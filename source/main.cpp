@@ -1,5 +1,12 @@
-﻿#include <GL/glfw.h> // Takes care of everything GL-related
+﻿
+
+#ifdef __APPLE__
+#include "glfw.h"
+#elif defined _WIN32 || defined _WIN64
+#include <GL/glfw.h> // Takes care of everything GL-related
 #include <GL/freeglut.h> // Takes care of everything GL-related
+#endif
+
 #include <stdlib.h>
 #include <iostream>
 #include "LevelSet.h"
