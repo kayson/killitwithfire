@@ -113,9 +113,8 @@ void showFPS()
 	if( (t-t0) > 1.0 || frames == 0 )
 	{
 		fps = (double)frames / (t-t0);
-		sprintf(titlestring, "Bollhav system (%.1f FPS)", fps);
-		//double e = balls.calcEnergy();
-		//sprintf(titlestring, "Bollhav system (%.1f Energi Diff)", e-ie);
+		sprintf(titlestring, "Fire (%.1f FPS)", fps);
+
 		glfwSetWindowTitle(titlestring);
 		t0 = t;
 		frames = 0;
@@ -148,7 +147,6 @@ void GLFWCALL reshape( int width, int height )
 
     if(HEIGHT<=0) HEIGHT=1; // Safeguard against iconified/closed window
 
-    //glViewport (0, 0, (GLsizei)WIDTH, (GLsizei)HEIGHT);
 	glViewport (0, 0, (GLsizei)WIDTH, (GLsizei)HEIGHT);
     glMatrixMode(GL_PROJECTION); 
     glLoadIdentity();
