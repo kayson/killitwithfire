@@ -3,17 +3,13 @@
 #include <stdlib.h>
 #include <iostream>
 #include "Grid.h"
+#include "Input.h"
+#include "Camera.h"
 
 bool init();
 void showFPS();
 void update(const double dt);
 void render();
-void GLFWCALL reshape( int width, int height );
-void input();
-void mouseInput();
-void keyInput();
-void GLFWCALL mouseButtonListener(int button, int action);
-void GLFWCALL keyButtonListener( int key, int action );
 
 double TIME = 1.0/7000.0;
 
@@ -25,6 +21,8 @@ int HEIGHT = 800, WIDTH = 800;
 bool running = false;
 
 Grid grid(10, 10);
+Input controller;
+Camera camera;
 
 int main(int argc, char *argv[]) 
 {
@@ -70,12 +68,11 @@ bool init()
 	}
 
 	//Fixar keylistener
-	glfwSetKeyCallback( keyButtonListener );
-	glfwSetWindowSizeCallback( reshape );
-	glfwSetMouseButtonCallback( mouseButtonListener);
+	glfwSetKeyCallback( controller.keyButtonListener );
+	glfwSetWindowSizeCallback( camera.reshape );
+	glfwSetMouseButtonCallback( controller.mouseButtonListener);
 	
 	glfwSwapInterval(0);//Tar bort Vsync
-
 
 	glClearColor (0.0f, 0, 0.0f, 0.0f);
 	glShadeModel (GL_SMOOTH);
@@ -124,7 +121,7 @@ void showFPS()
 
 void update(const double dt)
 {
-	input(); //updatera mus och tangentbord
+	controller.updateInput(); //updatera mus och tangentbord
 
 	//Update physics
 }
@@ -139,69 +136,3 @@ void render(void)
 	glfwSwapBuffers();
 }
 
-//Fixar vyn
-void GLFWCALL reshape( int width, int height )
-{
-	HEIGHT = height;
-	WIDTH = width;
-
-    if(HEIGHT<=0) HEIGHT=1; // Safeguard against iconified/closed window
-
-	glViewport (0, 0, (GLsizei)WIDTH, (GLsizei)HEIGHT);
-    glMatrixMode(GL_PROJECTION); 
-    glLoadIdentity();
-	gluOrtho2D(-10.0f, 10.0f, 0.0f, 20.0f); 
-    glMatrixMode( GL_MODELVIEW );
-    glLoadIdentity();
-}
-
-void input()
-{
-	mouseInput();
-	keyInput();
-}
-
-void mouseInput()
-{
-}
-
-void keyInput()
-{
-
-}
-
-void GLFWCALL mouseButtonListener(int button, int action)
-{
-	// Tar reda på vart i fönstret man klickar
-	int x = 0, y = 0;
-	glfwGetMousePos(&x, &y);
-
-	GLint viewport[4]; //var to hold the viewport info
-	GLdouble modelview[16]; //var to hold the modelview info
-	GLdouble projection[16]; //var to hold the projection matrix info
-	GLfloat winX, winY, winZ; //variables to hold screen x,y,z coordinates
-	GLdouble worldX, worldY, worldZ; //variables to hold world x,y,z coordinates
-
-	glGetDoublev( GL_MODELVIEW_MATRIX, modelview ); //get the modelview info
-	glGetDoublev( GL_PROJECTION_MATRIX, projection ); //get the projection matrix info
-	glGetIntegerv( GL_VIEWPORT, viewport ); //get the viewport info
-
-	winX = (float)x;
-	winY = (float)viewport[3] - (float)y;
-	winZ = 0;
-		
-	//get the world coordinates from the screen coordinates
-	gluUnProject( winX, winY, winZ, modelview, projection, viewport, &worldX, &worldY, &worldZ);
-
-	if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-	{
-	}
-	else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
-	{
-	}
-}
-
-void GLFWCALL keyButtonListener( int key, int action )
-{
-	
-}
