@@ -1,6 +1,4 @@
-﻿
-
-#ifdef __APPLE__
+﻿#ifdef __APPLE__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h> // Takes care of everything GL-related
@@ -13,6 +11,10 @@
 #include "Grid.h"
 #include "Input.h"
 #include "Camera.h"
+#include "Helper.h"
+#include "armadillo"
+
+using namespace arma;
 
 bool init();
 void showFPS();
@@ -38,6 +40,10 @@ int main(int argc, char *argv[])
 	{
 		return 1;
 	}
+
+	Helper h;
+
+	h.gradient(grid, 0,0,0);
 
 	// Main loop
 	while(running)
