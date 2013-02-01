@@ -2,6 +2,7 @@
 #include <GL/freeglut.h> // Takes care of everything GL-related
 #include <stdlib.h>
 #include <iostream>
+#include "LevelSet.h"
 #include "Grid.h"
 #include "Input.h"
 #include "Camera.h"

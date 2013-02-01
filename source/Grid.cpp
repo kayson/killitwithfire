@@ -28,17 +28,17 @@ void Grid::draw() const
 		{
 			for(int z = 0; z < zDim-1; z++)
 			{
-				glVertex3f(x, y, z);
-				glVertex3f(x+1, y, z);
+				glVertex3f((float)x, (float)y, (float)z);
+				glVertex3f((float)x+1.f, (float)y, (float)z);
 
-				glVertex3f(x, y, z);
-				glVertex3f(x, y+1, z);
+				glVertex3f((float)x, (float)y, (float)z);
+				glVertex3f((float)x, (float)y+1.f, (float)z);
 
-				glVertex3f(x, y+1, z);
-				glVertex3f(x+1, y+1, z);
+				glVertex3f((float)x, (float)y+1.f, (float)z);
+				glVertex3f((float)x+1.f, (float)y+1.f, (float)z);
 
-				glVertex3f(x+1, y, z);
-				glVertex3f(x+1, y+1, z);
+				glVertex3f((float)x+1.f, (float)y, (float)z);
+				glVertex3f((float)x+1.f, (float)y+1.f, (float)z);
 			}
 		}
 	}
