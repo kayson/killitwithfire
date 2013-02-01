@@ -1,5 +1,11 @@
+
 #include "Grid.h"
+
+#ifdef __APPLE__
+#include "glfw.h"
+#elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
+#endif
 
 Grid::Grid(const int x, const int y, const int z) 
 { 
