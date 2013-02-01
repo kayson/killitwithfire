@@ -3,13 +3,12 @@
 
 #include "datatype.h"
 #include <vector>
-
 //Denna klass bör nog vara en template klass, då griden skall innehålla densitet, tryck, hastighetsfält, mm...
 
 class Grid
 {
 public:
-	Grid(const int x = 10, const int y = 10, const int z = 10);
+	Grid(const int x = GRID_DIM_X, const int y = GRID_DIM_Y, const int z = GRID_DIM_Z);
 	~Grid() 
 	{ 
 		//Fixa destruktor 
@@ -32,6 +31,9 @@ public:
 	int getDimZ() const { return zDim; };
 
 private:
+	void drawLines2d() const;
+	void drawFilled2d() const;
+
 	data ***grid;
 	int xDim, yDim, zDim;
 };

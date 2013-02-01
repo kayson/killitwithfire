@@ -6,6 +6,7 @@
 #include "Grid.h"
 #include "Input.h"
 #include "Camera.h"
+#include "ImplicitFunctions.h"
 
 bool init();
 void showFPS();
@@ -18,10 +19,10 @@ double t0 = 0.0;
 int frames = 0;
 char titlestring[200];
 
-int HEIGHT = 800, WIDTH = 800;
+int HEIGHT = 600, WIDTH = 800;
 bool running = false;
 
-Grid grid(10, 10);
+LevelSet levelSet;
 Input controller;
 Camera camera;
 
@@ -58,6 +59,8 @@ bool init()
 {
 	running = true; // Main loop exits when this is set to GL_FALSE
     
+	levelSet.fillLevelSet(implicitFunction::sphere);
+	levelSet.printVelocityGrid();
 	// Initialise GLFW
 	glfwInit();
 
@@ -80,23 +83,6 @@ bool init()
 
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-
-	// Light material
-	/*glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-
-	GLfloat mat_diffuse[] = { 1.0f, 0.5f, 0.5f, 1.0f };
-	GLfloat mat_specular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-	GLfloat mat_shininess[] = { 100.0f };
-	GLfloat light_direction[] = { 0.3f, 0.3f, 1.0f, 0.0f };
-	GLfloat light_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-	//glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-	//glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light_diffuse);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_direction);*/
 
 	return true;
 }
@@ -132,8 +118,7 @@ void render(void)
 {
 	glClear (GL_COLOR_BUFFER_BIT);
 
-	grid.draw();
-
+	levelSet.draw();
 	glfwSwapBuffers();
 }
 

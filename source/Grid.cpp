@@ -15,18 +15,15 @@ Grid::Grid(const int x, const int y, const int z)
 			grid[i][j] = new data[zDim];
 	}
 }
-
-//Ritar endast ut rutnät för 2D atm
-void Grid::draw() const
+void Grid::drawLines2d() const
 {
 	glBegin(GL_LINES);
 	glColor3f(1,1,1);
-	
 	for(int x = 0; x < xDim-1; x++)
 	{
 		for(int y = 0; y < yDim-1; y++)
 		{
-			for(int z = 0; z < zDim-1; z++)
+			for(int z = 0; z < zDim; z++)
 			{
 				glVertex3f((float)x, (float)y, (float)z);
 				glVertex3f((float)x+1.f, (float)y, (float)z);
@@ -42,6 +39,35 @@ void Grid::draw() const
 			}
 		}
 	}
-
 	glEnd();
+}
+void Grid::drawFilled2d() const
+{
+	glBegin(GL_QUADS);
+	glColor3f(1,0,0);
+	for(int x = 0; x < xDim-1; x++)
+	{
+		for(int y = 0; y < yDim-1; y++)
+		{
+			for(int z = 0; z < zDim; z++)
+			{
+				if(grid[x][y][z] <= 0)
+				{
+					glVertex3f((float)x, (float)y, (float)z);
+					glVertex3f((float)x+1.f, (float)y, (float)z);
+					glVertex3f((float)x+1.f, (float)y+1.f, (float)z);
+					glVertex3f((float)x, (float)y+1.f, (float)z);
+				}
+			}
+		}
+	}
+	glEnd();
+}
+//Ritar endast ut rutnät för 2D atm
+void Grid::draw() const
+{
+	drawFilled2d();
+
+	drawLines2d();
+	
 }

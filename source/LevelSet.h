@@ -8,10 +8,12 @@ class LevelSet
 {
 public:
 	LevelSet();
-	~LevelSet();
+	~LevelSet(){;};
 	void fillLevelSet(data (*implicitFunction)(int x, int y, int z));
 	void specifyRenderFunction(void (*renderFunction)());
-	void draw();
+
+	void draw() const;
+	void printVelocityGrid();
 private:
 	Grid u; //Velocity grid
 	Grid phi; //Levelset, byta namn kanske?
