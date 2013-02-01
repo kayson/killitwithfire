@@ -16,7 +16,7 @@ void GLFWCALL Camera::reshape( int width, int height )
 	glViewport (0, 0, (GLsizei)WIDTH, (GLsizei)HEIGHT);
     glMatrixMode(GL_PROJECTION); 
     glLoadIdentity();
-	gluOrtho2D(-10.0f, 10.0f, 0.0f, 20.0f); 
+	gluOrtho2D(-10.0f, 10.0f, -5.0f, 20.0f); 
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 }
