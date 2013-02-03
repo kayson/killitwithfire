@@ -1,23 +1,23 @@
 #ifndef LEVELSET_H
 #define LEVELSET_H
 
-#include "datatype.h"
+//#include "datatype.h"
 #include "Grid.h"
 
 class LevelSet
 {
 public:
 	LevelSet();
-	~LevelSet(){;};
+	~LevelSet(){};
 	void fillLevelSet(data (*implicitFunction)(int x, int y, int z));
 	void specifyRenderFunction(void (*renderFunction)());
-	Grid& getVelocityGrid();
+	Grid<data> & getVelocityGrid();
 
 	void draw() const;
 	void printVelocityGrid();
 private:
-	Grid u; //Velocity grid
-	Grid phi; //Levelset, byta namn kanske?
+	Grid<data> u; //Velocity grid, BÖR VARA EN MACGRID!!!
+	Grid<data> phi; //Levelset, byta namn kanske?
 	void (*render)();
 };
 #endif //LEVELSET_H

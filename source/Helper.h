@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Grid.h"
+#include "datatype.h"
 #include "armadillo"
 
 using namespace arma;
@@ -14,15 +15,15 @@ class Helper
 public:
 	Helper();
 	~Helper();
-	vec gradient(Grid &g, int i, int j, int k);
-	double divergence(Grid &g, int i, int j, int k);
+	vec gradient(Grid<data> &g, int i, int j, int k);
+	data divergence(Grid<data> &g, int i, int j, int k); //Bör vara Grid<Vector3<data>> när vi har en vector3<data> klass
 private:
-	double calcDx(Grid &g, int i , int j, int k);
-	double calcDy(Grid &g, int i , int j, int k);
-	double calcDz(Grid &g, int i , int j, int k);
+	data calcDx(Grid<data> &g, int i , int j, int k);
+	data calcDy(Grid<data> &g, int i , int j, int k);
+	data calcDz(Grid<data> &g, int i , int j, int k);
 
-	double calcDxCentralDiff(Grid &g, int i , int j, int k);
-	double calcDyCentralDiff(Grid &g, int i , int j, int k);
-	double calcDzCentralDiff(Grid &g, int i , int j, int k);
+	data calcDxCentralDiff(Grid<data> &g, int i , int j, int k);
+	data calcDyCentralDiff(Grid<data> &g, int i , int j, int k);
+	data calcDzCentralDiff(Grid<data> &g, int i , int j, int k);
 };
 #endif
