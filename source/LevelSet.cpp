@@ -29,6 +29,10 @@ void LevelSet::printVelocityGrid()
 		std::cout << std::endl;
 	}
 }
+Grid& LevelSet::getVelocityGrid()
+{
+	return u;
+}
 void LevelSet::draw() const
 {
 	phi.draw();

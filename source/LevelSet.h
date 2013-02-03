@@ -11,6 +11,7 @@ public:
 	~LevelSet(){;};
 	void fillLevelSet(data (*implicitFunction)(int x, int y, int z));
 	void specifyRenderFunction(void (*renderFunction)());
+	Grid& getVelocityGrid();
 
 	void draw() const;
 	void printVelocityGrid();
