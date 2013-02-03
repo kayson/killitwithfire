@@ -8,10 +8,10 @@ Helper::~Helper(){}
 double Helper::calcDxCentralDiff(Grid &g, int i , int j, int k){
 	return (double)(g(i-1, j, k) + g(i+1, j, k))/2;//GRID_DIM_X;
 }
-double Helper::calcDxCentralDiff(Grid &g, int i , int j, int k){
+double Helper::calcDyCentralDiff(Grid &g, int i , int j, int k){
 	return (double)(g(i, j-1, k) + g(i, j+1, k))/2;//GRID_DIM_Y;
 }
-double Helper::calcDxCentralDiff(Grid &g, int i , int j, int k){
+double Helper::calcDzCentralDiff(Grid &g, int i , int j, int k){
 	return (double)(g(i, j, k-1) + g(i, j, k+1))/2;//GRID_DIM_Z;
 }
 
