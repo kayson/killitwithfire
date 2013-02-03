@@ -1,7 +1,11 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <GL/glfw.h>
+#ifdef __APPLE__
+#include "glfw.h"
+#elif defined _WIN32 || defined _WIN64
+#include <GL/glfw.h> 
+#endif
 
 class Camera
 {
