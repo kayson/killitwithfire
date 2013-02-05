@@ -6,6 +6,8 @@
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
 #endif
+#include<armadillo>
+using namespace arma;
 
 class Input
 {
@@ -18,6 +20,8 @@ public:
 	void keyInput();
 	static void GLFWCALL mouseButtonListener(int button, int action);
 	static void GLFWCALL keyButtonListener( int key, int action );
+public:
+	void (*moveFunction)(vec dP);
 };
 
 #endif
