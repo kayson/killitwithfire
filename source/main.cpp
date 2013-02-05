@@ -7,18 +7,18 @@
 
 #include <stdlib.h>
 #include <iostream>
-#include "LevelSet.h"
+#include "levelset/LevelSet.h"
 #include "Grid.h"
 #include "Input.h"
 #include "Camera.h"
 
 #include "Helper.h"
 #include "armadillo"
+#include "presets/firePresetsTwoDimension.h"
+
+#include "levelset/ImplicitFunctions.h"
 
 using namespace arma;
-
-#include "ImplicitFunctions.h"
-
 
 bool init();
 void showFPS();

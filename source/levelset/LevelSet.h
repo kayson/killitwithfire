@@ -1,8 +1,8 @@
 #ifndef LEVELSET_H
 #define LEVELSET_H
 
-//#include "datatype.h"
-#include "Grid.h"
+#include "../datatype.h"
+#include "../Grid.h"
 
 class LevelSet
 {
