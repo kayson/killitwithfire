@@ -1,6 +1,8 @@
+#ifndef CENTRALDIFF_H
+#define CENTRALDIFF_H
 #include "Discretization.h"
 
-class CentralDiff : Discretization{
+class CentralDiff : public Discretization{
 public:
 	data calcDx(Grid<data> &g, int i, int j, int k);
 	data calcDy(Grid<data> &g, int i, int j, int k);
@@ -10,3 +12,4 @@ public:
 	data calcD2y(Grid<data> &g, int i, int j, int k);
 	data calcD2z(Grid<data> &g, int i, int j, int k);
 };
+#endif

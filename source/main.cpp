@@ -18,6 +18,9 @@
 
 #include "levelset/ImplicitFunctions.h"
 
+#include "Discretization.h"
+#include "Divergence.h"
+
 using namespace arma;
 
 bool init();
@@ -38,14 +41,22 @@ LevelSet levelSet;
 Input controller;
 Camera camera;
 
-Helper h;
-
 int main(int argc, char *argv[]) 
 {
 	if(!init())
 	{
 		return 1;
 	}
+	
+	/*
+	KOMPILERINGSTEST FÖR ANROPS-SYNTAX
+	Grid<double> g;
+	CentralDiff c;
+	UpwindDiff u;
+
+	Divergence d;
+	d.getDivergence(g, 0, 0, 0, c);
+	*/
 
 	// Main loop
 	while(running)
@@ -74,7 +85,6 @@ bool init()
 	running = true; // Main loop exits when this is set to GL_FALSE
     
 	levelSet.fillLevelSet(implicitFunction::sphere);
-	//h.gradient(levelSet.getVelocityGrid(), 10, 6, 1);
 	// Initialise GLFW
 	glfwInit();
 
