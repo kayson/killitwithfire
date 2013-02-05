@@ -38,8 +38,6 @@ LevelSet levelSet;
 Input controller;
 Camera camera;
 
-Helper h;
-
 int main(int argc, char *argv[]) 
 {
 	if(!init())
@@ -74,7 +72,6 @@ bool init()
 	running = true; // Main loop exits when this is set to GL_FALSE
     
 	levelSet.fillLevelSet(implicitFunction::sphere);
-	//h.gradient(levelSet.getVelocityGrid(), 10, 6, 1);
 	// Initialise GLFW
 	glfwInit();
 
