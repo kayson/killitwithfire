@@ -72,7 +72,6 @@ bool init()
 	running = true; // Main loop exits when this is set to GL_FALSE
     
 	levelSet.fillLevelSet(implicitFunction::sphere);
-	levelSet.printVelocityGrid();
 	// Initialise GLFW
 	glfwInit();
 
