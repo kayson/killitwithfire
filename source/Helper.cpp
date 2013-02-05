@@ -4,15 +4,66 @@ Helper::Helper(){}
 
 Helper::~Helper(){}
 
-vec Helper::gradient(Grid &g, int i, int j, int k)
+// Central diff. i, j, k är halva index i staggered MAC grid.
+data Helper::calcDxCentralDiff(Grid<data> &g, int i , int j, int k){
+	return (double)(g(i-1, j, k) + g(i+1, j, k))/2;//GRID_DIM_X;
+}
+data Helper::calcDyCentralDiff(Grid<data> &g, int i , int j, int k){
+	return (double)(g(i, j-1, k) + g(i, j+1, k))/2;//GRID_DIM_Y;
+}
+data Helper::calcDzCentralDiff(Grid<data> &g, int i , int j, int k){
+	return (double)(g(i, j, k-1) + g(i, j, k+1))/2;//GRID_DIM_Z;
+}
+
+// Här kan man enkelt anropa andra diskretiserings-metoder om man vill.
+data Helper::calcDx(Grid<data> &g, int i, int j, int k){
+	return calcDxCentralDiff(g, i, j, k);
+}
+data Helper::calcDy(Grid<data> &g, int i, int j, int k){
+	return calcDyCentralDiff(g, i, j, k);
+}
+data Helper::calcDz(Grid<data> &g, int i, int j, int k){
+	return calcDzCentralDiff(g, i, j, k);
+}
+
+vec Helper::gradient(Grid<data> &g, int i, int j, int k)
 {
 	std::cout << "gradient(..) called\n";
-	vec v;
+	float dx=0, dy=0, dz=0;
+
+	/*cout << "i = " << i << ", j = " << j << endl;
+	cout << "g(i,j,k) = " << (double)g(i,j,k) << endl;
+	cout << "g(i-1,j,k) = " << (double)g(i-1,j,k) << endl;
+	cout << "g(i+1,j,k) = " << (double)g(i+1,j,k) << endl;
+	cout << "g(i,j-1,k) = " << (double)g(i,j-1,k) << endl;
+	cout << "g(i,j+1,k) = " << (double)g(i,j+1,k) << endl;*/
+
+	// Central diff. Är egentligen halva index i 
+	// staggered MAC grid
+
+	dx = calcDx(g, i, j, k);
+	dy = calcDy(g, i, j, k);
+	dz = 0;//Because 2d, calcDz(g, i, j, k);
+
+	vec v(3); // Vektor med dim 3x1
+	v(0) = dx;
+	v(1) = dy;
+	v(2) = dz;
+
+	std::cout << "Gradient is: \n" << v << endl;
+
 	return v;
 }
 
-float Helper::divergence(Grid &g, int i, int j, int k)
+data Helper::divergence(Grid<data> &g, int i, int j, int k)
 {
 	std::cout << "divergence(..) called\n";
-	return 0.f;
+	float dx=0, dy=0, dz=0;
+	// Central diff. Är egentligen halva index i 
+	// staggered MAC grid
+	dx = calcDx(g, i, j, k);
+	dy = calcDy(g, i, j, k);
+	dz = 0;//Because 2d, calcDz(g, i, j, k);
+
+	return dx+dy+dz;
 }

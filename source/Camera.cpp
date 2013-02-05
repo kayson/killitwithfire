@@ -2,7 +2,13 @@
 
 Camera::Camera()
 {
+	(position_) = zeros<vec>(3,1);
+}
 
+void Camera::translateForCamera()
+{
+	glLoadIdentity();
+	glTranslatef(-position_[0], -position_[1], -position_[2]);
 }
 
 void GLFWCALL Camera::reshape( int width, int height )
@@ -16,6 +22,7 @@ void GLFWCALL Camera::reshape( int width, int height )
 	glViewport (0, 0, (GLsizei)WIDTH, (GLsizei)HEIGHT);
     glMatrixMode(GL_PROJECTION); 
     glLoadIdentity();
+	//double offsetX = position_[0];
 	gluOrtho2D(-2.0f, 20.0f, -2.0f, 20.0f); 
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();

@@ -6,8 +6,8 @@ namespace implicitFunction
 	data sphere(int x, int y, int z)
 	{
 		data r = (data) 3;
-		data xo = (data) -GRID_DIM_X / 2; //-3.5;
-		data yo = (data) -GRID_DIM_Y / 2; //-3.7;
+		data xo = (data) -GRID_DIM_X / 2;
+		data yo = (data) -GRID_DIM_Y / 2;
 		data zo = (data) 0;
 		x += xo;
 		y += yo;

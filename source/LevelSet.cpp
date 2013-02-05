@@ -1,5 +1,6 @@
 #include "LevelSet.h"
 #include <iostream>
+
 LevelSet::LevelSet()
 {
 
@@ -14,7 +15,7 @@ void LevelSet::fillLevelSet(data (*implicitFunction)(int, int, int))
 				phi(i, j, k) = implicitFunction(i, j, k);
 	}
 }
-void LevelSet::printVelocityGrid()
+void LevelSet::printDistanceField()
 {
 	for(int i = 0; i < phi.getDimX(); i++)
 	{
@@ -29,6 +30,7 @@ void LevelSet::printVelocityGrid()
 		std::cout << std::endl;
 	}
 }
+
 void LevelSet::draw() const
 {
 	phi.draw();
