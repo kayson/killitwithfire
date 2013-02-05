@@ -31,12 +31,12 @@ vec Helper::gradient(Grid<data> &g, int i, int j, int k)
 	std::cout << "gradient(..) called\n";
 	float dx=0, dy=0, dz=0;
 
-	/*cout << "i = " << i << ", j = " << j << endl;
+	cout << "i = " << i << ", j = " << j << endl;
 	cout << "g(i,j,k) = " << (double)g(i,j,k) << endl;
 	cout << "g(i-1,j,k) = " << (double)g(i-1,j,k) << endl;
 	cout << "g(i+1,j,k) = " << (double)g(i+1,j,k) << endl;
 	cout << "g(i,j-1,k) = " << (double)g(i,j-1,k) << endl;
-	cout << "g(i,j+1,k) = " << (double)g(i,j+1,k) << endl;*/
+	cout << "g(i,j+1,k) = " << (double)g(i,j+1,k) << endl;
 
 	// Central diff. Är egentligen halva index i 
 	// staggered MAC grid
