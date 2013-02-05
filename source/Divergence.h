@@ -8,6 +8,5 @@ class Divergence
 {
 public:
 	Divergence();
-	double getDivergence(Grid<double> &g, int i, int j, int k, CentralDiff &c);
-	double getDivergence(Grid<double> &g, int i, int j, int k, UpwindDiff &c);
+	double getDivergence(Grid<double> &g, int i, int j, int k, Discretization &c);
 };

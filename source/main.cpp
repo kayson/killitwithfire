@@ -18,6 +18,9 @@
 
 #include "levelset/ImplicitFunctions.h"
 
+#include "Discretization.h"
+#include "Divergence.h"
+
 using namespace arma;
 
 bool init();
@@ -44,6 +47,16 @@ int main(int argc, char *argv[])
 	{
 		return 1;
 	}
+	
+	/*
+	KOMPILERINGSTEST FÖR ANROPS-SYNTAX
+	Grid<double> g;
+	CentralDiff c;
+	UpwindDiff u;
+
+	Divergence d;
+	d.getDivergence(g, 0, 0, 0, c);
+	*/
 
 	// Main loop
 	while(running)
