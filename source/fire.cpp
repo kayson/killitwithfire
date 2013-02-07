@@ -11,8 +11,25 @@ Fire::Fire(FirePresets *p){
     u = VelocityField();
 }
 
-double Fire::computeDT(){
-    return 0.5;
+double Fire::computeDT(double currentTime){
+	double smallStep;
+
+	//Bridson s. 35
+	double dx = preset->dx;
+	double alpha = preset->CFL_NUMBER;
+	double c = u.findMaximumVelocity();
+	if(c != 0)
+		smallStep = alpha * dx / c;
+	else
+		smallStep = dx;
+
+	//Fixa overshoot
+	/*double diff = currentTime + smallStep - preset->dt;
+	if(diff > 0)
+	{
+		smallStep -= diff;
+	}*/
+	return smallStep;
 }
 
 void Fire::advect(double duration){
@@ -24,11 +41,14 @@ void Fire::runSumulation(){
     //Beräkna tidssteget
 	double currentTime = 0;
 
-	double dt = computeDT();
 	while(currentTime < preset->dt)
 	{
+		double dt = computeDT(currentTime);
+
 		//Advektera hastighestsfältet
-		advect(preset->dt);
+		advect(dt);
+
+		currentTime += dt;
 	}
 
     
