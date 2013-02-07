@@ -9,15 +9,14 @@
 #include "VelocityField.h"
 
 
-using namespace arma;
 VelocityField::VelocityField(){
     
 }
 
-vec3 VelocityField::getVelocityAtWorldCoordinate(vec3 &pos){
+Vector3 VelocityField::getVelocityAtWorldCoordinate(Vector3 &pos){
     
     
-    vec3 v = vec3();
+    Vector3 v = Vector3();
     
     
     

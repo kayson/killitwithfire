@@ -9,6 +9,6 @@ class Gradient
 {
 public:
 	Gradient();
-	Vector3 getGradient(Grid &g, int i, int j, int k, Discretization &d);
+	static Vector3 getGradient(Grid &g, int i, int j, int k, Discretization &d);
 };
 #endif

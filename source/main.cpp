@@ -24,6 +24,8 @@
 #include "Divergence.h"
 #include "Gradient.h"
 
+#include "fire.h"
+
 //using namespace arma;
 
 bool init();
@@ -41,6 +43,7 @@ int HEIGHT = 600, WIDTH = 800;
 bool running = false;
 
 LevelSet levelSet;
+Fire *fire;
 Input controller;
 static Camera camera;
 
@@ -51,18 +54,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	
-	Grid g;
-
-	CentralDiff c;
-	UpwindDiff u;
-
-	Divergence divergence;
-	Gradient gradient;
-
-	double div = divergence.getDivergence(g, 1,1,1,c);
-	Vector3 v = gradient.getGradient(g,1,1,1,u);
-
-
+	fire = new Fire(new FirePresetsTwoDimension());
 	// Main loop
 	while(running)
 	{
@@ -90,7 +82,7 @@ bool init()
 	running = true; // Main loop exits when this is set to GL_FALSE
     
 	controller.setCamera(&camera);
-	levelSet.fillLevelSet(implicitFunction::sphere);
+	//levelSet.fillLevelSet(implicitFunction::sphere);
 	// Initialise GLFW
 	glfwInit();
 
@@ -139,6 +131,7 @@ void update(const double dt)
 	controller.updateInput(); //updatera mus och tangentbord
 
 	//Update physics
+	
 }
 
 //renderar objekt
@@ -148,7 +141,8 @@ void render(void)
 
 	camera.translateForCamera();
 
-	levelSet.draw();
+	fire->draw();
+
 	glfwSwapBuffers();
 }
 

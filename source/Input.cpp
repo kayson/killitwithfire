@@ -34,7 +34,7 @@ void moveCamera(DirectionEnums DIR)
 	}
 	else if(DIR == LEFT)
 	{
-		dP.z = -1.0;
+		dP.x = -1.0;
 	}
 	else if(DIR == RIGHT)
 	{

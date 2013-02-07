@@ -3,6 +3,7 @@
 
 #include "presets/firePresets.h"
 #include "VelocityField.h"
+#include "levelset/LevelSet.h"
 
 class Fire{
 protected:
@@ -11,11 +12,15 @@ protected:
 public:
 	Fire(FirePresets *preset);
 	~Fire();
-    
+
     void runSumulation(double duration);
-protected:
+
+	void draw();
+
+private:
+
     FirePresets *preset;
-    
+    LevelSet phi;
     //Grid
     VelocityField u;
 };

@@ -1,5 +1,8 @@
 #include "LevelSet.h"
+#include "../Discretization.h"
+#include "../CentralDiff.h"
 #include <iostream>
+#include <cmath>
 
 void LevelSet::fillLevelSet(data (*implicitFunction)(int, int, int))
 {
@@ -24,6 +27,25 @@ void LevelSet::printDistanceField()
 		}
 		std::cout << std::endl;
 	}
+}
+
+double LevelSet::getCurvature(const int i, const int j, const int k)
+{
+	Discretization *disc = &CentralDiff();
+	
+	double 
+	dx = disc->calcDx(phi, i, j, k),
+	dy = disc->calcDy(phi, i, j, k),
+	dz = disc->calcDz(phi, i, j, k),
+	d2x = disc->calcD2x(phi, i, j, k),
+	d2y = disc->calcD2y(phi, i, j, k),
+	d2z = disc->calcD2z(phi, i, j, k),
+	dxy = disc->calcDxy(phi, i, j, k),
+	dxz = disc->calcDxz(phi, i, j, k),
+	dyz = disc->calcDyz(phi, i, j, k);
+	double a = 2.0000000000;
+
+	return (dx*dx*(d2y + d2z) - a*dy*dz*dyz + dy*dy*(d2x*d2z) - a*dx*dz*dxz + dz*dz*(d2x + d2y) - a*dx*dy*dxy)/(a*std::pow(dx*dx+dy*dy+dz*dz, 1.5));
 }
 
 void LevelSet::draw() const

@@ -5,7 +5,8 @@
 Fire::Fire(FirePresets *p){
     //Presets
     preset = p;
-    
+
+	phi.fillLevelSet(preset->implicitFunction);
     //Grid
     u = VelocityField();
 }
@@ -33,6 +34,11 @@ void Fire::runSumulation(double duration){
     
     //Advektera levelset
     
+}
+
+void Fire::draw()
+{
+	phi.draw();
 }
 
 Fire::~Fire(){
