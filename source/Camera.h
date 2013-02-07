@@ -6,7 +6,7 @@
 #include "armadillo.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h> 
-#include <armadillo>
+#include "armadillo"
 #endif
 
 using namespace arma;

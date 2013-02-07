@@ -62,6 +62,15 @@ int Grid::getDimZ() const
 	return zDim; 
 };
 
+arma::vec Grid::getCellVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k)
+{
+	arma::vec tmp(3);
+	tmp(0) = (u(i,j,k) + u(i+1,j,k))/2;
+	tmp(1) = (v(i,j,k) + v(i,j+1,k))/2;
+	tmp(2) = (w(i,j,k) + w(i,j,k+1))/2;
+	
+	return tmp;
+}
 
 void Grid::drawLines2d() const
 {

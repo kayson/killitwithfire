@@ -13,11 +13,6 @@
 #include "Camera.h"
 #include "Helper.h"
 
-#ifdef __APPLE__
-#include "armadillo.h"
-#elif defined _WIN32 || defined _WIN64
-#include "armadillo"
-#endif
 #include "presets/firePresetsTwoDimension.h"
 
 #include "levelset/ImplicitFunctions.h"
