@@ -27,8 +27,5 @@ public:
 	virtual data calcDxz(Grid &g, int i, int j, int k)=0;
 	virtual data calcDxy(Grid &g, int i, int j, int k)=0;
 
-protected:
-	data dx, dy, dz, d2x, d2y, d2z;
-
 };
 #endif

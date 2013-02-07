@@ -14,6 +14,7 @@ public:
 
 	void draw() const;
 	void printDistanceField();
+	double getCurvature(const int i, const int j, const int k);
 private:
 	Grid phi; //Signed distance field
 	void (*render)();
