@@ -1,13 +1,22 @@
 #ifndef FIRE_H
 #define FIRE_H
 
+#include "AdvectRK2.h"
+#include "firePresets.h"
+#include "Advect.h"
+
 class Fire
 {
 public:
-	Fire(FirePresets preset);
+	Fire(FirePresets *preset);
+	~Fire();
+    
+    void runSumulationStep();
 
-private:
-	FirePresets presets;
-	
-}
+protected:
+    FirePresets *preset;
+    
+    //Grid
+    Grid grid;
+};
 #endif //FIRE_H
