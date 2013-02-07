@@ -2,7 +2,7 @@
 #define GRID_H
 
 #include "datatype.h"
-
+#include "Vector3.h"
 #ifdef __APPLE__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
@@ -27,6 +27,8 @@ public:
 	int getDimX() const;
 	int getDimY() const;
 	int getDimZ() const;
+
+	Vector3 getCellVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k);
 
 private:
 	void drawLines2d() const;

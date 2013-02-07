@@ -4,11 +4,6 @@
 #include <iostream>
 #include <cmath>
 
-LevelSet::LevelSet()
-{
-
-}
-
 void LevelSet::fillLevelSet(data (*implicitFunction)(int, int, int))
 {
 	for(int i = 0; i < phi.getDimX(); i++)

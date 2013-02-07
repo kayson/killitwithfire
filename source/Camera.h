@@ -3,13 +3,11 @@
 
 #ifdef __APPLE__
 #include "glfw.h"
-#include "armadillo.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h> 
-#include <armadillo>
 #endif
 
-using namespace arma;
+#include "Vector3.h"
 
 class Camera
 {
@@ -20,10 +18,10 @@ public:
 	static void GLFWCALL reshape( int width, int height );
 	void translateForCamera();
 	double getCameraSpeed(){ return cameraSpeed_; };
-	void moveCamera(vec dP);
+	void moveCamera(Vector3 dP);
 	
 private:
-	vec position_;
+	Vector3 position_;
 	double cameraSpeed_;
 };
 

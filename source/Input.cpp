@@ -23,34 +23,34 @@ void Input::initListeners()
 
 void moveCamera(DirectionEnums DIR)
 {
-	vec dP = zeros(3,1);
+	Vector3 dP(0,0,0);
 	if(DIR == FORWARD)
 	{
-		dP[2] = 1.0;
+		dP.z = 1.0;
 	}
 	else if(DIR == BACKWARD)
 	{
-		dP[2] = -1.0;
+		dP.z = -1.0;
 	}
 	else if(DIR == LEFT)
 	{
-		dP[0] = -1.0;
+		dP.x = -1.0;
 	}
 	else if(DIR == RIGHT)
 	{
-		dP[0] = 1.0;
+		dP.x = 1.0;
 	}
 	else if(DIR == UP)
 	{
-		dP[1] = 1.0;
+		dP.y = 1.0;
 	}
 	else if(DIR == DOWN)
 	{
-		dP[1] = -1.0;
+		dP.y = -1.0;
 	}
 	else
 	{
-		cout << "Direction not implemented in moveCamera @Input.cpp!";
+		std::cout << "Direction not implemented in moveCamera @Input.cpp!";
 	}
 	dP *= sCam->getCameraSpeed();
 	sCam->moveCamera(dP);
@@ -85,7 +85,7 @@ void GLFWCALL mouseButtonListener(int button, int action)
 
 void GLFWCALL keyButtonListener( int key, int action )
 {
-	if(action = GLFW_PRESS)
+	if(action == GLFW_PRESS)
 	{
 		switch(key)
 		{

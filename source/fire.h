@@ -1,22 +1,23 @@
 #ifndef FIRE_H
 #define FIRE_H
 
-#include "AdvectRK2.h"
-#include "firePresets.h"
-#include "Advect.h"
+#include "presets/firePresets.h"
+#include "VelocityField.h"
 
-class Fire
-{
+class Fire{
+protected:
+    double computeDT();
+    void advect(double duration);
 public:
 	Fire(FirePresets *preset);
 	~Fire();
     
-    void runSumulationStep();
-
+    void runSumulation(double duration);
 protected:
     FirePresets *preset;
     
     //Grid
-    Grid grid;
+    VelocityField u;
 };
+
 #endif //FIRE_H

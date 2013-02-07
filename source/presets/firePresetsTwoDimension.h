@@ -2,7 +2,12 @@
 #define FIREPRESETSTWODIM_H
 #include "firePresets.h"
 #include"../levelset/ImplicitFunctions.h"
+#include "../advect/AdvectRK2.h"
+
+#ifdef __APPLE__
 #include "AdvectRK2.h"
+#elif defined _WIN32 || defined _WIN64
+#endif
 
 class FirePresetsTwoDimension : public FirePresets
 {
