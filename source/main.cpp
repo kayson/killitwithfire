@@ -58,14 +58,15 @@ int main(int argc, char *argv[])
 	
 	/*
 	EXEMPEL PÅ ANROPS-SYNTAX FÖR DIV/GRAD*/
-	Grid<double> g;
+	/*Grid<double> g;
 	CentralDiff c;
 	UpwindDiff u;
 
 	Divergence divergence;
 	Gradient gradient;
 
-	//double div = divergence.getDivergence(g, 1,1,1,c);
+	double div = divergence.getDivergence(g, 1,1,1,c);
+	vec v = gradient.getGradient(g,1,1,1,u);*/
 	
 	
 
