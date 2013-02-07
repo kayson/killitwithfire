@@ -24,6 +24,8 @@
 #include "levelset/ImplicitFunctions.h"
 
 #include "Discretization.h"
+#include "CentralDiff.h"
+#include "UpwindDiff.h"
 #include "Divergence.h"
 #include "Gradient.h"
 
@@ -56,15 +58,16 @@ int main(int argc, char *argv[])
 	
 	/*
 	EXEMPEL PÅ ANROPS-SYNTAX FÖR DIV/GRAD*/
-	/*Grid<double> g;
+	Grid<double> g;
 	CentralDiff c;
 	UpwindDiff u;
 
-	Divergence d;
-	Gradient grad;
-	double herpderp = d.getDivergence(g, 0, 0, 0, c);
-	vec grad = grad.getGradient(g, 0, 0, 0, u);
-	*/
+	Divergence divergence;
+	Gradient gradient;
+
+	//double div = divergence.getDivergence(g, 1,1,1,c);
+	
+	
 
 	// Main loop
 	while(running)
