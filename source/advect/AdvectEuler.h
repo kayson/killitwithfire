@@ -9,6 +9,6 @@
 class AdvectEuler : public Advect {
 public:
     AdvectEuler(){};
-    virtual void advect(VelocityField &v, double dt);
+    virtual void advect(VelocityField &v,Grid &g, double dt);
 };
 #endif /* defined(__FuidFire__AdvectEuler__) */

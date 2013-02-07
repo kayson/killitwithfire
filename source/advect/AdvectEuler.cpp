@@ -3,6 +3,6 @@
 #include "AdvectEuler.h"
 
 
-void AdvectEuler::advect(VelocityField &v, double dt){
+void AdvectEuler::advect(VelocityField &v,Grid &g, double dt){
     
 }

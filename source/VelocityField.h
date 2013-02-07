@@ -11,8 +11,10 @@ private:
     Grid u,v,w;
 public:
     VelocityField();
-	data& getMax();
+	data getMax();
     Vector3 getVelocityAtWorldCoordinate(Vector3 &pos);
 	double findMaximumVelocity(){return 1;};
+    
+    friend class Fire;
 };
 #endif /* defined(__FuidFire__VelocityField__) */

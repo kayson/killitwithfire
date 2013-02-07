@@ -33,7 +33,10 @@ double Fire::computeDT(double currentTime){
 }
 
 void Fire::advect(double duration){
-    preset->advect->advect(u, 0.5);
+    preset->advect->advect(u,u.u, 0.5);
+    preset->advect->advect(u,u.v, 0.5);
+    preset->advect->advect(u,u.w, 0.5);
+
 }
 
 void Fire::runSumulation(){

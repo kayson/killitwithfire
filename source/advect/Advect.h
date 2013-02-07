@@ -6,6 +6,6 @@
 class Advect {
 public:
     virtual ~Advect(){};
-    virtual void advect(VelocityField &v, double dt) = 0;
+    virtual void advect(VelocityField &v,Grid &g, double dt) = 0;
 };
 #endif /* defined(__FuidFire__Advect__) */

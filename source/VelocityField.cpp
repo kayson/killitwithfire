@@ -6,7 +6,7 @@ VelocityField::VelocityField()
     
 }
 
-data& VelocityField::getMax()
+data VelocityField::getMax()
 {
 	data max = 0;
 	if ( u.getMax() > max )
