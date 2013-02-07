@@ -1,16 +1,28 @@
-//
-//  VelocityField.cpp
-//  FuidFire
-//
-//  Created by Johannes Deligiannis on 2/7/13.
-//  Copyright (c) 2013 Johannes Deligiannis. All rights reserved.
-//
-
 #include "VelocityField.h"
 
 
-VelocityField::VelocityField(){
+VelocityField::VelocityField()
+{
     
+}
+
+data& VelocityField::getMax()
+{
+	data max = 0;
+	if ( u.getMax() > max )
+	{
+		max = u.getMax();
+	}
+	if ( v.getMax() > max )
+	{
+		max = v.getMax();
+	}
+	if ( w.getMax() > max )
+	{
+		max = w.getMax();
+	}
+
+	return max;
 }
 
 Vector3 VelocityField::getVelocityAtWorldCoordinate(Vector3 &pos){

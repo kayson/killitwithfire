@@ -62,6 +62,26 @@ int Grid::getDimZ() const
 	return zDim; 
 };
 
+data& Grid::getMax()
+{
+	data max = 0;
+	for(int i = 0; i < xDim; i++)
+	{
+		for(int j = 0; j < yDim; j++)
+		{
+			for(int k = 0; k < zDim, k++)
+			{
+				if (grid[i][j][k] > max)
+				{
+					max = grid[i][j][k];
+				}
+			}
+		}
+	}
+
+	return max;
+}
+
 Vector3 Grid::getCellVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k)
 {
 	Vector3 x(
