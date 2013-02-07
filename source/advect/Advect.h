@@ -2,10 +2,10 @@
 #ifndef __FuidFire__Advect__
 #define __FuidFire__Advect__
 
-#include "Grid.h"
+#include "VelocityField.h"
 class Advect {
 public:
     virtual ~Advect(){};
-    virtual void advect(Grid &grid, double dt) = 0;
+    virtual void advect(VelocityField &v, double dt) = 0;
 };
 #endif /* defined(__FuidFire__Advect__) */
