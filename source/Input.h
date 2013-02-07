@@ -12,7 +12,6 @@
 #include "Camera.h"
 #include "datatype.h"
 
-#endif
 using namespace arma;
 
 class Input
