@@ -2,7 +2,8 @@
 
 Divergence::Divergence(){}
 
-double getDivergence(Grid &g, int i, int j, int k, Discretization &c)
+
+double Divergence::getDivergence(Grid &g, int i, int j, int k, Discretization &d)
 {
-	return c.calcDx(g,i,j,k) + c.calcDy(g,i,j,k) + c.calcDz(g,i,j,k);
+	return d.calcDx(g,i,j,k) + d.calcDy(g,i,j,k) + d.calcDz(g,i,j,k);
 }
