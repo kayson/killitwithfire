@@ -65,11 +65,7 @@ int main(int argc, char *argv[])
 
 	double div = divergence.getDivergence(g, 1,1,1,c);
 	vec v = gradient.getGradient(g,1,1,1,u);
-<<<<<<< HEAD
-=======
-	
->>>>>>> Utökade Fire-klassen så att den använder sig av FirePresets. En ny hjälpklass Advekt
-	
+
 
 	// Main loop
 	while(running)
