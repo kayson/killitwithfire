@@ -10,6 +10,7 @@ private:
 public:
     VelocityField();
 	data getMax();
+    Vector3 getPositionAtFace(int i ,int j, int k, DirectionEnums direction);
     Vector3 getVelocityAtWorldCoordinate(Vector3 &pos);
 
     friend class Fire;
