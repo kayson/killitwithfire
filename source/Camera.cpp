@@ -2,6 +2,7 @@
 
 Camera::Camera()
 {
+	cameraSpeed_ = 0.3;
 	(position_) = zeros<vec>(3,1);
 }
 
@@ -9,6 +10,11 @@ void Camera::translateForCamera()
 {
 	glLoadIdentity();
 	glTranslatef(-position_[0], -position_[1], -position_[2]);
+}
+
+void Camera::moveCamera(vec dP)
+{
+	position_ += dP;
 }
 
 void GLFWCALL Camera::reshape( int width, int height )

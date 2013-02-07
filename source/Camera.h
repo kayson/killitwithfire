@@ -14,12 +14,16 @@ class Camera
 {
 public:
 	Camera();
-	~Camera() {}
+	~Camera() {};
 
 	static void GLFWCALL reshape( int width, int height );
 	void translateForCamera();
+	double getCameraSpeed(){ return cameraSpeed_; };
+	void moveCamera(vec dP);
+	
 private:
 	vec position_;
+	double cameraSpeed_;
 };
 
 #endif

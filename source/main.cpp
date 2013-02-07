@@ -40,7 +40,7 @@ bool running = false;
 
 LevelSet levelSet;
 Input controller;
-Camera camera;
+static Camera camera;
 
 int main(int argc, char *argv[]) 
 {
@@ -87,6 +87,7 @@ bool init()
 {
 	running = true; // Main loop exits when this is set to GL_FALSE
     
+	controller.setCamera(&camera);
 	levelSet.fillLevelSet(implicitFunction::sphere);
 	// Initialise GLFW
 	glfwInit();
@@ -99,10 +100,8 @@ bool init()
 	}
 
 	//Fixar keylistener
-	glfwSetKeyCallback( controller.keyButtonListener );
+	controller.initListeners();
 	glfwSetWindowSizeCallback( camera.reshape );
-	glfwSetMouseButtonCallback( controller.mouseButtonListener);
-	
 	glfwSwapInterval(0);//Tar bort Vsync
 
 	glClearColor (0.0f, 0, 0.0f, 0.0f);
