@@ -20,6 +20,7 @@
 
 #include "Discretization.h"
 #include "Divergence.h"
+#include "Gradient.h"
 
 using namespace arma;
 
@@ -49,13 +50,15 @@ int main(int argc, char *argv[])
 	}
 	
 	/*
-	KOMPILERINGSTEST FÖR ANROPS-SYNTAX
-	Grid<double> g;
+	EXEMPEL PÅ ANROPS-SYNTAX FÖR DIV/GRAD*/
+	/*Grid<double> g;
 	CentralDiff c;
 	UpwindDiff u;
 
 	Divergence d;
-	d.getDivergence(g, 0, 0, 0, c);
+	Gradient grad;
+	double herpderp = d.getDivergence(g, 0, 0, 0, c);
+	vec grad = grad.getGradient(g, 0, 0, 0, u);
 	*/
 
 	// Main loop

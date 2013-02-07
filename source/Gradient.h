@@ -6,6 +6,7 @@
 
 class Gradient
 {
+public:
 	Gradient();
 	arma::vec getGradient(Grid<double> &g, int i, int j, int k, Discretization &d);
 };
