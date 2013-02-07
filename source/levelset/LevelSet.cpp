@@ -30,7 +30,7 @@ void LevelSet::printDistanceField()
 	}
 }
 
-double LevelSet::getCurvature(const int i, const int j, const int k) const
+double LevelSet::getCurvature(const int i, const int j, const int k)
 {
     
 	Discretization *disc = new CentralDiff();
@@ -52,13 +52,15 @@ double LevelSet::getCurvature(const int i, const int j, const int k) const
 	return (dx*dx*(d2y + d2z) - a*dy*dz*dyz + dy*dy*(d2x*d2z) - a*dx*dz*dxz + dz*dz*(d2x + d2y) - a*dx*dy*dxy)/(a*std::pow(dx*dx+dy*dy+dz*dz, 1.5));
 }
 
-Vector3 LevelSet::getNormal(const int i, const int j, const int k) const
+Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 {
 	Discretization *disc = new CentralDiff();
 
 	//Osäker om detta är korrekt implementation
 	Vector3 g = Gradient::getGradient(phi, i, j, j, *disc);
 	g.normalize();
+
+	delete disc;
 
 	return g;
 }
