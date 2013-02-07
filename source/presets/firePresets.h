@@ -26,6 +26,8 @@ public:
 	static const int GRID_DIM_Y;
 	static const int GRID_DIM_Z;
 	static const double GRID_SIZE;
+
+	static const double S;
     
     //Rutiner
 	Advect *advect;

@@ -9,8 +9,9 @@ private:
     Grid u,v,w;
 public:
     VelocityField();
-	data& getMax();
+
+	double getMax();
+
     Vector3 getVelocityAtWorldCoordinate(Vector3 &pos);
-	double findMaximumVelocity(){return 1.4;};
 };
 #endif /* defined(__FuidFire__VelocityField__) */

@@ -6,10 +6,21 @@ VelocityField::VelocityField()
     
 }
 
-data& VelocityField::getMax()
+Vector3 VelocityField::getVelocityAtWorldCoordinate(Vector3 &pos){
+    
+    
+    Vector3 v = Vector3();
+    
+    
+    
+    return v;
+}
+
+
+double VelocityField::getMax()
 {
-	data max = 0;
-	if ( u.getMax() > max )
+	double max = 1.2; //DBL_MIN;
+	/*if ( u.getMax() > max )
 	{
 		max = u.getMax();
 	}
@@ -21,16 +32,6 @@ data& VelocityField::getMax()
 	{
 		max = w.getMax();
 	}
-
+	*/
 	return max;
-}
-
-Vector3 VelocityField::getVelocityAtWorldCoordinate(Vector3 &pos){
-    
-    
-    Vector3 v = Vector3();
-    
-    
-    
-    return v;
 }
