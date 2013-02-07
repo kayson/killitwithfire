@@ -13,7 +13,7 @@ public:
 	Fire(FirePresets *preset);
 	~Fire();
 
-    void runSumulation(double duration);
+    void runSumulation();
 
 	void draw();
 

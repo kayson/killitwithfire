@@ -7,7 +7,7 @@
 UpwindDiff::UpwindDiff(){}
 
 // Att implementera
-data UpwindDiff::calcDx(Grid &g, int i, int j, int k)
+data UpwindDiff::calcDx(const Grid &g, const int i, const int j, const int k)
 {
 	//if(w(i,j,k).x > 0)
 	if(true)
@@ -15,7 +15,7 @@ data UpwindDiff::calcDx(Grid &g, int i, int j, int k)
 	else
 		return (g(i+1, j, k) - g(i, j, k))/GRID_SIZE;
 }
-data UpwindDiff::calcDy(Grid &g, int i, int j, int k)
+data UpwindDiff::calcDy(const Grid &g, const int i, const int j, const int k)
 {
 	//if(w(i,j,k).y > 0)
 	if(true)
@@ -23,7 +23,7 @@ data UpwindDiff::calcDy(Grid &g, int i, int j, int k)
 	else
 		return (g(i, j+1, k) - g(i, j, k))/GRID_SIZE;
 }
-data UpwindDiff::calcDz(Grid &g, int i, int j, int k)
+data UpwindDiff::calcDz(const Grid &g, const int i, const int j, const int k)
 {
 	//if(w(i,j,k).x > 0)
 	if(true)
@@ -32,16 +32,16 @@ data UpwindDiff::calcDz(Grid &g, int i, int j, int k)
 		return (g(i, j, k+1) - g(i, j, k))/GRID_SIZE;
 }
 
-data UpwindDiff::calcD2x(Grid &g, int i, int j, int k)
+data UpwindDiff::calcD2x(const Grid &g, const int i, const int j, const int k)
 {return 0;}
-data UpwindDiff::calcD2y(Grid &g, int i, int j, int k)
+data UpwindDiff::calcD2y(const Grid &g, const int i, const int j, const int k)
 {return 0;}
-data UpwindDiff::calcD2z(Grid &g, int i, int j, int k)
+data UpwindDiff::calcD2z(const Grid &g, const int i, const int j, const int k)
 {return 0;}
 
-data UpwindDiff::calcDyz(Grid &g, int i, int j, int k)
+data UpwindDiff::calcDyz(const Grid &g, const int i, const int j, const int k)
 {return 0;}
-data UpwindDiff::calcDxz(Grid &g, int i, int j, int k)
+data UpwindDiff::calcDxz(const Grid &g, const int i, const int j, const int k)
 {return 0;}
-data UpwindDiff::calcDxy(Grid &g, int i, int j, int k)
+data UpwindDiff::calcDxy(const Grid &g, const int i, const int j, const int k)
 {return 0;}
