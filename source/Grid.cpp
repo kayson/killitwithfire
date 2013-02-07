@@ -72,6 +72,64 @@ Vector3 Grid::getCellVelocity(Grid &u, Grid &v, Grid &w, const int i, const int 
 	return x;
 }
 
+Vector3 getGridVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k, DirectionEnums dir)
+{
+	if ( dir == UP )
+	{
+		Vector3 x(
+		(u(i,j,k) + u(i+1,j,k) + u(i,j+1,k) + u(i+1,j+1,k))/4,
+		v(i,j+1,k),
+		(w(i,j,k) + w(i,j,k+1) + w(i,j+1,k) + w(i,j+1,k+1))/4);
+	
+		return x;
+	}
+	if ( dir == DOWN )
+	{
+		Vector3 x(
+		(u(i,j,k) + u(i+1,j,k) + u(i,j-1,k) + u(i+1,j-1,k))/4,
+		v(i,j,k),
+		(w(i,j,k) + w(i,j,k+1) + w(i,j-1,k) + w(i,j-1,k+1))/4);
+	
+		return x;
+	}
+	if ( dir == LEFT )
+	{
+		Vector3 x(
+		u(i,j,k),
+		(v(i,j,k) + v(i,j+1,k) + v(i-1,j,k) + v(i-1,j+1,k))/4,
+		(w(i,j,k) + w(i,j,k+1) + w(i-1,j,k) + w(i-1,j,k+1))/4);
+	
+		return x;
+	}
+	if ( dir == RIGHT )
+	{
+		Vector3 x(
+		u(i+1,j,k),
+		(v(i,j,k) + v(i,j+1,k) + v(i+1,j,k) + v(i+1,j+1,k))/4,
+		(w(i,j,k) + w(i,j,k+1) + w(i+1,j,k) + w(i+1,j,k+1))/4);
+	
+		return x;
+	}
+	if ( dir == FORWARD )
+	{
+		Vector3 x(
+		(u(i,j,k) + u(i+1,j,k) + u(i,j,k+1) + u(i+1,j,k+1))/4,
+		(v(i,j,k) + v(i,j+1,k) + v(i,j,k+1) + v(i,j+1,k+1))/4,
+		w(i,j,k+1));
+	
+		return x;
+	}
+	if ( dir == BACKWARD )
+	{
+		Vector3 x(
+		(u(i,j,k) + u(i+1,j,k) + u(i,j,k-1) + u(i+1,j,k-1))/4,
+		(v(i,j,k) + v(i,j+1,k) + v(i,j,k-1) + v(i,j+1,k-1))/4,
+		w(i,j,k));
+	
+		return x;
+	}
+}
+
 void Grid::drawLines2d() const
 {
 	glBegin(GL_LINES);
