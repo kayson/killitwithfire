@@ -1,6 +1,13 @@
 #ifndef FIREPRESETS_H
 #define FIREPRESETS_H
+
+
+#ifdef __APPLE__
+#include "Advect.h"
+#elif defined _WIN32 || defined _WIN64
 #include "advect/Advect.h"
+#endif
+
 
 class FirePresets
 {
