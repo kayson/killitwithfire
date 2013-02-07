@@ -28,6 +28,8 @@ public:
 	int getDimY() const;
 	int getDimZ() const;
 
+	data& getMax();
+
 	Vector3 getCellVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k);
 	Vector3 getGridVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k, DirectionEnums dir);
 
