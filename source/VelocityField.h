@@ -1,5 +1,3 @@
-
-
 #ifndef __FuidFire__VelocityField__
 #define __FuidFire__VelocityField__
 
@@ -13,8 +11,8 @@ public:
     VelocityField();
 	data getMax();
     Vector3 getVelocityAtWorldCoordinate(Vector3 &pos);
-	double findMaximumVelocity(){return 1;};
-    
+
     friend class Fire;
+	double findMaximumVelocity(){return 1.4;};
 };
 #endif /* defined(__FuidFire__VelocityField__) */

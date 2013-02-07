@@ -18,17 +18,18 @@ double Fire::computeDT(double currentTime){
 	double dx = preset->dx;
 	double alpha = preset->CFL_NUMBER;
 	double c = u.findMaximumVelocity();
-	if(c != 0)
+	if(c > 1)
 		smallStep = alpha * dx / c;
 	else
 		smallStep = dx;
 
 	//Fixa overshoot
-	/*double diff = currentTime + smallStep - preset->dt;
+	double temp = currentTime + smallStep;
+	double diff = temp - preset->dt;
 	if(diff > 0)
 	{
 		smallStep -= diff;
-	}*/
+	}
 	return smallStep;
 }
 
@@ -46,6 +47,7 @@ void Fire::runSumulation(){
 
 	while(currentTime < preset->dt)
 	{
+		//Kan låsa programmet!
 		double dt = computeDT(currentTime);
 
 		//Advektera hastighestsfältet
