@@ -9,6 +9,6 @@ class Divergence
 public:
 	Divergence();
 
-	static double getDivergence(const Grid &g, const int i, const int j, const int k, Discretization &c);
+	static double getDivergence(Grid &g, const int i, const int j, const int k, Discretization &c);
 
 };
