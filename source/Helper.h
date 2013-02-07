@@ -20,15 +20,15 @@ class Helper
 public:
 	Helper();
 	~Helper();
-	vec gradient(Grid<data> &g, int i, int j, int k);
-	data divergence(Grid<data> &g, int i, int j, int k); //Bör vara Grid<Vector3<data>> när vi har en vector3<data> klass
+	vec gradient(Grid &g, int i, int j, int k);
+	data divergence(Grid &g, int i, int j, int k); //Bör vara Grid<Vector3> när vi har en vector3 klass
 private:
-	data calcDx(Grid<data> &g, int i , int j, int k);
-	data calcDy(Grid<data> &g, int i , int j, int k);
-	data calcDz(Grid<data> &g, int i , int j, int k);
+	data calcDx(Grid &g, int i , int j, int k);
+	data calcDy(Grid &g, int i , int j, int k);
+	data calcDz(Grid &g, int i , int j, int k);
 
-	data calcDxCentralDiff(Grid<data> &g, int i , int j, int k);
-	data calcDyCentralDiff(Grid<data> &g, int i , int j, int k);
-	data calcDzCentralDiff(Grid<data> &g, int i , int j, int k);
+	data calcDxCentralDiff(Grid &g, int i , int j, int k);
+	data calcDyCentralDiff(Grid &g, int i , int j, int k);
+	data calcDzCentralDiff(Grid &g, int i , int j, int k);
 };
 #endif

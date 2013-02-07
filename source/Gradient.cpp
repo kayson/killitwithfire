@@ -2,7 +2,7 @@
 
 Gradient::Gradient(){}
 
-arma::vec Gradient::getGradient(Grid<double> &g, int i, int j, int k, Discretization &d)
+arma::vec Gradient::getGradient(Grid &g, int i, int j, int k, Discretization &d)
 {
 	arma::vec v(3);
 	v(0) = d.calcDx(g,i,j,k);

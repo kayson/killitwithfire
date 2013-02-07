@@ -15,17 +15,17 @@ public:
 	//~Discretization();
 
 	// Dessa skall och måste överlagras av subklasser
-	virtual data calcDx(Grid<data> &g, int i, int j, int k)=0;
-	virtual data calcDy(Grid<data> &g, int i, int j, int k)=0;
-	virtual data calcDz(Grid<data> &g, int i, int j, int k)=0;
+	virtual data calcDx(Grid &g, int i, int j, int k)=0;
+	virtual data calcDy(Grid &g, int i, int j, int k)=0;
+	virtual data calcDz(Grid &g, int i, int j, int k)=0;
 
-	virtual data calcD2x(Grid<data> &g, int i, int j, int k)=0;
-	virtual data calcD2y(Grid<data> &g, int i, int j, int k)=0;
-	virtual data calcD2z(Grid<data> &g, int i, int j, int k)=0;
+	virtual data calcD2x(Grid &g, int i, int j, int k)=0;
+	virtual data calcD2y(Grid &g, int i, int j, int k)=0;
+	virtual data calcD2z(Grid &g, int i, int j, int k)=0;
 
-	virtual data calcDyz(Grid<data> &g, int i, int j, int k)=0;
-	virtual data calcDxz(Grid<data> &g, int i, int j, int k)=0;
-	virtual data calcDxy(Grid<data> &g, int i, int j, int k)=0;
+	virtual data calcDyz(Grid &g, int i, int j, int k)=0;
+	virtual data calcDxz(Grid &g, int i, int j, int k)=0;
+	virtual data calcDxy(Grid &g, int i, int j, int k)=0;
 
 protected:
 	data dx, dy, dz, d2x, d2y, d2z;

@@ -7,39 +7,39 @@
 */
 UpwindDiff::UpwindDiff(){}
 // Att implementera
-data UpwindDiff::calcDx(Grid<data> &g, int i, int j, int k)
+data UpwindDiff::calcDx(Grid &g, int i, int j, int k)
 {
 	// TODO
 	return 0;
 }
-data UpwindDiff::calcDy(Grid<data> &g, int i, int j, int k)
+data UpwindDiff::calcDy(Grid &g, int i, int j, int k)
 {
 	// TODO
 	return 0;
 }
-data UpwindDiff::calcDz(Grid<data> &g, int i, int j, int k)
+data UpwindDiff::calcDz(Grid &g, int i, int j, int k)
 {
 	// TODO
 	return 0;
 }
-data UpwindDiff::calcD2x(Grid<data> &g, int i, int j, int k)
+data UpwindDiff::calcD2x(Grid &g, int i, int j, int k)
 {
 	// TODO
 	return 0;
 }
-data UpwindDiff::calcD2y(Grid<data> &g, int i, int j, int k)
+data UpwindDiff::calcD2y(Grid &g, int i, int j, int k)
 {
 	// TODO
 	return 0;
 }
-data UpwindDiff::calcD2z(Grid<data> &g, int i, int j, int k)
+data UpwindDiff::calcD2z(Grid &g, int i, int j, int k)
 {
 	// TODO
 	return 0;
 }
-data UpwindDiff::calcDyz(Grid<data> &g, int i, int j, int k)
+data UpwindDiff::calcDyz(Grid &g, int i, int j, int k)
 {return 0;}
-data UpwindDiff::calcDxz(Grid<data> &g, int i, int j, int k)
+data UpwindDiff::calcDxz(Grid &g, int i, int j, int k)
 {return 0;}
-data UpwindDiff::calcDxy(Grid<data> &g, int i, int j, int k)
+data UpwindDiff::calcDxy(Grid &g, int i, int j, int k)
 {return 0;}

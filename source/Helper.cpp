@@ -5,28 +5,28 @@ Helper::Helper(){}
 Helper::~Helper(){}
 
 // Central diff. i, j, k är halva index i staggered MAC grid.
-data Helper::calcDxCentralDiff(Grid<data> &g, int i , int j, int k){
+data Helper::calcDxCentralDiff(Grid &g, int i , int j, int k){
 	return (double)(g(i-1, j, k) + g(i+1, j, k))/2;//GRID_DIM_X;
 }
-data Helper::calcDyCentralDiff(Grid<data> &g, int i , int j, int k){
+data Helper::calcDyCentralDiff(Grid &g, int i , int j, int k){
 	return (double)(g(i, j-1, k) + g(i, j+1, k))/2;//GRID_DIM_Y;
 }
-data Helper::calcDzCentralDiff(Grid<data> &g, int i , int j, int k){
+data Helper::calcDzCentralDiff(Grid &g, int i , int j, int k){
 	return (double)(g(i, j, k-1) + g(i, j, k+1))/2;//GRID_DIM_Z;
 }
 
 // Här kan man enkelt anropa andra diskretiserings-metoder om man vill.
-data Helper::calcDx(Grid<data> &g, int i, int j, int k){
+data Helper::calcDx(Grid &g, int i, int j, int k){
 	return calcDxCentralDiff(g, i, j, k);
 }
-data Helper::calcDy(Grid<data> &g, int i, int j, int k){
+data Helper::calcDy(Grid &g, int i, int j, int k){
 	return calcDyCentralDiff(g, i, j, k);
 }
-data Helper::calcDz(Grid<data> &g, int i, int j, int k){
+data Helper::calcDz(Grid &g, int i, int j, int k){
 	return calcDzCentralDiff(g, i, j, k);
 }
 
-vec Helper::gradient(Grid<data> &g, int i, int j, int k)
+vec Helper::gradient(Grid &g, int i, int j, int k)
 {
 	std::cout << "gradient(..) called\n";
 	float dx=0, dy=0, dz=0;
@@ -55,7 +55,7 @@ vec Helper::gradient(Grid<data> &g, int i, int j, int k)
 	return v;
 }
 
-data Helper::divergence(Grid<data> &g, int i, int j, int k)
+data Helper::divergence(Grid &g, int i, int j, int k)
 {
 	std::cout << "divergence(..) called\n";
 	float dx=0, dy=0, dz=0;

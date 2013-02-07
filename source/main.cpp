@@ -11,7 +11,6 @@
 #include "Grid.h"
 #include "Input.h"
 #include "Camera.h"
-
 #include "Helper.h"
 
 #ifdef __APPLE__
@@ -58,7 +57,7 @@ int main(int argc, char *argv[])
 	
 	/*
 	EXEMPEL PÅ ANROPS-SYNTAX FÖR DIV/GRAD*/
-	Grid<double> g;
+	Grid g;
 	CentralDiff c;
 	UpwindDiff u;
 
