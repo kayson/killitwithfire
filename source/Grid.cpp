@@ -69,7 +69,7 @@ data& Grid::getMax()
 	{
 		for(int j = 0; j < yDim; j++)
 		{
-			for(int k = 0; k < zDim, k++)
+			for(int k = 0; k < zDim; k++)
 			{
 				if (grid[i][j][k] > max)
 				{
