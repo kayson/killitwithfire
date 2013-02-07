@@ -19,12 +19,18 @@ void Fire::advect(double duration){
     preset->advect->advect(u, 0.5);
 }
 
-void Fire::runSumulation(double duration){
+void Fire::runSumulation(){
     
     //Beräkna tidssteget
+	double currentTime = 0;
 
-    //Advektera hastighestsfältet
-    advect(duration);
+	double dt = computeDT();
+	while(currentTime < preset->dt)
+	{
+		//Advektera hastighestsfältet
+		advect(preset->dt);
+	}
+
     
     //Externa krafter
     
