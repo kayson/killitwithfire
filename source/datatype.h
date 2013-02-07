@@ -6,5 +6,6 @@ typedef double data;
 const int GRID_DIM_X = 15;
 const int GRID_DIM_Y = 15;
 const int GRID_DIM_Z = 1;
+const int GRID_SIZE = 1;
 
 #endif
