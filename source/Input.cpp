@@ -85,7 +85,7 @@ void GLFWCALL mouseButtonListener(int button, int action)
 
 void GLFWCALL keyButtonListener( int key, int action )
 {
-	if(action = GLFW_PRESS)
+	if(action == GLFW_PRESS)
 	{
 		switch(key)
 		{
