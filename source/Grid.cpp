@@ -39,10 +39,10 @@ void Grid::setData(int x, int y, int z, data value)
 	
 data& Grid::operator()(const int x, const int y, const int z)
 {
-	//if(x < xDim && y < yDim && z < zDim)
-		//Skicka exception annars istället? dvs
-	//if(x >= xDim || y >= yDim || z >= zDim)
-		//throw; 	
+	if(x < 0 || y < 0 || z || 0) //Bör nog extrapolera här
+		throw;
+	if(x >= xDim || y >= yDim || z >= zDim) //Bör nog extrapolera här
+		throw;
 
 	return grid[x][y][z];
 };
