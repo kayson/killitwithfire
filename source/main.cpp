@@ -7,8 +7,9 @@
 
 #include <stdlib.h>
 #include <iostream>
-#include "levelset/LevelSet.h"
+
 #include "Grid.h"
+#include "levelset/LevelSet.h"
 #include "Input.h"
 #include "Camera.h"
 #include "Helper.h"

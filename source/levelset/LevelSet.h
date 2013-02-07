@@ -7,7 +7,7 @@
 class LevelSet
 {
 public:
-	LevelSet();
+	LevelSet(){};
 	~LevelSet(){};
 	void fillLevelSet(data (*implicitFunction)(int x, int y, int z));
 	void specifyRenderFunction(void (*renderFunction)());
