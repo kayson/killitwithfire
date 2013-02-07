@@ -1,7 +1,7 @@
 #ifndef FIRE_H
 #define FIRE_H
 
-#include "firePresets.h"
+#include "presets/firePresets.h"
 #include "VelocityField.h"
 
 class Fire{

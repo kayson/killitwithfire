@@ -1,6 +1,6 @@
 
 #include "fire.h"
-#include "Advect.h"
+#include "advect/Advect.h"
 
 Fire::Fire(FirePresets *p){
     //Presets
