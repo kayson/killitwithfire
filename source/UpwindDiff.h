@@ -5,16 +5,16 @@
 class UpwindDiff : public Discretization{
 public:
 	UpwindDiff();
-	data calcDx(Grid &g, int i, int j, int k);
-	data calcDy(Grid &g, int i, int j, int k);
-	data calcDz(Grid &g, int i, int j, int k);
+	data calcDx(const Grid &g, const int i, const int j, const int k);
+	data calcDy(const Grid &g, const int i, const int j, const int k);
+	data calcDz(const Grid &g, const int i, const int j, const int k);
 
-	data calcD2x(Grid &g, int i, int j, int k);
-	data calcD2y(Grid &g, int i, int j, int k);
-	data calcD2z(Grid &g, int i, int j, int k);
+	data calcD2x(const Grid &g, const int i, const int j, const int k);
+	data calcD2y(const Grid &g, const int i, const int j, const int k);
+	data calcD2z(const Grid &g, const int i, const int j, const int k);
 
-	data calcDyz(Grid &g, int i, int j, int k);
-	data calcDxz(Grid &g, int i, int j, int k);
-	data calcDxy(Grid &g, int i, int j, int k);
+	data calcDyz(const Grid &g, const int i, const int j, const int k);
+	data calcDxz(const Grid &g, const int i, const int j, const int k);
+	data calcDxy(const Grid &g, const int i, const int j, const int k);
 };
 #endif

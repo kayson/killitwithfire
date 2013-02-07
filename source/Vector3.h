@@ -38,6 +38,6 @@ public:
 
 public:
 	// Variables
-	float x,y,z;
+	double x,y,z;
 };
 #endif
