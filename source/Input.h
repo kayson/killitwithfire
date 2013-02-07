@@ -3,13 +3,16 @@
 
 #ifdef __APPLE__
 #include "glfw.h"
+#include "armadillo.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
+#include<armadillo>
 #endif
 
 #include "Camera.h"
 #include "datatype.h"
-#include<armadillo>
+
+#endif
 using namespace arma;
 
 class Input
