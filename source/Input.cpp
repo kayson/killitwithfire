@@ -53,7 +53,6 @@ void moveCamera(DirectionEnums DIR)
 		cout << "Direction not implemented in moveCamera @Input.cpp!";
 	}
 	dP *= sCam->getCameraSpeed();
-	cout << dP << endl;
 	sCam->moveCamera(dP);
 
 }
