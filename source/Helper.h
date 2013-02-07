@@ -4,7 +4,12 @@
 #include <iostream>
 #include "Grid.h"
 #include "datatype.h"
+
+#ifdef __APPLE__
+#include "armadillo.h"
+#elif defined _WIN32 || defined _WIN64
 #include "armadillo"
+#endif
 
 using namespace arma;
 
