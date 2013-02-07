@@ -7,7 +7,7 @@
 
 class Fire{
 protected:
-    double computeDT();
+    double computeDT(double currentTime);
     void advect(double duration);
 public:
 	Fire(FirePresets *preset);

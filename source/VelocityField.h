@@ -11,5 +11,6 @@ public:
     VelocityField();
 	data& getMax();
     Vector3 getVelocityAtWorldCoordinate(Vector3 &pos);
+	double findMaximumVelocity(){return 1;};
 };
 #endif /* defined(__FuidFire__VelocityField__) */

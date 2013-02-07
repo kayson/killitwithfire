@@ -20,7 +20,7 @@ public:
     //Konstanter
     static const double dx;
     static const double dt;
-
+	static const double CFL_NUMBER;
     
 	static const int GRID_DIM_X;
 	static const int GRID_DIM_Y;
