@@ -12,7 +12,7 @@
 class Discretization{
 public:
 	//Discretization();
-	//~Discretization();
+	virtual ~Discretization(){};
 
 	// Dessa skall och måste överlagras av subklasser
 	virtual data calcDx(const Grid &g, const int i, const int j, const int k)=0;

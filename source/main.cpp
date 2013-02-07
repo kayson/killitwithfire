@@ -82,7 +82,6 @@ bool init()
 	running = true; // Main loop exits when this is set to GL_FALSE
     
 	controller.setCamera(&camera);
-	//levelSet.fillLevelSet(implicitFunction::sphere);
 	// Initialise GLFW
 	glfwInit();
 
@@ -131,7 +130,7 @@ void update(const double dt)
 	controller.updateInput(); //updatera mus och tangentbord
 
 	//Update physics
-	
+	fire->runSumulation();
 }
 
 //renderar objekt
