@@ -27,8 +27,8 @@ data VelocityField::getMax()
 
 Vector3 getPositionAtFace(int i ,int j, int k, DirectionEnums direction){
     
-    double dx = 50;
-    double dx2 = dx/2.;
+    double dx = 50; //Använd global variabel
+    double dx2 = dx/2.; 
     double x = i*dx+dx2;
     double y = j*dx+dx2;
     double z = k*dx+dx2;
