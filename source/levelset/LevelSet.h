@@ -14,7 +14,7 @@ public:
 	void specifyRenderFunction(void (*renderFunction)());
 	//Grid<data> & getVelocityGrid();
 
-	arma::vec getCellVelocity(Grid<data> &u, Grid<data> &v, Grid<data> &w, int i, int j, int k);
+	arma::vec getCellVelocity(Grid<data> &u, Grid<data> &v, Grid<data> &w, const int i, const int j, const int k);
 
 	void draw() const;
 	void printDistanceField();

@@ -41,6 +41,7 @@ public:
 		}
 	}
 
+
 	void draw() const
 	{
 		drawFilled2d();
