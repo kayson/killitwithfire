@@ -62,7 +62,7 @@ int Grid::getDimZ() const
 	return zDim; 
 };
 
-data& Grid::getMax()
+data Grid::getMax()
 {
 	data max = 0;
 	for(int i = 0; i < xDim; i++)

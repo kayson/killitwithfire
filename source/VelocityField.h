@@ -1,5 +1,3 @@
-
-
 #ifndef __FuidFire__VelocityField__
 #define __FuidFire__VelocityField__
 
