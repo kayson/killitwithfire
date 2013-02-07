@@ -64,8 +64,7 @@ int main(int argc, char *argv[])
 	Gradient gradient;
 
 	double div = divergence.getDivergence(g, 1,1,1,c);
-	vec v = gradient.getGradient(g,1,1,1,u);*/
-	
+	vec v = gradient.getGradient(g,1,1,1,u);
 	
 
 	// Main loop
