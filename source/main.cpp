@@ -13,12 +13,19 @@
 #include "Camera.h"
 
 #include "Helper.h"
+
+#ifdef __APPLE__
+#include "armadillo.h"
+#elif defined _WIN32 || defined _WIN64
 #include "armadillo"
+#endif
 #include "presets/firePresetsTwoDimension.h"
 
 #include "levelset/ImplicitFunctions.h"
 
 #include "Discretization.h"
+#include "CentralDiff.h"
+#include "UpwindDiff.h"
 #include "Divergence.h"
 #include "Gradient.h"
 
@@ -40,7 +47,7 @@ bool running = false;
 
 LevelSet levelSet;
 Input controller;
-Camera camera;
+static Camera camera;
 
 int main(int argc, char *argv[]) 
 {
@@ -51,15 +58,16 @@ int main(int argc, char *argv[])
 	
 	/*
 	EXEMPEL PÅ ANROPS-SYNTAX FÖR DIV/GRAD*/
-	/*Grid<double> g;
+	Grid<double> g;
 	CentralDiff c;
 	UpwindDiff u;
 
-	Divergence d;
-	Gradient grad;
-	double herpderp = d.getDivergence(g, 0, 0, 0, c);
-	vec grad = grad.getGradient(g, 0, 0, 0, u);
-	*/
+	Divergence divergence;
+	Gradient gradient;
+
+	//double div = divergence.getDivergence(g, 1,1,1,c);
+	
+	
 
 	// Main loop
 	while(running)
@@ -87,6 +95,7 @@ bool init()
 {
 	running = true; // Main loop exits when this is set to GL_FALSE
     
+	controller.setCamera(&camera);
 	levelSet.fillLevelSet(implicitFunction::sphere);
 	// Initialise GLFW
 	glfwInit();
@@ -99,10 +108,8 @@ bool init()
 	}
 
 	//Fixar keylistener
-	glfwSetKeyCallback( controller.keyButtonListener );
+	controller.initListeners();
 	glfwSetWindowSizeCallback( camera.reshape );
-	glfwSetMouseButtonCallback( controller.mouseButtonListener);
-	
 	glfwSwapInterval(0);//Tar bort Vsync
 
 	glClearColor (0.0f, 0, 0.0f, 0.0f);

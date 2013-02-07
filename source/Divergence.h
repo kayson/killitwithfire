@@ -3,6 +3,7 @@
 #include "Discretization.h"
 #include "CentralDiff.h"
 #include "UpwindDiff.h"
+#include "presets\firePresets.h"
 
 class Divergence
 {

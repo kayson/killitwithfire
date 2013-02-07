@@ -16,9 +16,9 @@ private:
 
 };
 
-const int FirePresetsTwoDimension::GRID_DIM_X = 15;
-const int FirePresetsTwoDimension::GRID_DIM_Y = 15;
-const int FirePresetsTwoDimension::GRID_DIM_Z = 1;
+const int FirePresets::GRID_DIM_X = 15;
+const int FirePresets::GRID_DIM_Y = 15;
+const int FirePresets::GRID_DIM_Z = 1;
 
 
 #endif //FIREPRESETSTWODIM_H

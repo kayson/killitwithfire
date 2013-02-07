@@ -3,8 +3,12 @@
 
 #include "../datatype.h"
 #include "../Grid.h"
-#include "armadillo"
 
+#ifdef __APPLE__
+#include "armadillo.h"
+#elif defined _WIN32 || defined _WIN64
+#include "armadillo"
+#endif
 class LevelSet
 {
 public:
