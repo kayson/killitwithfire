@@ -2,13 +2,17 @@
 #define FIREPRESETSTWODIM_H
 #include "firePresets.h"
 #include"../levelset/ImplicitFunctions.h"
+#include "AdvectRK2.h"
 
 class FirePresetsTwoDimension : public FirePresets
 {
 public:
-	FirePresetsTwoDimension()
-	{
+	FirePresetsTwoDimension(){
 		implicitFunction = implicitFunction::sphere;
+        
+        
+        //Rutiner
+        advect = new AdvectRK2();
 	};
 	~FirePresetsTwoDimension();
 
