@@ -2,7 +2,7 @@
 #define FIREPRESETSTWODIM_H
 #include "firePresets.h"
 #include"../levelset/ImplicitFunctions.h"
-#include "AdvectRK2.h"
+#include "advect/AdvectRK2.h"
 
 class FirePresetsTwoDimension : public FirePresets
 {

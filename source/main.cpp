@@ -12,7 +12,7 @@
 #include "levelset/LevelSet.h"
 #include "Input.h"
 #include "Camera.h"
-#include "Helper.h"
+#include "Vector3.h"
 
 #include "presets/firePresetsTwoDimension.h"
 
@@ -24,7 +24,7 @@
 #include "Divergence.h"
 #include "Gradient.h"
 
-using namespace arma;
+//using namespace arma;
 
 bool init();
 void showFPS();
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	Gradient gradient;
 
 	double div = divergence.getDivergence(g, 1,1,1,c);
-	vec v = gradient.getGradient(g,1,1,1,u);
+	Vector3 v = gradient.getGradient(g,1,1,1,u);
 
 
 	// Main loop

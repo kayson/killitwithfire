@@ -4,7 +4,7 @@
 #define __FuidFire__AdvectEuler__
 
 #include "Advect.h"
-#include "VelocityField.h"
+#include "../VelocityField.h"
 
 class AdvectEuler : public Advect {
 public:

@@ -2,13 +2,11 @@
 #define GRID_H
 
 #include "datatype.h"
-
+#include "Vector3.h"
 #ifdef __APPLE__
 #include "glfw.h"
-#include "armadillo.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
-#include "armadillo"
 #endif
 
 class Grid
@@ -30,7 +28,7 @@ public:
 	int getDimY() const;
 	int getDimZ() const;
 
-	arma::vec getCellVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k);
+	Vector3 getCellVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k);
 
 private:
 	void drawLines2d() const;

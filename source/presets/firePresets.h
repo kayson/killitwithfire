@@ -1,6 +1,6 @@
 #ifndef FIREPRESETS_H
 #define FIREPRESETS_H
-#include "Advect.h"
+#include "advect/Advect.h"
 
 class FirePresets
 {

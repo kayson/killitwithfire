@@ -3,16 +3,16 @@
 Camera::Camera()
 {
 	cameraSpeed_ = 0.3;
-	(position_) = zeros<vec>(3,1);
+	(position_) = Vector3(0,0,0);
 }
 
 void Camera::translateForCamera()
 {
 	glLoadIdentity();
-	glTranslatef(-position_[0], -position_[1], -position_[2]);
+	glTranslatef(-position_.x, -position_.y, -position_.z);
 }
 
-void Camera::moveCamera(vec dP)
+void Camera::moveCamera(Vector3 dP)
 {
 	position_ += dP;
 }

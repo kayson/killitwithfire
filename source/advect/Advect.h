@@ -2,7 +2,7 @@
 #ifndef __FuidFire__Advect__
 #define __FuidFire__Advect__
 
-#include "VelocityField.h"
+#include "../VelocityField.h"
 class Advect {
 public:
     virtual ~Advect(){};
