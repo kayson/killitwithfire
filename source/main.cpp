@@ -26,8 +26,6 @@
 
 #include "fire.h"
 
-//using namespace arma;
-
 bool init();
 void showFPS();
 void update(const double dt);

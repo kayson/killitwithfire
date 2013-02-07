@@ -13,7 +13,7 @@ public:
     void substract(Vector3 *v);
     void rotate(Vector3 *axisRotate, double *angle ,double a, double b, double c);
     
-    double normalize();
+    void normalize();
     double dot(Vector3 &vTemp);
 	double norm();
 	double angle(Vector3 *vTemp);

@@ -74,15 +74,13 @@ double Vector3::norm()
 }
 
 // Normalize the vector
-double Vector3::normalize()
+void Vector3::normalize()
 {
     double size = sqrt(pow(x,2)+pow(y,2)+pow(z,2));
     double invSize = 1/size;
     x *= invSize;
     y *= invSize;
     z *= invSize;
-    
-    return size;
 }
 
 // stolen from : http://inside.mines.edu/~gmurray/ArbitraryAxisRotation/ 
