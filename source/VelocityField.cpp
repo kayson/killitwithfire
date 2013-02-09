@@ -3,7 +3,22 @@
 
 VelocityField::VelocityField()
 {
-    
+    std::cout << "Hej!" << std::endl;
+}
+
+void VelocityField::initVelocityField()
+{
+	for(int i = 0; i < xDim; i++)
+	{
+		for(int j = 0; j < yDim; j++)
+		{
+			for(int k = 0; k < zDim; k++)
+			{
+				centerVelocities(i, j, k) = Vector3(0., 1., 0.);
+			}
+		}	
+	}
+	std::cout << centerVelocities(0, 0, 0);
 }
 
 data VelocityField::getMax()
@@ -46,8 +61,8 @@ Vector3 getPositionAtFace(int i ,int j, int k, DirectionEnums direction){
 
 
 Vector3 VelocityField::getVelocityAtWorldCoordinate(Vector3 &pos){
-    
-    
-    Vector3 v = Vector3();
+    int a = (int) pos.x, b = (int) pos.y, c = (int) pos.z;
+	Vector3 v = centerVelocities(a, b, c);
+
     return v;
 }

@@ -34,7 +34,7 @@ void VectorGrid::setData(int x, int y, int z, const Vector3 &value)
 	
 Vector3 & VectorGrid::operator()(const int x, const int y, const int z)
 {
-	if(x < 0 || y < 0 || z || 0) //Bör nog extrapolera här
+	if(x < 0 || y < 0 || z < 0) //Bör nog extrapolera här
 		throw;
 	if(x >= xDim || y >= yDim || z >= zDim) //Bör nog extrapolera här
 		throw;

@@ -4,11 +4,10 @@
 #include "VectorGrid.h"
 
 class UpwindDiff : public Discretization{
-private:
-	VectorGrid *_w;
+
 public:
 	UpwindDiff();
-	UpwindDiff(VectorGrid *w) : _w(w) {};
+	//UpwindDiff(VectorGrid *w) : _w(w) {};
 	data calcDx(Grid &g, const int i, const int j, const int k);
 	data calcDy(Grid &g, const int i, const int j, const int k);
 	data calcDz(Grid &g, const int i, const int j, const int k);

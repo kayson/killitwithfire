@@ -36,6 +36,13 @@ public:
     Vector3 operator+ (const Vector3 &v);
     Vector3 operator- (const Vector3 &v);
 
+	friend std::ostream& operator<<(std::ostream& out, Vector3& v )
+	{
+		out << v.x << " " << v.y << " " << v.z << std::endl;
+		return out;
+	}
+
+
 public:
 	// Variables
 	double x,y,z;

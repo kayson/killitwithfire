@@ -5,10 +5,15 @@
 Fire::Fire(FirePresets *p){
     //Presets
     preset = p;
+	
+	//Grid
+	u = *new VelocityField(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
 
+	phi = *(new LevelSet(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z));
 	phi.fillLevelSet(preset->implicitFunction);
-    //Grid
-    u = VelocityField();
+	
+	preset->discretization->setVectorGrid(u.getCenterVel());
+    preset->advect->setDiscretization(preset->discretization);
 }
 
 double Fire::computeDT(double currentTime){
@@ -18,40 +23,42 @@ double Fire::computeDT(double currentTime){
 	double dx = preset->dx;
 	double alpha = preset->CFL_NUMBER;
 	double c = u.findMaximumVelocity();
-	if(c > 1)
+	if(c != 0)
 		smallStep = alpha * dx / c;
 	else
 		smallStep = dx;
 
 	//Fixa overshoot
-	double temp = currentTime + smallStep;
-	double diff = temp - preset->dt;
-	if(diff > 0)
+
+	if(smallStep > preset->dt - currentTime)
 	{
-		smallStep -= diff;
+		smallStep = preset->dt - currentTime;
 	}
 	return smallStep;
 }
 
-void Fire::advect(double duration){
-    preset->advect->advect(u,u.u, 0.5);
-    preset->advect->advect(u,u.v, 0.5);
-    preset->advect->advect(u,u.w, 0.5);
+void Fire::advectVelocityField(double duration){
+    /*preset->advect->advect(u, u.u, duration);
+    preset->advect->advect(u, u.v, duration);
+    preset->advect->advect(u, u.w, duration);*/
+}
 
+void Fire::advectLevelSet(double duration)
+{
+	preset->advect->advect(u, phi.phi, duration);
 }
 
 void Fire::runSumulation(){
     
     //Beräkna tidssteget
-	double currentTime = 0;
+	
 
-	while(currentTime < preset->dt)
+	for(double currentTime = 0; currentTime < preset->dt;)
 	{
-		//Kan låsa programmet!
 		double dt = computeDT(currentTime);
 
 		//Advektera hastighestsfältet
-		advect(dt);
+		advectVelocityField(dt);
 
 		currentTime += dt;
 	}
@@ -64,7 +71,15 @@ void Fire::runSumulation(){
     //Project
     
     //Advektera levelset
-    
+    for(double currentTime = 0; currentTime < preset->dt;)
+	{
+		double dt = computeDT(currentTime);
+
+		//Advektera hastighestsfältet
+		advectLevelSet(dt);
+
+		currentTime += dt;
+	}
 }
 
 void Fire::draw()

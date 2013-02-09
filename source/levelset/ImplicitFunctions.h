@@ -8,7 +8,7 @@ namespace implicitFunction
 		data r = (data) 3;
 		data xo = (data) -GRID_DIM_X / 2;
 		data yo = (data) -GRID_DIM_Y / 2;
-		data zo = (data) 0;
+		data zo = (data) -GRID_DIM_Z / 2;
 		x += xo;
 		y += yo;
 		z += zo;
