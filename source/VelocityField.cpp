@@ -25,7 +25,7 @@ void VelocityField::initVelocityField()
 data VelocityField::getMax()
 {
 	data max = 0;
-	if ( u.getMax() > max )
+	/*if ( u.getMax() > max )
 	{
 		max = u.getMax();
 	}
@@ -36,8 +36,10 @@ data VelocityField::getMax()
 	if ( w.getMax() > max )
 	{
 		max = w.getMax();
-	}
-
+	}*/
+	double cv = centerVelocities.getMax();
+	if( cv > max)
+		max = cv;
 	return max;
 }
 
