@@ -9,6 +9,8 @@
 #include <GL/glfw.h>
 #endif
 
+
+
 class Grid
 {
 public:
@@ -40,6 +42,7 @@ private:
 
 	data ***grid;
 	int xDim, yDim, zDim;
+
 };
 
 #endif

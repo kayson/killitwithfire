@@ -13,7 +13,6 @@ void AdvectEuler::advect(VelocityField &v, Grid &g, double dt){
 				{
 					double ddt = evaluate(v, g, i, j, k);
 					g.setData(i, j, k, g(i,j,k) + ddt * dt);
-
 				}
 			}
 		}
@@ -29,9 +28,11 @@ double AdvectEuler::evaluate(VelocityField &v, Grid &g, unsigned int i, unsigned
 
 	Vector3 vel = v.getVelocityAtWorldCoordinate(pos);
 	xv = discretization->calcDx(g, pos.x, pos.y, pos.z);
-	yv = discretization->calcDx(g, pos.x, pos.y, pos.z);
-	zv = discretization->calcDx(g, pos.x, pos.y, pos.z);
-
+	yv = discretization->calcDy(g, pos.x, pos.y, pos.z);
+	if(g.getDimZ() != 1)
+		zv = discretization->calcDz(g, pos.x, pos.y, pos.z);
+	else
+		zv = 0;
 
 	return -(vel.x * xv + vel.y * yv + vel.z * zv);
 }

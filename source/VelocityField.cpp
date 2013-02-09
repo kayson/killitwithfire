@@ -14,7 +14,8 @@ void VelocityField::initVelocityField()
 		{
 			for(int k = 0; k < zDim; k++)
 			{
-				centerVelocities(i, j, k) = Vector3(0., 1., 0.);
+				centerVelocities(i, j, k) = Vector3(0., .2, 0.);
+				centerVelocities(i, j, k).normalize();
 			}
 		}	
 	}
