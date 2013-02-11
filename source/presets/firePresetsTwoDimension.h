@@ -22,7 +22,10 @@ public:
 		discretization = new UpwindDiff();
 		
 	};
-	~FirePresetsTwoDimension();
+	~FirePresetsTwoDimension(){
+        delete advect;
+        delete discretization;
+    }
 
 private:
 
