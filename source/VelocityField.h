@@ -22,7 +22,7 @@ public:
 	VectorGrid *getCenterVel(){ return &centerVelocities;};
 	data getMax();
     Vector3 getPositionAtFace(int i ,int j, int k, DirectionEnums direction);
-    Vector3 getVelocityAtWorldCoordinate(Vector3 &pos);
+    Vector3 getVelocityAtCoordinate(Vector3 &pos);
 
     friend class Fire;
 	double findMaximumVelocity(){return 1.4;};
