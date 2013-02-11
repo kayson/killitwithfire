@@ -9,6 +9,9 @@ class LevelSet
 {
 public:
 	LevelSet(){};
+	LevelSet(int xDim, int yDim, int zDim){
+		phi = *(new Grid(xDim, yDim, zDim));
+	};
 	~LevelSet(){};
 	void fillLevelSet(data (*implicitFunction)(int x, int y, int z));
 	void specifyRenderFunction(void (*renderFunction)());
@@ -17,8 +20,10 @@ public:
 	void printDistanceField();
 	double getCurvature(const int i, const int j, const int k);
 	Vector3 getNormal(const int i, const int j, const int k);
-private:
+
 	Grid phi; //Signed distance field
+private:
+	
 	void (*render)();
 };
 #endif //LEVELSET_H

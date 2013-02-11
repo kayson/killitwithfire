@@ -8,7 +8,8 @@
 class Fire{
 protected:
     double computeDT(double currentTime);
-    void advect(double duration);
+    void advectVelocityField(double duration);
+	void advectLevelSet(double duration);
 public:
 	Fire(FirePresets *preset);
 	~Fire();

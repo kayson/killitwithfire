@@ -2,7 +2,9 @@
 #define FIREPRESETSTWODIM_H
 #include "firePresets.h"
 #include"../levelset/ImplicitFunctions.h"
-#include "../advect/AdvectRK2.h"
+#include "../advect/AdvectEuler.h"
+#include "../UpwindDiff.h"
+#include "../CentralDiff.h"
 
 #ifdef __APPLE__
 #include "AdvectRK2.h"
@@ -15,9 +17,10 @@ public:
 	FirePresetsTwoDimension(){
 		implicitFunction = implicitFunction::sphere;
         
-        
         //Rutiner
-        advect = new AdvectRK2();
+        advect = new AdvectEuler();
+		discretization = new UpwindDiff();
+		
 	};
 	~FirePresetsTwoDimension();
 
@@ -25,10 +28,10 @@ private:
 
 };
 
-const int FirePresets::GRID_DIM_X = 15;
-const int FirePresets::GRID_DIM_Y = 15;
+const int FirePresets::GRID_DIM_X = 25;
+const int FirePresets::GRID_DIM_Y = 25;
 const int FirePresets::GRID_DIM_Z = 1;
-const double FirePresets::dt = 1./30.;
+const double FirePresets::dt = 1./400.;
 const double FirePresets::dx = 0.5;
 const double FirePresets::CFL_NUMBER = 4.5;
 const double FirePresets::S = .5;

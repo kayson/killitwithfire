@@ -40,7 +40,6 @@ char titlestring[200];
 int HEIGHT = 600, WIDTH = 800;
 bool running = false;
 
-LevelSet levelSet;
 Fire *fire;
 Input controller;
 static Camera camera;

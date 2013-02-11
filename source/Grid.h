@@ -9,7 +9,7 @@
 #include <GL/glfw.h>
 #endif
 
-#include <cfloat>
+
 
 class Grid
 {
@@ -30,7 +30,7 @@ public:
 	int getDimY() const;
 	int getDimZ() const;
 
-	double getMax();
+	data getMax();
 
 	Vector3 getCellVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k);
 	Vector3 getGridVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k, DirectionEnums dir);
@@ -42,6 +42,7 @@ private:
 
 	data ***grid;
 	int xDim, yDim, zDim;
+
 };
 
 #endif

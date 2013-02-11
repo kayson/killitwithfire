@@ -31,7 +31,7 @@ public:
     
     //Rutiner
 	Advect *advect;
-    
+    Discretization *discretization;
 };
 
 

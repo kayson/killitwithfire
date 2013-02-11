@@ -1,5 +1,7 @@
 #include "Grid.h"
 
+const float RENDERSCALE = 0.4;
+
 Grid::Grid(const int x, const int y, const int z)
 {
 	xDim = x;
@@ -152,6 +154,7 @@ Vector3 getGridVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, con
 
 void Grid::drawLines2d() const
 {
+	
 	glBegin(GL_LINES);
 	glColor3f(1,1,1);
 	for(int x = 0; x < xDim-1; x++)
@@ -160,6 +163,8 @@ void Grid::drawLines2d() const
 		{
 			for(int z = 0; z < zDim; z++)
 			{
+
+
 				glVertex3f((float)x, (float)y, (float)z);
 				glVertex3f((float)x+1.f, (float)y, (float)z);
 
@@ -187,6 +192,7 @@ void Grid::drawFilled2d() const
 		{
 			for(int z = 0; z < zDim; z++)
 			{
+
 				if(grid[x][y][z] <= 0)
 				{
 					glVertex3f((float)x, (float)y, (float)z);

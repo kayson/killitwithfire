@@ -8,8 +8,11 @@
 #include <iostream>
 #include "Grid.h"
 #include "datatype.h"
+#include "VectorGrid.h"
 
 class Discretization{
+protected:
+	VectorGrid *_w;
 public:
 	//Discretization();
 	virtual ~Discretization(){};
@@ -26,6 +29,6 @@ public:
 	virtual data calcDyz(Grid &g, const int i, const int j, const int k)=0;
 	virtual data calcDxz(Grid &g, const int i, const int j, const int k)=0;
 	virtual data calcDxy(Grid &g, const int i, const int j, const int k)=0;
-
+	virtual void setVectorGrid(VectorGrid *w){_w = w;};
 };
 #endif
