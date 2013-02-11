@@ -1,4 +1,5 @@
 #include "Grid.h"
+#include "Interpolation.h"
 
 const float RENDERSCALE = 0.4;
 
@@ -205,3 +206,38 @@ void Grid::drawFilled2d() const
 	}
 	glEnd();
 }
+
+void Grid::drawValue2d() const
+{
+	glBegin(GL_QUADS);
+	for(int x = 0; x < xDim-1; x++)
+	{
+		for(int y = 0; y < yDim-1; y++)
+		{
+			for(int z = 0; z < zDim; z++)
+			{
+                
+				if(grid[x][y][z] <= 0)
+				{
+                    glColor3f(0,0,-grid[x][y][z]/8.0);
+                    
+					glVertex3f((float)x, (float)y, (float)z);
+					glVertex3f((float)x+1.f, (float)y, (float)z);
+					glVertex3f((float)x+1.f, (float)y+1.f, (float)z);
+					glVertex3f((float)x, (float)y+1.f, (float)z);
+                    
+				}else{
+                    glColor3f(grid[x][y][z]/100.0,0,0);
+                    
+					glVertex3f((float)x, (float)y, (float)z);
+					glVertex3f((float)x+1.f, (float)y, (float)z);
+					glVertex3f((float)x+1.f, (float)y+1.f, (float)z);
+					glVertex3f((float)x, (float)y+1.f, (float)z);
+                }
+			}
+		}
+	}
+	glEnd();
+}
+
+
