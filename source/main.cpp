@@ -28,7 +28,7 @@
 
 bool init();
 void showFPS();
-void update(const double dt);
+void update();
 void render();
 
 double TIME = 1.0/7000.0;
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 		// Calculate and update the frames per second (FPS) display
 		showFPS();
 
-		update(TIME);
+		update();
 
 		// Draw the scene.
 		render();
@@ -122,7 +122,7 @@ void showFPS()
 	frames ++;
 }
 
-void update(const double dt)
+void update()
 {
 	controller.updateInput(); //updatera mus och tangentbord
 
