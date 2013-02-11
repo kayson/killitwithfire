@@ -10,9 +10,14 @@ class Advect {
 protected:
 	Discretization *discretization;
 	BorderCondition borderCondition;
+	Discretization *normalDiscretization;
 public:
     virtual ~Advect(){};
     virtual void advect(VelocityField &v,Grid &g, double dt) = 0;
-	virtual void setDiscretization(Discretization *discret){ discretization = discret;};
+	virtual void setDiscretization(Discretization *discret, Discretization *norm)
+	{ 
+		discretization = discret; 
+		normalDiscretization = norm;
+	};
 };
 #endif /* defined(__FuidFire__Advect__) */

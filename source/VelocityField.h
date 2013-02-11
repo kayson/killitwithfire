@@ -13,12 +13,15 @@ private:
 	int xDim, yDim, zDim;
 public:
     VelocityField();
+    VelocityField(const VelocityField &v);
 	VelocityField(int xDim, int yDim, int zDim){
 		this->xDim = xDim; this->yDim = yDim; this->zDim = zDim;
 		centerVelocities = *new VectorGrid(xDim, yDim, zDim);
 		initVelocityField();
 	};
-
+    
+    void operator=(const VelocityField &v);
+    
 	VectorGrid *getCenterVel(){ return &centerVelocities;};
 	data getMax();
     Vector3 getPositionAtFace(int i ,int j, int k, DirectionEnums direction);
@@ -28,6 +31,7 @@ public:
 	Grid *getGridW() { return &w; }
 	void setCenterVel(Vector3 &v, const int i, const int j, const int k);
 
+        
     friend class Fire;
 	double findMaximumVelocity(){return 1.4;};
 };

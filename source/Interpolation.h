@@ -13,8 +13,20 @@
 template<class T>
 class LinearInterpolation {
 public:
-    T operator()(T t,T x1,T x2)const {
-        return x1+(x2-x1)*t;
+        
+    /*
+     Input:
+     t = ett värde mellan 0 och 1
+     f(0) = f1;
+     f(1) = f2;
+     
+     Exempel:
+     t = 1.3, =  f(0) = 1, f(1) = 4
+     => f(t) = f(1.3) =
+     */
+    
+    inline T operator()(T t,T f1,T f2)const {
+        return f1+(f2-f1)*t;
     }
 };
 
@@ -24,9 +36,23 @@ private:
 
 public:
     //Sid 37 bridson
-    T operator()(T t1,T x1,T x2, T x3,T x4) const{
-        T t2 = t1*t1; T t3 = t2*t1;
-        return x1*(-0.5*t1+t2-0.5*t3)+x2*(1-5./2.*t2+3./2.*t3)+x3*(0.5*t1+2*t2-3./2.*t3)+x4*(-0.5*t2+0.5*t3);
+    
+    /*
+     Input: n
+     t ett värde mellan 0 och 1
+     f(-1) = f1;
+     f(0) = f2;
+     f(1) = f3;
+     f(2) = f4;
+     
+     Exempel:
+     t = 1.3, =  f(-1) = 1, f(0) = 2, f(1) = 6, f(2) = -5;
+     => f(t) = f(1.3) = 3.222
+    */
+    
+    inline T operator()(T t,T f1,T f2, T f3,T f4) const{
+        T t2 = t*t; T t3 = t2*t;
+        return f1*(-0.5*t+t2-0.5*t3)+f2*(1-5./2.*t2+3./2.*t3)+f3*(0.5*t+2*t2-3./2.*t3)+f4*(-0.5*t2+0.5*t3);
     }
 };
 #endif /* defined(__FluidFire__LinearInterpolation__) */

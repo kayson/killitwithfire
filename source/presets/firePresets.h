@@ -28,10 +28,11 @@ public:
 	static const double GRID_SIZE;
 
 	static const double S;
-    
+
     //Rutiner
 	Advect *advect;
     Discretization *discretization;
+	Discretization *normalDiscretization;
 };
 
 

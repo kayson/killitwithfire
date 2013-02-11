@@ -6,7 +6,20 @@ VectorGrid::VectorGrid(const int x, const int y, const int z)
 	yDim = y;
 	zDim = z;
 
-	grid = new Vector3**[xDim];
+    initGrid();
+}
+
+void VectorGrid::operator=(const VectorGrid &v){
+    xDim = v.xDim;
+	yDim = v.yDim;
+	zDim = v.zDim;
+    
+    initGrid();
+}
+
+
+void VectorGrid::initGrid(){
+    grid = new Vector3**[xDim];
 	for(int i = 0; i < xDim; i++)
 	{
 		grid[i] = new Vector3*[yDim];

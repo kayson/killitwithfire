@@ -20,19 +20,23 @@ public:
         //Rutiner
         advect = new AdvectEuler();
 		discretization = new UpwindDiff();
+		normalDiscretization = new CentralDiff();
 		
 	};
-	~FirePresetsTwoDimension();
+	~FirePresetsTwoDimension(){
+        delete advect;
+        delete discretization;
+    }
 
 private:
 
 };
 
-const int FirePresets::GRID_DIM_X = 25;
-const int FirePresets::GRID_DIM_Y = 25;
+const int FirePresets::GRID_DIM_X = 4*35;
+const int FirePresets::GRID_DIM_Y = 4*35;
 const int FirePresets::GRID_DIM_Z = 1;
 const double FirePresets::dt = 1./400.;
-const double FirePresets::dx = 0.5;
+const double FirePresets::dx = 1./8.;
 const double FirePresets::CFL_NUMBER = .2;
 const double FirePresets::S = .5;
 

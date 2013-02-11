@@ -11,15 +11,15 @@ CentralDiff::CentralDiff(){}
 
 data CentralDiff::calcDx(Grid &g, const int i, const int j, const int k)
 {
-	return (double)(g(i+1, j, k) - g(i-1, j, k))/FirePresets::dx;;//deltaX;
+	return (double)(g(i+1, j, k) - g(i-1, j, k))/(FirePresets::dx*2.0);  //deltaX;
 }
 data CentralDiff::calcDy(Grid &g, const int i, const int j, const int k)
 {
-	return (double)(g(i, j+1, k) + g(i, j-1, k))/FirePresets::dx;;//deltaY;
+	return (double)(g(i, j+1, k) + g(i, j-1, k))/(FirePresets::dx*2.0);  //deltaY;
 }
 data CentralDiff::calcDz(Grid &g, const int i, const int j, const int k)
 {
-	return (double)(g(i, j, k+1) + g(i, j, k-1))/FirePresets::dx;;//deltaZ;
+	return (double)(g(i, j, k+1) + g(i, j, k-1))/(FirePresets::dx*2.0);  //deltaZ;
 }
 data CentralDiff::calcD2x(Grid &g, const int i, const int j, const int k)
 {
