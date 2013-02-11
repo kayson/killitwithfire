@@ -6,7 +6,7 @@ namespace implicitFunction
 {
 	data sphere(int x, int y, int z)
 	{
-		data r = (data) 5;
+		data r = (data) 10;
 		data xo = (data) -10.0;//-FirePresets::GRID_DIM_X / 2.0;
 		data yo = (data) -FirePresets::GRID_DIM_Y / 2.0;
 		data zo = (data) -FirePresets::GRID_DIM_Z / 2.0;

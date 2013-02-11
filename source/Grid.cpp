@@ -1,4 +1,6 @@
 #include "Grid.h"
+#include "Interpolation.h"
+#include "firePresets.h"
 
 const float RENDERSCALE = 0.4;
 
@@ -30,8 +32,8 @@ Grid::~Grid()
 
 void Grid::draw() const
 {
-	drawFilled2d();
-	drawLines2d();
+	drawValue2d();
+	//drawLines2d();
 }
 
 void Grid::setData(int x, int y, int z, data value)
@@ -41,7 +43,7 @@ void Grid::setData(int x, int y, int z, data value)
 	
 data& Grid::operator()(const int x, const int y, const int z)
 {
-	if(x < 0 || y < 0 || z || 0) //Bör nog extrapolera här
+	if(x < 0 || y < 0 || z < 0) //Bör nog extrapolera här
 		throw;
 	if(x >= xDim || y >= yDim || z >= zDim) //Bör nog extrapolera här
 		throw;
@@ -66,8 +68,8 @@ int Grid::getDimZ() const
 
 double Grid::getMax()
 {
-	double max = DBL_MIN;
-	for(int i = 0; i < xDim; i++)
+	double max = grid[0][0][0];
+	for(int i = 1; i < xDim; i++)
 	{
 		for(int j = 0; j < yDim; j++)
 		{
@@ -150,13 +152,18 @@ Vector3 getGridVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, con
 	
 		return x;
 	}
+    
+    return Vector3(0,0,0);
 }
 
 void Grid::drawLines2d() const
 {
-	
+    double dx = FirePresets::dx;
+
 	glBegin(GL_LINES);
 	glColor3f(1,1,1);
+    glScaled(dx, dx, dx);
+
 	for(int x = 0; x < xDim-1; x++)
 	{
 		for(int y = 0; y < yDim-1; y++)
@@ -165,17 +172,17 @@ void Grid::drawLines2d() const
 			{
 
 
-				glVertex3f((float)x, (float)y, (float)z);
-				glVertex3f((float)x+1.f, (float)y, (float)z);
+				glVertex3f(dx*(float)x, dx*(float)y, dx*(float)z);
+				glVertex3f(dx*((float)x+1.f), dx*(float)y, dx*(float)z);
 
-				glVertex3f((float)x, (float)y, (float)z);
-				glVertex3f((float)x, (float)y+1.f, (float)z);
+				glVertex3f(dx*(float)x, dx*(float)y, dx*(float)z);
+				glVertex3f(dx*(float)x, dx*((float)y+1.f), dx*(float)z);
 
-				glVertex3f((float)x, (float)y+1.f, (float)z);
-				glVertex3f((float)x+1.f, (float)y+1.f, (float)z);
+				glVertex3f(dx*((float)x), dx*((float)y+1.f), dx*(float)z);
+				glVertex3f(dx*((float)x+1.f), dx*((float)y+1.f), dx*(float)z);
 
-				glVertex3f((float)x+1.f, (float)y, (float)z);
-				glVertex3f((float)x+1.f, (float)y+1.f, (float)z);
+				glVertex3f(dx*((float)x+1.f), dx*(float)y, dx*(float)z);
+				glVertex3f(dx*((float)x+1.f), dx*((float)y+1.f), dx*(float)z);
 			}
 		}
 	}
@@ -184,8 +191,7 @@ void Grid::drawLines2d() const
 
 void Grid::drawFilled2d() const
 {
-	glBegin(GL_QUADS);
-	glColor3f(1,0,0);
+    double dx = FirePresets::dx;
 	for(int x = 0; x < xDim-1; x++)
 	{
 		for(int y = 0; y < yDim-1; y++)
@@ -195,13 +201,53 @@ void Grid::drawFilled2d() const
 
 				if(grid[x][y][z] <= 0)
 				{
-					glVertex3f((float)x, (float)y, (float)z);
-					glVertex3f((float)x+1.f, (float)y, (float)z);
-					glVertex3f((float)x+1.f, (float)y+1.f, (float)z);
-					glVertex3f((float)x, (float)y+1.f, (float)z);
+                    
+                    glBegin(GL_QUADS);
+                    glColor3f(1,0,0);
+                    
+					glVertex3f(dx*(float)x, dx*(float)y, dx*(float)z);
+					glVertex3f(dx*((float)x+1.f), dx*((float)y), dx*((float)z));
+					glVertex3f(dx*((float)x+1.f), dx*((float)y+1.f), dx*(float)z);
+					glVertex3f(dx*((float)x), dx*((float)y+1.f), dx*((float)z));
+                    glEnd();
+
 				}
 			}
 		}
 	}
-	glEnd();
 }
+
+void Grid::drawValue2d() const
+{
+    double dx = FirePresets::dx;
+	for(int x = 0; x < xDim-1; x++)
+	{
+		for(int y = 0; y < yDim-1; y++)
+		{
+			for(int z = 0; z < zDim; z++)
+			{
+                glBegin(GL_QUADS);
+
+				if(grid[x][y][z] <= 0)
+				{
+                    glColor3f(0,0,-grid[x][y][z]/8.0);
+                
+                    
+				}else{
+                    glColor3f(grid[x][y][z]/100.0,0,0);
+                
+                }
+                
+                glVertex3f(dx*(float)x, dx*(float)y, dx*(float)z);
+                glVertex3f(dx*((float)x+1.f), dx*(float)y, dx*(float)z);
+                glVertex3f(dx*((float)x+1.f), dx*((float)y+1.f), dx*(float)z);
+                glVertex3f(dx*(float)x, dx*((float)y+1.f), dx*(float)z);
+                
+                glEnd();
+
+			}
+		}
+	}
+}
+
+

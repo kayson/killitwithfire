@@ -40,6 +40,8 @@ private:
 
 	void drawFilled2d() const;
 
+    void drawValue2d() const;
+    
 	data ***grid;
 	int xDim, yDim, zDim;
 

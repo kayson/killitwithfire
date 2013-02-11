@@ -3,8 +3,11 @@
 
 #include "Vector3.h"
 
-class VectorGrid
-{
+class VectorGrid{
+    
+private:
+    void initGrid();
+    
 public:
 	VectorGrid(const int x = 1, const int y = 1, const int z = 1);
 
@@ -16,6 +19,9 @@ public:
 	void setData(const int x, const int y, const int z, const Vector3 &value);
 	
 	Vector3 & operator()(const int x, const int y, const int z);
+
+    
+    void operator=(const VectorGrid &v);
 
 	//Getters
 	int getDimX() const;
