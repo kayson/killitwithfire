@@ -226,6 +226,11 @@ Vector3 Vector3::operator* (const double &v){
     
     return Vector3(x*v,y*v,z*v);
 }
+Vector3 Vector3::operator/ (const double &v){
+    if(v == 0)
+		throw;
+    return Vector3(x/v,y/v,z/v);
+}
 Vector3 Vector3::operator* (const Vector3 &v){
     
     return Vector3(x*v.x,y*v.y,z*v.z);

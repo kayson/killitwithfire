@@ -13,7 +13,9 @@ Fire::Fire(FirePresets *p){
 	phi.fillLevelSet(preset->implicitFunction);
 	
 	preset->discretization->setVectorGrid(u.getCenterVel());
-    preset->advect->setDiscretization(preset->discretization);
+	preset->normalDiscretization->setVectorGrid(u.getCenterVel());
+
+    preset->advect->setDiscretization(preset->discretization, preset->normalDiscretization);
 }
 
 double Fire::computeDT(double currentTime){

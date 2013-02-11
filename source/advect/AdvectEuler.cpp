@@ -1,5 +1,7 @@
 #include "AdvectEuler.h"
 #include <limits>
+#include "../presets/firePresets.h"
+#include "../Gradient.h"
 
 void AdvectEuler::advect(VelocityField &v, Grid &g, double dt){
     for(int i = 0; i < g.getDimX(); i++)
@@ -24,15 +26,18 @@ double AdvectEuler::evaluate(VelocityField &v, Grid &g, unsigned int i, unsigned
 	Vector3 pos = Vector3(i,j,k);
 	double xv, yv, zv;
 
+	
+	Vector3 gradPhi = Gradient::getGradient(g, i, j, k, *discretization);
+
+
+	Vector3 normalGrad = Gradient::getGradient(g, i, j, k, *normalDiscretization);
+
+
+
+	Vector3 localUnitNormal = normalGrad / gradPhi.norm();
+
 	Vector3 vel = v.getVelocityAtCoordinate(pos);
-	vel *= -1;
-	Vector3 gradPhi;
-	gradPhi.x = discretization->calcDx(g, pos.x, pos.y, pos.z);
-	gradPhi.y = discretization->calcDy(g, pos.x, pos.y, pos.z);
-	if(g.getDimZ() != 1)
-		gradPhi.z = discretization->calcDz(g, pos.x, pos.y, pos.z);
-	else
-		gradPhi.z = 0;
+	vel = (vel + localUnitNormal * FirePresets::S) * -1.0;
 
 	return vel.dot(gradPhi);
 }

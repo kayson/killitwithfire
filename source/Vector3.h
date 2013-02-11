@@ -32,6 +32,7 @@ public:
     void operator*= (const Vector3 &v);
     void operator*= (const double &v);
     Vector3 operator* (const double &v);
+    Vector3 operator/ (const double &v);
     Vector3 operator* (const Vector3 &v);
     Vector3 operator+ (const Vector3 &v);
     Vector3 operator- (const Vector3 &v);

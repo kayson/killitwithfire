@@ -2,7 +2,7 @@
 
 Camera::Camera()
 {
-	cameraSpeed_ = 0.3;
+	cameraSpeed_ = 0.5;
 	(position_) = Vector3(0,0,0);
 }
 
