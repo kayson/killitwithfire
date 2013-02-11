@@ -66,6 +66,12 @@ Vector3 getPositionAtFace(int i ,int j, int k, DirectionEnums direction){
 Vector3 VelocityField::getVelocityAtWorldCoordinate(Vector3 &pos){
     int a = (int) pos.x, b = (int) pos.y, c = (int) pos.z;
 	Vector3 v = centerVelocities(a, b, c);
-
+    //Interpolera!
+    
     return v;
 }
+
+
+
+
+
