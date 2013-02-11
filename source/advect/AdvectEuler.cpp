@@ -19,9 +19,8 @@ void AdvectEuler::advect(VelocityField &v, Grid &g, double dt){
 	}
 }
 
-double AdvectEuler::evaluate(VelocityField &v, Grid &g, unsigned int i, unsigned int j, unsigned int k)
-{
-	Vector3 pos = *new Vector3(i,j,k);
+double AdvectEuler::evaluate(VelocityField &v, Grid &g, unsigned int i, unsigned int j, unsigned int k){
+	Vector3 pos = Vector3(i,j,k);
 	double xv, yv, zv;
 
 	//Fattas världstransform här!
