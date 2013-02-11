@@ -22,7 +22,7 @@ double Fire::computeDT(double currentTime){
 	//Bridson s. 35
 	double dx = preset->dx;
 	double alpha = preset->CFL_NUMBER;
-	double c = u.findMaximumVelocity();
+	double c = u.getMax();
 	if(c != 0)
 		smallStep = alpha * dx / c;
 	else
