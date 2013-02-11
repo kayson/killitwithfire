@@ -39,7 +39,7 @@ double AdvectEuler::evaluate(VelocityField &v, Grid &g, unsigned int i, unsigned
 	Vector3 localUnitNormal = normalGrad / gradPhi.norm();
 
 	Vector3 vel = v.getVelocityAtCoordinate(pos);
-	vel = (vel + localUnitNormal * FirePresets::S) * -1.0;
+	vel = (vel + localUnitNormal * FirePresets::S) * 1.0;
 
 	return vel.dot(gradPhi);
 }

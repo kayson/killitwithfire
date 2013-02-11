@@ -25,6 +25,7 @@
 #include "Gradient.h"
 
 #include "fire.h"
+#include "Interpolation.h"
 
 bool init();
 void showFPS();
@@ -50,6 +51,10 @@ int main(int argc, char *argv[])
 	{
 		return 1;
 	}
+    
+    CatmullRomInterpolation<double> d;
+    std::cout << d(1.3,1,2,6,-5) << std::endl;
+    
 	
 	fire = new Fire(new FirePresetsTwoDimension());
 	// Main loop

@@ -1,6 +1,11 @@
 #include "Grid.h"
 #include "Interpolation.h"
+
+#ifdef __APPLE__
+#include "firePresets.h"
+#elif defined _WIN32 || defined _WIN64
 #include "presets\firePresets.h"
+#endif
 
 const float RENDERSCALE = 0.4;
 
