@@ -7,6 +7,8 @@
 */
 CentralDiff::CentralDiff(){}
 
+// Göra kontroller så att grid-index inte går utanför grid-dim här?
+
 data CentralDiff::calcDx(Grid &g, const int i, const int j, const int k)
 {
 	return (double)(g(i+1, j, k) - g(i-1, j, k))/FirePresets::dx;;//deltaX;

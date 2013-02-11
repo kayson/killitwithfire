@@ -4,10 +4,12 @@
 
 #include "../VelocityField.h"
 #include "../Discretization.h"
+#include "../BorderCondition.h"
 
 class Advect {
 protected:
 	Discretization *discretization;
+	BorderCondition borderCondition;
 public:
     virtual ~Advect(){};
     virtual void advect(VelocityField &v,Grid &g, double dt) = 0;

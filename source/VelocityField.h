@@ -23,6 +23,10 @@ public:
 	data getMax();
     Vector3 getPositionAtFace(int i ,int j, int k, DirectionEnums direction);
     Vector3 getVelocityAtCoordinate(Vector3 &pos);
+	Grid *getGridU() { return &u; }
+	Grid *getGridV() { return &v; }
+	Grid *getGridW() { return &w; }
+	void setCenterVel(Vector3 &v, const int i, const int j, const int k);
 
     friend class Fire;
 	double findMaximumVelocity(){return 1.4;};
