@@ -13,7 +13,7 @@ void AdvectEuler::advect(VelocityField &v, Grid &g, double dt){
 				//Fulhack eftersom att vi inte har med border kontroll.
 				if(!(i == 0  || j == 0 || i == g.getDimX()-1 || j == g.getDimY()-1))
 				{
-					if(g.getDimZ() != 0 && (k == 0 || k == g.getDimZ()-1))
+					if(g.getDimZ() != 1 && (k == 0 || k == g.getDimZ()-1))
 						continue;
 					double f = evaluate(v, g, i, j, k);
 					g.setData(i, j, k, g(i,j,k) + f * dt);
