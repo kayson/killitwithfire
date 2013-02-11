@@ -67,8 +67,8 @@ int Grid::getDimZ() const
 
 double Grid::getMax()
 {
-	double max = DBL_MIN;
-	for(int i = 0; i < xDim; i++)
+	double max = grid[0][0][0];
+	for(int i = 1; i < xDim; i++)
 	{
 		for(int j = 0; j < yDim; j++)
 		{
