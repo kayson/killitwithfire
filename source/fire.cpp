@@ -7,7 +7,7 @@ Fire::Fire(FirePresets *p){
     preset = p;
 	
 	//Grid
-	u = *new VelocityField(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
+	u = VelocityField(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
 
 	phi = *(new LevelSet(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z));
 	phi.fillLevelSet(preset->implicitFunction);

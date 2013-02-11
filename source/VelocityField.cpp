@@ -6,6 +6,18 @@ VelocityField::VelocityField()
     std::cout << "Hej!" << std::endl;
 }
 
+VelocityField::VelocityField(const VelocityField &v){
+    this->xDim = v.xDim; this->yDim = v.yDim; this->zDim = v.zDim;
+    centerVelocities = VectorGrid(xDim, yDim, zDim);
+    initVelocityField();
+}
+
+void VelocityField::operator=(const VelocityField &v){
+    this->xDim = v.xDim; this->yDim = v.yDim; this->zDim = v.zDim;
+    centerVelocities = VectorGrid(xDim, yDim, zDim);
+    initVelocityField();
+}
+
 void VelocityField::initVelocityField()
 {
 	for(int i = 0; i < xDim; i++)
