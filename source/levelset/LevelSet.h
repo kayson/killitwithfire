@@ -8,7 +8,10 @@
 class LevelSet
 {
 public:
-	LevelSet(){};
+	LevelSet():phi(1000,1000,1000){
+    
+    
+    };
 	LevelSet(int xDim, int yDim, int zDim):phi(xDim,yDim,zDim){
 		
 	};

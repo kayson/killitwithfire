@@ -46,6 +46,8 @@ MACGrid::MACGrid(int x,int y,int z, double dx):_u(x+1,y,z),_v(x,y+1,z),_w(x,y,z+
         iterator.setValue(i*j*k);
     }
     
+    
+    
 }
 
 

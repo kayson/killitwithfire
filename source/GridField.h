@@ -25,9 +25,9 @@ private:
     T *_data;
     const int _xdim,_ydim, _zdim;
     double *trans,*itrans;
-
-public:
+private:
     GridField();
+public:
     GridField(int xdim,int ydim, int zdim);
 
     ~GridField();

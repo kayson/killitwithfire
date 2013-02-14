@@ -16,12 +16,18 @@
 
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 {
-	for(int i = 0; i < phi.xdim(); i++)
-		for(int j = 0; j < phi.ydim(); j++)
-			for(int k = 0; k < phi.zdim(); k++)
-			{
-				phi.setValueAtIndex(implicitFunction(i, j, k),i,j,k);
-	}
+	for(int i = 0; i < phi.xdim(); i++){
+		for(int j = 0; j < phi.ydim(); j++){
+			for(int k = 0; k < phi.zdim(); k++){
+                phi.setValueAtIndex( implicitFunction(i,j,k),i,j,k);
+                //std::cout << phi.valueAtIndex(i, j, k);
+            }
+        }
+    }
+
+
+    
+    
 }
 void LevelSet::printDistanceField()
 {
@@ -86,7 +92,7 @@ void LevelSet::draw() const
 			{
                 glBegin(GL_QUADS);
 				
-				if(phi.valueAtIndex(x,y,z) <= 0)
+				if(phi.valueAtIndex(x, y, z) <= 0)
 				{
                     //glColor3f(0,0,-grid[x][y][z]/8.0);
                     glColor3f(0,0,1);
