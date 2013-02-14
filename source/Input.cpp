@@ -21,7 +21,7 @@ void Input::initListeners()
 	glfwSetMouseButtonCallback(mouseButtonListener);
 }
 
-void moveCamera(DirectionEnums DIR)
+void moveCamera(DirectionEnums DIR, double dt)
 {
 	Vector3 dP(0,0,0);
 	if(DIR == FORWARD)
@@ -52,7 +52,10 @@ void moveCamera(DirectionEnums DIR)
 	{
 		std::cout << "Direction not implemented in moveCamera @Input.cpp!";
 	}
-	dP *= sCam->getCameraSpeed();
+	if(dt != 0.0)
+		dP *= sCam->getCameraSpeed()/(dt * 1.0/60.0);
+	else
+		dP *= sCam->getCameraSpeed();
 	sCam->moveCamera(dP);
 
 }
@@ -63,19 +66,32 @@ void Input::setCamera(Camera *cam)
 	sCam = cam;
 }
 
-void Input::updateInput()
+void Input::updateInput(double dt)
 {
 	mouseInput();
-	keyInput();
+	keyInput(dt);
 }
 
 void Input::mouseInput()
 {
 }
 
-void Input::keyInput()
+int CheckButton(int c)
+{
+	return glfwGetKey(c);
+}
+
+void Input::keyInput(double dt)
 {
 
+	if(CheckButton('W') == GLFW_PRESS)
+		moveCamera(UP, dt);
+	if(CheckButton('A') == GLFW_PRESS)
+		moveCamera(LEFT, dt);
+	if(CheckButton('S') == GLFW_PRESS)
+		moveCamera(DOWN, dt);
+	if(CheckButton('D') == GLFW_PRESS)
+		moveCamera(RIGHT, dt);
 }
 
 void GLFWCALL mouseButtonListener(int button, int action)
@@ -85,24 +101,5 @@ void GLFWCALL mouseButtonListener(int button, int action)
 
 void GLFWCALL keyButtonListener( int key, int action )
 {
-	if(action == GLFW_PRESS)
-	{
-		switch(key)
-		{
-		case 'W':
-			moveCamera(UP);
-			break;
-		case 'A':
-			moveCamera(LEFT);
-			break;
-
-		case 'S':
-			moveCamera(DOWN);
-			break;
-
-		case 'D':
-			moveCamera(RIGHT);
-			break;
-		};
-	}
+	
 }

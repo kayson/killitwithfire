@@ -17,9 +17,9 @@ public:
 	~Input();
 
 	void setCamera(Camera *cam);
-	void updateInput();
+	void updateInput(double dt);
 	void mouseInput();
-	void keyInput();
+	void keyInput(double dt);
 	
 	void initListeners();
 	
