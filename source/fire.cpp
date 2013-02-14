@@ -57,17 +57,13 @@ void Fire::advectLevelSet(double duration)
 
 void Fire::computeCellTypes()
 {
-	for(int i = 0; i < phi.phi.getDimX(); i++)
+	for(GridFieldIterator<int> it = celltype.iterator(); !it.done(); it.next())
 	{
-		for(int j = 0; j < phi.phi.getDimY(); j++)
-		{
-			for(int k = 0; k < phi.phi.getDimZ(); k++)
-			{
-				celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
-			}
-		}
+		int i, j, k;
+		it.index(i, j, k);
+		celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
 	}
-}
+}	
 
 CellType Fire::getCellType(const int i, const int j, const int k)
 {
@@ -111,6 +107,8 @@ void Fire::runSumulation(){
 
 		currentTime += dt;
 	}
+
+	computeCellTypes(); //Beräkna om vad för typ voxlarna är
 }
 
 void Fire::draw()
