@@ -8,7 +8,12 @@
 #include <stdlib.h>
 #include <iostream>
 
+
 #include "GridField.hpp"
+
+#include "MACGrid.h"
+#include "Grid.h"
+
 #include "Input.h"
 #include "Camera.h"
 #include "presets/firePresetsTwoDimension.h"
@@ -44,21 +49,9 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-    GridField<double> f = GridField<double>(10,10,1);
-    
-    int i = 0;
-    for (GridFieldIterator<double> iterator = f.iterator(); !iterator.done(); iterator.next()) {
-        iterator.setValue(++i);
-    }
-    for (GridFieldIterator<double> iterator = f.iterator(); !iterator.done(); iterator.next()) {
-        std::cout << iterator.value() << std::endl;
-    }
-    
-    
-    double x,y,z;
-    std::cout << f.valueAtWorld(0.4,0.9,0) << std::endl;
-    
-    
+    MACGrid grid = MACGrid(10, 10, 10, 50);
+    Vector3 val = grid.velocityAtWorld(Vector3(50,40,40));
+    std::cout << val << std::endl;
 	fire = new Fire(new FirePresetsTwoDimension());
 	// Main loop
 	while(running)

@@ -8,6 +8,8 @@
 
 #include "GridField.h"
 #include "Interpolation.h"
+#ifndef FuidFire_GridField_hpp
+#define FuidFire_GridField_hpp
 
 template<class T>
 GridField<T>::GridField():_xdim(1),_ydim(1),_zdim(1){
@@ -158,6 +160,19 @@ inline void GridField<T>::worldToCell(int &i,int &j,int &k, double &w_x, double 
 
 
 template<class T>
+inline int GridField<T>::xdim() const{
+    return _xdim;
+}
+template<class T>
+inline int GridField<T>::ydim() const{
+    return _ydim;
+}
+template<class T>
+inline int GridField<T>::zdim() const{
+    return _zdim;
+}
+
+template<class T>
 inline void GridField<T>::localToCellCoordinate(int i,int j,int k, double l_x, double l_y,double l_z, double &c_x,double &c_y,double &x_z) const{
     
     indexAt(localToIndex(l_x,l_y, l_z),i,j,k);
@@ -171,10 +186,16 @@ inline void GridField<T>::setValueAtIndex(T val,int i,int j,int k){
     _data[indexAt(i, j, k)] = val;
 }
 
+//Operatorer
+template<class T>
+T GridField<T>::operator()(int i, int j, int k){
+    return valueAtIndex(i, j, k);
+}
+
 template<class T>
 GridFieldIterator<T> GridField<T>::iterator(){
     return GridFieldIterator<T>(this);
 }
-
+#endif //LEVELSET_HPP
 
 

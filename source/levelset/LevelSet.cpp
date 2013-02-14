@@ -8,24 +8,30 @@
 #include <cmath>
 
 
+#ifdef __APPLE__
+#include "firePresets.h"
+#elif defined _WIN32 || defined _WIN64
+#include "../presets/firePresets.h"
+#endif
+
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 {
-	for(int i = 0; i < phi.getDimX(); i++)
-		for(int j = 0; j < phi.getDimY(); j++)
-			for(int k = 0; k < phi.getDimZ(); k++)
+	for(int i = 0; i < phi.xdim(); i++)
+		for(int j = 0; j < phi.ydim(); j++)
+			for(int k = 0; k < phi.zdim(); k++)
 			{
-				phi(i, j, k) = implicitFunction(i, j, k);
+				phi.setValueAtIndex(implicitFunction(i, j, k),i,j,k);
 	}
 }
 void LevelSet::printDistanceField()
 {
-	for(int i = 0; i < phi.getDimX(); i++)
+	for(int i = 0; i < phi.xdim(); i++)
 	{
-		for(int j = 0; j < phi.getDimY(); j++)
+		for(int j = 0; j < phi.ydim(); j++)
 		{
-			for(int k = 0; k < phi.getDimZ(); k++)
+			for(int k = 0; k < phi.zdim(); k++)
 			{
-				std::cout << phi(i, j, k) << " ";
+				std::cout << phi.valueAtIndex(i,j,k) << " ";
 			}
 			
 		}
@@ -64,11 +70,42 @@ Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 	g.normalize();
 
 	delete disc;
-
+	
 	return g;
 }
 
 void LevelSet::draw() const
 {
-	phi.draw();
+	double dx = FirePresets::dx;
+
+	for(int x = 0; x < phi.xdim()-1; x++)
+	{
+		for(int y = 0; y < phi.ydim()-1; y++)
+		{
+			for(int z = 0; z < phi.zdim(); z++)
+			{
+                glBegin(GL_QUADS);
+				
+				if(phi.valueAtIndex(x,y,z) <= 0)
+				{
+                    //glColor3f(0,0,-grid[x][y][z]/8.0);
+                    glColor3f(0,0,1);
+                
+                    
+				}else{
+					//glColor3f(grid[x][y][z]/100.0,0,0);
+                    glColor3f(1,0,0);
+                
+                }
+                
+                glVertex3f(dx*(float)x, dx*(float)y, dx*(float)z);
+                glVertex3f(dx*((float)x+1.f), dx*(float)y, dx*(float)z);
+                glVertex3f(dx*((float)x+1.f), dx*((float)y+1.f), dx*(float)z);
+                glVertex3f(dx*(float)x, dx*((float)y+1.f), dx*(float)z);
+                
+                glEnd();
+
+			}
+		}
+	}
 }

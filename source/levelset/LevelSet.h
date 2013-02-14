@@ -2,15 +2,15 @@
 #define LEVELSET_H
 
 #include "../datatype.h"
-#include "../Grid.h"
 #include "../Vector3.h"
+#include "../GridField.hpp"
 
 class LevelSet
 {
 public:
 	LevelSet(){};
-	LevelSet(int xDim, int yDim, int zDim){
-		phi = *(new Grid(xDim, yDim, zDim));
+	LevelSet(int xDim, int yDim, int zDim):phi(xDim,yDim,zDim){
+		
 	};
 	~LevelSet(){};
 	void fillLevelSet(double (*implicitFunction)(int x, int y, int z));
@@ -20,8 +20,11 @@ public:
 	void printDistanceField();
 	double getCurvature(const int i, const int j, const int k);
 	Vector3 getNormal(const int i, const int j, const int k);
+
 	void reinitialize();
-	Grid phi; //Signed distance field
+
+	GridField<double> phi; //Signed distance field
+
 private:
 	
 	void (*render)();

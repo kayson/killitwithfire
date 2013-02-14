@@ -9,8 +9,8 @@
 class AdvectEuler : public Advect {
 public:
     AdvectEuler(){};
-    virtual void advect(VelocityField &v, Grid &g, double dt);
-	void integrateEuler(VelocityField &v, Grid &g, double dt);
-	double evaluate(VelocityField &v, Grid &g, unsigned int i, unsigned int j, unsigned int k);
+    virtual void advect(VelocityField &v, GridField<double> &g, double dt);
+	void integrateEuler(VelocityField &v, GridField<double> &g, double dt);
+	double evaluate(VelocityField &v, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k);
 };
 #endif /* defined(__FuidFire__AdvectEuler__) */

@@ -4,14 +4,14 @@
 
 #include "GridField.hpp"
 
-Fire::Fire(FirePresets *p){
+Fire::Fire(FirePresets *p):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z){
     //Presets
     preset = p;
 	//GridField<double> g(1,1,1);
 	//Grid
 	u = VelocityField(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
 
-	phi = *(new LevelSet(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z));
+	
 	phi.fillLevelSet(preset->implicitFunction);
 	
 	preset->discretization->setVectorGrid(u.getCenterVel());
@@ -57,17 +57,13 @@ void Fire::advectLevelSet(double duration)
 
 void Fire::computeCellTypes()
 {
-	for(int i = 0; i < phi.phi.getDimX(); i++)
+	for(GridFieldIterator<int> it = celltype.iterator(); !it.done(); it.next())
 	{
-		for(int j = 0; j < phi.phi.getDimY(); j++)
-		{
-			for(int k = 0; k < phi.phi.getDimZ(); k++)
-			{
-				celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
-			}
-		}
+		int i, j, k;
+		it.index(i, j, k);
+		celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
 	}
-}
+}	
 
 CellType Fire::getCellType(const int i, const int j, const int k)
 {
@@ -111,6 +107,8 @@ void Fire::runSumulation(){
 
 		currentTime += dt;
 	}
+
+	computeCellTypes(); //Beräkna om vad för typ voxlarna är
 }
 
 void Fire::draw()
