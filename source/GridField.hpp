@@ -8,10 +8,8 @@
 
 #include "GridField.h"
 
-template<class T>
-GridField<T>::GridField(int xdim,int ydim, int zdim):_xdim(xdim),_ydim(ydim),_zdim(zdim){
-    data = new T[xdim*ydim*zdim];
-}
+//template<class T>
+//GridField<T>::GridField(int xdim,int ydim, int zdim)
 
 template<class T>
 GridField<T>::~GridField(){

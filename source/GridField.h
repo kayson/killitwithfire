@@ -28,7 +28,8 @@ private:
     int localToIndex(const double l_x,const double l_y,const double l_z) const;
 
 public:
-    GridField(int xdim,int ydim, int zdim);
+    GridField(int xdim,int ydim, int zdim):_xdim(xdim),_ydim(ydim),_zdim(zdim){ data = new T[xdim*ydim*zdim]; };
+
     ~GridField();
     void setTransformation(double *m); //4x4 matrix som transformerar cellkoordinater till världskoordinater 
 
