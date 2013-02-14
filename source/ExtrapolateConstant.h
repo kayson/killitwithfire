@@ -34,7 +34,6 @@ public:
 				return (double)(g(i, j, k) - g(i, j, k-1))/(FirePresets::dx*2.0);
 
 			// Andra-derivata
-
 		}
 
 		return 0;
