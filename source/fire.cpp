@@ -1,11 +1,12 @@
 
 #include "fire.h"
 #include "advect/Advect.h"
+#include "GridField.hpp"
 
 Fire::Fire(FirePresets *p){
     //Presets
     preset = p;
-	
+	GridField<double> g(1,1,1);
 	//Grid
 	u = VelocityField(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
 
