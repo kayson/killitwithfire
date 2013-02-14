@@ -51,9 +51,28 @@ void Fire::advectLevelSet(double duration)
 	preset->advect->advect(u, phi.phi, duration);
 }
 
-CellType Fire::computeCellType(const int i, const int j, const int k) const
+void Fire::computeCellTypes()
 {
-	return IGNITED;
+	for(int i = 0; i < phi.phi.getDimX(); i++)
+	{
+		for(int j = 0; j < phi.phi.getDimY(); j++)
+		{
+			for(int k = 0; k < phi.phi.getDimZ(); k++)
+			{
+				celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
+			}
+		}
+	}
+}
+
+CellType Fire::getCellType(const int i, const int j, const int k)
+{
+	if(false) //Check if is solid
+		return SOLID;
+	else if(phi.phi(i,j,k) <= 0.0)
+		return BLUECORE;
+	else 
+		return IGNITED;
 }
 
 void Fire::runSumulation(){

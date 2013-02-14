@@ -12,7 +12,9 @@ protected:
     double computeDT(double currentTime);
     void advectVelocityField(double duration);
 	void advectLevelSet(double duration);
-	CellType computeCellType(const int i, const int j, const int k) const;
+
+	void computeCellTypes();
+	CellType getCellType(const int i, const int j, const int k);
 
 	//void 
 public:
@@ -31,7 +33,7 @@ private:
     //Grid
     VelocityField u;
 
-	GridField<CellType> celltype;
+	GridField<int> celltype;
 };
 
 #endif //FIRE_H
