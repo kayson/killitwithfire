@@ -29,30 +29,31 @@ namespace reinitialize{
 		switch(order)
 		{
 		case 1:
-			in -= FirePresets::GRID_DIM_X;
+			*in = FirePresets::GRID_DIM_X - *in;
 			break;
 		case 2:
-			jn -= FirePresets::GRID_DIM_Y;
+			*jn = FirePresets::GRID_DIM_Y - *jn;
+			
 			break;
 		case 3:
-			kn -= FirePresets::GRID_DIM_Z;
+			*kn -= FirePresets::GRID_DIM_Z - *kn;
 			break;
 		case 4:
-			in -= FirePresets::GRID_DIM_X;
-			jn -= FirePresets::GRID_DIM_Y;
+			*in -= FirePresets::GRID_DIM_X - *in;
+			*jn -= FirePresets::GRID_DIM_Y - *jn;
 			break;
 		case 5:
-			kn -= FirePresets::GRID_DIM_Z;
-			jn -= FirePresets::GRID_DIM_Y;
+			*kn -= FirePresets::GRID_DIM_Z - *kn;
+			*jn -= FirePresets::GRID_DIM_Y - *jn;
 			break;
 		case 6:
-			in -= FirePresets::GRID_DIM_X;
-			kn -= FirePresets::GRID_DIM_Z;
+			*in -= FirePresets::GRID_DIM_X - *in;
+			*kn -= FirePresets::GRID_DIM_Z - *kn;
 			break;
 		case 7:
-			in -= FirePresets::GRID_DIM_X;
-			jn -= FirePresets::GRID_DIM_Y;
-			kn -= FirePresets::GRID_DIM_Z;
+			*in -= FirePresets::GRID_DIM_X - *in;
+			*jn -= FirePresets::GRID_DIM_Y - *jn;
+			*kn -= FirePresets::GRID_DIM_Z - *kn;
 			break;
 		};
 	}
@@ -65,7 +66,7 @@ namespace reinitialize{
 				{
 					int in = i, jn = j, kn = k;
 					fixForOrder(i, j, k, &in, &jn, &kn, order);
-					int asd;
+					
 		}
 	}
 
@@ -81,10 +82,10 @@ namespace reinitialize{
 	}
 	void reinitializeGrid(GridField<double> &g)
 	{
-		GridField<bool> *known = new GridField<bool>(FirePresets::GRID_DIM_X,FirePresets::GRID_DIM_Y,FirePresets::GRID_DIM_Z);
+/*		GridField<bool> *known = new GridField<bool>(FirePresets::GRID_DIM_X,FirePresets::GRID_DIM_Y,FirePresets::GRID_DIM_Z);
 		resetToSurface(g, known);
 		swipe(g, known);
-
+*/
 	}
 }
 

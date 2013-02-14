@@ -121,7 +121,7 @@ inline T GridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
     indexAt(index, i, j, k);
     
     //Konvertera lokala koordinater för index till cellkoordinater (0..1)
-    localToCellCoordinate(i,j,k,l_x,l_y,l_x,cell_x,cell_y,cell_z);
+    localToCellCoordinate(i,j,k,l_x,l_y,l_z,cell_x,cell_y,cell_z);
     
     //Interpolera...
     LinearInterpolation<T> interpolation = LinearInterpolation<T>();
