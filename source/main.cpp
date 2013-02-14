@@ -49,9 +49,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-    MACGrid grid = MACGrid(10, 10, 10, 50);
-    Vector3 val = grid.velocityAtWorld(Vector3(50,40,40));
-    std::cout << val << std::endl;
+    
 	fire = new Fire(new FirePresetsTwoDimension());
 	// Main loop
 	while(running)
