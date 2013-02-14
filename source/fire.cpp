@@ -109,8 +109,8 @@ void Fire::runSumulation(){
 		computeCellTypes(); //Beräkna om vad för typ voxlarna är
 	
 	//Fixa signed distance field
-	if(count % 50 == 0)
-		phi.reinitialize();
+	/*if(count % 50 == 0)
+		phi.reinitialize();*/
 	count++;
 }
 
