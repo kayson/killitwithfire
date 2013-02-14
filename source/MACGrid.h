@@ -16,6 +16,7 @@ class MACGrid {
 private:
     GridField<double> _u,_v,_w;
 public:
+    MACGrid(int x,int y,int z, double dx);
     Vector3 velocityAtWorld(const Vector3 &world) const;
 };
 #endif /* defined(__FuidFire__MACGrid__) */
