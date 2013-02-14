@@ -10,8 +10,12 @@ public:
 	{
 		if(typeid(d) == typeid(UpwindDiff))
 		{
-			// Gör boundary-kontroll här och sedan konstant
-			// extrapolering enl. Upwind
+			if(i <= 0 || i >= g.getDimX()-1)
+				return 0;
+			if(j <= 0 || j >= g.getDimY()-1)
+				return 0;
+			if(k <= 0 || k >= g.getDimZ()-1)
+				return 0;
 		}
 		/*if(typeid(d) == typeid(CentralDiff))
 		{
