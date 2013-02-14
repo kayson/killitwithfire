@@ -29,6 +29,7 @@ public:
 
     void runSumulation();
 
+	void drawCenterVelocities();
 	void draw();
 
 private:

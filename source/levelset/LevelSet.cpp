@@ -84,15 +84,15 @@ void LevelSet::draw() const
 {
 	double dx = FirePresets::dx;
 
+	glBegin(GL_QUADS);
+
 	for(int x = 0; x < phi.xdim()-1; x++)
 	{
 		for(int y = 0; y < phi.ydim()-1; y++)
 		{
 			for(int z = 0; z < phi.zdim(); z++)
 			{
-                glBegin(GL_QUADS);
-				
-				if(phi.valueAtIndex(x, y, z) <= 0)
+				if(phi.valueAtIndex(x,y,z) <= 0)
 				{
                     glColor3f(0,0,-phi.valueAtIndex(x, y, z)/8.0);
                     //glColor3f(0,0,1);
@@ -107,10 +107,8 @@ void LevelSet::draw() const
                 glVertex3f(dx*((float)x+1.f), dx*(float)y, dx*(float)z);
                 glVertex3f(dx*((float)x+1.f), dx*((float)y+1.f), dx*(float)z);
                 glVertex3f(dx*(float)x, dx*((float)y+1.f), dx*(float)z);
-                
-                glEnd();
-
 			}
 		}
 	}
+	glEnd();
 }
