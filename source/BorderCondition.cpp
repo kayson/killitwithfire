@@ -1,14 +1,14 @@
 #include "BorderCondition.h"
 
 // Returnerar true om ingen boundary-åtgärd behövs
-bool BorderCondition::checkBorder(Grid &g, const int i, const int j, const int k)
+bool BorderCondition::checkBorder(Grid &g, const int i, const int j, const int k) const
 {
 	//std::cout << "checkBorder(...)\n";
 	return !(i == 0  || j == 0 || i == g.getDimX()-1 || j == g.getDimY()-1 || k == 0 || k == g.getDimZ()-1);
 }
 
 // Denna skall endast anropas om checkBorder(..) returnerat FALSE
-void BorderCondition::enforceBorderCondition(VelocityField &vel, Grid &g, const int i, const int j, const int k)
+void BorderCondition::enforceBorderCondition(VelocityField &vel, Grid &g, const int i, const int j, const int k) const
 {
 	//std::cout << "enforceBoundaryCondition(...), (i,j,k) = ("<<i<<", "<<j<<", "<<k<<")\n";
     Vector3 p = Vector3(i,j,k);

@@ -1,16 +1,24 @@
 #include "UpwindDiff.h"
 #include "fire.h"
+#include "ExtrapolateConstant.h"
 /*
 	Beräknar andra ordningens approximation av första-upwind differentiation.
 	Index är eg. halva index för staggered MAC-grid.
 */
-UpwindDiff::UpwindDiff(){}
+UpwindDiff::UpwindDiff()
+{
+	ext = new ExtrapolateConstant();
+}
+
+UpwindDiff::~UpwindDiff()
+{
+	delete ext;
+}
 
 double UpwindDiff::calcDx(Grid &g, const int i, const int j, const int k)
 {
-	// Boundary-fix (konstant extrapolering)
 	if(i <= 0 || i >= g.getDimX()-1)
-		return 0;
+		return ext->extrapolate(g,i,j,k,*this);	// Extrapolera
 	if((*_w)(i, j, k).x > 0)
 		return (g(i, j, k) - g(i-1, j, k))/FirePresets::dx;
 	else
@@ -18,9 +26,8 @@ double UpwindDiff::calcDx(Grid &g, const int i, const int j, const int k)
 }
 double UpwindDiff::calcDy(Grid &g, const int i, const int j, const int k)
 {
-	// Boundary-fix (konstant extrapolering)
 	if(j <= 0 || j >= g.getDimY()-1)
-		return 0;
+		return ext->extrapolate(g,i,j,k,*this);	// Extrapolera
 	if((*_w)(i, j, k).y > 0)
 		return (g(i, j, k) - g(i, j-1, k))/FirePresets::dx;
 	else
@@ -28,9 +35,8 @@ double UpwindDiff::calcDy(Grid &g, const int i, const int j, const int k)
 }
 double UpwindDiff::calcDz(Grid &g, const int i, const int j, const int k)
 {
-	// Boundary-fix (konstant extrapolering)
 	if(k <= 0 || k >= g.getDimZ()-1)
-		return 0;
+		return ext->extrapolate(g,i,j,k,*this);	// Extrapolera
 	if((*_w)(i, j, k).z > 0)
 		return (g(i, j, k) - g(i, j, k-1))/FirePresets::dx;
 	else

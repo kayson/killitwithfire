@@ -3,30 +3,60 @@
 /*
 	Beräknar andra ordningens approx. av första-derivatan eller
 	andra-derivatan i rummet med central differentiation. Index
-	är eg. halva index för staggered MAC-grid.
+	är eg. halva index för staggered MAC-grid. Konstant extrapolering
+	görs för kant-celler.
 */
-CentralDiff::CentralDiff(){}
+CentralDiff::CentralDiff()
+{
+	ext = new ExtrapolateConstant();
+}
 
-// Göra kontroller så att grid-index inte går utanför grid-dim här?
+CentralDiff::~CentralDiff()
+{
+	delete ext;
+}
 
 double CentralDiff::calcDx(Grid &g, const int i, const int j, const int k)
 {
-	return (double)(g(i+1, j, k) - g(i-1, j, k))/(FirePresets::dx*2.0);  //deltaX;
+	if(i <= 0)	// Konstant extrapolering
+		return (double)(g(i+1, j, k) - g(i, j, k))/(FirePresets::dx*2.0);
+	if(i >= g.getDimX()-1)	// Konstant extrapolering
+		return (double)(g(i, j, k) - g(i-1, j, k))/(FirePresets::dx*2.0);
+	else
+		return (double)(g(i+1, j, k) - g(i-1, j, k))/(FirePresets::dx*2.0);
 }
 double CentralDiff::calcDy(Grid &g, const int i, const int j, const int k)
 {
-	return (double)(g(i, j+1, k) + g(i, j-1, k))/(FirePresets::dx*2.0);  //deltaY;
+	if(j <= 0)	// Konstant extrapolering
+		return (double)(g(i, j+1, k) - g(i, j, k))/(FirePresets::dx*2.0);  
+	if(j >= g.getDimY()-1)	// Konstant extrapolering
+		return (double)(g(i, j, k) - g(i, j-1, k))/(FirePresets::dx*2.0);  
+	else
+		return (double)(g(i, j+1, k) - g(i, j-1, k))/(FirePresets::dx*2.0);
 }
 double CentralDiff::calcDz(Grid &g, const int i, const int j, const int k)
 {
-	return (double)(g(i, j, k+1) + g(i, j, k-1))/(FirePresets::dx*2.0);  //deltaZ;
+	if(k <= 0)	// Konstant extrapolering
+		return (double)(g(i, j, k+1) - g(i, j, k))/(FirePresets::dx*2.0);
+	if(k >= g.getDimZ()-1)	// Konstant extrapolering
+		return (double)(g(i, j, k) - g(i, j, k-1))/(FirePresets::dx*2.0);
+	else
+		return (double)(g(i, j, k+1) - g(i, j, k-1))/(FirePresets::dx*2.0);
 }
+
 double CentralDiff::calcD2x(Grid &g, const int i, const int j, const int k)
 {
-	return ( g(i+1,j,k) - 2*g(i,j,k) + g(i-1,j,k))/( FirePresets::dx*FirePresets::dx /*deltaX^2 */ );
+	if(i <= 0)
+		return ( g(i+1,j,k) - 2*g(i,j,k) + g(i,j,k))/( FirePresets::dx*FirePresets::dx /*deltaX^2 */ );
+	if(i >= g.getDimX()-1)
+		return ( g(i,j,k) - 2*g(i,j,k) + g(i-1,j,k))/( FirePresets::dx*FirePresets::dx /*deltaX^2 */ );
+	else
+		return ( g(i+1,j,k) - 2*g(i,j,k) + g(i-1,j,k))/( FirePresets::dx*FirePresets::dx /*deltaX^2 */ );
 }
 double CentralDiff::calcD2y(Grid &g, const int i, const int j, const int k)
 {
+	if(i <= 0)
+		return ( g(i,j+1,k) - 2*g(i,j,k) + g(i,j,k))/( FirePresets::dx*FirePresets::dx /* deltaY^2 */ );
 	return ( g(i,j+1,k) - 2*g(i,j,k) + g(i,j-1,k))/( FirePresets::dx*FirePresets::dx /* deltaY^2 */ );
 }
 double CentralDiff::calcD2z(Grid &g, const int i, const int j, const int k)

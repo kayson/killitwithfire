@@ -7,6 +7,7 @@
 //
 
 #include "Vector3.h"
+#include <glm/glm.hpp>
 
 #ifndef FuidFire_GridField_h
 #define FuidFire_GridField_h
@@ -29,8 +30,7 @@ private:
 public:
     GridField(int xdim,int ydim, int zdim);
     ~GridField();
-    void setTransformation(double *m); //4x4 matrix som transformerar cellkoordinater till världskoordinater
-    
+    void setTransformation(double *m); //4x4 matrix som transformerar cellkoordinater till världskoordinater 
 
     inline T valueAtIndex(int i) const;
     inline T valueAtIndex(int i,int j,int k) const;
