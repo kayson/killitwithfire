@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <iostream>
 
+#include "GridField.hpp"
 #include "Grid.h"
 #include "levelset/LevelSet.h"
 #include "Input.h"
@@ -52,6 +53,8 @@ int main(int argc, char *argv[])
 	{
 		return 1;
 	}
+    
+    GridField<double> f = GridField<double>(10,10,10);
     
 	fire = new Fire(new FirePresetsTwoDimension());
 	// Main loop
