@@ -34,9 +34,9 @@ void VelocityField::initVelocityField()
 	std::cout << centerVelocities(0, 0, 0);
 }
 
-data VelocityField::getMax()
+double VelocityField::getMax()
 {
-	data max = 0;
+	double max = 0;
 	/*if ( u.getMax() > max )
 	{
 		max = u.getMax();

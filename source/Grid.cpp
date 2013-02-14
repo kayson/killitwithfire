@@ -15,12 +15,12 @@ Grid::Grid(const int x, const int y, const int z)
 	yDim = y;
 	zDim = z;
 
-	grid = new data**[xDim];
+	grid = new double**[xDim];
 	for(int i = 0; i < xDim; i++)
 	{
-		grid[i] = new data*[yDim];
+		grid[i] = new double*[yDim];
 		for(int j = 0; j < yDim; j++)
-			grid[i][j] = new data[zDim];
+			grid[i][j] = new double[zDim];
 	}
 }
 
@@ -41,12 +41,12 @@ void Grid::draw() const
 	//drawLines2d();
 }
 
-void Grid::setData(int x, int y, int z, data value)
+void Grid::setData(int x, int y, int z, double value)
 { 
 	grid[x][y][z] = value; 
 };
 	
-data& Grid::operator()(const int x, const int y, const int z)
+double& Grid::operator()(const int x, const int y, const int z)
 {
 	//std::cout << "Grid operator(), (x,y,z) = ("<<x<<", "<<y<<", "<<z<<")\n";
 	if(x < 0 || y < 0 || z < 0) //Bör nog extrapolera här
