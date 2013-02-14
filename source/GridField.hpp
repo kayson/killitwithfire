@@ -7,18 +7,14 @@
 //
 
 #include "GridField.h"
-#include <algorithm>
 #include "Interpolation.h"
-<<<<<<< HEAD
-=======
-#include <cmath>
->>>>>>> Småfix
 
 template<class T>
 GridField<T>::GridField():_xdim(1),_ydim(1),_zdim(1){
     //Cell data
     _data = new T[cellCount()];
-    std::fill(_data,_data+cellCount(),0);
+    for (int i = 0; i < 16; i++) _data[i] = T();
+    
     //Använd Enhetsmatris
     double *m = new double[4*4];
     std::fill(m, m+4*4, 0);
@@ -26,15 +22,11 @@ GridField<T>::GridField():_xdim(1),_ydim(1),_zdim(1){
     setTransformation(m);
 }
 
-<<<<<<< HEAD
-//template<class T>
-//GridField<T>::GridField(int xdim,int ydim, int zdim)
-=======
 template<class T>
 GridField<T>::GridField(int xdim,int ydim, int zdim):_xdim(xdim),_ydim(ydim),_zdim(zdim){
     //Cell data
     _data = new T[cellCount()];
-    std::fill(_data,_data+cellCount(),0);
+    for (int i = 0; i < 16; i++) _data[i] = T();
     
     //Sätt Enhetsmatris
     double *m = new double[4*4];
@@ -42,7 +34,6 @@ GridField<T>::GridField(int xdim,int ydim, int zdim):_xdim(xdim),_ydim(ydim),_zd
     m[0] = 1; m[5] = 1; m[10] = 1; m[15] = 1.0;
     setTransformation(m);
 }
->>>>>>> f181c730ef9dc1999648c397eff6bce63743be8d
 
 template<class T>
 GridField<T>::~GridField(){
@@ -74,11 +65,7 @@ void GridField<T>::worldToLocal(const double w_x,const double w_y,const double w
 template<class T>
 int GridField<T>::localToIndex(const double l_x,const double l_y,const double l_z) const{
     //Index
-<<<<<<< HEAD
-    return indexAt( floor(l_x/((double)_xdim) + 0.5) , floor(l_y/((double)_ydim) + 0.5) , floor(l_z/((double)_zdim)) + 0.5);
-=======
     return indexAt( round(l_x*((double)_xdim)) , round(l_y*((double)_ydim)) , round(l_z*((double)_zdim)));
->>>>>>> Småfix
 }
 
 template<class T>

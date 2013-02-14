@@ -26,9 +26,6 @@ private:
     double *trans,*itrans;
 
 public:
-
-    GridField(int xdim,int ydim, int zdim):_xdim(xdim),_ydim(ydim),_zdim(zdim){ data = new T[xdim*ydim*zdim]; };
-
     GridField();
     GridField(int xdim,int ydim, int zdim);
 
