@@ -27,7 +27,7 @@ void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 }
 void LevelSet::reinitialize()
 {
-	reinitialize::reinitializeGrid(phi);
+	//reinitialize::reinitializeGrid(phi);
 }
 void LevelSet::printDistanceField()
 {

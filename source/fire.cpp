@@ -107,32 +107,38 @@ void Fire::runSumulation(){
 		computeCellTypes(); //Beräkna om vad för typ voxlarna är
 	
 	//Fixa signed distance field
-	if(count % 50 == 0)
-		phi.reinitialize();
+	/*if(count % 50 == 0)
+		phi.reinitialize();*/
 	count++;
 }
 
 void Fire::drawCenterVelocities()
 {
-	glBegin(GL_LINES);
-	glColor3f(0,1,0);
 	for(int i = 0; i < phi.phi.xdim(); i += 5)
 	{
 		for(int j = 0; j < phi.phi.ydim(); j += 5)
 		{
 			for(int k = 0; k < phi.phi.zdim(); k += 5)
 			{
-				float x0 = FirePresets::dx*(i + 0.5);
-				float y0 = FirePresets::dx*(j + 0.5);
-				float z0 = FirePresets::dx*(k + 0.5);
+				float x0 = FirePresets::dx*((double)(i) + 0.5);
+				float y0 = FirePresets::dx*((double)(j) + 0.5);
+				float z0 = FirePresets::dx*((double)(k) + 0.5);
                 
 				Vector3 v = u.centerVelocities(i, j, k)*FirePresets::dx;
-				glVertex3f(x0, y0, z0);
-				glVertex3f(x0 + v.x, y0 + v.y, z0 + v.z);
+				glColor3f(0,1,0);
+				glBegin(GL_LINES);
+					glVertex3f(x0, y0, z0);
+					glVertex3f(x0 + v.x, y0 + v.y, z0 + v.z);
+				glEnd();
+
+				glColor3f(0,0,0);
+				glBegin(GL_POINTS);
+					glVertex3f(x0 + v.x, y0 + v.y, z0 + v.z);
+				glEnd();
 			}
 		}
 	}
-	glEnd();
+	
 }
 
 void Fire::draw()

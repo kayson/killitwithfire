@@ -36,24 +36,24 @@ namespace reinitialize{
 			
 			break;
 		case 3:
-			*kn -= FirePresets::GRID_DIM_Z - *kn;
+			*kn = FirePresets::GRID_DIM_Z - *kn;
 			break;
 		case 4:
-			*in -= FirePresets::GRID_DIM_X - *in;
-			*jn -= FirePresets::GRID_DIM_Y - *jn;
+			*in = FirePresets::GRID_DIM_X - *in;
+			*jn = FirePresets::GRID_DIM_Y - *jn;
 			break;
 		case 5:
-			*kn -= FirePresets::GRID_DIM_Z - *kn;
-			*jn -= FirePresets::GRID_DIM_Y - *jn;
+			*kn = FirePresets::GRID_DIM_Z - *kn;
+			*jn = FirePresets::GRID_DIM_Y - *jn;
 			break;
 		case 6:
-			*in -= FirePresets::GRID_DIM_X - *in;
-			*kn -= FirePresets::GRID_DIM_Z - *kn;
+			*in = FirePresets::GRID_DIM_X - *in;
+			*kn = FirePresets::GRID_DIM_Z - *kn;
 			break;
 		case 7:
-			*in -= FirePresets::GRID_DIM_X - *in;
-			*jn -= FirePresets::GRID_DIM_Y - *jn;
-			*kn -= FirePresets::GRID_DIM_Z - *kn;
+			*in = FirePresets::GRID_DIM_X - *in;
+			*jn = FirePresets::GRID_DIM_Y - *jn;
+			*kn = FirePresets::GRID_DIM_Z - *kn;
 			break;
 		};
 	}
