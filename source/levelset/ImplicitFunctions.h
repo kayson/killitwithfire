@@ -1,15 +1,19 @@
 #ifndef IMPLICITFUNCTIONS_H
 #define IMPLICITFUNCTIONS_H
-#include "datatype.h"
 #include "../fire.h"
+#include "../presets/firePresets.h"
 namespace implicitFunction
 {
-	data sphere(int x, int y, int z)
+	double sphere(int i, int j, int k)
 	{
-		data r = (data) 10;
-		data xo = (data) -10.0;//-FirePresets::GRID_DIM_X / 2.0;
-		data yo = (data) -FirePresets::GRID_DIM_Y / 2.0;
-		data zo = (data) -FirePresets::GRID_DIM_Z / 2.0;
+		double x = (double) i / (double) FirePresets::dx;
+		double y = (double) j / (double) FirePresets::dx;
+		double z = (double) k / (double) FirePresets::dx;
+
+		double r = (double) 100;
+		double xo =  -(double)FirePresets::GRID_DIM_X;
+		double yo =  -(double)FirePresets::GRID_DIM_Y;
+		double zo =  -(double)FirePresets::GRID_DIM_Z;
 		x += xo;
 		y += yo;
 		z += zo;
