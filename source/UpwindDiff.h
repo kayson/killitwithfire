@@ -7,6 +7,7 @@ class UpwindDiff : public Discretization{
 
 public:
 	UpwindDiff();
+	~UpwindDiff();
 
 	data calcDx(Grid &g, const int i, const int j, const int k);
 	data calcDy(Grid &g, const int i, const int j, const int k);

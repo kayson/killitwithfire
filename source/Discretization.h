@@ -9,6 +9,7 @@
 #include "Grid.h"
 #include "datatype.h"
 #include "VectorGrid.h"
+#include "Extrapolation.h"
 
 class Discretization{
 protected:
@@ -30,5 +31,7 @@ public:
 	virtual data calcDxz(Grid &g, const int i, const int j, const int k)=0;
 	virtual data calcDxy(Grid &g, const int i, const int j, const int k)=0;
 	virtual void setVectorGrid(VectorGrid *w){_w = w;};
+
+	Extrapolation<Discretization> *ext;
 };
 #endif

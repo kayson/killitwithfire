@@ -5,8 +5,8 @@
 #include "Vector3.h"
 class BorderCondition{
 public:
-	bool checkBorder(Grid &g, const int i, const int j, const int k);
-	void enforceBorderCondition(VelocityField &v, Grid &g, const int i, const int j, const int k);
+	bool checkBorder(Grid &g, const int i, const int j, const int k) const;
+	void enforceBorderCondition(VelocityField &v, Grid &g, const int i, const int j, const int k) const;
 private:
 };
 

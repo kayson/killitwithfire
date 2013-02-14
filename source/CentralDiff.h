@@ -1,10 +1,13 @@
 #ifndef CENTRALDIFF_H
 #define CENTRALDIFF_H
 #include "Discretization.h"
+#include "Extrapolation.h"
+#include "ExtrapolateConstant.h"
 
 class CentralDiff : public Discretization{
 public:
 	CentralDiff();
+	~CentralDiff();
 	data calcDx(Grid &g, const int i, const int j, const int k);
 	data calcDy(Grid &g, const int i, const int j, const int k);
 	data calcDz(Grid &g, const int i, const int j, const int k);
@@ -17,4 +20,5 @@ public:
 	data calcDxz(Grid &g, const int i, const int j, const int k);
 	data calcDxy(Grid &g, const int i, const int j, const int k);
 };
+
 #endif
