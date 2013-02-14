@@ -13,22 +13,22 @@
 
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 {
-	for(int i = 0; i < phi.getDimX(); i++)
-		for(int j = 0; j < phi.getDimY(); j++)
-			for(int k = 0; k < phi.getDimZ(); k++)
+	for(int i = 0; i < phi.xdim(); i++)
+		for(int j = 0; j < phi.ydim(); j++)
+			for(int k = 0; k < phi.zdim(); k++)
 			{
-				phi(i, j, k) = implicitFunction(i, j, k);
+				phi.setValueAtIndex(implicitFunction(i, j, k),i,j,k);
 	}
 }
 void LevelSet::printDistanceField()
 {
-	for(int i = 0; i < phi.getDimX(); i++)
+	for(int i = 0; i < phi.xdim(); i++)
 	{
-		for(int j = 0; j < phi.getDimY(); j++)
+		for(int j = 0; j < phi.ydim(); j++)
 		{
-			for(int k = 0; k < phi.getDimZ(); k++)
+			for(int k = 0; k < phi.zdim(); k++)
 			{
-				std::cout << phi(i, j, k) << " ";
+				std::cout << phi.valueAtIndex(i,j,k) << " ";
 			}
 			
 		}
@@ -75,11 +75,11 @@ void LevelSet::draw() const
 {
 	double dx = FirePresets::dx;
 
-	for(int x = 0; x < xDim-1; x++)
+	for(int x = 0; x < phi.xdim()-1; x++)
 	{
-		for(int y = 0; y < yDim-1; y++)
+		for(int y = 0; y < phi.ydim()-1; y++)
 		{
-			for(int z = 0; z < zDim; z++)
+			for(int z = 0; z < phi.zdim(); z++)
 			{
                 glBegin(GL_QUADS);
 				
