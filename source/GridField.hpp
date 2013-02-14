@@ -184,6 +184,12 @@ inline void GridField<T>::setValueAtIndex(T val,int i,int j,int k){
     _data[indexAt(i, j, k)] = val;
 }
 
+//Operatorer
+template<class T>
+T GridField<T>::operator()(int i, int j, int k){
+    return valueAtIndex(i, j, k);
+}
+
 template<class T>
 GridFieldIterator<T> GridField<T>::iterator(){
     return GridFieldIterator<T>(this);
