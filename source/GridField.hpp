@@ -65,7 +65,7 @@ void GridField<T>::worldToLocal(const double w_x,const double w_y,const double w
 template<class T>
 int GridField<T>::localToIndex(const double l_x,const double l_y,const double l_z) const{
     //Index
-    return indexAt( round(l_x*((double)_xdim)) , round(l_y*((double)_ydim)) , round(l_z*((double)_zdim)));
+    return indexAt( floor(l_x*((double)_xdim)+0.5) , floor(l_y*((double)_ydim)+0.5) , floor(l_z*((double)_zdim)+0.5));
 }
 
 template<class T>

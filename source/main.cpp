@@ -53,9 +53,7 @@ int main(int argc, char *argv[])
 	{
 		return 1;
 	}
-    
-<<<<<<< HEAD
-=======
+
     GridField<double> f = GridField<double>(10,10,1);
     
     int i = 0;
@@ -71,7 +69,6 @@ int main(int argc, char *argv[])
     std::cout << f.valueAtWorld(0.4,0.9,0) << std::endl;
     
     
->>>>>>> 5faf75ced050bb4328abd47b619f47fa1d08a251
 	fire = new Fire(new FirePresetsTwoDimension());
 	// Main loop
 	while(running)
