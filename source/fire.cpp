@@ -10,14 +10,12 @@ Fire::Fire(FirePresets *p):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->G
 
 	u = VelocityField(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
 
-	
 	phi.fillLevelSet(preset->implicitFunction);
 	
 	preset->discretization->setVectorGrid(u.getCenterVel());
 	preset->normalDiscretization->setVectorGrid(u.getCenterVel());
 
     preset->advect->setDiscretization(preset->discretization, preset->normalDiscretization);
-
 
 }
 
