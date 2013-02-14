@@ -23,7 +23,7 @@ public:
     void operator=(const VelocityField &v);
     
 	VectorGrid *getCenterVel(){ return &centerVelocities;};
-	data getMax();
+	double getMax();
     Vector3 getPositionAtFace(int i ,int j, int k, DirectionEnums direction);
     Vector3 getVelocityAtCoordinate(Vector3 &pos);
 	Grid *getGridU() { return &u; }

@@ -1,15 +1,16 @@
 #ifndef GRID_H
 #define GRID_H
 
+
 #include "datatype.h"
+#include "helper.h"
+
 #include "Vector3.h"
 #ifdef __APPLE__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
 #endif
-
-
 
 class Grid
 {
@@ -21,16 +22,16 @@ public:
 	void draw() const;
 
 	//Setters
-	void setData(int x, int y, int z, data value);
+	void setData(int x, int y, int z, double value);
 	
-	data& operator()(const int x, const int y, const int z);
+	double& operator()(const int x, const int y, const int z);
 
 	//Getters
 	int getDimX() const;
 	int getDimY() const;
 	int getDimZ() const;
 
-	data getMax();
+	double getMax();
 
 	Vector3 getCellVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k);
 	Vector3 getGridVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k, DirectionEnums dir);
@@ -42,7 +43,7 @@ private:
 
     void drawValue2d() const;
     
-	data ***grid;
+	double ***grid;
 	int xDim, yDim, zDim;
 
 };

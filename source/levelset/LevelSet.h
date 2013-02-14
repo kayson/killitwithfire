@@ -13,7 +13,7 @@ public:
 		phi = *(new Grid(xDim, yDim, zDim));
 	};
 	~LevelSet(){};
-	void fillLevelSet(data (*implicitFunction)(int x, int y, int z));
+	void fillLevelSet(double (*implicitFunction)(int x, int y, int z));
 	void specifyRenderFunction(void (*renderFunction)());
 
 	void draw() const;

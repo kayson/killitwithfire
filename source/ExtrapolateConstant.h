@@ -13,11 +13,10 @@ public:
 			// Gör boundary-kontroll här och sedan konstant
 			// extrapolering enl. Upwind
 		}
-		if(typeid(d) == typeid(CentralDiff))
+		/*if(typeid(d) == typeid(CentralDiff))
 		{
-			// Gör boundary-kontroll här och sedan konstant
-			// extrapolering enl. Central diff
-		}
+		}*/
+
 		return 0;
 	}
 };

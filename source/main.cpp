@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <iostream>
 
+#include "GridField.hpp"
 #include "Grid.h"
 #include "levelset/LevelSet.h"
 #include "Input.h"
@@ -32,8 +33,10 @@ void update();
 void render();
 
 double TIME = 1.0/7000.0;
+double fps;
 
 double t0 = 0.0;
+
 int frames = 0;
 char titlestring[200];
 
@@ -50,6 +53,8 @@ int main(int argc, char *argv[])
 	{
 		return 1;
 	}
+    
+    GridField<double> f = GridField<double>(10,10,10);
     
 	fire = new Fire(new FirePresetsTwoDimension());
 	// Main loop
@@ -103,9 +108,10 @@ bool init()
 	return true;
 }
 
-void showFPS() 
+void calculateFPS()
 {
-	double t, fps;
+	double t;
+		
     
 	// Get current time
 	t = glfwGetTime();  // Gets number of seconds since glfwInit()
@@ -113,18 +119,25 @@ void showFPS()
 	if( (t-t0) > 1.0 || frames == 0 )
 	{
 		fps = (double)frames / (t-t0);
-		sprintf(titlestring, "Fire (%.1f FPS)", fps);
 
-		glfwSetWindowTitle(titlestring);
 		t0 = t;
 		frames = 0;
 	}
 	frames ++;
+
+}
+
+void showFPS() 
+{
+	calculateFPS();
+	sprintf(titlestring, "Fire (%.1f FPS)", fps);
+
+	glfwSetWindowTitle(titlestring);
 }
 
 void update()
 {
-	controller.updateInput(); //updatera mus och tangentbord
+	controller.updateInput(fps); //updatera mus och tangentbord
 
 	//Update physics
 	fire->runSumulation();

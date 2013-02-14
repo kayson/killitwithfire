@@ -14,7 +14,7 @@ class FirePresets
 public:
 	FirePresets(){};
 	~FirePresets(){};
-	data (*implicitFunction)(int x, int y, int z);
+	double (*implicitFunction)(int x, int y, int z);
 
 
     //Konstanter

@@ -11,7 +11,8 @@ bool BorderCondition::checkBorder(Grid &g, const int i, const int j, const int k
 void BorderCondition::enforceBorderCondition(VelocityField &vel, Grid &g, const int i, const int j, const int k) const
 {
 	//std::cout << "enforceBoundaryCondition(...), (i,j,k) = ("<<i<<", "<<j<<", "<<k<<")\n";
-	Vector3 v = vel.getVelocityAtCoordinate(Vector3(i,j,k));
+    Vector3 p = Vector3(i,j,k);
+	Vector3 v = vel.getVelocityAtCoordinate(p);
 	if(i == 0 && v.x < 0){
 		//std::cout << "1\n";
 		v.x = 0;

@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cmath>
 
-void LevelSet::fillLevelSet(data (*implicitFunction)(int, int, int))
+void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 {
 	for(int i = 0; i < phi.getDimX(); i++)
 		for(int j = 0; j < phi.getDimY(); j++)
