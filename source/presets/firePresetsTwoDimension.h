@@ -32,8 +32,8 @@ private:
 
 };
 
-const int FirePresets::GRID_DIM_X = 10*35;
-const int FirePresets::GRID_DIM_Y = 4*35;
+const int FirePresets::GRID_DIM_X = 8*35;
+const int FirePresets::GRID_DIM_Y = 10*35;
 const int FirePresets::GRID_DIM_Z = 1;
 const double FirePresets::dt = 1./200.;
 const double FirePresets::dx = 1./8.;

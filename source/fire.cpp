@@ -7,8 +7,7 @@
 Fire::Fire(FirePresets *p):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z){
     //Presets
     preset = p;
-	//GridField<double> g(1,1,1);
-	//Grid
+
 	u = VelocityField(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
 
 	
@@ -73,7 +72,7 @@ CellType Fire::getCellType(const int i, const int j, const int k)
 	else 
 		return IGNITED;
 }
-
+int count = 0;
 void Fire::runSumulation(){
     
     //Beräkna tidssteget
@@ -106,11 +105,13 @@ void Fire::runSumulation(){
 
 		currentTime += dt;
 	}
-
-	computeCellTypes(); //Beräkna om vad för typ voxlarna är
-
+	
+		computeCellTypes(); //Beräkna om vad för typ voxlarna är
+	
 	//Fixa signed distance field
-	phi.reinitialize();
+	if(count % 50 == 0)
+		phi.reinitialize();
+	count++;
 }
 
 void Fire::draw()
