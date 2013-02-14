@@ -80,7 +80,6 @@ private:
     int _i;
     GridField<T> *_grid;
 private:
-    GridFieldIterator() = delete;
     GridFieldIterator(GridField<T> *grid):_i(0),_done(false){ _grid = grid; };
     int index(){ return _i;};
 public:

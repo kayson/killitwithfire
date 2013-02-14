@@ -6,7 +6,7 @@
 #ifndef DISCRETIZATION_H
 #define DISCRETIZATION_H
 #include <iostream>
-#include "Grid.h"
+#include "GridField.hpp"
 #include "datatype.h"
 #include "VectorGrid.h"
 #include "Extrapolation.h"
@@ -19,17 +19,17 @@ public:
 	virtual ~Discretization(){};
 
 	// Dessa skall och måste överlagras av subklasser
-	virtual double calcDx(Grid &g, const int i, const int j, const int k)=0;
-	virtual double calcDy(Grid &g, const int i, const int j, const int k)=0;
-	virtual double calcDz(Grid &g, const int i, const int j, const int k)=0;
+	virtual double calcDx(GridField<double> &g, const int i, const int j, const int k)=0;
+	virtual double calcDy(GridField<double> &g, const int i, const int j, const int k)=0;
+	virtual double calcDz(GridField<double> &g, const int i, const int j, const int k)=0;
 
-	virtual double calcD2x(Grid &g, const int i, const int j, const int k)=0;
-	virtual double calcD2y(Grid &g, const int i, const int j, const int k)=0;
-	virtual double calcD2z(Grid &g, const int i, const int j, const int k)=0;
+	virtual double calcD2x(GridField<double> &g, const int i, const int j, const int k)=0;
+	virtual double calcD2y(GridField<double> &g, const int i, const int j, const int k)=0;
+	virtual double calcD2z(GridField<double> &g, const int i, const int j, const int k)=0;
 
-	virtual double calcDyz(Grid &g, const int i, const int j, const int k)=0;
-	virtual double calcDxz(Grid &g, const int i, const int j, const int k)=0;
-	virtual double calcDxy(Grid &g, const int i, const int j, const int k)=0;
+	virtual double calcDyz(GridField<double> &g, const int i, const int j, const int k)=0;
+	virtual double calcDxz(GridField<double> &g, const int i, const int j, const int k)=0;
+	virtual double calcDxy(GridField<double> &g, const int i, const int j, const int k)=0;
 	virtual void setVectorGrid(VectorGrid *w){_w = w;};
 
 	Extrapolation<Discretization> *ext;
