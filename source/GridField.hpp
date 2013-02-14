@@ -13,7 +13,7 @@ template<class T>
 GridField<T>::GridField():_xdim(1),_ydim(1),_zdim(1){
     //Cell data
     _data = new T[cellCount()];
-    for (int i = 0; i < 16; i++) _data[i] = T();
+    for (int i = 0; i < cellCount(); i++) _data[i] = T();
     
     //Använd Enhetsmatris
     double *m = new double[4*4];
@@ -26,7 +26,7 @@ template<class T>
 GridField<T>::GridField(int xdim,int ydim, int zdim):_xdim(xdim),_ydim(ydim),_zdim(zdim){
     //Cell data
     _data = new T[cellCount()];
-    for (int i = 0; i < 16; i++) _data[i] = T();
+    for (int i = 0; i < cellCount(); i++) _data[i] = T();
     
     //Sätt Enhetsmatris
     double *m = new double[4*4];
