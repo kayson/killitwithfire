@@ -1,8 +1,6 @@
 #ifndef CENTRALDIFF_H
 #define CENTRALDIFF_H
 #include "Discretization.h"
-#include "Extrapolation.h"
-#include "ExtrapolateConstant.h"
 
 class CentralDiff : public Discretization{
 public:
