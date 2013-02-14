@@ -67,13 +67,14 @@ Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 	g.normalize();
 
 	delete disc;
-
+	
 	return g;
 }
 
 void LevelSet::draw() const
 {
 	double dx = FirePresets::dx;
+
 	for(int x = 0; x < xDim-1; x++)
 	{
 		for(int y = 0; y < yDim-1; y++)
@@ -81,15 +82,15 @@ void LevelSet::draw() const
 			for(int z = 0; z < zDim; z++)
 			{
                 glBegin(GL_QUADS);
-
-				if(grid[x][y][z] <= 0)
+				
+				if(phi.valueAtIndex(x,y,z) <= 0)
 				{
                     //glColor3f(0,0,-grid[x][y][z]/8.0);
                     glColor3f(0,0,1);
                 
                     
 				}else{
-//                    glColor3f(grid[x][y][z]/100.0,0,0);
+					//glColor3f(grid[x][y][z]/100.0,0,0);
                     glColor3f(1,0,0);
                 
                 }
