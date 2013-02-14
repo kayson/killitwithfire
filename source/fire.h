@@ -1,11 +1,17 @@
+
+
 #ifndef FIRE_H
 #define FIRE_H
 
+
 #include "presets/firePresets.h"
+
 #include "VelocityField.h"
 #include "levelset/LevelSet.h"
 #include "GridField.h"
 #include "helper.h"
+
+
 
 class Fire{
 protected:

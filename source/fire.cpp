@@ -4,7 +4,7 @@
 
 #include "GridField.hpp"
 
-Fire::Fire(FirePresets *p):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z){
+Fire::Fire(FirePresets *p):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z){
     //Presets
     preset = p;
 	//GridField<double> g(1,1,1);
@@ -19,7 +19,6 @@ Fire::Fire(FirePresets *p):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->G
 
     preset->advect->setDiscretization(preset->discretization, preset->normalDiscretization);
 
-	GridField<CellType> *g = new GridField<CellType>(5,1,1);
 
 }
 
@@ -67,7 +66,7 @@ void Fire::computeCellTypes()
 
 CellType Fire::getCellType(const int i, const int j, const int k)
 {
-	if(false) //Check if is solid
+	if(true) //Check if is solid
 		return SOLID;
 	else if(phi.phi(i,j,k) <= 0.0)
 		return BLUECORE;
