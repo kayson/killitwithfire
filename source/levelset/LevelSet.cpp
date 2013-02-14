@@ -96,8 +96,7 @@ void LevelSet::draw() const
 				{
                     //glColor3f(0,0,-grid[x][y][z]/8.0);
                     glColor3f(0,0,1);
-                
-                    
+                                    
 				}else{
 					//glColor3f(grid[x][y][z]/100.0,0,0);
                     glColor3f(1,0,0);
