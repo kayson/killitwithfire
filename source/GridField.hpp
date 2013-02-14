@@ -19,7 +19,7 @@ GridField<T>::GridField():_xdim(1),_ydim(1),_zdim(1){
     //Använd Enhetsmatris
     double *m = new double[4*4];
     std::fill(m, m+4*4, 0);
-    m[0] = 1; m[5] = 1; m[10] = 1;
+    m[0] = 1.0/((double)_xdim); m[5] = 1.0/((double)_ydim); m[10] = 1.0/((double)_zdim);
     setTransformation(m);
 }
 
@@ -32,7 +32,7 @@ GridField<T>::GridField(int xdim,int ydim, int zdim):_xdim(xdim),_ydim(ydim),_zd
     //Sätt Enhetsmatris
     double *m = new double[4*4];
     std::fill(m, m+4*4, 0);
-    m[0] = 1; m[5] = 1; m[10] = 1;
+    m[0] = 1.0/((double)_xdim); m[5] = 1.0/((double)_ydim); m[10] = 1.0/((double)_zdim);
     setTransformation(m);
 }
 

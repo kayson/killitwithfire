@@ -7,8 +7,11 @@
 //
 
 #include "Vector3.h"
+#ifdef __APPLE__
+#include "glm.hpp"
+#elif defined _WIN32 || defined _WIN64
 #include <glm/glm.hpp>
-
+#endif
 #ifndef FuidFire_GridField_h
 #define FuidFire_GridField_h
 
