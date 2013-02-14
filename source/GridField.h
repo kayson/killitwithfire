@@ -7,6 +7,7 @@
 //
 
 #include "Vector3.h"
+
 #ifdef __APPLE__
 #include "glm.hpp"
 #elif defined _WIN32 || defined _WIN64
@@ -19,7 +20,7 @@ template <class T>
 class GridFieldIterator;
 
 template <class T>
-class GridField {
+class GridField{
 private:
     T *_data;
     const int _xdim,_ydim, _zdim;
@@ -56,10 +57,11 @@ public:
     inline void localToCellCoordinate(int i,int j,int k, double l_x, double l_y,double l_z, double &c_x,double &c_y,double &x_z) const;
 
     
-    
     //Setter
     inline void setValueAtIndex(T val,int i);
     inline void setValueAtIndex(T val,int i,int j,int k);
+    
+    T operator()(int i, int j, int k);
     
     //Iterator
     GridFieldIterator<T> iterator();
@@ -77,6 +79,7 @@ private:
     int _i;
     GridField<T> *_grid;
 private:
+    GridFieldIterator() = delete;
     GridFieldIterator(GridField<T> *grid):_i(0),_done(false){ _grid = grid; };
     int index(){ return _i;};
 public:

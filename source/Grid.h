@@ -12,8 +12,7 @@
 #include <GL/glfw.h>
 #endif
 
-class Grid
-{
+class Grid{
 public:
 	Grid(const int x = GRID_DIM_X, const int y = GRID_DIM_Y, const int z = GRID_DIM_Z);
 
@@ -37,6 +36,7 @@ public:
 	Vector3 getGridVelocity(Grid &u, Grid &v, Grid &w, const int i, const int j, const int k, DirectionEnums dir);
 
 private:
+    
 	void drawLines2d() const;
 
 	void drawFilled2d() const;

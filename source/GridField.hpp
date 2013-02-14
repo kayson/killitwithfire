@@ -158,15 +158,15 @@ inline void GridField<T>::worldToCell(int &i,int &j,int &k, double &w_x, double 
 
 
 template<class T>
-inline void GridField<T>::xdim() const{
+inline int GridField<T>::xdim() const{
     return _xdim;
 }
 template<class T>
-inline void GridField<T>::ydim() const{
+inline int GridField<T>::ydim() const{
     return _ydim;
 }
 template<class T>
-inline void GridField<T>::zdim() const{
+inline int GridField<T>::zdim() const{
     return _zdim;
 }
 
