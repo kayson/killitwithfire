@@ -4,6 +4,7 @@
 #include "../datatype.h"
 #include "../Grid.h"
 #include "../Vector3.h"
+#include "../GridField.h"
 
 class LevelSet
 {
@@ -21,7 +22,7 @@ public:
 	double getCurvature(const int i, const int j, const int k);
 	Vector3 getNormal(const int i, const int j, const int k);
 
-	Grid phi; //Signed distance field
+	GridField phi; //Signed distance field
 private:
 	
 	void (*render)();

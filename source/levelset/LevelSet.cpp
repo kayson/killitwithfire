@@ -5,6 +5,12 @@
 #include <iostream>
 #include <cmath>
 
+#ifdef __APPLE__
+#include "firePresets.h"
+#elif defined _WIN32 || defined _WIN64
+#include "../presets/firePresets.h"
+#endif
+
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 {
 	for(int i = 0; i < phi.getDimX(); i++)
@@ -67,5 +73,35 @@ Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 
 void LevelSet::draw() const
 {
-	phi.draw();
+	double dx = FirePresets::dx;
+	for(int x = 0; x < xDim-1; x++)
+	{
+		for(int y = 0; y < yDim-1; y++)
+		{
+			for(int z = 0; z < zDim; z++)
+			{
+                glBegin(GL_QUADS);
+
+				if(grid[x][y][z] <= 0)
+				{
+                    //glColor3f(0,0,-grid[x][y][z]/8.0);
+                    glColor3f(0,0,1);
+                
+                    
+				}else{
+//                    glColor3f(grid[x][y][z]/100.0,0,0);
+                    glColor3f(1,0,0);
+                
+                }
+                
+                glVertex3f(dx*(float)x, dx*(float)y, dx*(float)z);
+                glVertex3f(dx*((float)x+1.f), dx*(float)y, dx*(float)z);
+                glVertex3f(dx*((float)x+1.f), dx*((float)y+1.f), dx*(float)z);
+                glVertex3f(dx*(float)x, dx*((float)y+1.f), dx*(float)z);
+                
+                glEnd();
+
+			}
+		}
+	}
 }
