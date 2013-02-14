@@ -48,8 +48,19 @@ int GridField<T>::localToIndex(const double l_x,const double l_y,const double l_
 template<class T>
 void GridField<T>::setTransformation(double *m){ //4x4 matrix som transformerar cellkoordinater till världskoordinater
     trans = m;
-    //Gör invers på m!
-    //itrans = inverse(m);
+
+	glm::mat4x4 temp(m[0],m[1],m[2],m[3],
+					m[4],m[5],m[6],m[7],
+					m[8],m[9],m[10],m[11],
+					m[12],m[13],m[14],m[15]);
+	temp = glm::inverse(temp);
+
+    itrans = new double[16];
+	itrans[0] = temp[0][0];itrans[1] = temp[0][1];itrans[2] = temp[0][2];itrans[3] = temp[0][3];
+	itrans[4] = temp[1][0];itrans[5] = temp[1][1];itrans[6] = temp[1][2];itrans[7] = temp[1][3];
+	itrans[8] = temp[2][0];itrans[9] = temp[2][1];itrans[10] = temp[2][2];itrans[11] = temp[2][3];
+	itrans[12] = temp[3][0];itrans[13] = temp[3][1];itrans[14] = temp[3][2];itrans[15] = temp[3][3];
+
 }
 
 template<class T>
