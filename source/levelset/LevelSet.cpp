@@ -3,7 +3,7 @@
 #include "../Discretization.h"
 #include "../CentralDiff.h"
 #include "../Gradient.h"
-#include "../Reinitialize.h"
+//#include "../Reinitialize.h"
 #include <iostream>
 #include <cmath>
 

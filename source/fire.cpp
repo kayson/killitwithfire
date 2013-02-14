@@ -57,13 +57,21 @@ void Fire::computeCellTypes()
 	{
 		int i, j, k;
 		it.index(i, j, k);
+        
+        if(celltype(i,j,k)){
+            
+        }   
+        
 		celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
+        
+        
+            
 	}
 }	
 
 CellType Fire::getCellType(const int i, const int j, const int k)
 {
-	if(true) //Check if is solid
+	if(false) //Check if is solid
 		return SOLID;
 	else if(phi.phi(i,j,k) <= 0.0)
 		return BLUECORE;

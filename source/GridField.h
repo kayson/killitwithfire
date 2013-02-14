@@ -27,6 +27,7 @@ private:
     double *trans,*itrans;
 private:
     GridField();
+    int size() const;
 public:
     GridField(int xdim,int ydim, int zdim);
 
@@ -85,7 +86,19 @@ private:
 public:
     ~GridFieldIterator(){ _grid = NULL; };
 public:
-    void next(){ _i++; if(_i == _grid->cellCount()) _done = true;};
+    
+    void next(){
+        
+        if(_i == _grid->cellCount()-1){
+            std::cout << _i << std::endl;
+            _done = true;
+        }
+        
+        if (!done()) {
+            _i++;
+        }
+    };
+    
     bool done(){return _done;};
     T value(){ return _grid->valueAtIndex(index());};
     void setValue(double val){ _grid->setValueAtIndex(val,index());};

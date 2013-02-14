@@ -35,6 +35,12 @@ GridField<T>::GridField(int xdim,int ydim, int zdim):_xdim(xdim),_ydim(ydim),_zd
     std::fill(m, m+4*4, 0);
     m[0] = 1; m[5] = 1; m[10] = 1; m[15] = 1.0;
     setTransformation(m);
+    
+    
+    
+    int i = indexAt(5, 5, 0);
+    std::cout << i << std::endl;
+    
 }
 
 template<class T>
@@ -43,16 +49,22 @@ GridField<T>::~GridField(){
 }
 
 //Private
+/** Dessa funktioner måste tittas över!
+ indexAt(int i, int j, int k);
+ indexAt(int index,int &i, int &j, int &k);
+*/
 template<class T>
 inline int GridField<T>::indexAt(int i, int j, int k) const{
-    return i+_ydim*j+_xdim*_ydim*k;
+    assert(i < xdim() && i >= 0 && j < ydim() && j >= 0 && k >= 0 && k < zdim());
+    return i+(_ydim)*j+(_xdim)*(_ydim)*k;
 }
 
 template<class T>
 inline void GridField<T>::indexAt(int index,int &i, int &j, int &k) const{
     k = index /(_xdim*_ydim);
-    j = (index-(k*_xdim*_ydim))/(_ydim);
-    i = (index-j*_ydim-k*_xdim*_ydim);
+    j = (index-(k*_xdim*_ydim))/(_xdim);
+    i = (index-j*_xdim-k*_xdim*_ydim);
+    
 }
 
 //Transformera världskoordinater till lokala koordinater
@@ -102,7 +114,11 @@ inline T GridField<T>::valueAtIndex(int i) const{
 
 template<class T>
 inline T GridField<T>::valueAtIndex(int i,int j,int k) const{
-    assert(i < xdim() && i >= 0 && j >= 0 && j < ydim() && k >= 0 && k < zdim() );
+    
+    if (!(i < xdim() && i >= 0 && j >= 0 && j < ydim() && k >= 0 && k < zdim())) {
+        std::cout << i << " " << j << " " << k << std::endl;
+        assert(i < xdim() && i >= 0 && j >= 0 && j < ydim() && k >= 0 && k < zdim() );
+    }
     return valueAtIndex(indexAt(i, j, k));
 }
 
@@ -140,7 +156,7 @@ inline T GridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
 
 template<class T>
 int GridField<T>::cellCount() const{
-    return _xdim*_ydim*_zdim;
+    return (_xdim)*(_ydim)*(_zdim);
 }
 
 template<class T>
@@ -175,7 +191,6 @@ inline int GridField<T>::zdim() const{
 
 template<class T>
 inline void GridField<T>::localToCellCoordinate(int i,int j,int k, double l_x, double l_y,double l_z, double &c_x,double &c_y,double &x_z) const{
-    
     indexAt(localToIndex(l_x,l_y, l_z),i,j,k);
 }
 template<class T>
