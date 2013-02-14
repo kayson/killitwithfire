@@ -52,8 +52,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
     
-    GridField<double> f = GridField<double>(10,10,10);
-    
 	fire = new Fire(new FirePresetsTwoDimension());
 	// Main loop
 	while(running)

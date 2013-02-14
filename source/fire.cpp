@@ -50,6 +50,11 @@ void Fire::advectLevelSet(double duration)
 	preset->advect->advect(u, phi.phi, duration);
 }
 
+CellType Fire::computeCellType(const int i, const int j, const int k) const
+{
+	return IGNITED;
+}
+
 void Fire::runSumulation(){
     
     //Beräkna tidssteget
