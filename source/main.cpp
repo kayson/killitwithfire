@@ -54,21 +54,19 @@ int main(int argc, char *argv[])
 		return 1;
 	}
     
-    GridField<double> f = GridField<double>(5,5,5);
+    GridField<double> f = GridField<double>(10,10,1);
+    
+    int i = 0;
     for (GridFieldIterator<double> iterator = f.iterator(); !iterator.done(); iterator.next()) {
-        iterator.setValue(10);
+        iterator.setValue(++i);
     }
     for (GridFieldIterator<double> iterator = f.iterator(); !iterator.done(); iterator.next()) {
         std::cout << iterator.value() << std::endl;
-        
-
     }
     
     
     double x,y,z;
-    //f.cellToWorld(2, 2, 2, x, y, z);
-    //f.worldToCell(x, y, z, <#double &w_x#>, <#double &w_y#>, <#double &w_z#>)
-    std::cout << x << " " << y << " " << z << std::endl;
+    std::cout << f.valueAtWorld(0.4,0.9,0) << std::endl;
     
     
 	fire = new Fire(new FirePresetsTwoDimension());

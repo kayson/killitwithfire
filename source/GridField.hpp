@@ -9,6 +9,10 @@
 #include "GridField.h"
 #include <algorithm>
 #include "Interpolation.h"
+<<<<<<< HEAD
+=======
+#include <cmath>
+>>>>>>> Småfix
 
 template<class T>
 GridField<T>::GridField():_xdim(1),_ydim(1),_zdim(1){
@@ -18,7 +22,7 @@ GridField<T>::GridField():_xdim(1),_ydim(1),_zdim(1){
     //Använd Enhetsmatris
     double *m = new double[4*4];
     std::fill(m, m+4*4, 0);
-    m[0] = 1.0/((double)_xdim); m[5] = 1.0/((double)_ydim); m[10] = 1.0/((double)_zdim);
+    m[0] = 1; m[5] = 1; m[10] = 1; m[15] = 1.0;
     setTransformation(m);
 }
 
@@ -35,7 +39,7 @@ GridField<T>::GridField(int xdim,int ydim, int zdim):_xdim(xdim),_ydim(ydim),_zd
     //Sätt Enhetsmatris
     double *m = new double[4*4];
     std::fill(m, m+4*4, 0);
-    m[0] = 1.0/((double)_xdim); m[5] = 1.0/((double)_ydim); m[10] = 1.0/((double)_zdim);
+    m[0] = 1; m[5] = 1; m[10] = 1; m[15] = 1.0;
     setTransformation(m);
 }
 >>>>>>> f181c730ef9dc1999648c397eff6bce63743be8d
@@ -70,13 +74,17 @@ void GridField<T>::worldToLocal(const double w_x,const double w_y,const double w
 template<class T>
 int GridField<T>::localToIndex(const double l_x,const double l_y,const double l_z) const{
     //Index
+<<<<<<< HEAD
     return indexAt( floor(l_x/((double)_xdim) + 0.5) , floor(l_y/((double)_ydim) + 0.5) , floor(l_z/((double)_zdim)) + 0.5);
+=======
+    return indexAt( round(l_x*((double)_xdim)) , round(l_y*((double)_ydim)) , round(l_z*((double)_zdim)));
+>>>>>>> Småfix
 }
 
 template<class T>
 int GridField<T>::localToUpperLeftIndex(const double l_x,const double l_y,const double l_z) const{
     //Index
-    return indexAt( floor(l_x/((double)_xdim)) , floor(l_y/((double)_ydim)) , floor(l_z/((double)_zdim)));
+    return indexAt( floor(l_x*((double)_xdim)) , floor(l_y*((double)_ydim)) , floor(l_z*((double)_zdim)));
 }
 
 //Public
@@ -116,7 +124,7 @@ inline T GridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
     double cell_x,cell_y,cell_z;
 
     //Konvertera världskoordinater till cellkoordinater
-    worldToLocal(w_x, w_y, w_z, l_x, l_y, l_z);                      
+    worldToLocal(w_x, w_y, w_z, l_x, l_y, l_z);
     //Konverera lokala koordinater till 1D index för cellen närmast "upp" til vänster
     index = localToUpperLeftIndex(l_x, l_y, l_z);
     //Konvertera 1D index till 3D index (i,j,k)

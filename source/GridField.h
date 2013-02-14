@@ -53,10 +53,10 @@ public:
     int localToUpperLeftIndex(const double l_x,const double l_y,const double l_z) const;
     inline void localToCellCoordinate(int i,int j,int k, double l_x, double l_y,double l_z, double &c_x,double &c_y,double &x_z) const;
 
-    
     //Setter
     inline void setValueAtIndex(T val,int i);
     inline void setValueAtIndex(T val,int i,int j,int k);
+
     
     //Iterator
     GridFieldIterator<T> iterator();
