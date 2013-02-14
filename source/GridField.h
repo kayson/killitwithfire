@@ -7,8 +7,11 @@
 //
 
 #include "Vector3.h"
+#ifdef __APPLE__
+#include "glm.hpp"
+#elif defined _WIN32 || defined _WIN64
 #include <glm/glm.hpp>
-
+#endif
 #ifndef FuidFire_GridField_h
 #define FuidFire_GridField_h
 
@@ -23,8 +26,12 @@ private:
     double *trans,*itrans;
 
 public:
+
+    GridField(int xdim,int ydim, int zdim):_xdim(xdim),_ydim(ydim),_zdim(zdim){ data = new T[xdim*ydim*zdim]; };
+
     GridField();
     GridField(int xdim,int ydim, int zdim);
+
     ~GridField();
 
     void setTransformation(double *m); //4x4 matrix som transformerar cellkoordinater till världskoordinater
@@ -46,10 +53,10 @@ public:
     int localToUpperLeftIndex(const double l_x,const double l_y,const double l_z) const;
     inline void localToCellCoordinate(int i,int j,int k, double l_x, double l_y,double l_z, double &c_x,double &c_y,double &x_z) const;
 
-    
     //Setter
     inline void setValueAtIndex(T val,int i);
     inline void setValueAtIndex(T val,int i,int j,int k);
+
     
     //Iterator
     GridFieldIterator<T> iterator();

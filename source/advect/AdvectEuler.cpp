@@ -27,12 +27,13 @@ double AdvectEuler::evaluate(VelocityField &v, Grid &g, unsigned int i, unsigned
 	
 	Vector3 gradPhi = Gradient::getGradient(g, i, j, k, *discretization);
 
-	//Vector3 normalGrad = Gradient::getGradient(g, i, j, k, *normalDiscretization);
-
-	//Vector3 localUnitNormal = normalGrad / gradPhi.norm();
-
+	Vector3 normalGrad = Gradient::getGradient(g, i, j, k, *normalDiscretization);
+	double l = normalGrad.norm();
 	Vector3 vel = v.getVelocityAtCoordinate(pos)*-1.0;
-	//vel = (vel + localUnitNormal * FirePresets::S) * 1.0;
-
+	if(l != 0)
+	{
+		Vector3 localUnitNormal = normalGrad / l * -1.0;
+		vel = (vel + localUnitNormal * FirePresets::S) * 1.0;
+	}
 	return vel.dot(gradPhi);
 }

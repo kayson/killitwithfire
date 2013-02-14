@@ -7,6 +7,7 @@
 template<class T>
 class Extrapolation{
 public:
+    virtual ~Extrapolation(){};
 	virtual double extrapolate(Grid& g, const int i, const int j, const int k, T &t)=0;
 };
 

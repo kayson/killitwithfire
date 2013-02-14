@@ -1,7 +1,11 @@
 
 #include "fire.h"
 #include "advect/Advect.h"
+<<<<<<< HEAD
+#include "GridField.h"
+=======
 #include "GridField.hpp"
+>>>>>>> f181c730ef9dc1999648c397eff6bce63743be8d
 
 Fire::Fire(FirePresets *p){
     //Presets
@@ -17,6 +21,9 @@ Fire::Fire(FirePresets *p){
 	preset->normalDiscretization->setVectorGrid(u.getCenterVel());
 
     preset->advect->setDiscretization(preset->discretization, preset->normalDiscretization);
+
+	GridField<CellType> *g = new GridField<CellType>(5,1,1);
+
 }
 
 double Fire::computeDT(double currentTime){
