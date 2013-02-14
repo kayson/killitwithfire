@@ -54,7 +54,15 @@ int main(int argc, char *argv[])
 		return 1;
 	}
     
-    GridField<double> f = GridField<double>(10,10,10);
+    GridField<double> f = GridField<double>(3,3,3);
+    for (GridFieldIterator<double> iterator = f.iterator(); !iterator.done(); iterator.next()) {
+        iterator.setValue(10);
+    }
+    for (GridFieldIterator<double> iterator = f.iterator(); !iterator.done(); iterator.next()) {
+        std::cout << iterator.value();
+    }
+    
+    
     
 	fire = new Fire(new FirePresetsTwoDimension());
 	// Main loop

@@ -25,7 +25,7 @@ public:
      => f(t) = f(1.3) =
      */
     
-    inline T operator()(T t,T f1,T f2)const {
+    inline T operator()(double t,T f1,T f2)const {
         return f1+(f2-f1)*t;
     }
 };
@@ -50,7 +50,7 @@ public:
      => f(t) = f(1.3) = 3.222
     */
     
-    inline T operator()(T t,T f1,T f2, T f3,T f4) const{
+    inline T operator()(double t,T f1,T f2, T f3,T f4) const{
         T t2 = t*t; T t3 = t2*t;
         return f1*(-0.5*t+t2-0.5*t3)+f2*(1-5./2.*t2+3./2.*t3)+f3*(0.5*t+2*t2-3./2.*t3)+f4*(-0.5*t2+0.5*t3);
     }
