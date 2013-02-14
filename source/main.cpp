@@ -1,4 +1,4 @@
-#ifdef __APPLE__
+﻿#ifdef __APPLE__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h> // Takes care of everything GL-related
@@ -8,24 +8,19 @@
 #include <stdlib.h>
 #include <iostream>
 
+
+#include "GridField.hpp"
+
 #include "MACGrid.h"
 #include "Grid.h"
-#include "levelset/LevelSet.h"
+
 #include "Input.h"
 #include "Camera.h"
-#include "Vector3.h"
-
 #include "presets/firePresetsTwoDimension.h"
 
-#include "levelset/ImplicitFunctions.h"
-
-#include "Discretization.h"
-#include "CentralDiff.h"
-#include "UpwindDiff.h"
-#include "Divergence.h"
-#include "Gradient.h"
-
 #include "fire.h"
+
+
 
 bool init();
 void showFPS();
@@ -54,9 +49,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-    MACGrid grid = MACGrid(10, 10, 10, 50);
-    Vector3 val = grid.velocityAtWorld(Vector3(50,40,40));
-    std::cout << val << std::endl;
+    
 	fire = new Fire(new FirePresetsTwoDimension());
 	// Main loop
 	while(running)

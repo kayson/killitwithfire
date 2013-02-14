@@ -102,6 +102,7 @@ inline T GridField<T>::valueAtIndex(int i) const{
 
 template<class T>
 inline T GridField<T>::valueAtIndex(int i,int j,int k) const{
+    assert(i < xdim() && i >= 0 && j >= 0 && j < ydim() && k >= 0 && k < zdim() );
     return valueAtIndex(indexAt(i, j, k));
 }
 

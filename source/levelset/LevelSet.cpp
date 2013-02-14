@@ -1,9 +1,12 @@
 #include "LevelSet.h"
+
 #include "../Discretization.h"
 #include "../CentralDiff.h"
 #include "../Gradient.h"
+#include "../Reinitialize.h"
 #include <iostream>
 #include <cmath>
+
 
 #ifdef __APPLE__
 #include "firePresets.h"
@@ -13,12 +16,18 @@
 
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 {
-	for(int i = 0; i < phi.xdim(); i++)
-		for(int j = 0; j < phi.ydim(); j++)
-			for(int k = 0; k < phi.zdim(); k++)
-			{
-				phi.setValueAtIndex(implicitFunction(i, j, k),i,j,k);
-	}
+	for(int i = 0; i < phi.xdim(); i++){
+		for(int j = 0; j < phi.ydim(); j++){
+			for(int k = 0; k < phi.zdim(); k++){
+                phi.setValueAtIndex( implicitFunction(i,j,k),i,j,k);
+                //std::cout << phi.valueAtIndex(i, j, k);
+            }
+        }
+    }
+
+
+    
+    
 }
 void LevelSet::printDistanceField()
 {
@@ -87,8 +96,7 @@ void LevelSet::draw() const
 				{
                     //glColor3f(0,0,-grid[x][y][z]/8.0);
                     glColor3f(0,0,1);
-                
-                    
+                                    
 				}else{
 					//glColor3f(grid[x][y][z]/100.0,0,0);
                     glColor3f(1,0,0);

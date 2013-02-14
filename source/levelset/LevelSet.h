@@ -8,7 +8,10 @@
 class LevelSet
 {
 public:
-	LevelSet(){};
+	LevelSet():phi(1000,1000,1000){
+    
+    
+    };
 	LevelSet(int xDim, int yDim, int zDim):phi(xDim,yDim,zDim){
 		
 	};
@@ -21,7 +24,10 @@ public:
 	double getCurvature(const int i, const int j, const int k);
 	Vector3 getNormal(const int i, const int j, const int k);
 
+	void reinitialize();
+
 	GridField<double> phi; //Signed distance field
+
 private:
 	
 	void (*render)();
