@@ -1,15 +1,16 @@
 #ifndef GRID_H
 #define GRID_H
 
+
 #include "datatype.h"
+#include "helper.h"
+
 #include "Vector3.h"
 #ifdef __APPLE__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
 #endif
-
-
 
 class Grid
 {

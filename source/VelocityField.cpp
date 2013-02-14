@@ -3,7 +3,7 @@
 
 VelocityField::VelocityField()
 {
-    std::cout << "Hej!" << std::endl;
+
 }
 
 VelocityField::VelocityField(const VelocityField &v){
