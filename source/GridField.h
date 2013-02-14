@@ -38,6 +38,11 @@ public:
     inline void worldToCell(int &i,int &j,int &k, double &w_x, double &w_y,double &w_z) const;
     
     //Getter
+    
+    int xdim() const;
+    int ydim() const;
+    int zdim() const;
+
     inline T valueAtIndex(int i) const;
     inline T valueAtIndex(int i,int j,int k) const;
     inline T valueAtWorld(double w_x, double w_y,double w_z) const;
@@ -50,10 +55,11 @@ public:
     int localToUpperLeftIndex(const double l_x,const double l_y,const double l_z) const;
     inline void localToCellCoordinate(int i,int j,int k, double l_x, double l_y,double l_z, double &c_x,double &c_y,double &x_z) const;
 
+    
+    
     //Setter
     inline void setValueAtIndex(T val,int i);
     inline void setValueAtIndex(T val,int i,int j,int k);
-
     
     //Iterator
     GridFieldIterator<T> iterator();

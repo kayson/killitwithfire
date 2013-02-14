@@ -22,7 +22,7 @@ public:
 	double getCurvature(const int i, const int j, const int k);
 	Vector3 getNormal(const int i, const int j, const int k);
 
-	GridField phi; //Signed distance field
+	GridField<double> phi; //Signed distance field
 private:
 	
 	void (*render)();
