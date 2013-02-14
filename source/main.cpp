@@ -9,23 +9,13 @@
 #include <iostream>
 
 #include "GridField.hpp"
-#include "Grid.h"
-#include "levelset/LevelSet.h"
 #include "Input.h"
 #include "Camera.h"
-#include "Vector3.h"
-
 #include "presets/firePresetsTwoDimension.h"
 
-#include "levelset/ImplicitFunctions.h"
-
-#include "Discretization.h"
-#include "CentralDiff.h"
-#include "UpwindDiff.h"
-#include "Divergence.h"
-#include "Gradient.h"
-
 #include "fire.h"
+
+
 
 bool init();
 void showFPS();

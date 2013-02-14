@@ -20,7 +20,7 @@ public:
 	void printDistanceField();
 	double getCurvature(const int i, const int j, const int k);
 	Vector3 getNormal(const int i, const int j, const int k);
-
+	void reinitialize();
 	Grid phi; //Signed distance field
 private:
 	

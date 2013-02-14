@@ -1,9 +1,12 @@
 #include "LevelSet.h"
+
 #include "../Discretization.h"
 #include "../CentralDiff.h"
 #include "../Gradient.h"
+#include "../Reinitialize.h"
 #include <iostream>
 #include <cmath>
+
 
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 {
