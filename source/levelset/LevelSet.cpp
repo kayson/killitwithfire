@@ -94,11 +94,11 @@ void LevelSet::draw() const
 			{
 				if(phi.valueAtIndex(x,y,z) <= 0)
 				{
-                    glColor3f(0,0,-phi.valueAtIndex(x, y, z)/8.0);
+                    glColor3f(0,0,-phi.valueAtIndex(x, y, z)/3.0);
                     //glColor3f(0,0,1);
                                     
 				}else{
-					glColor3f(phi.valueAtIndex(x, y, z)/100.0,0,0);
+					glColor3f(phi.valueAtIndex(x, y, z)/50.0,0,0);
                     //glColor3f(1,0,0);
                 
                 }

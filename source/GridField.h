@@ -90,7 +90,7 @@ public:
     void next(){
         
         if(_i == _grid->cellCount()-1){
-            std::cout << _i << std::endl;
+            //std::cout << _i << std::endl;
             _done = true;
         }
         

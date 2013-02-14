@@ -56,7 +56,7 @@ GridField<T>::~GridField(){
 template<class T>
 inline int GridField<T>::indexAt(int i, int j, int k) const{
     assert(i < xdim() && i >= 0 && j < ydim() && j >= 0 && k >= 0 && k < zdim());
-    return i+(_ydim)*j+(_xdim)*(_ydim)*k;
+    return i+(_xdim)*j+(_xdim)*(_ydim)*k;
 }
 
 template<class T>
@@ -114,7 +114,7 @@ inline T GridField<T>::valueAtIndex(int i) const{
 
 template<class T>
 inline T GridField<T>::valueAtIndex(int i,int j,int k) const{
-    
+
     if (!(i < xdim() && i >= 0 && j >= 0 && j < ydim() && k >= 0 && k < zdim())) {
         std::cout << i << " " << j << " " << k << std::endl;
         assert(i < xdim() && i >= 0 && j >= 0 && j < ydim() && k >= 0 && k < zdim() );
