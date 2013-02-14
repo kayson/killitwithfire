@@ -15,27 +15,27 @@ UpwindDiff::~UpwindDiff()
 	delete ext;
 }
 
-double UpwindDiff::calcDx(Grid &g, const int i, const int j, const int k)
+double UpwindDiff::calcDx(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(i <= 0 || i >= g.getDimX()-1)
+	if(i <= 0 || i >= g.xdim()-1)
 		return ext->extrapolate(g,i,j,k,*this);	// Extrapolera
 	if((*_w)(i, j, k).x > 0)
 		return (g(i, j, k) - g(i-1, j, k))/FirePresets::dx;
 	else
 		return (g(i+1, j, k) - g(i, j, k))/FirePresets::dx;
 }
-double UpwindDiff::calcDy(Grid &g, const int i, const int j, const int k)
+double UpwindDiff::calcDy(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(j <= 0 || j >= g.getDimY()-1)
+	if(j <= 0 || j >= g.ydim()-1)
 		return ext->extrapolate(g,i,j,k,*this);	// Extrapolera
 	if((*_w)(i, j, k).y > 0)
 		return (g(i, j, k) - g(i, j-1, k))/FirePresets::dx;
 	else
 		return (g(i, j+1, k) - g(i, j, k))/FirePresets::dx;
 }
-double UpwindDiff::calcDz(Grid &g, const int i, const int j, const int k)
+double UpwindDiff::calcDz(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(k <= 0 || k >= g.getDimZ()-1)
+	if(k <= 0 || k >= g.zdim()-1)
 		return ext->extrapolate(g,i,j,k,*this);	// Extrapolera
 	if((*_w)(i, j, k).z > 0)
 		return (g(i, j, k) - g(i, j, k-1))/FirePresets::dx;
@@ -43,16 +43,16 @@ double UpwindDiff::calcDz(Grid &g, const int i, const int j, const int k)
 		return (g(i, j, k+1) - g(i, j, k))/FirePresets::dx;
 }
 
-double UpwindDiff::calcD2x(Grid &g, const int i, const int j, const int k)
+double UpwindDiff::calcD2x(GridField<double> &g, const int i, const int j, const int k)
 {return 0;}
-double UpwindDiff::calcD2y(Grid &g, const int i, const int j, const int k)
+double UpwindDiff::calcD2y(GridField<double> &g, const int i, const int j, const int k)
 {return 0;}
-double UpwindDiff::calcD2z(Grid &g, const int i, const int j, const int k)
+double UpwindDiff::calcD2z(GridField<double> &g, const int i, const int j, const int k)
 {return 0;}
 
-double UpwindDiff::calcDyz(Grid &g, const int i, const int j, const int k)
+double UpwindDiff::calcDyz(GridField<double> &g, const int i, const int j, const int k)
 {return 0;}
-double UpwindDiff::calcDxz(Grid &g, const int i, const int j, const int k)
+double UpwindDiff::calcDxz(GridField<double> &g, const int i, const int j, const int k)
 {return 0;}
-double UpwindDiff::calcDxy(Grid &g, const int i, const int j, const int k)
+double UpwindDiff::calcDxy(GridField<double> &g, const int i, const int j, const int k)
 {return 0;}

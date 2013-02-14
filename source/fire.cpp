@@ -4,14 +4,14 @@
 
 #include "GridField.hpp"
 
-Fire::Fire(FirePresets *p){
+Fire::Fire(FirePresets *p):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z){
     //Presets
     preset = p;
 	//GridField<double> g(1,1,1);
 	//Grid
 	u = VelocityField(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
 
-	phi = *(new LevelSet(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z));
+	
 	phi.fillLevelSet(preset->implicitFunction);
 	
 	preset->discretization->setVectorGrid(u.getCenterVel());

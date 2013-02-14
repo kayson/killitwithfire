@@ -2,9 +2,9 @@
 
 Gradient::Gradient(){}
 
-Vector3 Gradient::getGradient(Grid &g, const int i, const int j, const int k, Discretization &d)
+Vector3 Gradient::getGradient(GridField<double> &g, const int i, const int j, const int k, Discretization &d)
 {
-	if(g.getDimZ() != 1)
+	if(g.zdim() != 1)
 		return Vector3(d.calcDx(g,i,j,k), d.calcDy(g,i,j,k), d.calcDz(g,i,j,k));
 	return Vector3(d.calcDx(g,i,j,k), d.calcDy(g,i,j,k), 0.0);
 }

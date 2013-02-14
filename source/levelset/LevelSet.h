@@ -9,8 +9,8 @@ class LevelSet
 {
 public:
 	LevelSet(){};
-	LevelSet(int xDim, int yDim, int zDim){
-		phi = *(new GridField(xDim, yDim, zDim));
+	LevelSet(int xDim, int yDim, int zDim):phi(xDim,yDim,zDim){
+		
 	};
 	~LevelSet(){};
 	void fillLevelSet(double (*implicitFunction)(int x, int y, int z));

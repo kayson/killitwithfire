@@ -8,6 +8,8 @@
 
 #include "GridField.h"
 #include "Interpolation.h"
+#ifndef FuidFire_GridField_hpp
+#define FuidFire_GridField_hpp
 
 template<class T>
 GridField<T>::GridField():_xdim(1),_ydim(1),_zdim(1){
@@ -194,6 +196,6 @@ template<class T>
 GridFieldIterator<T> GridField<T>::iterator(){
     return GridFieldIterator<T>(this);
 }
-
+#endif //LEVELSET_HPP
 
 
