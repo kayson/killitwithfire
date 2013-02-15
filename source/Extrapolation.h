@@ -1,7 +1,9 @@
+// Johan Noren
+// Abstrakt bas-klass for olika extrapolerings-implementeringar
+
 #ifndef EXTRAPOLATION_H
 #define EXTRAPOLATION_H
 
-//#include "Grid.h"
 #include "Discretization.h"
 
 template<class T>

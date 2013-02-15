@@ -1,6 +1,7 @@
 /*
 	Bas-klass för olika diskretiseringsmetoder. Virtuella metoder
 	skall överlagras av sub-klasser
+	Johan Noren
 */
 
 #ifndef DISCRETIZATION_H

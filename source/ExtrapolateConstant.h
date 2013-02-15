@@ -1,3 +1,8 @@
+// Johan Noren
+// Denna class genomfor konstant extrapolering. Om en operator forsoker
+// hamta data fran utanfor griden extrapoleras vardet till den
+// narmaste grid-cellen.
+
 #ifndef EXTRAPOLATECONSTANT_H
 #define EXTRAPOLATECONSTANT_H
 

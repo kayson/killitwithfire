@@ -1,3 +1,4 @@
+// Johan Noren
 #ifndef CENTRALDIFF_H
 #define CENTRALDIFF_H
 #include "Discretization.h"

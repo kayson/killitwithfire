@@ -2,7 +2,8 @@
 #include "fire.h"
 #include "ExtrapolateConstant.h"
 /*
-	Beräknar andra ordningens approx. av första-derivatan eller
+	Johan Noren
+	Beräknar andra ordningens approx. av första-derivatan resp.
 	andra-derivatan i rummet med central differentiation. Index
 	är eg. halva index för staggered MAC-grid. Konstant extrapolering
 	görs för kant-celler.
@@ -19,28 +20,28 @@ CentralDiff::~CentralDiff()
 
 double CentralDiff::calcDx(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(i <= 0)	// Konstant extrapolering
-		return ext->extrapolate(g,i,j,k,*this);
-	if(i >= g.xdim()-1)	// Konstant extrapolering
-		return ext->extrapolate(g,i,j,k,*this);
+	if(i <= 0)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	if(i >= g.xdim()-1)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
 	else
 		return (double)(g(i+1, j, k) - g(i-1, j, k))/(FirePresets::dx*2.0);
 }
 double CentralDiff::calcDy(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(j <= 0)	// Konstant extrapolering
-		return ext->extrapolate(g,i,j,k,*this);
-	if(j >= g.ydim()-1)	// Konstant extrapolering
-		return ext->extrapolate(g,i,j,k,*this);
+	if(j <= 0)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	if(j >= g.ydim()-1)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
 	else
 		return (double)(g(i, j+1, k) - g(i, j-1, k))/(FirePresets::dx*2.0);
 }
 double CentralDiff::calcDz(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(k <= 0)	// Konstant extrapolering
-		ext->extrapolate(g,i,j,k,*this);
-	if(k >= g.zdim()-1)	// Konstant extrapolering
-		ext->extrapolate(g,i,j,k,*this);
+	if(k <= 0)
+		ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	if(k >= g.zdim()-1)
+		ext->extrapolate(g,i,j,k,*this); // Extrapolering
 	else
 		return (double)(g(i, j, k+1) - g(i, j, k-1))/(FirePresets::dx*2.0);
 }

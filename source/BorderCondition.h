@@ -1,3 +1,4 @@
+// Johan Noren
 #ifndef BORDERCONDITION_H
 #define BORDERCONDITION_H
 #include "GridField.hpp"
