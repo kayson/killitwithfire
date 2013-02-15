@@ -80,7 +80,7 @@ public:
 
     //Iterator
     const GridFieldIterator<T> iterator() const;
-
+    
     friend class GridFieldIterator<T>;
 };
 /**
@@ -101,13 +101,8 @@ public:
     ~GridFieldIterator(){ _grid = NULL; };
     
     void next(){
-        if(_i == _grid->cellCount()-1){
-            _done = true;
-        }
-        
-        if (!done()) {
-            _i++;
-        }
+        if(_i == _grid->cellCount()-1) _done = true;
+        if (!done()) _i++;
     };
     
     int index() const{ return _i;};
@@ -117,7 +112,6 @@ public:
 
     friend class GridField<T>;
 };
-
 
 
 #endif

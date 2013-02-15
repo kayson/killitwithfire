@@ -38,21 +38,26 @@ MACGrid::MACGrid(int x,int y,int z, double dx):_u(x+1,y,z),_v(x,y+1,z),_w(x,y,z+
     for (GridFieldIterator<double> iterator = _u.iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        _u.setValueAtIndex(0.4, iterator.index());
+        _u.setValueAtIndex(0.2, iterator.index());
     }
     
     //Fill V
     for (GridFieldIterator<double> iterator = _v.iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        _v.setValueAtIndex(0.4, iterator.index());
+        _v.setValueAtIndex(0.2, iterator.index());
     }
     
     //Fill W
     for (GridFieldIterator<double> iterator = _w.iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        _w.setValueAtIndex(0.4, iterator.index());
+        _w.setValueAtIndex(0.2, iterator.index());
+    }
+    try {
+        _u.valueAtIndex(100, 100, 100);
+    } catch (std::runtime_error e) {
+        std::cout << e.what() << std::endl;
     }
 }
 
@@ -103,7 +108,7 @@ void MACGrid::draw(){
         _u.indexToWorld(i, j, k, x, y, z);
         double val = _u.valueAtIndex(i, j, k);
         
-        glColor3f(1,0,0);
+        glColor3f(1,0,1);
         glBegin(GL_LINES);
         glVertex3f(x, y, z);
         glVertex3f(x + val, y, z);
@@ -137,6 +142,8 @@ void MACGrid::draw(){
         glVertex3f(x, y, z+val);
         glEnd();
     }
+    
+    
 }
 
 
