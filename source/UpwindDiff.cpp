@@ -56,3 +56,15 @@ double UpwindDiff::calcDxz(GridField<double> &g, const int i, const int j, const
 {return 0;}
 double UpwindDiff::calcDxy(GridField<double> &g, const int i, const int j, const int k)
 {return 0;}
+
+Vector3 UpwindDiff::calcDx(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+Vector3 UpwindDiff::calcDy(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+Vector3 UpwindDiff::calcDz(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+																		
+Vector3 UpwindDiff::calcD2x(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+Vector3 UpwindDiff::calcD2y(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+Vector3 UpwindDiff::calcD2z(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+																	
+Vector3 UpwindDiff::calcDyz(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+Vector3 UpwindDiff::calcDxz(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+Vector3 UpwindDiff::calcDxy(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }

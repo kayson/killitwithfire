@@ -20,5 +20,17 @@ public:
 	double calcDyz(GridField<double> &g, const int i, const int j, const int k);
 	double calcDxz(GridField<double> &g, const int i, const int j, const int k);
 	double calcDxy(GridField<double> &g, const int i, const int j, const int k);
+
+	Vector3 calcDx(GridField<Vector3> &g, const int i, const int j, const int k);
+	Vector3 calcDy(GridField<Vector3> &g, const int i, const int j, const int k);
+	Vector3 calcDz(GridField<Vector3> &g, const int i, const int j, const int k);
+
+	Vector3 calcD2x(GridField<Vector3> &g, const int i, const int j, const int k);
+	Vector3 calcD2y(GridField<Vector3> &g, const int i, const int j, const int k);
+	Vector3 calcD2z(GridField<Vector3> &g, const int i, const int j, const int k);
+
+	Vector3 calcDyz(GridField<Vector3> &g, const int i, const int j, const int k);
+	Vector3 calcDxz(GridField<Vector3> &g, const int i, const int j, const int k);
+	Vector3 calcDxy(GridField<Vector3> &g, const int i, const int j, const int k);
 };
 #endif

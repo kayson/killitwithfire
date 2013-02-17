@@ -86,3 +86,15 @@ double CentralDiff::calcDxy(GridField<double> &g, const int i, const int j, cons
 {
 	return ( g(i+1,j+1,k) - g(i+1,j-1,k) + g(i-1,j-1,k) - g(i-1,j+1,k) ) / (4*FirePresets::dx*FirePresets::dx);
 }
+
+Vector3 CentralDiff::calcDx(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+Vector3 CentralDiff::calcDy(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+Vector3 CentralDiff::calcDz(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+																	
+Vector3 CentralDiff::calcD2x(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+Vector3 CentralDiff::calcD2y(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+Vector3 CentralDiff::calcD2z(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+																	
+Vector3 CentralDiff::calcDyz(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+Vector3 CentralDiff::calcDxz(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
+Vector3 CentralDiff::calcDxy(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }

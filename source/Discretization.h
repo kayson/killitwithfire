@@ -32,18 +32,18 @@ public:
 	virtual double calcDyz(GridField<double> &g, const int i, const int j, const int k)=0;
 	virtual double calcDxz(GridField<double> &g, const int i, const int j, const int k)=0;
 	virtual double calcDxy(GridField<double> &g, const int i, const int j, const int k)=0;
-	/*
-	virtual double calcDx(GridField<Vector3> &g, const int i, const int j, const int k)=0;
-	virtual double calcDy(GridField<Vector3> &g, const int i, const int j, const int k)=0;
-	virtual double calcDz(GridField<Vector3> &g, const int i, const int j, const int k)=0;
-
-	virtual double calcD2x(GridField<Vector3> &g, const int i, const int j, const int k)=0;
-	virtual double calcD2y(GridField<Vector3> &g, const int i, const int j, const int k)=0;
-	virtual double calcD2z(GridField<Vector3> &g, const int i, const int j, const int k)=0;
-
-	virtual double calcDyz(GridField<Vector3> &g, const int i, const int j, const int k)=0;
-	virtual double calcDxz(GridField<Vector3> &g, const int i, const int j, const int k)=0;
-	virtual double calcDxy(GridField<Vector3> &g, const int i, const int j, const int k)=0;*/
+	
+	virtual  Vector3 calcDx(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+	virtual  Vector3 calcDy(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+	virtual  Vector3 calcDz(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+			 
+	virtual  Vector3 calcD2x(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+	virtual  Vector3 calcD2y(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+	virtual  Vector3 calcD2z(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+			 
+	virtual  Vector3 calcDyz(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+	virtual  Vector3 calcDxz(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+	virtual  Vector3 calcDxy(GridField<Vector3> &g, const int i, const int j, const int k)=0;
 
 	virtual void setVectorGrid(VectorGrid *w){_w = w;};
 
