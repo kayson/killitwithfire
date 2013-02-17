@@ -205,33 +205,17 @@ void Vector3::operator*= (const Vector3 &v){
     z *=v.z;
 }
 
-void Vector3::operator*= (const double &v){
-    
-    x *=v;
-    y *=v;
-    z *=v;
-}
-
-Vector3 Vector3::operator+ (const Vector3 &v){
+Vector3 Vector3::operator+ (const Vector3 &v) const {
     
     return Vector3(x+v.x,y+v.y,z+v.z);
 }
 
-Vector3 Vector3::operator- (const Vector3 &v){
+Vector3 Vector3::operator- (const Vector3 &v) const {
     
     return Vector3(x-v.x,y-v.y,z-v.z);
 }
 
-Vector3 Vector3::operator* (const double &v){
-    
-    return Vector3(x*v,y*v,z*v);
-}
-Vector3 Vector3::operator/ (const double &v){
-    if(v == 0)
-		throw;
-    return Vector3(x/v,y/v,z/v);
-}
-Vector3 Vector3::operator* (const Vector3 &v){
+Vector3 Vector3::operator* (const Vector3 &v) const {
     
     return Vector3(x*v.x,y*v.y,z*v.z);
 }
@@ -243,6 +227,48 @@ void Vector3::description(){
     
 }
 
+void Vector3::operator*= (const double f){
+    
+    x *= f;
+    y *= f;
+    z *= f;
+}
+
+Vector3 Vector3::operator+ (const double f) const
+{
+	return Vector3(x+f,y+f,z+f);
+}
+
+Vector3 Vector3::operator- (const double f) const
+{
+	return Vector3(x-f,y-f,z-f);
+}
+
+Vector3 Vector3::operator* (const double f) const
+{
+	return Vector3(x*f,y*f,z*f);
+}
+
+Vector3 Vector3::operator/ (const double f) const {
+    if(f == 0)
+		throw;
+    return Vector3(x/f,y/f,z/f);
+}
+
+Vector3 operator+ (const double f, const Vector3 &v)
+{
+	return v+f;
+}
+
+Vector3 operator- (const double f, const Vector3 &v)
+{
+	return v-f;
+}
+
+Vector3 operator* (const double f, const Vector3 &v)
+{
+	return v;
+}
 
 
 

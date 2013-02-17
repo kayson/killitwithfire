@@ -30,13 +30,20 @@ public:
     void operator+= (const Vector3 &v);
     void operator-= (const Vector3 &v);
     void operator*= (const Vector3 &v);
-    void operator*= (const double &v);
-    Vector3 operator* (const double &v);
-    Vector3 operator/ (const double &v);
-    Vector3 operator* (const Vector3 &v);
-    Vector3 operator+ (const Vector3 &v);
-    Vector3 operator- (const Vector3 &v);
-
+    Vector3 operator* (const Vector3 &v) const;
+    Vector3 operator+ (const Vector3 &v) const;
+    Vector3 operator- (const Vector3 &v) const;
+	
+	void operator*= (const double f);
+	Vector3 operator* (const double f) const;
+	Vector3 operator/ (const double f) const;
+    Vector3 operator+ (const double f) const;
+    Vector3 operator- (const double f) const;
+	
+	friend Vector3 operator+ (const double f, const Vector3 &v);
+	friend Vector3 operator- (const double f, const Vector3 &v);
+	friend Vector3 operator* (const double f, const Vector3 &v);
+	
 	friend std::ostream& operator<<(std::ostream& out, Vector3& v )
 	{
 		out << v.x << " " << v.y << " " << v.z << std::endl;

@@ -7,6 +7,8 @@
 	andra-derivatan i rummet med central differentiation. Index
 	är eg. halva index för staggered MAC-grid. Konstant extrapolering
 	görs för kant-celler.
+
+	//Egentligen en Colocated
 */
 CentralDiff::CentralDiff()
 {
@@ -86,6 +88,8 @@ double CentralDiff::calcDxy(GridField<double> &g, const int i, const int j, cons
 {
 	return ( g(i+1,j+1,k) - g(i+1,j-1,k) + g(i-1,j-1,k) - g(i-1,j+1,k) ) / (4*FirePresets::dx*FirePresets::dx);
 }
+
+// Samma funktioner men med Vector3
 
 Vector3 CentralDiff::calcDx(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
 Vector3 CentralDiff::calcDy(GridField<Vector3> &g, const int i, const int j, const int k)	{ return Vector3(); }
