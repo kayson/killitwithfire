@@ -93,9 +93,10 @@ template<class T>
 inline T GridField<T>::valueAtIndex(int i,int j,int k) const{
     
     if (!(i < xdim() && i >= 0 && j >= 0 && j < ydim() && k >= 0 && k < zdim())) {
-        std::string s = "Index ("+ std::to_string(i) + "," + std::to_string(j) + ","+ std::to_string(k)+") out of bounds [0..";
-        s += std::to_string(xdim()) + "],[0.." + std::to_string(ydim()) + "],[0.." + std::to_string(zdim()) + "]";
-        throw std::runtime_error(s);
+		//std::string s = "Index ("+ std::to_string(i) + "," + std::to_string(j) + ","+ std::to_string(k)+") out of bounds [0..";
+        //s += std::to_string(xdim()) + "],[0.." + std::to_string(ydim()) + "],[0.." + std::to_string(zdim()) + "]";
+        std::string s = "Out of bounds";
+		throw std::runtime_error(s);
     }
     return valueAtIndex(indexAt(i, j, k));
 }

@@ -22,7 +22,7 @@ public:
     MACGrid(const MACGrid &m);
     ~MACGrid(){};
 
-    void operator=(const MACGrid &m) = delete;
+    //void operator=(const MACGrid &m) = delete;
     Vector3 velocityAtWorld(const Vector3 &world) const;
     double velocityAtFace(const int i,const int j,const int k, DirectionEnums d) const;
 

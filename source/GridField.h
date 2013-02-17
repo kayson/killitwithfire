@@ -31,7 +31,7 @@ public:
     //Konstruktor/Destruktor
     GridField(int xdim,int ydim, int zdim);
     GridField(const GridField<T> &g);
-    void operator=(const GridField<T> &g) = delete;
+    //void operator=(const GridField<T> &g) = delete; Kompilerar ej //Axel c++11?
 
     void setTransformation(double *m); //4x4 matrix som transformerar cellkoordinater till världskoordinater
 

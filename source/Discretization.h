@@ -10,6 +10,7 @@
 #include "GridField.hpp"
 #include "datatype.h"
 #include "VectorGrid.h"
+#include "Vector3.h"
 #include "Extrapolation.h"
 
 class Discretization{
@@ -31,6 +32,19 @@ public:
 	virtual double calcDyz(GridField<double> &g, const int i, const int j, const int k)=0;
 	virtual double calcDxz(GridField<double> &g, const int i, const int j, const int k)=0;
 	virtual double calcDxy(GridField<double> &g, const int i, const int j, const int k)=0;
+	/*
+	virtual double calcDx(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+	virtual double calcDy(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+	virtual double calcDz(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+
+	virtual double calcD2x(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+	virtual double calcD2y(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+	virtual double calcD2z(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+
+	virtual double calcDyz(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+	virtual double calcDxz(GridField<Vector3> &g, const int i, const int j, const int k)=0;
+	virtual double calcDxy(GridField<Vector3> &g, const int i, const int j, const int k)=0;*/
+
 	virtual void setVectorGrid(VectorGrid *w){_w = w;};
 
 	Extrapolation<Discretization> *ext;

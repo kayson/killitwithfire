@@ -7,10 +7,64 @@
 //
 
 #include "MACGrid.h"
+#ifdef __APPLE__
 #include "glfw.h"
-
+#elif defined _WIN32 || defined _WIN64
+#include <GL/glfw.h> // Takes care of everything GL-related
+#include <GL/freeglut.h> // Takes care of everything GL-related
+#endif
+/*
 MACGrid::MACGrid():MACGrid(10,10,10,50){
     
+}
+*/
+MACGrid::MACGrid() : _u(10+1,10,10), _v(10,10+1,10), _w(10,10,10+1)
+{
+	//Transformera
+	double dx = 50;
+    double *u_matrix = new double[16];
+    std::fill(u_matrix, u_matrix+16, 0);
+    u_matrix[0] = dx; u_matrix[5] = dx; u_matrix[10] = dx; u_matrix[7] = dx*0.5; u_matrix[11] = -2*dx;  u_matrix[15] = 1;
+    //u_matrix[0] = dx*cos(0.4); u_matrix[1] = -sin(0.4)*dx; u_matrix[4] = sin(0.4)*dx; u_matrix[5] = cos(0.4)*dx; u_matrix[10] = dx; u_matrix[7] = dx*0.5; u_matrix[15] = 1;
+
+    double *v_matrix = new double[16];
+    std::fill(v_matrix, v_matrix+16, 0);
+    v_matrix[0] = dx; v_matrix[5] = dx; v_matrix[10] = dx; v_matrix[3] = dx*0.5; v_matrix[11] = -2*dx; v_matrix[15] = 1;
+    
+    double *w_matrix = new double[16];
+    std::fill(w_matrix, w_matrix+16, 0);
+    w_matrix[0] = dx; w_matrix[5] = dx; w_matrix[10] = dx; w_matrix[3] = dx*0.5; w_matrix[7] = dx*0.5; w_matrix[11] = -2*dx; w_matrix[15] = 1;
+
+    
+    _u.setTransformation(u_matrix);
+    _v.setTransformation(v_matrix);
+    _w.setTransformation(w_matrix);
+    
+    //Fill U
+    for (GridFieldIterator<double> iterator = _u.iterator(); !iterator.done(); iterator.next()) {
+        int i,j,k;
+        iterator.index(i, j, k);
+        _u.setValueAtIndex(0.2, iterator.index());
+    }
+    
+    //Fill V
+    for (GridFieldIterator<double> iterator = _v.iterator(); !iterator.done(); iterator.next()) {
+        int i,j,k;
+        iterator.index(i, j, k);
+        _v.setValueAtIndex(0.2, iterator.index());
+    }
+    
+    //Fill W
+    for (GridFieldIterator<double> iterator = _w.iterator(); !iterator.done(); iterator.next()) {
+        int i,j,k;
+        iterator.index(i, j, k);
+        _w.setValueAtIndex(0.2, iterator.index());
+    }
+    try {
+        _u.valueAtIndex(100, 100, 100);
+    } catch (std::runtime_error e) {
+        std::cout << e.what() << std::endl;
+    }
 }
 
 MACGrid::MACGrid(int x,int y,int z, double dx):_u(x+1,y,z),_v(x,y+1,z),_w(x,y,z+1){
