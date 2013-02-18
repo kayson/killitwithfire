@@ -32,10 +32,11 @@ private:
 
 };
 
-const int FirePresets::GRID_DIM_X = 5*25;
-const int FirePresets::GRID_DIM_Y = 3*25;
+const int FirePresets::GRID_DIM_X = 45;
+const int FirePresets::GRID_DIM_Y = 45;
 const int FirePresets::GRID_DIM_Z = 1;
-const double FirePresets::dt = 1./200.;
+const double FirePresets::GRID_SIZE = 15;
+const double FirePresets::dt = 1./20.;
 const double FirePresets::dx = 1./8.;
 const double FirePresets::CFL_NUMBER = .2;
 const double FirePresets::S = .5;

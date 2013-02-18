@@ -6,6 +6,9 @@
 //  Copyright (c) 2013 Johannes Deligiannis. All rights reserved.
 //
 
+
+
+
 #include "Vector3.h"
 #include "GridMapping.h"
 
@@ -33,6 +36,7 @@ public:
     //Konstruktor/Destruktor
     GridField(const GridMapping &m);
     GridField(int xdim,int ydim, int zdim);
+    GridField(int xdim,int ydim, int zdim, double size);
     GridField(const GridField<T> &g);
     GridField<T>& operator=(const GridField<T> &g);
 
