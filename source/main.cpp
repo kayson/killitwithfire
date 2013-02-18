@@ -44,7 +44,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	
+    unsigned int t = (unsigned int)time(NULL);
+    srand(t);
 
 	fire = new Fire(new FirePresetsTwoDimension());
 	// Main loop

@@ -24,6 +24,7 @@ private:
     
     GridField<bool> *_cacheFlag;
     GridField<Vector3> *_cache;
+    
 public:
     GridField<double> *_center;
 private:

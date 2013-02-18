@@ -10,7 +10,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
     preset = pre;
 
     
-    u.fillVelocity(Vector3(0.1,0.0,0));
+    //u.fillVelocity(Vector3(0.1,0.0,0));
 	phi.fillLevelSet(preset->implicitFunction);
 	
 	//preset->discretization->setVectorGrid(u.getCenterVel());
@@ -199,10 +199,11 @@ void Fire::runSimulation(){
 		advectLevelSet(preset->dt);
 
 		currentTime += dt;
-	}
+    }
+    u.advect(preset->dt);
 
 	computeCellTypes(); //Beräkna om vad för typ voxlarna är
-
+    
     //Externa krafter  
 		//preset->externalForce->addForce(grid);
     
