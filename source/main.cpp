@@ -1,6 +1,7 @@
 #ifdef __APPLE__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
+#include <time.h>
 #include <GL/glfw.h> // Takes care of everything GL-related
 #include <GL/freeglut.h> // Takes care of everything GL-related
 #endif
