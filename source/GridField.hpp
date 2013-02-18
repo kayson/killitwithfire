@@ -187,6 +187,9 @@ void GridField<T>::setAll(T val){
 template<class T>
 void GridField<T>::setValueAtIndex(T val,int i,int j,int k){
     int index = mapping.indexAt(i, j, k);
+    /*if (typeid(T) == typeid(bool) && i == 2 && j == 44 && k == 0) {
+        std::cout << cellCount() << std::endl;
+    }*/
     _data[index] = val;
 }
 
