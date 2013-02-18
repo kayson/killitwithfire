@@ -79,7 +79,7 @@ CellType Fire::getCellType(const int i, const int j, const int k)
 		return IGNITED;
 }
 int count = 0;
-void Fire::runSumulation(){
+void Fire::runSimulation(){
     
     //Beräkna tidssteget
 	

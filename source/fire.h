@@ -27,7 +27,7 @@ public:
 	Fire(FirePresets *preset);
 	~Fire();
 
-    void runSumulation();
+    void runSimulation();
 
 	void drawCenterVelocities();
 	void draw();

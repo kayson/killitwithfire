@@ -3,6 +3,7 @@
 #include "../presets/firePresets.h"
 #include "../Gradient.h"
 
+
 void AdvectEuler::advect(VelocityField &v, GridField<double> *g, GridField<double> *ng, double dt){
     for(int i = 0; i < g->xdim(); i++)
 	{
@@ -21,7 +22,7 @@ void AdvectEuler::advect(VelocityField &v, GridField<double> *g, GridField<doubl
 	}
 }
 
-double AdvectEuler::evaluate(VelocityField &v, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k){
+double AdvectEuler::evaluate(VelocityField &u, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k){
 	Vector3 pos = Vector3(i,j,k);
 	double xv, yv, zv;
 	
@@ -29,7 +30,8 @@ double AdvectEuler::evaluate(VelocityField &v, GridField<double> &g, unsigned in
 
 	Vector3 normalGrad = Gradient::getGradient(g, i, j, k, *normalDiscretization);
 	
-	Vector3 vel = v.getVelocityAtCoordinate(pos) * -1.0;
+
+	Vector3 vel = u.getVelocityAtCoordinate(pos)*-1.0;
 	/*
 	double l = normalGrad.norm();
 	if(l != 0)
