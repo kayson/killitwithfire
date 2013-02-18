@@ -54,7 +54,7 @@ public:
     void setAll(T val);
     void setValueAtIndex(T val,int i);
     void setValueAtIndex(T val,int i,int j,int k);
-    
+
     //Operatorer
     T operator()(int i, int j, int k) const;
 
