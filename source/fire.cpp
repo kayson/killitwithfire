@@ -56,7 +56,7 @@ void Fire::project(double dt)
 		for(int j = 0; j < phi.phi->ydim(); j ++)
 			for(int k = 0; k < phi.phi->zdim(); k ++)
 			{
-				if(getCellType(i,j,k) == BLUECORE && getCellType(i,j,k) == IGNITED)
+				if(getCellType(i,j,k) == BLUECORE || getCellType(i,j,k) == IGNITED)
 					rhs->setValueAtIndex(
 					(u.valueAtFace(i,j,k,RIGHT) - u.valueAtFace(i,j,k,LEFT) +
 					u.valueAtFace(i,j,k,UP) - u.valueAtFace(i,j,k,DOWN) +
