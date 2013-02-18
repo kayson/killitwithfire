@@ -67,7 +67,14 @@ void Fire::project(double dt)
 
 
 	// A
-			
+	for(int i = 0; i<phi.phi->xdim(); i++){
+		for(int j = 0; i<phi.phi->ydim(); j++){
+			for(int k = 0; k<phi.phi->zdim(); k++){
+				if(getCellType(i,j,k) == BLUECORE) // om bränsle
+				scale = dt/(preset->dx*preset->dx*preset->rhof);
+			}
+		}
+	}
 
 	// räkna fram nya p mha. A och b
 
@@ -291,4 +298,5 @@ void Fire::draw()
 
 Fire::~Fire(){
     delete preset;
+	delete A;
 }
