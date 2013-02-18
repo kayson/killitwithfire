@@ -127,6 +127,7 @@ CellType Fire::getCellType(const int i, const int j, const int k)
 	else 
 		return IGNITED;
 }
+
 int count = 0;
 void Fire::runSimulation(){
     

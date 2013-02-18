@@ -35,6 +35,7 @@ void GLFWCALL Camera::reshape( int width, int height )
         gluOrtho2D(-2.0f, 20.0f, -2.0f, 20.0f);
         glMatrixMode( GL_MODELVIEW );
         glLoadIdentity();
+
     }else{
         // Select and setup the projection matrix.
         glMatrixMode(GL_PROJECTION); // "We want to edit the projection matrix"
@@ -46,8 +47,8 @@ void GLFWCALL Camera::reshape( int width, int height )
         glMatrixMode( GL_MODELVIEW ); // "We want to edit the modelview matrix"
         glLoadIdentity(); // Reset the matrix to identity
         // Look from 0,-5,0 towards 0,0,0 with Z as "up" in the image
-        
-        /*gluLookAt( 7.5f, 0.0, 7.5f,    // Eye position
+        /*
+        gluLookAt( 7.5f, 0.0, 7.5f,    // Eye position
                       0.0, 0.0, 0.0,   // View point
                     0.0f, 1.0f, 0.0f );  // Up vector
          */
