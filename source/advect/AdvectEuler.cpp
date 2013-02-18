@@ -21,8 +21,6 @@ void AdvectEuler::advect(MACGrid &u, GridField<double> *g,GridField<double> *ng,
 			}
 		}
 	}
-
-    
 }
 
 double AdvectEuler::evaluate(MACGrid &u, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k){

@@ -49,49 +49,39 @@ void Fire::project(double dt)
 {
 	double scale = 1 / preset->dx;
 
-
 	// b (rhs)
+	// sid. 45, Figure 4.2 (Bridson)
 	for(int i = 0; i < phi.phi->xdim(); i ++)
 		for(int j = 0; j < phi.phi->ydim(); j ++)
 			for(int k = 0; k < phi.phi->zdim(); k ++)
 			{
-				if(getCellType(i,j,k) == BLUECORE)
-					rhs->setValueAtIndex(-scale,i,j,k);
-					/* -scale * (u(i+1,j,k)-u(i,j,k)
-					+v(i,j+1,k)-v(i,j,k)
-					+w(i,j,k+1)-w(i,j,k));*/
+				if(getCellType(i,j,k) == BLUECORE && getCellType(i,j,k) == IGNITED)
+					rhs->setValueAtIndex(
+					(u.valueAtFace(i,j,k,RIGHT) - u.valueAtFace(i,j,k,LEFT) +
+					u.valueAtFace(i,j,k,UP) - u.valueAtFace(i,j,k,DOWN) +
+					u.valueAtFace(i,j,k,FORWARD) - u.valueAtFace(i,j,k,BACKWARD))
+					,i,j,k);
 			}
 
 
 	// A
 
-	// räkna fram p med A och b
+	// räkna fram nya p mha. A och b
 
-	// uppdatera u^(n+1) med nya p
+	// räkna fram u^(n+1) med nya p, 
+	// sid. 41, Figure 4.1 (Bridson)
 	for(int i = 0; i < phi.phi->xdim(); i ++)
 		for(int j = 0; j < phi.phi->ydim(); j ++)
 			for(int k = 0; k < phi.phi->zdim(); k ++)
 			{
-				if(getCellType(i,j,k) == BLUECORE)
+				if(getCellType(i,j,k) == BLUECORE || getCellType(i,j,k) == IGNITED)
 				{
-					scale = dt / (preset->rhof * preset->dx);
-					u.setValueAtFace(u.valueAtFace(i,j,k,LEFT) - scale * p->valueAtIndex(i,j,k),i,j,k,LEFT);
-					u.setValueAtFace(u.valueAtFace(i,j,k,RIGHT) + scale * p->valueAtIndex(i,j,k),i,j,k,RIGHT);
-					u.setValueAtFace(u.valueAtFace(i,j,k,DOWN) - scale * p->valueAtIndex(i,j,k),i,j,k,DOWN);
-					u.setValueAtFace(u.valueAtFace(i,j,k,UP) + scale * p->valueAtIndex(i,j,k),i,j,k,UP);
-					u.setValueAtFace(u.valueAtFace(i,j,k,BACKWARD) - scale * p->valueAtIndex(i,j,k),i,j,k,BACKWARD);
-					u.setValueAtFace(u.valueAtFace(i,j,k,FORWARD) + scale * p->valueAtIndex(i,j,k),i,j,k,FORWARD);
-
-				}
-				else if(getCellType(i,j,k) == IGNITED)
-				{
-					scale = dt / (preset->rhoh * preset->dx);
-					/*u(i,j,k) -= scale * p(i,j,k);
-					u(i+1,j,k) += scale * p(i,j,k);
-					v(i,j,k) -= scale * p(i,j,k);
-					v(i,j+1,k) += scale * p(i,j,k);
-					w(i,j,k) -= scale * p(i,j,k);
-					w(i,j,k+1) += scale * p(i,j,k);*/
+					u.setValueAtFace(u.valueAtFace(i,j,k,LEFT) - (dt / (getDensity(i,j,k,LEFT) * preset->dx)) * p->valueAtIndex(i,j,k),i,j,k,LEFT);
+					u.setValueAtFace(u.valueAtFace(i,j,k,RIGHT) + (dt / (getDensity(i,j,k,RIGHT) * preset->dx)) * p->valueAtIndex(i,j,k),i,j,k,RIGHT);
+					u.setValueAtFace(u.valueAtFace(i,j,k,DOWN) - (dt / (getDensity(i,j,k,DOWN) * preset->dx)) * p->valueAtIndex(i,j,k),i,j,k,DOWN);
+					u.setValueAtFace(u.valueAtFace(i,j,k,UP) + (dt / (getDensity(i,j,k,UP) * preset->dx)) * p->valueAtIndex(i,j,k),i,j,k,UP);
+					u.setValueAtFace(u.valueAtFace(i,j,k,BACKWARD) - (dt / (getDensity(i,j,k,BACKWARD) * preset->dx)) * p->valueAtIndex(i,j,k),i,j,k,BACKWARD);
+					u.setValueAtFace(u.valueAtFace(i,j,k,FORWARD) + (dt / (getDensity(i,j,k,FORWARD) * preset->dx)) * p->valueAtIndex(i,j,k),i,j,k,FORWARD);
 
 				}
 				else if(getCellType(i,j,k) == SOLID)
@@ -99,6 +89,66 @@ void Fire::project(double dt)
 
 				}
 			}
+
+}
+
+double Fire::getAlpha(const int i, const int j, const int k, DirectionEnums d)
+{
+	// sid. 104 (Bridson)
+	double temp = 0;
+
+	if(d == RIGHT)
+		temp = phi.phi->valueAtIndex(i+1,j,k);
+	if(d == LEFT)
+		temp = phi.phi->valueAtIndex(i-1,j,k);
+	if(d == UP)
+		temp = phi.phi->valueAtIndex(i,j+1,k);
+	if(d == DOWN)
+		temp = phi.phi->valueAtIndex(i,j-1,k);
+	if(d == FORWARD)
+		temp = phi.phi->valueAtIndex(i,j,k+1);
+	if(d == BACKWARD)
+		temp = phi.phi->valueAtIndex(i,j,k-1);
+
+	if(phi.phi->valueAtIndex(i,j,k) <= 0 && temp <= 0)
+		return 1;
+	else if(phi.phi->valueAtIndex(i,j,k) <= 0 && temp > 0)
+		return (phi.phi->valueAtIndex(i,j,k) / 
+			(phi.phi->valueAtIndex(i,j,k) - temp));
+	else if(phi.phi->valueAtIndex(i,j,k) > 0 && temp <= 0)
+		return 1 - (phi.phi->valueAtIndex(i,j,k) / 
+			(phi.phi->valueAtIndex(i,j,k) - temp));
+	else if(phi.phi->valueAtIndex(i,j,k) > 0 && temp > 0)
+		return 0;
+}
+
+double Fire::getDensity(const int i, const int j, const int k, DirectionEnums d)
+{
+	// sid. 104 (Bridson)
+	double alpha = getAlpha(i,j,k,d);
+	CellType temp;
+
+	if(d == LEFT)
+		temp = getCellType(i-1,j,k);
+	if(d == RIGHT)
+		temp = getCellType(i+1,j,k);
+	if(d == DOWN)
+		temp = getCellType(i,j-1,k);
+	if(d == UP)
+		temp = getCellType(i,j+1,k);
+	if(d == BACKWARD)
+		temp = getCellType(i,j,k-1);
+	if(d == FORWARD)
+		temp = getCellType(i,j,k+1);
+			
+	if(getCellType(i,j,k) == BLUECORE && temp == BLUECORE)
+		return preset->rhof;
+	else if(getCellType(i,j,k) == BLUECORE && temp == IGNITED)
+		return alpha * preset->rhof + ( 1 - alpha ) * preset->rhoh;
+	else if(getCellType(i,j,k) == IGNITED && temp == BLUECORE)
+		return alpha * preset->rhoh + ( 1 - alpha ) * preset->rhof;
+	else if(getCellType(i,j,k) == IGNITED && temp == IGNITED)
+		return preset->rhoh;
 
 }
 
