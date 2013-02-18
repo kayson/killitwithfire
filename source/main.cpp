@@ -8,17 +8,13 @@
 #include <stdlib.h>
 #include <iostream>
 
-
-#include "GridField.hpp"
-
-#include "MACGrid.h"
-#include "Grid.h"
-
 #include "Input.h"
 #include "Camera.h"
 #include "presets/firePresetsTwoDimension.h"
 
 #include "fire.h"
+
+#include "imageExporter.h"
 
 
 bool init();
@@ -48,7 +44,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-    
+	
+
 	fire = new Fire(new FirePresetsTwoDimension());
 	// Main loop
 	while(running)
@@ -60,6 +57,8 @@ int main(int argc, char *argv[])
 
 		// Draw the scene.
 		render();
+
+		
 
 		// Check if the ESC key was pressed or the window was closed.
 		if(glfwGetKey(GLFW_KEY_ESC) || !glfwGetWindowParam(GLFW_OPENED))
