@@ -13,7 +13,7 @@ protected:
 	Discretization *normalDiscretization;
 public:
     virtual ~Advect(){};
-    virtual void advect(VelocityField &v,GridField<double> &g, double dt) = 0;
+    virtual void advect(VelocityField &v,GridField<double> *g, GridField<double> *ng, double dt) = 0;
 	virtual void setDiscretization(Discretization *discret, Discretization *norm)
 	{ 
 		discretization = discret; 
