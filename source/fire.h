@@ -41,7 +41,7 @@ private:
 	GridField<double> *rhs;
 
     //Grid
-    VelocityField u;
+    MACGrid u;
 
 	GridField<int> celltype;
 };

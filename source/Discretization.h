@@ -9,13 +9,13 @@
 #include <iostream>
 #include "GridField.hpp"
 #include "datatype.h"
-#include "VectorGrid.h"
+#include "MACGrid.h"
 #include "Vector3.h"
 #include "Extrapolation.h"
 
 class Discretization{
 protected:
-	VectorGrid *_w;
+	MACGrid *_w;
 public:
 	//Discretization();
 	virtual ~Discretization(){};
@@ -45,7 +45,7 @@ public:
 	virtual  Vector3 calcDxz(GridField<Vector3> &g, const int i, const int j, const int k)=0;
 	virtual  Vector3 calcDxy(GridField<Vector3> &g, const int i, const int j, const int k)=0;
 
-	virtual void setVectorGrid(VectorGrid *w){_w = w;};
+	virtual void setMACGrid(MACGrid *w){_w = w;};
 
 	Extrapolation<Discretization> *ext;
 };
