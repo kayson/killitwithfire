@@ -265,18 +265,18 @@ void MACGrid::fillVelocity(Vector3 vel){
 double MACGrid::valueAtFace(const int i,const int j,const int k, DirectionEnums d) const{
     
     if (d == RIGHT){
-        return _u->valueAtIndex(i+1,j,k);
+        return _u->valueAtIndex(i+1, j, k);
     }else if (d == LEFT){
-        return _u->valueAtIndex(i,j,k);
-    }else if (d == UP) {
-        return _v->valueAtIndex(i,j,k);
-    }else if (d == DOWN){
-        return _v->valueAtIndex(i,j+1,k);
-    }else  if (d == BACKWARD){
-        return _w->valueAtIndex(i,j,k);
+        return _u->valueAtIndex(i, j, k);
+    }else if (d == DOWN) {
+        return _v->valueAtIndex(i, j, k);
+    }else if (d == UP){
+        return _v->valueAtIndex(i, j+1, k);
+    }else  if (d == FORWARD){
+        return _w->valueAtIndex(i, j, k+1);
     }else{
-        //Forward
-        return _w->valueAtIndex(i,j,k+1);
+        //Backward
+        return _w->valueAtIndex(i, j, k);
     }
 }
 
