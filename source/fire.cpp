@@ -18,7 +18,8 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
     preset->advect->setDiscretization(preset->discretization, preset->normalDiscretization);
 	const int matDim = phi.phi->xdim()*phi.phi->ydim()*phi.phi->zdim()*phi.phi->xdim()*phi.phi->ydim()*phi.phi->zdim();
-	A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
+	//A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
+	_borderCondition = new BorderCondition();
 }
 
 double Fire::computeDT(double currentTime){
@@ -67,11 +68,22 @@ void Fire::project(double dt)
 
 
 	// A
-	for(int i = 0; i<phi.phi->xdim(); i++){
-		for(int j = 0; i<phi.phi->ydim(); j++){
-			for(int k = 0; k<phi.phi->zdim(); k++){
+	
+	for(int i = 0; i<u.xdim(); i++){
+		for(int j = 0; i<u.ydim(); j++){
+			for(int k = 0; k<u.zdim(); k++){
+				// Korrekt skalningsfaktor
 				if(getCellType(i,j,k) == BLUECORE) // om bränsle
-				scale = dt/(preset->dx*preset->dx*preset->rhof);
+					scale = dt/(preset->dx*preset->dx*preset->rhof);
+				else if(getCellType(i,j,k) == IGNITED) // om gas
+					scale = dt/(preset->dx*preset->dx*preset->rhoh);
+
+				/*if(!_borderCondition->checkBorder(*phi.phi,i,j,k))
+					_borderCondition->enforceBorderCondition(u, *phi.phi,i,j,k);*/
+				if(getCellType(i,j,k) == BLUECORE && getCellType(i+1,j,k) == BLUECORE){
+					//A->set_element(u.getCenterField()->
+				}
+				
 			}
 		}
 	}
@@ -298,5 +310,6 @@ void Fire::draw()
 
 Fire::~Fire(){
     delete preset;
-	delete A;
+	//delete A;
+	delete _borderCondition;
 }

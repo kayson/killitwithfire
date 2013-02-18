@@ -43,6 +43,10 @@ public:
     void resetCache();
 
     //Värden
+	unsigned int xdim(){ return _u->xdim(); }
+	unsigned int ydim(){ return _u->ydim(); }
+	unsigned int zdim(){ return _u->xdim(); }
+	GridField<double>* getCenterField() { return _center; };
     double getMax() const;
     Vector3 velocityAtWorld(const Vector3 &world) const;
     Vector3 velocityAtIndex(const Vector3 &index) const;
