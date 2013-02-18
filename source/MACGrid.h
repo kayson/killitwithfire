@@ -21,6 +21,10 @@ private:
     GridField<double> *_u,*_v,*_w;
     GridMapping _boxes;
     GridMapping _fluid;
+    
+    GridField<bool> *_cacheFlag;
+    GridField<Vector3> *_cache;
+    
 public:
     GridField<double> *_center;
 private:
@@ -34,11 +38,19 @@ public:
     MACGrid& operator=(const MACGrid &g);
 
 
-    //Buffer
+    //Buffer & cache
     MACGrid * buffer();
     void swapBuffer();
+    void resetCache();
+
+    //Värden
+    double getMax() const;
     Vector3 velocityAtWorld(const Vector3 &world) const;
-    double velocityAtFace(const int i,const int j,const int k, DirectionEnums d) const;
+    Vector3 velocityAtIndex(const Vector3 &index) const;
+    Vector3 operator()(int i ,int j,int k) const;
+    void fillVelocity(Vector3 vel);
+    double valueAtFace(const int i,const int j,const int k, DirectionEnums d) const;
+    void setValueAtFace(double val,const int i, const int j, const int k, DirectionEnums d);
     void advect(double dt);
 
     void draw();

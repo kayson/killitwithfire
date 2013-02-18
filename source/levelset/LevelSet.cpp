@@ -82,7 +82,35 @@ Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 
 void LevelSet::draw() const
 {
-	double dx = FirePresets::dx;
+
+    for (GridFieldIterator<double> iter = phi->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        phi->mapping.indexToWorld(i, j, k, x, y, z);
+        
+        
+        if(phi->valueAtIndex(i,j,k) <= 0)
+        {
+            glColor3f(0,0,-phi->valueAtIndex(i, j, k)/3.);
+            
+        }else{
+            glColor3f(phi->valueAtIndex(i, j, k)/50.0,0,0);
+            
+        }
+        glBegin(GL_QUADS);
+
+        glVertex3f((float)x, (float)y, (float)z);
+        glVertex3f(((float)x+1.f), (float)y, (float)z);
+        glVertex3f(((float)x+1.f), ((float)y+1.f), (float)z);
+        glVertex3f((float)x, ((float)y+1.f), (float)z);
+        glEnd();
+
+    }
+    
+
+    
+	/*double dx = FirePresets::dx;
 
 	glBegin(GL_QUADS);
 
@@ -92,6 +120,9 @@ void LevelSet::draw() const
 		{
 			for(int z = 0; z < phi->zdim(); z++)
 			{
+                
+                
+                
 				if(phi->valueAtIndex(x,y,z) <= 0)
 				{
                     glColor3f(0,0,-phi->valueAtIndex(x, y, z)/3.0);
@@ -111,4 +142,5 @@ void LevelSet::draw() const
 		}
 	}
 	glEnd();
+     */
 }

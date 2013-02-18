@@ -10,11 +10,11 @@ class LevelSet
 public:
 	LevelSet(){
 		phi  = new GridField<double>(1000,1000,1000);
-		temp = new GridField<double>(1000, 1000, 1000);
+		temp = new GridField<double>(1000, 1000, 1000,10);
     };
-	LevelSet(int xDim, int yDim, int zDim){
-		phi  = new GridField<double>(xDim,yDim,zDim);
-		temp = new GridField<double>(xDim,yDim,zDim);
+	LevelSet(int xDim, int yDim, int zDim, double size){
+		phi  = new GridField<double>(xDim,yDim,zDim,size);
+		temp = new GridField<double>(xDim,yDim,zDim,size);
 	};
 	~LevelSet(){};
 	void fillLevelSet(double (*implicitFunction)(int x, int y, int z));

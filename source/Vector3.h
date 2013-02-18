@@ -1,12 +1,12 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
 #include <iostream>
-class Vector3
-{
+class Vector3{
 public:
 	// Constructors
 	Vector3();
 	Vector3(double xf, double yf, double zf);
+    Vector3(double v);
     ~Vector3();
 	// Functions
 	void mult(double f);

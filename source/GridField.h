@@ -6,6 +6,9 @@
 //  Copyright (c) 2013 Johannes Deligiannis. All rights reserved.
 //
 
+
+
+
 #include "Vector3.h"
 #include "GridMapping.h"
 
@@ -33,6 +36,7 @@ public:
     //Konstruktor/Destruktor
     GridField(const GridMapping &m);
     GridField(int xdim,int ydim, int zdim);
+    GridField(int xdim,int ydim, int zdim, double size);
     GridField(const GridField<T> &g);
     GridField<T>& operator=(const GridField<T> &g);
 
@@ -51,9 +55,10 @@ public:
     int cellCount() const;
 
     //Setter
+    void setAll(T val);
     void setValueAtIndex(T val,int i);
     void setValueAtIndex(T val,int i,int j,int k);
-    
+
     //Operatorer
     T operator()(int i, int j, int k) const;
 
@@ -95,7 +100,6 @@ public:
     GridFieldIterator(const GridFieldIterator<T> &i):GridMappingIterator(&i._grid->mapping),_grid(i._grid){  };
     ~GridFieldIterator(){ _grid = nullptr; };
     T value() const{ return _grid->valueAtIndex(index());};
-
     friend class GridField<T>;
 };
 

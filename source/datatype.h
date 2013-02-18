@@ -7,7 +7,7 @@ const int GRID_DIM_X = 15;
 const int GRID_DIM_Y = 15;
 const int GRID_DIM_Z = 1;
 
-enum DirectionEnums {UP, DOWN, LEFT, RIGHT, FORWARD, BACKWARD};
+enum DirectionEnums {UP, DOWN, LEFT, RIGHT, FORWARD, BACKWARD, CENTER};
 
 const int GRID_SIZE = 1;
 

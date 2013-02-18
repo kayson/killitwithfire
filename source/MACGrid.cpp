@@ -57,6 +57,12 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     _w = new GridField<double>(xdim,ydim,zdim+1);
     
     _center = new GridField<double>(xdim,ydim,zdim);
+    _cache = new GridField<Vector3>(xdim,ydim,zdim );
+    _cache->mapping.setTransformation(glm::mat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
+    _cacheFlag = new GridField<bool>(xdim,ydim,zdim);
+    _cacheFlag->mapping.setTransformation(glm::mat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
+    _cacheFlag->setAll(false);
+
     _fluid = GridMapping(xdim*3,ydim*3,zdim*3, glm::mat4x4(size,0,0,dx*0.5, 0,size,0,dy*0.5, 0,0,size,dz*0.5, 0,0,0,1) );
     
     //Transformera
@@ -87,11 +93,13 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     
     _center->mapping.setTransformation(c_matrix);
     
+ 
+    double randMax = 3;
     //Fill U
     for (GridFieldIterator<double> iterator = _u->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        double v1 = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*0.2-0.1;
+        double v1 = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
         _u->setValueAtIndex(v1, iterator.index());
     }
     
@@ -99,7 +107,7 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     for (GridFieldIterator<double> iterator = _v->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        double v1 =  ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*0.2-0.1;
+        double v1 =  ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
         _v->setValueAtIndex(v1, iterator.index());
     }
     
@@ -107,7 +115,7 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     for (GridFieldIterator<double> iterator = _w->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*0.2-0.1;
+        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
         _w->setValueAtIndex(0*v1, iterator.index());
     }
     
@@ -122,6 +130,8 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
         }
     }
     
+    
+    
     //_u->setValueAtIndex(0.1, 4, 4, 4);
     //_center->setValueAtIndex(-100.0, 4, 4, 4);
 }
@@ -132,7 +142,8 @@ MACGrid::MACGrid(const MACGrid &m){
     _v = new GridField<double>(*m._v);
     _w = new GridField<double>(*m._w);
     _center = new GridField<double>(*m._center);
-            
+    _cacheFlag = new GridField<bool>(*m._cacheFlag);
+    _cache = new GridField<Vector3>(*m._cache);
     _buffer = nullptr;
 
 }
@@ -141,6 +152,9 @@ MACGrid::~MACGrid(){
     delete _u;
     delete _v;
     delete _w;
+    delete _cacheFlag;
+    delete _cache;
+    
     if (_buffer != nullptr) {
         delete _buffer;
     }
@@ -154,7 +168,9 @@ MACGrid& MACGrid::operator=(const MACGrid &g){
         _v = new GridField<double>(*g._v);
         _w = new GridField<double>(*g._w);
         _center = new GridField<double>(*g._center);
-                
+        _cache = new GridField<Vector3>(*g._cache);
+        _cacheFlag = new GridField<bool>(*g._cacheFlag);
+     
     }
     
     return *this;
@@ -189,7 +205,13 @@ void MACGrid::swapBuffer(){
 }
 
 
+double MACGrid::getMax() const{
+    return 0.1;
+}
+
+
 Vector3 MACGrid::velocityAtWorld(const Vector3 &world) const{
+
     double u,v,w;
     //U
     u = _u->valueAtWorld(world.x, world.y, world.z);
@@ -197,25 +219,91 @@ Vector3 MACGrid::velocityAtWorld(const Vector3 &world) const{
     v = _v->valueAtWorld(world.x, world.y, world.z);
     //W
     w = _w->valueAtWorld(world.x, world.y, world.z);
-
+    
     return Vector3(u,v,w);
 }
 
-double MACGrid::velocityAtFace(const int i,const int j,const int k, DirectionEnums d) const{
+Vector3 MACGrid::velocityAtIndex(const Vector3 &index) const{
+    //return Vector3(0.5);
+    double x,y,z;
+    
+    if (_cacheFlag->valueAtIndex(index.x, index.y, index.z) == true) { //Finns det en tillgänglig cache?
+        return _cache->valueAtIndex(index.x, index.y, index.z);
+    }else{
+
+        _center->mapping.indexToWorld(index.x, index.y, index.z, x, y, z);
+
+        double u,v,w;
+        //U
+        u = _u->valueAtWorld(x, y, z);
+        //V
+        v = _v->valueAtWorld(x, y, z);
+        //W
+        w = _w->valueAtWorld(x, y, z);
+        
+        Vector3 vel(u,v,w);
+
+        _cacheFlag->setValueAtIndex(true,index.x, index.y, index.z);
+        _cache->setValueAtIndex(vel,index.x, index.y, index.z);
+        
+        return vel;
+    }
+}
+
+Vector3 MACGrid::operator()(int i ,int j,int k) const{
+    return velocityAtIndex(Vector3(i,j,k));
+}
+
+void MACGrid::fillVelocity(Vector3 vel){
+    
+    for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
+        _u->setValueAtIndex(vel.x, iter.index());
+        buffer()->_u->setValueAtIndex(vel.x,iter.index());
+    }
+    
+    for (GridFieldIterator<double> iter = _v->iterator(); !iter.done(); iter.next()) {
+        _v->setValueAtIndex(vel.y, iter.index());
+        buffer()->_v->setValueAtIndex(vel.y,iter.index());
+    }
+    
+    for (GridFieldIterator<double> iter = _w->iterator(); !iter.done(); iter.next()) {
+        _w->setValueAtIndex(vel.z, iter.index());
+        buffer()->_w->setValueAtIndex(vel.z,iter.index());
+    }
+}
+
+double MACGrid::valueAtFace(const int i,const int j,const int k, DirectionEnums d) const{
     
     if (d == RIGHT){
-        return _u->valueAtIndex(i+1,j,k);
+        return _u->valueAtIndex(i+1, j, k);
     }else if (d == LEFT){
-        return _u->valueAtIndex(i,j,k);
-    }else if (d == UP) {
-        return _v->valueAtIndex(i,j,k);
-    }else if (d == DOWN){
-        return _v->valueAtIndex(i,j+1,k);
-    }else  if (d == BACKWARD){
-        return _w->valueAtIndex(i,j,k);
+        return _u->valueAtIndex(i, j, k);
+    }else if (d == DOWN) {
+        return _v->valueAtIndex(i, j+1, k);
+    }else if (d == UP){
+        return _v->valueAtIndex(i, j, k);
+    }else  if (d == FORWARD){
+        return _w->valueAtIndex(i, j, k+1);
     }else{
-        //Forward
-        return _w->valueAtIndex(i,j,k+1);
+        //Backward
+        return _w->valueAtIndex(i, j, k);
+    }
+}
+
+void MACGrid::setValueAtFace(double val,const int i, const int j, const int k, DirectionEnums d){
+    if (d == RIGHT){
+        _u->setValueAtIndex(val, i+1, j, k);
+    }else if (d == LEFT){
+        _u->setValueAtIndex(val, i, j, k);
+    }else if (d == DOWN) {
+        _v->setValueAtIndex(val, i, j, k);
+    }else if (d == UP){
+        _v->setValueAtIndex(val, i, j+1, k);
+    }else  if (d == FORWARD){
+        _w->setValueAtIndex(val, i, j, k+1);
+    }else{
+        //Backward
+        _w->setValueAtIndex(val, i, j, k);
     }
 }
 
@@ -438,27 +526,22 @@ void MACGrid::draw(){
     
     //glTranslatef(0.5*_dx, 0.5*_dx, 0.5*_dx);
     
-
-    
 }
 
 
 void MACGrid::advect(double dt){
     
      for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        _u->mapping.indexToWorld(i, j, k, x, y, z);
-        
-        double u = _u->valueAtWorld(x, y, z);
-        double v = _v->valueAtWorld(x, y, z);
-        double w = _w->valueAtWorld(x, y, z);
-        
-        double val = _u->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
-        //v = _v->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
-        //w = _w->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
-        buffer()->_u->setValueAtIndex(val, i, j, k);
+         int i,j,k;
+         iter.index(i, j, k);
+         double x,y,z;
+         _u->mapping.indexToWorld(i, j, k, x, y, z);
+         Vector3 pos(x,y,z);
+         Vector3 vel = velocityAtWorld(pos);
+         vel = velocityAtWorld(pos-vel*dt*0.5);
+         
+         double val = _u->valueAtWorld(x-vel.x*dt, y-vel.y*dt, z-vel.z*dt);
+         buffer()->_u->setValueAtIndex(val, i, j, k);
     }
     
     for (GridFieldIterator<double> iter = _v->iterator(); !iter.done(); iter.next()) {
@@ -466,14 +549,11 @@ void MACGrid::advect(double dt){
         iter.index(i, j, k);
         double x,y,z;
         _v->mapping.indexToWorld(i, j, k, x, y, z);
+        Vector3 pos(x,y,z);
+        Vector3 vel = velocityAtWorld(pos);
+        vel = velocityAtWorld(pos-vel*dt*0.5);
         
-        double u = _u->valueAtWorld(x, y, z);
-        double v = _v->valueAtWorld(x, y, z);
-        double w = _w->valueAtWorld(x, y, z);
-        
-        double val = _v->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
-        //v = _v->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
-        //w = _w->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
+        double val = _v->valueAtWorld(x-vel.x*dt, y-vel.y*dt, z-vel.z*dt);
         buffer()->_v->setValueAtIndex(val, i, j, k);
     }
     
@@ -482,20 +562,17 @@ void MACGrid::advect(double dt){
         iter.index(i, j, k);
         double x,y,z;
         _w->mapping.indexToWorld(i, j, k, x, y, z);
+        Vector3 pos(x,y,z);
+        Vector3 vel = velocityAtWorld(pos);
+        vel = velocityAtWorld(pos-vel*dt*0.5);
         
-        double u = _u->valueAtWorld(x, y, z);
-        double v = _v->valueAtWorld(x, y, z);
-        double w = _w->valueAtWorld(x, y, z);
-        
-        double val = _w->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
-        //v = _v->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
-        //w = _w->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
+        double val = _w->valueAtWorld(x-vel.x*dt, y-vel.y*dt, z-vel.z*dt);
         buffer()->_w->setValueAtIndex(val, i, j, k);
     }
     
     
     
-    for (GridFieldIterator<double> iter = _center->iterator(); !iter.done(); iter.next()) {
+    /*for (GridFieldIterator<double> iter = _center->iterator(); !iter.done(); iter.next()) {
         int i,j,k;
         iter.index(i, j, k);
         double x,y,z;
@@ -509,7 +586,7 @@ void MACGrid::advect(double dt){
         //v = _v->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
         //w = _w->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
         buffer()->_center->setValueAtIndex(val, i, j, k);
-    }
+    }*/
     
     /*
     static Vector3 ball = Vector3(0.3,0.3,0.3);
@@ -521,8 +598,8 @@ void MACGrid::advect(double dt){
     drawSphere(0.05, 10);
     */
     swapBuffer();
+    _cache->setAll(false);
 }
-
 
 
 

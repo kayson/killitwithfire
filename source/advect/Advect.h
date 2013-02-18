@@ -2,9 +2,9 @@
 #ifndef __FuidFire__Advect__
 #define __FuidFire__Advect__
 
-#include "../VelocityField.h"
 #include "../Discretization.h"
 #include "../BorderCondition.h"
+#include "../MACGrid.h"
 
 class Advect {
 protected:
@@ -15,7 +15,8 @@ protected:
 public:
     virtual ~Advect(){};
 
-    virtual void advect(VelocityField &v,GridField<double> *g, GridField<double> *ng, double dt) = 0;
+    
+    virtual void advect(MACGrid &u, GridField<double> *g,GridField<double> *temp, double dt) = 0;
 
 	virtual void setDiscretization(Discretization *upwind, Discretization *central)
 	{ 
