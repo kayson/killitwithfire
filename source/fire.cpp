@@ -63,8 +63,6 @@ void Fire::computeCellTypes()
         }   
         
 		celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
-        
-        
             
 	}
 }	
@@ -93,7 +91,6 @@ void Fire::runSimulation(){
 
 		currentTime += dt;
 	}
-
     
     //Externa krafter
     
