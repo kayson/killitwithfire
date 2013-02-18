@@ -21,7 +21,6 @@
 #include "fire.h"
 
 
-
 bool init();
 void showFPS();
 void update();

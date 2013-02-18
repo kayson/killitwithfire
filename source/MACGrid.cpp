@@ -12,6 +12,7 @@
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h> // Takes care of everything GL-related
 #include <GL/freeglut.h> // Takes care of everything GL-related
+#include <math.h>
 #define M_PI 3.14159265358979323846264338
 #endif
 
@@ -114,7 +115,7 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     for (GridFieldIterator<double> iterator = _center->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        if (sqrt(i*i+j*j+k*k) < ((double)_center->mapping.xdim())*0.5 ) {
+		if (sqrt((double)i*i+(double)j*j+(double)k*k) < ((double)_center->mapping.xdim())*0.5 ) {
             _center->setValueAtIndex(0.8, iterator.index());
         }else{
             _center->setValueAtIndex(0.5, iterator.index());
