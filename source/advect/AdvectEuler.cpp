@@ -20,6 +20,12 @@ void AdvectEuler::advect(VelocityField &v, GridField<double> *g, GridField<doubl
 			}
 		}
 	}
+
+	GridField<double> *temp;
+	temp = g;
+	g = ng;
+	ng = temp;
+
 }
 
 double AdvectEuler::evaluate(VelocityField &u, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k){
