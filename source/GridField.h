@@ -31,6 +31,7 @@ private:
     GridField();
 public:
     //Konstruktor/Destruktor
+    GridField(const GridMapping &m);
     GridField(int xdim,int ydim, int zdim);
     GridField(const GridField<T> &g);
     GridField<T>& operator=(const GridField<T> &g);

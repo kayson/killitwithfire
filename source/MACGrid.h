@@ -19,9 +19,10 @@ class MACGrid{
 private:
     MACGrid *_buffer;
     GridField<double> *_u,*_v,*_w;
-    GridField<double> *_center;
     GridMapping _boxes;
     GridMapping _fluid;
+public:
+    GridField<double> *_center;
 private:
     void initialize(int xdim,int ydim,int zdim, double size);
 public:

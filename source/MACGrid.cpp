@@ -12,7 +12,9 @@
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h> // Takes care of everything GL-related
 #include <GL/freeglut.h> // Takes care of everything GL-related
+#define M_PI 3.14159265358979323846264338
 #endif
+
 /*
 MACGrid::MACGrid():MACGrid(10,10,10,50){
     

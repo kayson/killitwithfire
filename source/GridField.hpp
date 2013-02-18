@@ -23,6 +23,16 @@
 #define FuidFire_GridField_hpp
 
 template<class T>
+GridField<T>::GridField(const GridMapping &m){
+    mapping = m;
+    
+    //Allokera data-array
+    _data = new T[cellCount()];
+    for (int i = 0; i < cellCount(); i++) _data[i] = T();
+}
+
+
+template<class T>
 GridField<T>::GridField():GridField(10,10,10){
 }
 
