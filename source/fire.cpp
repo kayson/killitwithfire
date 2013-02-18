@@ -50,7 +50,7 @@ void Fire::project(double dt)
 	double scale = 1 / preset->dx;
 
 
-	// b
+	// b (rhs)
 	for(int i = 0; i < phi.phi->xdim(); i ++)
 		for(int j = 0; j < phi.phi->ydim(); j ++)
 			for(int k = 0; k < phi.phi->zdim(); k ++)
@@ -75,12 +75,12 @@ void Fire::project(double dt)
 				if(getCellType(i,j,k) == BLUECORE)
 				{
 					scale = dt / (preset->rhof * preset->dx);
-					/*u(i,j,k) -= scale * p(i,j,k);
-					u(i+1,j,k) += scale * p(i,j,k);
-					v(i,j,k) -= scale * p(i,j,k);
-					v(i,j+1,k) += scale * p(i,j,k);
-					w(i,j,k) -= scale * p(i,j,k);
-					w(i,j,k+1) += scale * p(i,j,k);*/
+					u.setValueAtFace(u.valueAtFace(i,j,k,LEFT) - scale * p->valueAtIndex(i,j,k),i,j,k,LEFT);
+					u.setValueAtFace(u.valueAtFace(i,j,k,RIGHT) + scale * p->valueAtIndex(i,j,k),i,j,k,RIGHT);
+					u.setValueAtFace(u.valueAtFace(i,j,k,DOWN) - scale * p->valueAtIndex(i,j,k),i,j,k,DOWN);
+					u.setValueAtFace(u.valueAtFace(i,j,k,UP) + scale * p->valueAtIndex(i,j,k),i,j,k,UP);
+					u.setValueAtFace(u.valueAtFace(i,j,k,BACKWARD) - scale * p->valueAtIndex(i,j,k),i,j,k,BACKWARD);
+					u.setValueAtFace(u.valueAtFace(i,j,k,FORWARD) + scale * p->valueAtIndex(i,j,k),i,j,k,FORWARD);
 
 				}
 				else if(getCellType(i,j,k) == IGNITED)
