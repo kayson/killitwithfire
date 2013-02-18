@@ -39,9 +39,11 @@ public:
 
     //Buffer & cache
     MACGrid * buffer();
-    void resetCache();
-    
     void swapBuffer();
+    void resetCache();
+
+    //Värden
+    double getMax() const;
     Vector3 velocityAtWorld(const Vector3 &world) const;
     Vector3 velocityAtIndex(const Vector3 &index) const;
     Vector3 operator()(int i ,int j,int k) const;

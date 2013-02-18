@@ -200,8 +200,13 @@ void MACGrid::swapBuffer(){
 }
 
 
+double MACGrid::getMax() const{
+    return 0.1;
+}
+
+
 Vector3 MACGrid::velocityAtWorld(const Vector3 &world) const{
-    return Vector3(0.1,0,0);
+
     double u,v,w;
     //U
     u = _u->valueAtWorld(world.x, world.y, world.z);
@@ -221,7 +226,7 @@ Vector3 MACGrid::velocityAtIndex(const Vector3 &index) const{
     if (_cacheFlag->valueAtIndex(index.x, index.y, index.z)) {
         return _cache->valueAtIndex(index.x, index.y, index.z);
     }else{
-        //return Vector3(10.0,0,0);
+
         
         double u,v,w;
         //U
@@ -269,9 +274,9 @@ double MACGrid::valueAtFace(const int i,const int j,const int k, DirectionEnums 
     }else if (d == LEFT){
         return _u->valueAtIndex(i, j, k);
     }else if (d == DOWN) {
-        return _v->valueAtIndex(i, j, k);
-    }else if (d == UP){
         return _v->valueAtIndex(i, j+1, k);
+    }else if (d == UP){
+        return _v->valueAtIndex(i, j, k);
     }else  if (d == FORWARD){
         return _w->valueAtIndex(i, j, k+1);
     }else{

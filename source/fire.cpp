@@ -195,11 +195,11 @@ void Fire::runSimulation(){
 		double dt = computeDT(currentTime);
 
 		//Advektera hastighestsfältet
-		advectLevelSet(dt);
+		advectLevelSet(preset->dt);
 
 		currentTime += dt;
 	}
-	
+
 	computeCellTypes(); //Beräkna om vad för typ voxlarna är
 
     //Externa krafter  
