@@ -438,8 +438,6 @@ void MACGrid::draw(){
     
     //glTranslatef(0.5*_dx, 0.5*_dx, 0.5*_dx);
     
-
-    
 }
 
 

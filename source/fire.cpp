@@ -40,12 +40,6 @@ double Fire::computeDT(double currentTime){
 	return smallStep;
 }
 
-void Fire::advectVelocityField(double duration){
-    /*preset->advect->advect(u, u.u, duration);
-    preset->advect->advect(u, u.v, duration);
-    preset->advect->advect(u, u.w, duration);*/
-}
-
 void Fire::advectLevelSet(double duration)
 {
 	preset->advect->advect(u, phi.phi, phi.temp, duration);
@@ -85,9 +79,6 @@ void Fire::runSimulation(){
 	for(double currentTime = 0; currentTime < preset->dt;)
 	{
 		double dt = computeDT(currentTime);
-
-		//Advektera hastighestsfältet
-		advectVelocityField(dt);
 
 		currentTime += dt;
 	}

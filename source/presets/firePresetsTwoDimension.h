@@ -39,5 +39,7 @@ const double FirePresets::dt = 1./200.;
 const double FirePresets::dx = 1./8.;
 const double FirePresets::CFL_NUMBER = .2;
 const double FirePresets::S = .5;
+const double FirePresets::rhof = 1;
+const double FirePresets::rhoh = 0.1;
 
 #endif //FIREPRESETSTWODIM_H

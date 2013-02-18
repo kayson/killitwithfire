@@ -16,9 +16,8 @@
 class Fire{
 protected:
     double computeDT(double currentTime);
-    void advectVelocityField(double duration);
 	void advectLevelSet(double duration);
-
+	void projection(double duration);
 	void computeCellTypes();
 	CellType getCellType(const int i, const int j, const int k);
 
@@ -36,6 +35,9 @@ private:
 
     FirePresets *preset;
     LevelSet phi;
+
+	//Pressure field
+	//GridField<double> p;
 
     //Grid
     VelocityField u;
