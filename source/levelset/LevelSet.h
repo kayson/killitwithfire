@@ -8,12 +8,13 @@
 class LevelSet
 {
 public:
-	LevelSet():phi(1000,1000,1000){
-    
-    
+	LevelSet(){
+		phi  = new GridField<double>(1000,1000,1000);
+		temp = new GridField<double>(1000, 1000, 1000);
     };
-	LevelSet(int xDim, int yDim, int zDim):phi(xDim,yDim,zDim){
-		
+	LevelSet(int xDim, int yDim, int zDim){
+		phi  = new GridField<double>(xDim,yDim,zDim);
+		temp = new GridField<double>(xDim,yDim,zDim);
 	};
 	~LevelSet(){};
 	void fillLevelSet(double (*implicitFunction)(int x, int y, int z));
@@ -26,7 +27,8 @@ public:
 
 	void reinitialize();
 
-	GridField<double> phi; //Signed distance field
+	GridField<double> *phi; //Signed distance field
+	GridField<double> *temp;
 
 private:
 	

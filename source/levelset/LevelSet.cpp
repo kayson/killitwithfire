@@ -16,10 +16,10 @@
 
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 {
-	for(int i = 0; i < phi.xdim(); i++){
-		for(int j = 0; j < phi.ydim(); j++){
-			for(int k = 0; k < phi.zdim(); k++){
-                phi.setValueAtIndex( implicitFunction(i,j,k),i,j,k);
+	for(int i = 0; i < phi->xdim(); i++){
+		for(int j = 0; j < phi->ydim(); j++){
+			for(int k = 0; k < phi->zdim(); k++){
+                phi->setValueAtIndex( implicitFunction(i,j,k),i,j,k);
                 //std::cout << phi.valueAtIndex(i, j, k);
             }
         }
@@ -31,13 +31,13 @@ void LevelSet::reinitialize()
 }
 void LevelSet::printDistanceField()
 {
-	for(int i = 0; i < phi.xdim(); i++)
+	for(int i = 0; i < phi->xdim(); i++)
 	{
-		for(int j = 0; j < phi.ydim(); j++)
+		for(int j = 0; j < phi->ydim(); j++)
 		{
-			for(int k = 0; k < phi.zdim(); k++)
+			for(int k = 0; k < phi->zdim(); k++)
 			{
-				std::cout << phi.valueAtIndex(i,j,k) << " ";
+				std::cout << phi->valueAtIndex(i,j,k) << " ";
 			}
 			
 		}
@@ -51,15 +51,15 @@ double LevelSet::getCurvature(const int i, const int j, const int k)
 	Discretization *disc = new CentralDiff();
 	
 	double 
-	dx = disc->calcDx(phi, i, j, k),
-	dy = disc->calcDy(phi, i, j, k),
-	dz = disc->calcDz(phi, i, j, k),
-	d2x = disc->calcD2x(phi, i, j, k),
-	d2y = disc->calcD2y(phi, i, j, k),
-	d2z = disc->calcD2z(phi, i, j, k),
-	dxy = disc->calcDxy(phi, i, j, k),
-	dxz = disc->calcDxz(phi, i, j, k),
-	dyz = disc->calcDyz(phi, i, j, k);
+	dx = disc->calcDx(*phi, i, j, k),
+	dy = disc->calcDy(*phi, i, j, k),
+	dz = disc->calcDz(*phi, i, j, k),
+	d2x = disc->calcD2x(*phi, i, j, k),
+	d2y = disc->calcD2y(*phi, i, j, k),
+	d2z = disc->calcD2z(*phi, i, j, k),
+	dxy = disc->calcDxy(*phi, i, j, k),
+	dxz = disc->calcDxz(*phi, i, j, k),
+	dyz = disc->calcDyz(*phi, i, j, k);
 	double a = 2.0000000000;
     
     delete disc;
@@ -72,7 +72,7 @@ Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 	Discretization *disc = new CentralDiff();
 
 	//Osäker om detta är korrekt implementation
-	Vector3 g = Gradient::getGradient(phi, i, j, j, *disc);
+	Vector3 g = Gradient::getGradient(*phi, i, j, j, *disc);
 	g.normalize();
 
 	delete disc;
@@ -86,19 +86,19 @@ void LevelSet::draw() const
 
 	glBegin(GL_QUADS);
 
-	for(int x = 0; x < phi.xdim()-1; x++)
+	for(int x = 0; x < phi->xdim()-1; x++)
 	{
-		for(int y = 0; y < phi.ydim()-1; y++)
+		for(int y = 0; y < phi->ydim()-1; y++)
 		{
-			for(int z = 0; z < phi.zdim(); z++)
+			for(int z = 0; z < phi->zdim(); z++)
 			{
-				if(phi.valueAtIndex(x,y,z) <= 0)
+				if(phi->valueAtIndex(x,y,z) <= 0)
 				{
-                    glColor3f(0,0,-phi.valueAtIndex(x, y, z)/3.0);
+                    glColor3f(0,0,-phi->valueAtIndex(x, y, z)/3.0);
                     //glColor3f(0,0,1);
                                     
 				}else{
-					glColor3f(phi.valueAtIndex(x, y, z)/50.0,0,0);
+					glColor3f(phi->valueAtIndex(x, y, z)/50.0,0,0);
                     //glColor3f(1,0,0);
                 
                 }

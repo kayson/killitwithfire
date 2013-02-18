@@ -48,7 +48,7 @@ void Fire::advectVelocityField(double duration){
 
 void Fire::advectLevelSet(double duration)
 {
-	preset->advect->advect(u, phi.phi, duration);
+	preset->advect->advect(u, phi.phi, phi.temp, duration);
 }
 
 void Fire::computeCellTypes()
@@ -71,7 +71,7 @@ CellType Fire::getCellType(const int i, const int j, const int k)
 {
 	if(false) //Check if is solid
 		return SOLID;
-	else if(phi.phi(i,j,k) <= 0.0)
+	else if(phi.phi->valueAtIndex(i,j,k) <= 0.0)
 		return BLUECORE;
 	else 
 		return IGNITED;
@@ -109,7 +109,7 @@ void Fire::runSimulation(){
 		currentTime += dt;
 	}
 	
-		computeCellTypes(); //Beräkna om vad för typ voxlarna är
+	computeCellTypes(); //Beräkna om vad för typ voxlarna är
 	
 	//Fixa signed distance field
 	/*if(count % 50 == 0)
@@ -119,11 +119,11 @@ void Fire::runSimulation(){
 
 void Fire::drawCenterVelocities()
 {
-	for(int i = 0; i < phi.phi.xdim(); i += 5)
+	for(int i = 0; i < phi.phi->xdim(); i += 5)
 	{
-		for(int j = 0; j < phi.phi.ydim(); j += 5)
+		for(int j = 0; j < phi.phi->ydim(); j += 5)
 		{
-			for(int k = 0; k < phi.phi.zdim(); k += 5)
+			for(int k = 0; k < phi.phi->zdim(); k += 5)
 			{
 				float x0 = FirePresets::dx*((double)(i) + 0.5);
 				float y0 = FirePresets::dx*((double)(j) + 0.5);

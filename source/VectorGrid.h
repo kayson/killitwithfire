@@ -19,7 +19,6 @@ public:
 	void setData(const int x, const int y, const int z, const Vector3 &value);
 	
 	Vector3 & operator()(const int x, const int y, const int z);
-
     
     void operator=(const VectorGrid &v);
 
