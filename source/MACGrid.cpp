@@ -598,10 +598,32 @@ void MACGrid::advect(double dt){
     drawSphere(0.05, 10);
     */
     swapBuffer();
-    _cache->setAll(false);
 }
 
-
+void MACGrid::addForce(Vector3 vec, double dt){
+    for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double val = _u->valueAtIndex(i, j, k);
+        _u->setValueAtIndex(val+vec.x*dt, i, j, k);
+    }
+    
+    for (GridFieldIterator<double> iter = _v->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double val = _v->valueAtIndex(i, j, k);
+        _v->setValueAtIndex(val+vec.y*dt, i, j, k);
+    }
+    
+    for (GridFieldIterator<double> iter = _w->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double val = _w->valueAtIndex(i, j, k);
+        _w->setValueAtIndex(val+vec.z*dt, i, j, k);
+    }
+    
+    _cache->setAll(false);
+}
 
 
 

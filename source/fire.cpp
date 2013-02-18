@@ -191,6 +191,7 @@ void Fire::runSimulation(){
 		currentTime += dt;
 	}	
 
+
 	 //Advektera levelset
     for(double currentTime = 0; currentTime < preset->dt;)
 	{
@@ -202,8 +203,8 @@ void Fire::runSimulation(){
 		currentTime += dt;
     }
 
-	// Self-advection
     u.advect(preset->dt);
+    u.addForce(Vector3(0.0, -0.5, 0.0), preset->dt);
 
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 
