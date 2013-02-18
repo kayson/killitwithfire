@@ -44,6 +44,10 @@ public:
     void resetCache();
 
     //Värden
+	unsigned int xdim(){ return _u->xdim(); }
+	unsigned int ydim(){ return _u->ydim(); }
+	unsigned int zdim(){ return _u->xdim(); }
+	GridField<double>* getCenterField() { return _center; };
     double getMax() const;
     Vector3 velocityAtWorld(const Vector3 &world) const;
     Vector3 velocityAtIndex(const Vector3 &index) const;
@@ -52,6 +56,7 @@ public:
     double valueAtFace(const int i,const int j,const int k, DirectionEnums d) const;
     void setValueAtFace(double val,const int i, const int j, const int k, DirectionEnums d);
     void advect(double dt);
+    void addForce(Vector3 vec, double dt);
 
     void draw();
 };
