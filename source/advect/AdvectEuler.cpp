@@ -32,9 +32,9 @@ double AdvectEuler::evaluate(VelocityField &u, GridField<double> &g, unsigned in
 	Vector3 pos = Vector3(i,j,k);
 	double xv, yv, zv;
 	
-	Vector3 gradPhi = Gradient::getGradient(g, i, j, k, *discretization);
+	Vector3 gradPhi = Gradient::getGradient(g, i, j, k, *upwindDiscretization);
 
-	Vector3 normalGrad = Gradient::getGradient(g, i, j, k, *normalDiscretization);
+	Vector3 normalGrad = Gradient::getGradient(g, i, j, k, *centralDiscretization);
 	
 
 	Vector3 vel = u.getVelocityAtCoordinate(pos)*-1.0;

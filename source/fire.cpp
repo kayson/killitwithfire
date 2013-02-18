@@ -12,10 +12,10 @@ Fire::Fire(FirePresets *p):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->G
 
 	phi.fillLevelSet(preset->implicitFunction);
 	
-	preset->discretization->setVectorGrid(u.getCenterVel());
-	preset->normalDiscretization->setVectorGrid(u.getCenterVel());
+	preset->upwindDiscretization->setVectorGrid(u.getCenterVel());
+	preset->centralDiscretization->setVectorGrid(u.getCenterVel());
 
-    preset->advect->setDiscretization(preset->discretization, preset->normalDiscretization);
+	preset->advect->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
 
 }
 
@@ -113,8 +113,8 @@ void Fire::runSimulation(){
 	computeCellTypes(); //Beräkna om vad för typ voxlarna är
 	
 	//Fixa signed distance field
-	/*if(count % 50 == 0)
-		phi.reinitialize();*/
+	/*if(count % 50 == 0)*/
+	phi.reinitialize();
 	count++;
 }
 

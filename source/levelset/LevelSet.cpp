@@ -3,7 +3,7 @@
 #include "../Discretization.h"
 #include "../CentralDiff.h"
 #include "../Gradient.h"
-//#include "../Reinitialize.h"
+#include "../Reinitialize.h"
 #include <iostream>
 #include <cmath>
 
@@ -27,7 +27,7 @@ void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 }
 void LevelSet::reinitialize()
 {
-	//reinitialize::reinitializeGrid(phi);
+	reinitialize::reinitializeGrid(*phi);
 }
 void LevelSet::printDistanceField()
 {

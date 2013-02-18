@@ -8,18 +8,19 @@
 
 class Advect {
 protected:
-	Discretization *discretization;
 	BorderCondition borderCondition;
-	Discretization *normalDiscretization;
+	Discretization *upwindDiscretization;
+	
+	Discretization *centralDiscretization;
 public:
     virtual ~Advect(){};
 
     virtual void advect(VelocityField &v,GridField<double> *g, GridField<double> *ng, double dt) = 0;
 
-	virtual void setDiscretization(Discretization *discret, Discretization *norm)
+	virtual void setDiscretization(Discretization *upwind, Discretization *central)
 	{ 
-		discretization = discret; 
-		normalDiscretization = norm;
+		upwindDiscretization = upwind; 
+		centralDiscretization = central;
 	};
 };
 #endif /* defined(__FuidFire__Advect__) */

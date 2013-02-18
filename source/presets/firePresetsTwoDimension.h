@@ -19,13 +19,14 @@ public:
         
         //Rutiner
         advect = new AdvectEuler();
-		discretization = new UpwindDiff();
-		normalDiscretization = new CentralDiff();
+		upwindDiscretization = new UpwindDiff();
+		centralDiscretization = new CentralDiff();
 		
 	};
 	~FirePresetsTwoDimension(){
         delete advect;
-        delete discretization;
+        delete centralDiscretization;
+		delete upwindDiscretization;
     }
 
 private:
