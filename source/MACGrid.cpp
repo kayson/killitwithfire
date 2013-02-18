@@ -285,15 +285,15 @@ void MACGrid::setValueAtFace(double val,const int i, const int j, const int k, D
         _u->setValueAtIndex(val, i+1, j, k);
     }else if (d == LEFT){
         _u->setValueAtIndex(val, i, j, k);
-    }else if (d == UP) {
+    }else if (d == DOWN) {
         _v->setValueAtIndex(val, i, j, k);
-    }else if (d == DOWN){
+    }else if (d == UP){
         _v->setValueAtIndex(val, i, j+1, k);
-    }else  if (d == BACKWARD){
-        _w->setValueAtIndex(val, i, j, k);
+    }else  if (d == FORWARD){
+        _w->setValueAtIndex(val, i, j, k+1);
     }else{
-        //Forward
-        _w->setValueAtIndex(val, i, j+1, k);
+        //Backward
+        _w->setValueAtIndex(val, i, j, k);
     }
 }
 
