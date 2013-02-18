@@ -180,7 +180,6 @@ CellType Fire::getCellType(const int i, const int j, const int k)
 		return IGNITED;
 }
 
-int count = 0;
 void Fire::runSimulation(){
     
     //Beräkna tidssteget
@@ -215,9 +214,7 @@ void Fire::runSimulation(){
     
   	
 	//Fixa signed distance field
-	/*if(count % 50 == 0)*/
 	phi.reinitialize();
-	count++;
 }
 
 void Fire::drawCenterVelocities()
