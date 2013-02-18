@@ -26,10 +26,10 @@ void AdvectEuler::advect(MACGrid &u, GridField<double> *g,GridField<double> *ng,
 double AdvectEuler::evaluate(MACGrid &u, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k){
 	Vector3 pos = Vector3(i,j,k);
 	double xv, yv, zv;
-	discretization->setMACGrid(&u);//Oh god why??
-	Vector3 gradPhi = Gradient::getGradient(g, i, j, k, *discretization);
+	
+	Vector3 gradPhi = Gradient::getGradient(g, i, j, k, *upwindDiscretization);
 
-	Vector3 normalGrad = Gradient::getGradient(g, i, j, k, *normalDiscretization);
+	Vector3 normalGrad = Gradient::getGradient(g, i, j, k, *centralDiscretization);
 	
 	Vector3 vel = u.velocityAtIndex(pos)*-1.0;
 	/*

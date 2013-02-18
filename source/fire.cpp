@@ -12,11 +12,12 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
     
     //u.fillVelocity(Vector3(0.1,0.0,0));
 	phi.fillLevelSet(preset->implicitFunction);
-	
-	//preset->discretization->setVectorGrid(u.getCenterVel());
-	//preset->normalDiscretization->setVectorGrid(u.getCenterVel());
 
-    preset->advect->setDiscretization(preset->discretization, preset->normalDiscretization);
+	preset->upwindDiscretization->setMACGrid(&u);
+	preset->centralDiscretization->setMACGrid(&u);
+
+
+	preset->advect->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
 
 }
 
@@ -214,8 +215,8 @@ void Fire::runSimulation(){
     
   	
 	//Fixa signed distance field
-	/*if(count % 50 == 0)
-		phi.reinitialize();*/
+	/*if(count % 50 == 0)*/
+	phi.reinitialize();
 	count++;
 }
 

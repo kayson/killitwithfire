@@ -58,9 +58,7 @@ int main(int argc, char *argv[])
 		update();
 
 		// Draw the scene.
-		render();
-
-		
+		render();		
 
 		// Check if the ESC key was pressed or the window was closed.
 		if(glfwGetKey(GLFW_KEY_ESC) || !glfwGetWindowParam(GLFW_OPENED))
