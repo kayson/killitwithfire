@@ -3,7 +3,7 @@
 #include "../presets/firePresets.h"
 #include "../Gradient.h"
 
-void AdvectEuler::advect(VelocityField &v, GridField<double> &g, double dt){
+void AdvectEuler::advect(VelocityField &u, GridField<double> &g, double dt){
     for(int i = 0; i < g.xdim(); i++)
 	{
 		for(int j = 0; j < g.ydim(); j++)
@@ -11,9 +11,9 @@ void AdvectEuler::advect(VelocityField &v, GridField<double> &g, double dt){
 			for(int k = 0; k < g.zdim(); k++)
 			{
 				if(!borderCondition.checkBorder(g,i,j,k))
-					borderCondition.enforceBorderCondition(v,g,i,j,k);
+					borderCondition.enforceBorderCondition(u,g,i,j,k);
 				{
-					double f = evaluate(v, g, i, j, k);
+					double f = evaluate(u, g, i, j, k);
 					g.setValueAtIndex(g(i,j,k) + f * dt, i, j, k);// setData(i, j, k, );
 				}
 			}
@@ -21,7 +21,7 @@ void AdvectEuler::advect(VelocityField &v, GridField<double> &g, double dt){
 	}
 }
 
-double AdvectEuler::evaluate(VelocityField &v, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k){
+double AdvectEuler::evaluate(VelocityField &u, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k){
 	Vector3 pos = Vector3(i,j,k);
 	double xv, yv, zv;
 	
@@ -29,7 +29,7 @@ double AdvectEuler::evaluate(VelocityField &v, GridField<double> &g, unsigned in
 
 	Vector3 normalGrad = Gradient::getGradient(g, i, j, k, *normalDiscretization);
 	
-	Vector3 vel = v.getVelocityAtCoordinate(pos)*-1.0;
+	Vector3 vel = u.getVelocityAtCoordinate(pos)*-1.0;
 	/*
 	double l = normalGrad.norm();
 	if(l != 0)
