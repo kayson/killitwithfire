@@ -9,13 +9,11 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
     //Presets
     preset = pre;
 
-    
-    //u.fillVelocity(Vector3(0.1,0.0,0));
 	phi.fillLevelSet(preset->implicitFunction);
 
 
-    preset->advect->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
-	const int matDim = phi.phi->xdim()*phi.phi->ydim()*phi.phi->zdim()*phi.phi->xdim()*phi.phi->ydim()*phi.phi->zdim();
+    preset->advection->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
+	const int matDim = phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim()*phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim();
 	//A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
 	_borderCondition = new BorderCondition();
 
@@ -23,7 +21,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	preset->centralDiscretization->setMACGrid(&u);
 
 
-	preset->advect->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
+	preset->advection->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
 
 
 }
@@ -51,7 +49,7 @@ double Fire::computeDT(double currentTime){
 
 void Fire::advectLevelSet(double duration)
 {
-	preset->advect->advect(u, phi.phi,phi.temp, duration);
+	preset->advection->advect(u, phi.grid, phi.gridCopy, duration);
 }
 
 void Fire::project(double dt)
@@ -60,9 +58,9 @@ void Fire::project(double dt)
 
 	// b (rhs)
 	// sid. 45, Figure 4.2 (Bridson)
-	for(int i = 0; i < phi.phi->xdim(); i ++)
-		for(int j = 0; j < phi.phi->ydim(); j ++)
-			for(int k = 0; k < phi.phi->zdim(); k ++)
+	for(int i = 0; i < phi.grid->xdim(); i ++)
+		for(int j = 0; j < phi.grid->ydim(); j ++)
+			for(int k = 0; k < phi.grid->zdim(); k ++)
 			{
 				if(getCellType(i,j,k) == BLUECORE || getCellType(i,j,k) == IGNITED)
 					rhs->setValueAtIndex(
@@ -84,8 +82,8 @@ void Fire::project(double dt)
 				else if(getCellType(i,j,k) == IGNITED) // om gas
 					scale = dt/(preset->dx*preset->dx*preset->rhoh);
 
-				/*if(!_borderCondition->checkBorder(*phi.phi,i,j,k))
-					_borderCondition->enforceBorderCondition(u, *phi.phi,i,j,k);*/
+				/*if(!_borderCondition->checkBorder(*phi.grid,i,j,k))
+					_borderCondition->enforceBorderCondition(u, *phi.grid,i,j,k);*/
 				if(getCellType(i,j,k) == BLUECORE && getCellType(i+1,j,k) == BLUECORE){
 					//A->set_element(u.getCenterField()->
 				}
@@ -98,9 +96,9 @@ void Fire::project(double dt)
 
 	// räkna fram u^(n+1) med nya p, 
 	// sid. 41, Figure 4.1 (Bridson)
-	for(int i = 0; i < phi.phi->xdim(); i ++)
-		for(int j = 0; j < phi.phi->ydim(); j ++)
-			for(int k = 0; k < phi.phi->zdim(); k ++)
+	for(int i = 0; i < phi.grid->xdim(); i ++)
+		for(int j = 0; j < phi.grid->ydim(); j ++)
+			for(int k = 0; k < phi.grid->zdim(); k ++)
 			{
 				if(getCellType(i,j,k) == BLUECORE || getCellType(i,j,k) == IGNITED)
 				{
@@ -126,27 +124,27 @@ double Fire::getAlpha(const int i, const int j, const int k, DirectionEnums d)
 	double temp = 0;
 
 	if(d == RIGHT)
-		temp = phi.phi->valueAtIndex(i+1,j,k);
+		temp = phi.grid->valueAtIndex(i+1,j,k);
 	if(d == LEFT)
-		temp = phi.phi->valueAtIndex(i-1,j,k);
+		temp = phi.grid->valueAtIndex(i-1,j,k);
 	if(d == UP)
-		temp = phi.phi->valueAtIndex(i,j+1,k);
+		temp = phi.grid->valueAtIndex(i,j+1,k);
 	if(d == DOWN)
-		temp = phi.phi->valueAtIndex(i,j-1,k);
+		temp = phi.grid->valueAtIndex(i,j-1,k);
 	if(d == FORWARD)
-		temp = phi.phi->valueAtIndex(i,j,k+1);
+		temp = phi.grid->valueAtIndex(i,j,k+1);
 	if(d == BACKWARD)
-		temp = phi.phi->valueAtIndex(i,j,k-1);
+		temp = phi.grid->valueAtIndex(i,j,k-1);
 
-	if(phi.phi->valueAtIndex(i,j,k) <= 0 && temp <= 0)
+	if(phi.grid->valueAtIndex(i,j,k) <= 0 && temp <= 0)
 		return 1;
-	else if(phi.phi->valueAtIndex(i,j,k) <= 0 && temp > 0)
-		return (phi.phi->valueAtIndex(i,j,k) / 
-			(phi.phi->valueAtIndex(i,j,k) - temp));
-	else if(phi.phi->valueAtIndex(i,j,k) > 0 && temp <= 0)
-		return 1 - (phi.phi->valueAtIndex(i,j,k) / 
-			(phi.phi->valueAtIndex(i,j,k) - temp));
-	else if(phi.phi->valueAtIndex(i,j,k) > 0 && temp > 0)
+	else if(phi.grid->valueAtIndex(i,j,k) <= 0 && temp > 0)
+		return (phi.grid->valueAtIndex(i,j,k) / 
+			(phi.grid->valueAtIndex(i,j,k) - temp));
+	else if(phi.grid->valueAtIndex(i,j,k) > 0 && temp <= 0)
+		return 1 - (phi.grid->valueAtIndex(i,j,k) / 
+			(phi.grid->valueAtIndex(i,j,k) - temp));
+	else if(phi.grid->valueAtIndex(i,j,k) > 0 && temp > 0)
 		return 0;
 }
 
@@ -200,7 +198,7 @@ CellType Fire::getCellType(const int i, const int j, const int k)
 {
 	if(false) //Check if is solid
 		return SOLID;
-	else if(phi.phi->valueAtIndex(i,j,k) <= 0.0)
+	else if(phi.grid->valueAtIndex(i,j,k) <= 0.0)
 		return BLUECORE;
 	else 
 		return IGNITED;
@@ -282,12 +280,12 @@ void Fire::drawCenterVelocities()
         
     }
     /*
-	for(int i = 0; i < phi.phi.xdim(); i += 5)
+	for(int i = 0; i < phi.grid.xdim(); i += 5)
 >>>>>>> Tagit bort vectorgrid
 	{
-		for(int j = 0; j < phi.phi->ydim(); j += 5)
+		for(int j = 0; j < phi.grid->ydim(); j += 5)
 		{
-			for(int k = 0; k < phi.phi->zdim(); k += 5)
+			for(int k = 0; k < phi.grid->zdim(); k += 5)
 			{
 				float x0 = FirePresets::dx*((double)(i) + 0.5);
 				float y0 = FirePresets::dx*((double)(j) + 0.5);

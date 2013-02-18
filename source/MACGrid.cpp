@@ -224,7 +224,7 @@ Vector3 MACGrid::velocityAtWorld(const Vector3 &world) const{
 }
 
 Vector3 MACGrid::velocityAtIndex(const Vector3 &index) const{
-    //return Vector3(0.5);
+    
     double x,y,z;
     
     if (_cacheFlag->valueAtIndex(index.x, index.y, index.z) == true) { //Finns det en tillgänglig cache?

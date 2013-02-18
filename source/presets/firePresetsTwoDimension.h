@@ -18,13 +18,13 @@ public:
 		implicitFunction = implicitFunction::sphere;
         
         //Rutiner
-        advect = new AdvectEuler();
+        advection = new AdvectEuler();
 		upwindDiscretization = new UpwindDiff();
 		centralDiscretization = new CentralDiff();
 		
 	};
 	~FirePresetsTwoDimension(){
-        delete advect;
+        delete advection;
         delete centralDiscretization;
 		delete upwindDiscretization;
     }

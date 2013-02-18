@@ -9,12 +9,12 @@ class LevelSet
 {
 public:
 	LevelSet(){
-		phi  = new GridField<double>(1000,1000,1000);
-		temp = new GridField<double>(1000, 1000, 1000,10);
+		grid  = new GridField<double>(1000,1000,1000);
+		gridCopy = new GridField<double>(1000, 1000, 1000,10);
     };
 	LevelSet(int xDim, int yDim, int zDim, double size){
-		phi  = new GridField<double>(xDim,yDim,zDim,size);
-		temp = new GridField<double>(xDim,yDim,zDim,size);
+		grid  = new GridField<double>(xDim,yDim,zDim,size);
+		gridCopy = new GridField<double>(xDim,yDim,zDim,size);
 	};
 	~LevelSet(){};
 	void fillLevelSet(double (*implicitFunction)(int x, int y, int z));
@@ -27,8 +27,8 @@ public:
 
 	void reinitialize();
 
-	GridField<double> *phi; //Signed distance field
-	GridField<double> *temp;
+	GridField<double> *grid; //Signed distance field
+	GridField<double> *gridCopy;
 
 private:
 	

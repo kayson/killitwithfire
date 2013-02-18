@@ -33,7 +33,7 @@ public:
 	static const double rhoh; // Hot gaseous products density (kg/m^3)
 
     //Rutiner
-	Advect *advect;
+	Advect *advection;
     Discretization *upwindDiscretization;
 	Discretization *centralDiscretization;
 };
