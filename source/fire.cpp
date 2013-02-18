@@ -200,9 +200,12 @@ void Fire::runSimulation(){
 
 		currentTime += dt;
     }
+
+	// Self-advection
     u.advect(preset->dt);
 
-	computeCellTypes(); //Beräkna om vad för typ voxlarna är
+	//Beräkna om vad för typ voxlarna är
+	computeCellTypes(); 
     
     //Externa krafter  
 		//preset->externalForce->addForce(grid);
