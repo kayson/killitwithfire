@@ -4,9 +4,9 @@
 
 #include "GridField.hpp"
 
-Fire::Fire(FirePresets *p):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z){
+Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z){
     //Presets
-    preset = p;
+    preset = pre;
 
 	u = VelocityField(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
 
@@ -45,6 +45,63 @@ void Fire::advectLevelSet(double duration)
 	preset->advect->advect(u, phi.phi, phi.temp, duration);
 }
 
+void Fire::project(double dt)
+{
+	double scale = 1 / preset->dx;
+
+
+	// b
+	for(int i = 0; i < phi.phi->xdim(); i ++)
+		for(int j = 0; j < phi.phi->ydim(); j ++)
+			for(int k = 0; k < phi.phi->zdim(); k ++)
+			{
+				if(getCellType(i,j,k) == BLUECORE)
+					rhs->setValueAtIndex(-scale,i,j,k);
+					/* -scale * (u(i+1,j,k)-u(i,j,k)
+					+v(i,j+1,k)-v(i,j,k)
+					+w(i,j,k+1)-w(i,j,k));*/
+			}
+
+
+	// A
+
+	// räkna fram p med A och b
+
+	// uppdatera u^(n+1) med nya p
+	for(int i = 0; i < phi.phi->xdim(); i ++)
+		for(int j = 0; j < phi.phi->ydim(); j ++)
+			for(int k = 0; k < phi.phi->zdim(); k ++)
+			{
+				if(getCellType(i,j,k) == BLUECORE)
+				{
+					scale = dt / (preset->rhof * preset->dx);
+					/*u(i,j,k) -= scale * p(i,j,k);
+					u(i+1,j,k) += scale * p(i,j,k);
+					v(i,j,k) -= scale * p(i,j,k);
+					v(i,j+1,k) += scale * p(i,j,k);
+					w(i,j,k) -= scale * p(i,j,k);
+					w(i,j,k+1) += scale * p(i,j,k);*/
+
+				}
+				else if(getCellType(i,j,k) == IGNITED)
+				{
+					scale = dt / (preset->rhoh * preset->dx);
+					/*u(i,j,k) -= scale * p(i,j,k);
+					u(i+1,j,k) += scale * p(i,j,k);
+					v(i,j,k) -= scale * p(i,j,k);
+					v(i,j+1,k) += scale * p(i,j,k);
+					w(i,j,k) -= scale * p(i,j,k);
+					w(i,j,k+1) += scale * p(i,j,k);*/
+
+				}
+				else if(getCellType(i,j,k) == SOLID)
+				{
+
+				}
+			}
+
+}
+
 void Fire::computeCellTypes()
 {
 	for(GridFieldIterator<int> it = celltype.iterator(); !it.done(); it.next())
@@ -74,22 +131,14 @@ int count = 0;
 void Fire::runSimulation(){
     
     //Beräkna tidssteget
-	
-
 	for(double currentTime = 0; currentTime < preset->dt;)
 	{
 		double dt = computeDT(currentTime);
 
 		currentTime += dt;
-	}
-    
-    //Externa krafter
-    
-    //preset->externalForce->addForce(grid);
-    
-    //Project
-    
-    //Advektera levelset
+	}	
+
+	 //Advektera levelset
     for(double currentTime = 0; currentTime < preset->dt;)
 	{
 		double dt = computeDT(currentTime);
@@ -101,7 +150,13 @@ void Fire::runSimulation(){
 	}
 	
 	computeCellTypes(); //Beräkna om vad för typ voxlarna är
-	
+
+    //Externa krafter  
+		//preset->externalForce->addForce(grid);
+    
+    //Project
+    
+  	
 	//Fixa signed distance field
 	/*if(count % 50 == 0)
 		phi.reinitialize();*/
