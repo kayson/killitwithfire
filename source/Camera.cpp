@@ -26,10 +26,32 @@ void GLFWCALL Camera::reshape( int width, int height )
     if(HEIGHT<=0) HEIGHT=1; // Safeguard against iconified/closed window
 
 	glViewport (0, 0, (GLsizei)WIDTH, (GLsizei)HEIGHT);
-    glMatrixMode(GL_PROJECTION); 
-    glLoadIdentity();
-	//double offsetX = position_[0];
-	gluOrtho2D(-2.0f, 20.0f, -2.0f, 20.0f); 
-    glMatrixMode( GL_MODELVIEW );
-    glLoadIdentity();
+    
+
+    
+    if (true) {
+        
+        glMatrixMode(GL_PROJECTION);
+        gluOrtho2D(-2.0f, 20.0f, -2.0f, 20.0f);
+        glMatrixMode( GL_MODELVIEW );
+        glLoadIdentity();
+    }else{
+        // Select and setup the projection matrix.
+        glMatrixMode(GL_PROJECTION); // "We want to edit the projection matrix"
+        //glLoadIdentity(); // Reset the matrix to identity
+        // 65 degrees FOV, same aspect ratio as window, depth range 1 to 100
+        //gluPerspective( 85.0f, (GLfloat)width/(GLfloat)height, 1.0f, 100.0f );
+        
+        // Select and setup the modelview matrix.
+        glMatrixMode( GL_MODELVIEW ); // "We want to edit the modelview matrix"
+        glLoadIdentity(); // Reset the matrix to identity
+        // Look from 0,-5,0 towards 0,0,0 with Z as "up" in the image
+        
+        /*gluLookAt( 7.5f, 0.0, 7.5f,    // Eye position
+                      0.0, 0.0, 0.0,   // View point
+                    0.0f, 1.0f, 0.0f );  // Up vector
+         */
+    }
+    
+    
 }

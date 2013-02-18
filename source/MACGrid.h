@@ -13,18 +13,32 @@
 #include "Vector3.h"
 #include "GridField.hpp"
 #include "datatype.h"
-class MACGrid {
+#include "VectorGrid.h"
+
+class MACGrid{
 private:
-    GridField<double> _u,_v,_w;
+    MACGrid *_buffer;
+    GridField<double> *_u,*_v,*_w;
+    GridField<double> *_center;
+    GridMapping _boxes;
+    GridMapping _fluid;
+private:
+    void initialize(int xdim,int ydim,int zdim, double size);
 public:
     MACGrid();
-    MACGrid(int x,int y,int z, double dx);
+    MACGrid(int dim, double size);
+    MACGrid(int xdim,int ydim,int zdim, double size);
     MACGrid(const MACGrid &m);
-    ~MACGrid(){};
+    ~MACGrid();
+    MACGrid& operator=(const MACGrid &g);
 
-    //void operator=(const MACGrid &m) = delete;
+
+    //Buffer
+    MACGrid * buffer();
+    void swapBuffer();
     Vector3 velocityAtWorld(const Vector3 &world) const;
     double velocityAtFace(const int i,const int j,const int k, DirectionEnums d) const;
+    void advect();
 
     void draw();
 };

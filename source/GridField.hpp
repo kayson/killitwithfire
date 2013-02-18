@@ -9,88 +9,76 @@
 #include "GridField.h"
 #include "Interpolation.h"
 #include <exception>
+
+#include "GridMapping.h"
+
+
+
+#ifdef __APPLE__
+#elif defined _WIN32 || defined _WIN64
+#define round(x) floor((x) >= 0 ? (x) + 0.5 : (x) - 0.5)
+#endif
+
 #ifndef FuidFire_GridField_hpp
 #define FuidFire_GridField_hpp
 
 template<class T>
-GridField<T>::GridField():GridField(1,1,1){
-    
-    
+GridField<T>::GridField():GridField(10,10,10){
 }
 
 template<class T>
-GridField<T>::GridField(int xdim,int ydim, int zdim):_xdim(xdim),_ydim(ydim),_zdim(zdim){
+GridField<T>::GridField(int xdim,int ydim, int zdim){
+    //mapping
+    mapping = GridMapping(xdim,ydim,zdim);
+    
     //Allokera data-array
     _data = new T[cellCount()];
     for (int i = 0; i < cellCount(); i++) _data[i] = T();
-    
-    //Sätt Enhetsmatris
-    double *m = new double[4*4];
-    std::fill(m, m+4*4, 0);
-    m[0] = 1; m[5] = 1; m[10] = 1; m[15] = 1.0;
-    setTransformation(m);
+
 }
 
 template<class T>
 GridField<T>::GridField(const GridField<T> &g){
-    _data = new T[cellCount()];
+
+    mapping = GridMapping(g.mapping);
+    
+    _data = new T[g.cellCount()];
 
     //Iterera över g
     for (GridFieldIterator<T> iter = g.iterator(); !iter.done(); iter.next()) {
         setValueAtIndex(iter.value(), iter.index());
     }
-    trans = new double[16];
-    itrans = new double[16];
-    for (int i = 0; i < 16; i++) trans[i] = g.trans[i];
-    for (int i = 0; i < 16; i++) itrans[i] = g.itrans[i];
-
 }
 
 template<class T>
-void GridField<T>::setTransformation(double *m){ //4x4 matrix som transformerar cellkoordinater till världskoordinater
-    trans = m;
+GridField<T>& GridField<T>::operator=(const GridField<T> &g){
+    if (this != g) {
+        mapping = g.mapping;
+        
+        //Allokera data-array
+        _data = new T[cellCount()];
+        for (int i = 0; i < cellCount(); i++) _data[i] = T();
+
+        *_extrapolation = *g._extrapolation;
+
+    }
     
-	glm::mat4x4 temp(m[0],m[1],m[2],m[3],
-                     m[4],m[5],m[6],m[7],
-                     m[8],m[9],m[10],m[11],
-                     m[12],m[13],m[14],m[15]);
-	temp = glm::inverse(temp);
-    
-    itrans = new double[16];
-	itrans[0] = temp[0][0];itrans[1] = temp[0][1];itrans[2] = temp[0][2];itrans[3] = temp[0][3];
-	itrans[4] = temp[1][0];itrans[5] = temp[1][1];itrans[6] = temp[1][2];itrans[7] = temp[1][3];
-	itrans[8] = temp[2][0];itrans[9] = temp[2][1];itrans[10] = temp[2][2];itrans[11] = temp[2][3];
-	itrans[12] = temp[3][0];itrans[13] = temp[3][1];itrans[14] = temp[3][2];itrans[15] = temp[3][3];
-    
+    return *this;
 }
+
 
 template<class T>
 GridField<T>::~GridField(){
     delete [] _data;
-    delete trans;
-    delete itrans;
 }
 
 template<class T>
-inline int GridField<T>::xdim() const{
-    return _xdim;
-}
-template<class T>
-inline int GridField<T>::ydim() const{
-    return _ydim;
-}
-template<class T>
-inline int GridField<T>::zdim() const{
-    return _zdim;
-}
-
-template<class T>
-inline T GridField<T>::valueAtIndex(int i) const{
+T GridField<T>::valueAtIndex(int i) const{
     return _data[i];
 }
 
 template<class T>
-inline T GridField<T>::valueAtIndex(int i,int j,int k) const{
+T GridField<T>::valueAtIndex(int i,int j,int k) const{
     
     if (!(i < xdim() && i >= 0 && j >= 0 && j < ydim() && k >= 0 && k < zdim())) {
 		//std::string s = "Index ("+ std::to_string(i) + "," + std::to_string(j) + ","+ std::to_string(k)+") out of bounds [0..";
@@ -98,107 +86,73 @@ inline T GridField<T>::valueAtIndex(int i,int j,int k) const{
         std::string s = "Out of bounds";
 		throw std::runtime_error(s);
     }
-    return valueAtIndex(indexAt(i, j, k));
+    return valueAtIndex(mapping.indexAt(i, j, k));
 }
 
 template<class T>
-inline T GridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
-    int index;
+T GridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
+    
     int i,j,k;
-    double l_x,l_y,l_z;
-    double cell_x,cell_y,cell_z;
-    
+    double w_x0,w_y0,w_z0;
+    double w_x1,w_y1,w_z1;
+    double x,y,z;
+
     //Konvertera världskoordinater till cellkoordinater
-    worldToLocal(w_x, w_y, w_z, l_x, l_y, l_z);
-    //Konverera lokala koordinater till 1D index för cellen närmast "upp" til vänster
-    index = localToUpperLeftIndex(l_x, l_y, l_z);
-    //Konvertera 1D index till 3D index (i,j,k)
-    indexAt(index, i, j, k);
-    
-    //Konvertera lokala koordinater för index till cellkoordinater (0..1)
-    localToIndex(i,j,k,l_x,l_y,l_z,cell_x,cell_y,cell_z);
-    
+    mapping.worldToUpperLeftIndex(w_x, w_y, w_z, i, j, k);
+    mapping.indexToWorld(i, j, k, w_x0, w_y0, w_z0);
+    mapping.indexToWorld(i+1, j+1, k+1, w_x1, w_y1, w_z1);
+
+    x = (w_x-w_x0)/(w_x1-w_x0);
+    y = (w_y-w_y0)/(w_y1-w_y0);
+    z = (w_z-w_z0)/(w_z1-w_z0);
+    assert(i < 100);
+    //FIXA!!! -->    
     //Interpolera...
     LinearInterpolation<T> interpolation = LinearInterpolation<T>();
-    T t1 = interpolation(cell_x, valueAtIndex(i,j,k),valueAtIndex(i+1,j,k));
-    T t2 = interpolation(cell_x,valueAtIndex(i,j+1,k),valueAtIndex(i+1,j+1,k));
-    T t3 = interpolation(cell_x,valueAtIndex(i,j+1,k+1),valueAtIndex(i+1,j+1,k+1));
-    T t4 = interpolation(cell_x,valueAtIndex(i,j+1,k+1),valueAtIndex(i+1,j+1,k+1));
+    T t1 = interpolation(x,valueAtIndex(i,j,k),valueAtIndex(i+1,j,k));
+    T t2 = interpolation(x,valueAtIndex(i,j+1,k),valueAtIndex(i+1,j+1,k));
+    T t3 = interpolation(x,valueAtIndex(i,j,k+1),valueAtIndex(i+1,j,k+1));
+    T t4 = interpolation(x,valueAtIndex(i,j+1,k+1),valueAtIndex(i+1,j+1,k+1));
     
-    T t5 = interpolation(cell_y,t1,t2);
-    T t6 = interpolation(cell_y,t3,t4);
+    T t5 = interpolation(y,t1,t2);
+    T t6 = interpolation(y,t3,t4);
     
-    T t7 = interpolation(cell_z,t5,t6);
+    T t7 = interpolation(z,t5,t6);
     
     return t7;
 }
 
 template<class T>
 int GridField<T>::cellCount() const{
-    return (_xdim)*(_ydim)*(_zdim);
+    return (mapping.xdim())*(mapping.ydim())*(mapping.zdim());
+}
+//Dim
+template<class T>
+int GridField<T>::xdim() const{
+    return mapping.xdim();
+}
+template<class T>
+int GridField<T>::ydim() const{
+    return mapping.ydim();
+}
+template<class T>
+int GridField<T>::zdim() const{
+    return mapping.zdim();
 }
 
 template<class T>
-inline int GridField<T>::indexAt(int i, int j, int k) const{
-    assert(i < xdim() && i >= 0 && j < ydim() && j >= 0 && k >= 0 && k < zdim());
-    return i+(_xdim)*j+(_xdim)*(_ydim)*k;
+int GridField<T>::size() const{
+    return mapping.xdim()*mapping.ydim()*mapping.zdim();
 }
 
 template<class T>
-inline void GridField<T>::indexAt(int index,int &i, int &j, int &k) const{
-    k = index /(_xdim*_ydim);
-    j = (index-(k*_xdim*_ydim))/(_xdim);
-    i = (index-j*_xdim-k*_xdim*_ydim);
-    
-}
-
-template<class T>
-inline void GridField<T>::indexToWorld(int i,int j,int k, double &w_x, double &w_y,double &w_z) const{
-    double x = i,y = j,z = k;
-    w_x = trans[0]*x+trans[1]*y+trans[2]*z+trans[3];
-    w_y = trans[4]*x+trans[5]*y+trans[6]*z+trans[7];
-    w_z = trans[8]*x+trans[9]*y+trans[10]*z+trans[11];
-}
-
-template<class T>
-inline void GridField<T>::worldToIndex(int &i,int &j,int &k, double w_x, double w_y,double w_z) const{
-    double l_x = itrans[0]*w_x+itrans[1]*w_y+itrans[2]*w_z+itrans[3];
-    double l_y = itrans[4]*w_x+itrans[5]*w_y+itrans[6]*w_z+itrans[7];
-    double l_z = itrans[8]*w_x+itrans[9]*w_y+itrans[10]*w_z+itrans[11];
-    indexAt(localToIndex(l_x,l_y, l_z),i,j,k);
-}
-
-template<class T>
-int GridField<T>::localToIndex(const double l_x,const double l_y,const double l_z) const{
-    //Index
-    return indexAt( floor(l_x*((double)_xdim)+0.5) , floor(l_y*((double)_ydim)+0.5) , floor(l_z*((double)_zdim)+0.5));
-}
-
-template<class T>
-inline void GridField<T>::localToIndex(int i,int j,int k, double l_x, double l_y,double l_z, double &c_x,double &c_y,double &x_z) const{
-    indexAt(localToIndex(l_x,l_y, l_z),i,j,k);
-}
-
-template<class T>
-int GridField<T>::localToUpperLeftIndex(const double l_x,const double l_y,const double l_z) const{
-    //Index
-    return indexAt( floor(l_x*((double)_xdim)) , floor(l_y*((double)_ydim)) , floor(l_z*((double)_zdim)));
-}
-
-template<class T>
-void GridField<T>::worldToLocal(const double w_x,const double w_y,const double w_z, double &l_x,double &l_y,double &l_z) const{
-    l_x = itrans[0]*w_x+itrans[1]*w_y+itrans[2]*w_z+itrans[3];
-    l_y = itrans[4]*w_x+itrans[5]*w_y+itrans[6]*w_z+itrans[7];
-    l_z = itrans[8]*w_x+itrans[9]*w_y+itrans[10]*w_z+itrans[11];
-}
-
-template<class T>
-inline void GridField<T>::setValueAtIndex(T val,int i){
+void GridField<T>::setValueAtIndex(T val,int i){
     _data[i] = val;
 }
 template<class T>
-inline void GridField<T>::setValueAtIndex(T val,int i,int j,int k){
-    _data[indexAt(i, j, k)] = val;
+void GridField<T>::setValueAtIndex(T val,int i,int j,int k){
+    int index = mapping.indexAt(i, j, k);
+    _data[index] = val;
 }
 
 //Operatorer

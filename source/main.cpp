@@ -1,4 +1,4 @@
-﻿#ifdef __APPLE__
+#ifdef __APPLE__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h> // Takes care of everything GL-related
