@@ -34,12 +34,24 @@ GridField<T>::GridField(const GridMapping &m){
 
 template<class T>
 GridField<T>::GridField():GridField(10,10,10){
+    
 }
 
 template<class T>
 GridField<T>::GridField(int xdim,int ydim, int zdim){
     //mapping
     mapping = GridMapping(xdim,ydim,zdim);
+    
+    //Allokera data-array
+    _data = new T[cellCount()];
+    for (int i = 0; i < cellCount(); i++) _data[i] = T();
+    
+}
+
+template<class T>
+GridField<T>::GridField(int xdim,int ydim, int zdim, double size){
+    //mapping
+    mapping = GridMapping(xdim,ydim,zdim,size);
     
     //Allokera data-array
     _data = new T[cellCount()];

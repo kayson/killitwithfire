@@ -4,12 +4,13 @@
 
 #include "GridField.hpp"
 
-Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z)
+Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X-1, preset->GRID_DIM_Y-1, preset->GRID_DIM_Z, preset->GRID_SIZE)
 {
     //Presets
     preset = pre;
 
-    u.fillVelocity(Vector3(10,0,0));
+    
+    u.fillVelocity(Vector3(0.1,0.0,0));
 	phi.fillLevelSet(preset->implicitFunction);
 	
 	//preset->discretization->setVectorGrid(u.getCenterVel());
@@ -25,7 +26,7 @@ double Fire::computeDT(double currentTime){
 	//Bridson s. 35
 	double dx = preset->dx;
 	double alpha = preset->CFL_NUMBER;
-	double c = 10;// u.getMax();
+	double c = 1;// u.getMax();
 	if(c != 0)
 		smallStep = alpha * dx / c;
 	else
@@ -186,20 +187,19 @@ void Fire::drawCenterVelocities()
         glEnd();
         */
         
-        double dx = FirePresets::dx;
-        x = i; y = j; z = k;
+        //x = i; y = j; z = k;
                     
         glColor3f(0,1,0);
         glBegin(GL_LINES);
-        glVertex3f(x, y, z);
-        glVertex3f(x + v.x, y + v.y, z + v.z);
+        glVertex3f(x, y, 0);
+        glVertex3f(x + v.x, y + v.y, 0);
         glEnd();
-        
-        glColor3f(0,0,0);
+        /*
+        glColor3f(1,0,0);
         glBegin(GL_POINTS);
-        glVertex3f(x + v.x, y + v.y, z + v.z);
+        glVertex3f(x, y, 0);
         glEnd();
-         
+         */
         
     }
     /*

@@ -42,6 +42,10 @@ GridMapping::GridMapping(int xdim,int ydim,int zdim, glm::mat4x4 t):_xdim(xdim),
     _itrans = glm::inverse(_trans);
 }
 
+GridMapping::GridMapping(int xdim,int ydim,int zdim, double size):_xdim(xdim),_ydim(ydim),_zdim(zdim){
+    _trans = glm::mat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1);
+    _itrans = glm::inverse(_trans);
+}
 
 GridMapping::GridMapping(const GridMapping &g){
     _trans = g._trans;
