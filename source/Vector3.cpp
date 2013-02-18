@@ -14,6 +14,12 @@ Vector3::Vector3(double xf, double yf, double zf){
 	y = yf;
 	z = zf;
 }
+
+Vector3::Vector3(double v){
+    x = v;
+	y = v;
+	z = v;
+}
 Vector3::~Vector3(){
     
 }

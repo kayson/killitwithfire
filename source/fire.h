@@ -38,7 +38,7 @@ private:
     LevelSet phi;
 
     //Grid
-    VelocityField u;
+    MACGrid u;
 
 	GridField<int> celltype;
 };

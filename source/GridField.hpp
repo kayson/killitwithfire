@@ -94,7 +94,15 @@ T GridField<T>::valueAtIndex(int i,int j,int k) const{
 		//std::string s = "Index ("+ std::to_string(i) + "," + std::to_string(j) + ","+ std::to_string(k)+") out of bounds [0..";
         //s += std::to_string(xdim()) + "],[0.." + std::to_string(ydim()) + "],[0.." + std::to_string(zdim()) + "]";
         std::string s = "Out of bounds";
-		throw std::runtime_error(s);
+		//throw std::runtime_error(s);
+        i = i < 0 ? 0 : i;
+        i = i >= xdim() ? xdim() : i;
+        j = j < 0 ? 0 : j;
+        j = j >= ydim() ? ydim() : j;
+        k = k < 0 ? 0 : k;
+        k = k >= zdim() ? zdim() : k;
+        return T(0);
+
     }
     return valueAtIndex(mapping.indexAt(i, j, k));
 }
@@ -115,7 +123,7 @@ T GridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
     x = (w_x-w_x0)/(w_x1-w_x0);
     y = (w_y-w_y0)/(w_y1-w_y0);
     z = (w_z-w_z0)/(w_z1-w_z0);
-    assert(i < 100);
+    //assert(i < 100);
     //FIXA!!! -->    
     //Interpolera...
     LinearInterpolation<T> interpolation = LinearInterpolation<T>();
@@ -159,6 +167,11 @@ template<class T>
 void GridField<T>::setValueAtIndex(T val,int i){
     _data[i] = val;
 }
+template<class T>
+void GridField<T>::setAll(T val){
+    for (int i = 0; i < cellCount(); i++) _data[i] = val;
+}
+
 template<class T>
 void GridField<T>::setValueAtIndex(T val,int i,int j,int k){
     int index = mapping.indexAt(i, j, k);

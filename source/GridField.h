@@ -51,6 +51,7 @@ public:
     int cellCount() const;
 
     //Setter
+    void setAll(T val);
     void setValueAtIndex(T val,int i);
     void setValueAtIndex(T val,int i,int j,int k);
     

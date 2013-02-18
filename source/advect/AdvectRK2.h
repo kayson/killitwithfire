@@ -8,7 +8,7 @@ class AdvectRK2 : public Advect {
 
 public:
     AdvectRK2();
-    virtual void advect(VelocityField &v,GridField<double> *g, GridField<double> *ng, double dt);
+    virtual void advect(MACGrid &v,GridField<double> &g, double dt);
 };
 
 #endif /* defined(__FuidFire__AdvectRK2__) */

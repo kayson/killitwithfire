@@ -4,16 +4,15 @@
 
 #include "GridField.hpp"
 
-Fire::Fire(FirePresets *p):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z){
+Fire::Fire(FirePresets *p):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),	u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,1){
     //Presets
     preset = p;
 
-	u = VelocityField(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
-
+    u.fillVelocity(Vector3(10,0,0));
 	phi.fillLevelSet(preset->implicitFunction);
 	
-	preset->discretization->setVectorGrid(u.getCenterVel());
-	preset->normalDiscretization->setVectorGrid(u.getCenterVel());
+	//preset->discretization->setVectorGrid(u.getCenterVel());
+	//preset->normalDiscretization->setVectorGrid(u.getCenterVel());
 
     preset->advect->setDiscretization(preset->discretization, preset->normalDiscretization);
 
@@ -25,7 +24,7 @@ double Fire::computeDT(double currentTime){
 	//Bridson s. 35
 	double dx = preset->dx;
 	double alpha = preset->CFL_NUMBER;
-	double c = u.getMax();
+	double c = 10;// u.getMax();
 	if(c != 0)
 		smallStep = alpha * dx / c;
 	else
@@ -48,7 +47,7 @@ void Fire::advectVelocityField(double duration){
 
 void Fire::advectLevelSet(double duration)
 {
-	preset->advect->advect(u, phi.phi, phi.temp, duration);
+	preset->advect->advect(u, phi.phi,phi.temp, duration);
 }
 
 void Fire::computeCellTypes()
@@ -63,7 +62,7 @@ void Fire::computeCellTypes()
         }   
         
 		celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
-            
+
 	}
 }	
 
@@ -120,7 +119,45 @@ void Fire::runSimulation(){
 
 void Fire::drawCenterVelocities()
 {
-	for(int i = 0; i < phi.phi->xdim(); i += 5)
+    
+    for (GridFieldIterator<double> iter = u._center->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u._center->mapping.indexToWorld(i, j, k, x, y, z);
+        
+        Vector3 v = u.velocityAtWorld(Vector3(x,y,z));//*FirePresets::dx;
+        /*glColor3f(0,1,0);
+        glBegin(GL_LINES);
+        glVertex3f(1, 1, 1);
+        glVertex3f(dx*i + 1, y + 1, z + 1);
+        glEnd();
+        
+        glColor3f(0,0,0);
+        glBegin(GL_POINTS);
+        glVertex3f(x + v.x, y + v.y, z + v.z);
+        glEnd();
+        */
+        
+        double dx = FirePresets::dx;
+        x = i; y = j; z = k;
+                    
+        glColor3f(0,1,0);
+        glBegin(GL_LINES);
+        glVertex3f(x, y, z);
+        glVertex3f(x + v.x, y + v.y, z + v.z);
+        glEnd();
+        
+        glColor3f(0,0,0);
+        glBegin(GL_POINTS);
+        glVertex3f(x + v.x, y + v.y, z + v.z);
+        glEnd();
+         
+        
+    }
+    /*
+	for(int i = 0; i < phi.phi.xdim(); i += 5)
+>>>>>>> Tagit bort vectorgrid
 	{
 		for(int j = 0; j < phi.phi->ydim(); j += 5)
 		{
@@ -130,7 +167,7 @@ void Fire::drawCenterVelocities()
 				float y0 = FirePresets::dx*((double)(j) + 0.5);
 				float z0 = FirePresets::dx*((double)(k) + 0.5);
                 
-				Vector3 v = u.centerVelocities(i, j, k)*FirePresets::dx;
+				Vector3 v = u.velocityAtIndex(Vector3(i, j, k))*FirePresets::dx;
 				glColor3f(0,1,0);
 				glBegin(GL_LINES);
 					glVertex3f(x0, y0, z0);
@@ -143,7 +180,7 @@ void Fire::drawCenterVelocities()
 				glEnd();
 			}
 		}
-	}
+	}*/
 	
 }
 
