@@ -133,7 +133,7 @@ void update()
 	controller.updateInput(fps); //updatera mus och tangentbord
 
 	//Update physics
-	fire->runSumulation();
+	fire->runSimulation();
 }
 
 //renderar objekt
