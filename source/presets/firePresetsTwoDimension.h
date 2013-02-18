@@ -19,13 +19,14 @@ public:
         
         //Rutiner
         advect = new AdvectEuler();
-		discretization = new UpwindDiff();
-		normalDiscretization = new CentralDiff();
+		upwindDiscretization = new UpwindDiff();
+		centralDiscretization = new CentralDiff();
 		
 	};
 	~FirePresetsTwoDimension(){
         delete advect;
-        delete discretization;
+        delete centralDiscretization;
+		delete upwindDiscretization;
     }
 
 private:
@@ -36,7 +37,7 @@ const int FirePresets::GRID_DIM_X = 45;
 const int FirePresets::GRID_DIM_Y = 45;
 const int FirePresets::GRID_DIM_Z = 1;
 const double FirePresets::GRID_SIZE = 15;
-const double FirePresets::dt = 1./20.;
+const double FirePresets::dt = 1./10.;
 const double FirePresets::dx = 1./8.;
 const double FirePresets::CFL_NUMBER = .2;
 const double FirePresets::S = .5;
