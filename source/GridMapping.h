@@ -28,6 +28,7 @@ public:
     //Konstruktor
     GridMapping();
     GridMapping(int xdim,int ydim,int zdim);
+    GridMapping(int xdim,int ydim,int zdim, double size);
     GridMapping(int dim,glm::mat4x4 t);
     GridMapping(int xdim,int ydim,int zdim,glm::mat4x4 t);
     GridMapping(const GridMapping &);
@@ -37,7 +38,7 @@ public:
     //Transformation
     void setTransformation(double *t);
     void setTransformation(glm::mat4x4 t);
-
+    
     //Dim
     int xdim() const;
     int ydim() const;

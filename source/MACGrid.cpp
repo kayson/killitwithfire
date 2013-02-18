@@ -57,8 +57,12 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     _w = new GridField<double>(xdim,ydim,zdim+1);
     
     _center = new GridField<double>(xdim,ydim,zdim);
-    _cache = new GridField<Vector3>(xdim,ydim,zdim);
+    _cache = new GridField<Vector3>(xdim,ydim,zdim );
+    _cache->mapping.setTransformation(glm::mat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
     _cacheFlag = new GridField<bool>(xdim,ydim,zdim);
+    _cacheFlag->mapping.setTransformation(glm::mat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
+    _cacheFlag->setAll(false);
+
     _fluid = GridMapping(xdim*3,ydim*3,zdim*3, glm::mat4x4(size,0,0,dx*0.5, 0,size,0,dy*0.5, 0,0,size,dz*0.5, 0,0,0,1) );
     
     //Transformera
@@ -125,7 +129,6 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     }
     
     
-    _cacheFlag->setAll(false);
     
     //_u->setValueAtIndex(0.1, 4, 4, 4);
     //_center->setValueAtIndex(-100.0, 4, 4, 4);
@@ -219,15 +222,15 @@ Vector3 MACGrid::velocityAtWorld(const Vector3 &world) const{
 }
 
 Vector3 MACGrid::velocityAtIndex(const Vector3 &index) const{
-
+    //return Vector3(0.5);
     double x,y,z;
-    _center->mapping.indexToWorld(index.x, index.y, index.z, x, y, z);
     
-    if (_cacheFlag->valueAtIndex(index.x, index.y, index.z)) {
+    if (_cacheFlag->valueAtIndex(index.x, index.y, index.z) == true) { //Finns det en tillgänglig cache?
         return _cache->valueAtIndex(index.x, index.y, index.z);
     }else{
 
-        
+        _center->mapping.indexToWorld(index.x, index.y, index.z, x, y, z);
+
         double u,v,w;
         //U
         u = _u->valueAtWorld(x, y, z);
