@@ -16,7 +16,8 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	//preset->normalDiscretization->setVectorGrid(u.getCenterVel());
 
     preset->advect->setDiscretization(preset->discretization, preset->normalDiscretization);
-
+	const int matDim = phi.phi->xdim()*phi.phi->ydim()*phi.phi->zdim()*phi.phi->xdim()*phi.phi->ydim()*phi.phi->zdim();
+	A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
 }
 
 double Fire::computeDT(double currentTime){
@@ -64,6 +65,7 @@ void Fire::project(double dt)
 
 
 	// A
+			
 
 	// räkna fram p med A och b
 

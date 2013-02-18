@@ -10,7 +10,7 @@
 #include "levelset/LevelSet.h"
 #include "GridField.h"
 #include "helper.h"
-
+#include "Pressure\pcgsolver\sparse_matrix.h"
 
 
 class Fire{
@@ -39,6 +39,9 @@ private:
 	//Pressure field
 	GridField<double> *p;
 	GridField<double> *rhs;
+
+	// Sparse matrix A
+	SparseMatrix<double> *A;
 
     //Grid
     MACGrid u;
