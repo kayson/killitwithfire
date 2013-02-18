@@ -39,7 +39,7 @@ public:
     void swapBuffer();
     Vector3 velocityAtWorld(const Vector3 &world) const;
     double velocityAtFace(const int i,const int j,const int k, DirectionEnums d) const;
-    void advect();
+    void advect(double dt);
 
     void draw();
 };

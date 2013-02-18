@@ -443,9 +443,7 @@ void MACGrid::draw(){
 }
 
 
-void MACGrid::advect(){
-    
-    double dt = 0.2;//0.0000000000000001;
+void MACGrid::advect(double dt){
     
      for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
         int i,j,k;
