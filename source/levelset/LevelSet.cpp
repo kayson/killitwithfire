@@ -93,12 +93,12 @@ void LevelSet::draw() const
         grid->mapping.indexToWorld(i, j, k, x, y, z);
         
         
-        if(grid->valueAtIndex(i,j,k) <= 0)
+        if(grid->valueAtIndex(i,j,k) > 0)
         {
-            glColor3f(0,0,-grid->valueAtIndex(i, j, k)/3.);
+            glColor3f(0,0,grid->valueAtIndex(i, j, k)/3.);
             
         }else{
-            glColor3f(grid->valueAtIndex(i, j, k)/50.0,0,0);
+            glColor3f(-grid->valueAtIndex(i, j, k)/50.0,0,0);
             
         }
         glBegin(GL_QUADS);
