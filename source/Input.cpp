@@ -1,4 +1,5 @@
 #include "Input.h"
+#include "helper.h"
 void GLFWCALL keyButtonListener( int key, int action );
 void GLFWCALL mouseButtonListener(int button, int action);
 

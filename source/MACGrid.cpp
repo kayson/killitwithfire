@@ -7,6 +7,7 @@
 //
 
 #include "MACGrid.h"
+#include "MACAdvect.h"
 #ifdef __APPLE__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
@@ -37,12 +38,14 @@ MACGrid::MACGrid(int xdim,int ydim,int zdim, double size){
 
 void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     _boxes = GridMapping(xdim,ydim,zdim, glm::mat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1) );
-    
+    _advect = new MACAdvectEuler<double>();
+
     double dx = size/(double)_boxes.xdim();
     double dy = size/(double)_boxes.ydim();
     double dz = size/(double)_boxes.zdim();
     
     _buffer = nullptr;
+    
     
     //Transformera
     double *matrix = new double[16];
@@ -63,7 +66,7 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     _cacheFlag->mapping.setTransformation(glm::mat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
     _cacheFlag->setAll(false);
 
-    _fluid = GridMapping(xdim*3,ydim*3,zdim*3, glm::mat4x4(size,0,0,dx*0.5, 0,size,0,dy*0.5, 0,0,size,dz*0.5, 0,0,0,1) );
+    //_fluid = GridMapping(xdim*3,ydim*3,zdim*3, glm::mat4x4(size,0,0,dx*0.5, 0,size,0,dy*0.5, 0,0,size,dz*0.5, 0,0,0,1) );
     
     //Transformera
     double *u_matrix = new double[16];
@@ -94,12 +97,12 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     _center->mapping.setTransformation(c_matrix);
     
  
-    double randMax = 3;
+    double randMax = 0.5;
     //Fill U
     for (GridFieldIterator<double> iterator = _u->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        double v1 = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
+        double v1 = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
         _u->setValueAtIndex(v1, iterator.index());
     }
     
@@ -107,15 +110,15 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     for (GridFieldIterator<double> iterator = _v->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        double v1 =  ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
-        _v->setValueAtIndex(v1, iterator.index());
+        double v1 =  ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
+        _v->setValueAtIndex(0*v1, iterator.index());
     }
     
     //Fill W
     for (GridFieldIterator<double> iterator = _w->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
+        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
         _w->setValueAtIndex(0*v1, iterator.index());
     }
     
@@ -198,10 +201,7 @@ void MACGrid::swapBuffer(){
     _v = tmp_v;
     _w = tmp_w;
     _center = tmp_c;
-    
-    if (_u == buffer()->_u) {
-        assert(false);
-    }
+
 }
 
 
@@ -223,8 +223,8 @@ Vector3 MACGrid::velocityAtWorld(const Vector3 &world) const{
     return Vector3(u,v,w);
 }
 
-Vector3 MACGrid::velocityAtIndex(const Vector3 &index) const{
-    
+Vector3 MACGrid::velocityAtCenter(const Vector3 &index) const{
+
     double x,y,z;
     
     if (_cacheFlag->valueAtIndex(index.x, index.y, index.z) == true) { //Finns det en tillgänglig cache?
@@ -251,7 +251,7 @@ Vector3 MACGrid::velocityAtIndex(const Vector3 &index) const{
 }
 
 Vector3 MACGrid::operator()(int i ,int j,int k) const{
-    return velocityAtIndex(Vector3(i,j,k));
+    return velocityAtCenter(Vector3(i,j,k));
 }
 
 void MACGrid::fillVelocity(Vector3 vel){
@@ -437,7 +437,7 @@ void MACGrid::draw(){
     }
     */
     
-    GridMappingIterator itera = _fluid.iterator();
+    /*GridMappingIterator itera = _fluid.iterator();
     
     //IteratorRange *range = new IteratorRange(2, 2, 2, xdim()-2, ydim()-2, zdim()-2);
     //iter.setCondition(range);
@@ -456,7 +456,7 @@ void MACGrid::draw(){
         }
         glPopMatrix();
         
-    }
+    }*/
     
     
 
@@ -534,69 +534,24 @@ void MACGrid::advect(double dt){
      for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
          int i,j,k;
          iter.index(i, j, k);
-         double x,y,z;
-         _u->mapping.indexToWorld(i, j, k, x, y, z);
-         Vector3 pos(x,y,z);
-         Vector3 vel = velocityAtWorld(pos);
-         vel = velocityAtWorld(pos-vel*dt*0.5);
-         
-         double val = _u->valueAtWorld(x-vel.x*dt, y-vel.y*dt, z-vel.z*dt);
+         double val = _advect->advect(dt, *this, *_u, i, j, k);
          buffer()->_u->setValueAtIndex(val, i, j, k);
     }
     
     for (GridFieldIterator<double> iter = _v->iterator(); !iter.done(); iter.next()) {
         int i,j,k;
         iter.index(i, j, k);
-        double x,y,z;
-        _v->mapping.indexToWorld(i, j, k, x, y, z);
-        Vector3 pos(x,y,z);
-        Vector3 vel = velocityAtWorld(pos);
-        vel = velocityAtWorld(pos-vel*dt*0.5);
-        
-        double val = _v->valueAtWorld(x-vel.x*dt, y-vel.y*dt, z-vel.z*dt);
+        double val = _advect->advect(dt, *this, *_v, i, j, k);
         buffer()->_v->setValueAtIndex(val, i, j, k);
     }
     
     for (GridFieldIterator<double> iter = _w->iterator(); !iter.done(); iter.next()) {
         int i,j,k;
         iter.index(i, j, k);
-        double x,y,z;
-        _w->mapping.indexToWorld(i, j, k, x, y, z);
-        Vector3 pos(x,y,z);
-        Vector3 vel = velocityAtWorld(pos);
-        vel = velocityAtWorld(pos-vel*dt*0.5);
-        
-        double val = _w->valueAtWorld(x-vel.x*dt, y-vel.y*dt, z-vel.z*dt);
+        double val = _advect->advect(dt, *this, *_w, i, j, k);
         buffer()->_w->setValueAtIndex(val, i, j, k);
     }
     
-    
-    
-    /*for (GridFieldIterator<double> iter = _center->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        _center->mapping.indexToWorld(i, j, k, x, y, z);
-        
-        double u = _u->valueAtWorld(x, y, z);
-        double v = _v->valueAtWorld(x, y, z);
-        double w = _w->valueAtWorld(x, y, z);
-        
-        double val = _center->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
-        //v = _v->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
-        //w = _w->valueAtWorld(x-u*dt, y-v*dt, z-w*dt);
-        buffer()->_center->setValueAtIndex(val, i, j, k);
-    }*/
-    
-    /*
-    static Vector3 ball = Vector3(0.3,0.3,0.3);
-    double u = _u->valueAtWorld(ball.x, ball.y, ball.z);
-    double v = _v->valueAtWorld(ball.x, ball.y, ball.z);
-    double w = _w->valueAtWorld(ball.x, ball.y, ball.z);
-    ball += Vector3(u,v,w)*dt;
-    glTranslatef(ball.x,ball.y,ball.z);
-    drawSphere(0.05, 10);
-    */
     swapBuffer();
 }
 

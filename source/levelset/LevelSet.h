@@ -1,7 +1,6 @@
 #ifndef LEVELSET_H
 #define LEVELSET_H
 
-#include "../datatype.h"
 #include "../Vector3.h"
 #include "../GridField.hpp"
 

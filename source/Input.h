@@ -8,7 +8,6 @@
 #endif
 
 #include "Camera.h"
-#include "datatype.h"
 
 class Input
 {

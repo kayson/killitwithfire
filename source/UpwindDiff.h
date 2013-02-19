@@ -1,7 +1,6 @@
 #ifndef UPWINDDIFF_H
 #define UPWINDDIFF_H
 #include "Discretization.h"
-#include "VectorGrid.h"
 
 class UpwindDiff : public Discretization{
 
