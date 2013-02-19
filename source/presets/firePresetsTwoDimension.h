@@ -35,8 +35,8 @@ private:
 Discretization *FirePresets::upwindDisc = new UpwindDiff();
 Discretization *FirePresets::centralDisc = new CentralDiff();
 
-const int FirePresets::GRID_DIM_X = 45;
-const int FirePresets::GRID_DIM_Y = 45;
+const int FirePresets::GRID_DIM_X = 35;
+const int FirePresets::GRID_DIM_Y = 35;
 const int FirePresets::GRID_DIM_Z = 1;
 const double FirePresets::GRID_SIZE = 15;
 const double FirePresets::dt = 1./80.;
