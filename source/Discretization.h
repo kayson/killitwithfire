@@ -20,6 +20,14 @@ public:
 	virtual ~Discretization(){};
 
 	// Dessa skall och måste överlagras av subklasser
+	virtual double calcDxp(GridField<double> &g, const int i, const int j, const int k)=0;
+	virtual double calcDyp(GridField<double> &g, const int i, const int j, const int k)=0;
+	virtual double calcDzp(GridField<double> &g, const int i, const int j, const int k)=0;
+
+	virtual double calcDxm(GridField<double> &g, const int i, const int j, const int k)=0;
+	virtual double calcDym(GridField<double> &g, const int i, const int j, const int k)=0;
+	virtual double calcDzm(GridField<double> &g, const int i, const int j, const int k)=0;
+
 	virtual double calcDx(GridField<double> &g, const int i, const int j, const int k)=0;
 	virtual double calcDy(GridField<double> &g, const int i, const int j, const int k)=0;
 	virtual double calcDz(GridField<double> &g, const int i, const int j, const int k)=0;

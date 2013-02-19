@@ -14,6 +14,65 @@ UpwindDiff::~UpwindDiff()
 {
 	delete ext;
 }
+double UpwindDiff::calcDxm(GridField<double> &g, const int i, const int j, const int k)
+{
+	if(i <= 0)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	if(i >= g.xdim()-1)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	else
+		return (double)(g(i, j, k) - g(i-1, j, k))/(FirePresets::dx);
+}
+
+double UpwindDiff::calcDym(GridField<double> &g, const int i, const int j, const int k)
+{
+	if(i <= 0)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	if(i >= g.xdim()-1)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	else
+		return (double)(g(i, j, k) - g(i, j - 1, k))/(FirePresets::dx);
+}
+
+double UpwindDiff::calcDzm(GridField<double> &g, const int i, const int j, const int k)
+{
+	if(i <= 0)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	if(i >= g.xdim()-1)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	else
+		return (double)(g(i, j, k) - g(i, j, k - 1))/(FirePresets::dx);
+}
+
+double UpwindDiff::calcDxp(GridField<double> &g, const int i, const int j, const int k)
+{
+	if(i <= 0)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	if(i >= g.xdim()-1)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	else
+		return (double)(g(i + 1, j, k) - g(i, j, k))/(FirePresets::dx);
+}
+
+double UpwindDiff::calcDyp(GridField<double> &g, const int i, const int j, const int k)
+{
+	if(i <= 0)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	if(i >= g.xdim()-1)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	else
+		return (double)(g(i, j + 1, k) - g(i, j, k))/(FirePresets::dx);
+}
+
+double UpwindDiff::calcDzp(GridField<double> &g, const int i, const int j, const int k)
+{
+	if(i <= 0)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	if(i >= g.xdim()-1)
+		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+	else
+		return (double)(g(i, j, k + 1) - g(i, j, k))/(FirePresets::dx);
+}
 
 double UpwindDiff::calcDx(GridField<double> &g, const int i, const int j, const int k)
 {
