@@ -10,6 +10,7 @@
 #include <Accelerate/Accelerate.h>
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
+//#include "Pressure/pcgsolver/pcg_solver.h"
 #endif
 
 Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
@@ -130,11 +131,11 @@ void Fire::project2D(double dt){
 	}
     
 	// räkna fram nya p mha. A och b
-    PCGSolver<double> pcgSolver;
+    /*PCGSolver<double> pcgSolver;
 	if(!pcgSolver.solve(*A, rhsVec, pVec, *resid_out, iter_out)){
         
     }
-    
+    */
     
     //scale = dt/(1.0*dx);
 
@@ -218,10 +219,10 @@ void Fire::project(double dt)
 	}
 
 	// räkna fram nya p mha. A och b
-    PCGSolver<double> pcgSolver;
+    /*PCGSolver<double> pcgSolver;
 	if(!pcgSolver.solve(*A, rhsVec, pVec, *resid_out, iter_out)){
         
-    }
+    }*/
 
 	// räkna fram u^(n+1) med nya p, 
 	// sid. 41, Figure 4.1 (Bridson)
@@ -377,11 +378,9 @@ void Fire::runSimulation(){
 		//preset->externalForce->addForce(grid);
     
     //Project
-<<<<<<< HEAD
-	//project(preset->dt);
-=======
+
 	//project2D(preset->dt);
->>>>>>> 174e4e5b396ab8c5d67fbde42fd5fdef1d495eae
+
   	
 	//Fixa signed distance field
 	phi.reinitialize();
