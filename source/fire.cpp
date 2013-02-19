@@ -224,13 +224,15 @@ void Fire::runSimulation(){
 		double dt = computeDT(currentTime);
 
 		//Advektera hastighestsfältet
-		advectLevelSet(preset->dt);
+		//advectLevelSet(preset->dt);
 
 		currentTime += dt;
     }
 
+    advectLevelSet(preset->dt);
     u.advect(preset->dt);
-    //u.addForce(Vector3(0.0, -1.1, 0.0), preset->dt);
+    Vector3 force = Vector3(0.0, -0.05, 0.0);
+    u.addForce(force, preset->dt);
 
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 
@@ -314,6 +316,7 @@ void Fire::drawCenterVelocities()
 void Fire::draw()
 {
 	phi.draw();
+    //u.draw();
 	drawCenterVelocities();
 }
 

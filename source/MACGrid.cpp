@@ -16,6 +16,7 @@
 #include <math.h>
 #define M_PI 3.14159265358979323846264338
 #endif
+#include <algorithm>
 
 /*
 MACGrid::MACGrid():MACGrid(10,10,10,50){
@@ -97,13 +98,14 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     _center->mapping.setTransformation(c_matrix);
     
  
-    double randMax = 0.5;
+    double randMax = 1.3;
     //Fill U
     for (GridFieldIterator<double> iterator = _u->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
         double v1 = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
         _u->setValueAtIndex(v1, iterator.index());
+        buffer()->_u->setValueAtIndex(v1, iterator.index());
     }
     
     //Fill V
@@ -112,6 +114,8 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
         iterator.index(i, j, k);
         double v1 =  ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
         _v->setValueAtIndex(0*v1, iterator.index());
+        buffer()->_v->setValueAtIndex(0*v1, iterator.index());
+
     }
     
     //Fill W
@@ -120,6 +124,7 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
         iterator.index(i, j, k);
         double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
         _w->setValueAtIndex(0*v1, iterator.index());
+        buffer()->_w->setValueAtIndex(0*v1, iterator.index());
     }
     
     //Fill Center
@@ -187,8 +192,8 @@ MACGrid * MACGrid::buffer(){
 }
 
 void MACGrid::swapBuffer(){
-    GridField<double> *tmp_u,*tmp_v,*tmp_w,*tmp_c;
-    tmp_u = buffer()->_u;
+    /*GridField<double> *tmp_u,*tmp_v,*tmp_w,*tmp_c;
+    tmp_u = (buffer()->_u);
     tmp_v = buffer()->_v;
     tmp_w = buffer()->_w;
     tmp_c = buffer()->_center;
@@ -201,8 +206,36 @@ void MACGrid::swapBuffer(){
     _v = tmp_v;
     _w = tmp_w;
     _center = tmp_c;
+    */
+    
+    GridField<double> *_u_buffer = &(*buffer()->_u);
+    GridField<double> *_v_buffer = &(*buffer()->_v);
+    GridField<double> *_w_buffer = &(*buffer()->_w);
+    GridField<double> *_center_buffer = &(*buffer()->_center);
+    GridField<bool> *_cacheFlag_buffer = &(*buffer()->_cacheFlag);
+    GridField<Vector3> *_cache_buffer = &(*buffer()->_cache);
 
+    buffer()->_u = &(*_u);
+    buffer()->_v = &(*_v);
+    buffer()->_w = &(*_w);
+    buffer()->_center = &(*_center);
+    buffer()->_cacheFlag = &(*_cacheFlag);
+    buffer()->_cache = &(*_cache);
+
+    _u = &(*_u_buffer);
+    _v = &(*_v_buffer);
+    _w = &(*_w_buffer);
+    _center = &(*_center_buffer);
+    _cacheFlag = &(*_cacheFlag_buffer);
+    _cache = &(*_cache_buffer);
+
+    
+    /*std::iter_swap(buffer()->_u, _u);
+    std::iter_swap(buffer()->_v, _v);
+    std::iter_swap(buffer()->_w, _w);
+     */
 }
+
 
 
 double MACGrid::getMax() const{
@@ -227,7 +260,7 @@ Vector3 MACGrid::velocityAtCenter(const Vector3 &index) const{
 
     double x,y,z;
     
-    if (_cacheFlag->valueAtIndex(index.x, index.y, index.z) == true) { //Finns det en tillgänglig cache?
+    if (false && _cacheFlag->valueAtIndex(index.x, index.y, index.z) == true) { //Finns det en tillgänglig cache?
         return _cache->valueAtIndex(index.x, index.y, index.z);
     }else{
 
@@ -307,6 +340,58 @@ void MACGrid::setValueAtFace(double val,const int i, const int j, const int k, D
     }
 }
 
+void MACGrid::advect(double dt){
+    
+    for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double val = _advect->advect(dt, *this, *_u, i, j, k);
+        buffer()->_u->setValueAtIndex(val, i, j, k);
+    }
+    
+    for (GridFieldIterator<double> iter = _v->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double val = _advect->advect(dt, *this, *_v, i, j, k);
+        buffer()->_v->setValueAtIndex(val, i, j, k);
+    }
+    
+    for (GridFieldIterator<double> iter = _w->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double val = _advect->advect(dt, *this, *_w, i, j, k);
+        buffer()->_w->setValueAtIndex(val, i, j, k);
+    }
+    
+    swapBuffer();
+}
+
+void MACGrid::addForce(Vector3 vec, double dt){
+    for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double val = _u->valueAtIndex(i, j, k);
+        _u->setValueAtIndex(val+vec.x*dt, i, j, k);
+    }
+    
+    for (GridFieldIterator<double> iter = _v->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double val = _v->valueAtIndex(i, j, k);
+        _v->setValueAtIndex(val+vec.y*dt, i, j, k);
+    }
+    
+    for (GridFieldIterator<double> iter = _w->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double val = _w->valueAtIndex(i, j, k);
+        _w->setValueAtIndex(val+vec.z*dt, i, j, k);
+    }
+    
+    _cache->setAll(false);
+}
+
+/*
 void drawSphere(float r, int segs) {
     int i, j;
     float x, y, z, z1, z2, R, R1, R2;
@@ -364,14 +449,12 @@ void drawSphere(float r, int segs) {
     }
     glEnd();
 }
-
-
 void MACGrid::draw(){
     double t  = glfwGetTime();
     //std::cout << t << std::endl;
     glRotatef(t*4, 0, 1, 0);
     glRotatef(20, 1, 0, 0);
-    /*
+    
     for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
         int i,j,k;
         iter.index(i, j, k);
@@ -412,9 +495,9 @@ void MACGrid::draw(){
         glVertex3f(x, y, z);
         glVertex3f(x, y, z+val);
         glEnd();
-    }*/
+    }
     
-    /*GridFieldIterator<double> itera = _center->iterator();
+    GridFieldIterator<double> itera = _center->iterator();
     //IteratorRange *range = new IteratorRange(2, 2, 2, xdim()-2, ydim()-2, zdim()-2);
     //iter.setCondition(range);
     for (; !itera.done(); itera.next()) {
@@ -435,9 +518,9 @@ void MACGrid::draw(){
         glPopMatrix();
         
     }
-    */
     
-    /*GridMappingIterator itera = _fluid.iterator();
+    
+    GridMappingIterator itera = _fluid.iterator();
     
     //IteratorRange *range = new IteratorRange(2, 2, 2, xdim()-2, ydim()-2, zdim()-2);
     //iter.setCondition(range);
@@ -456,12 +539,12 @@ void MACGrid::draw(){
         }
         glPopMatrix();
         
-    }*/
+    }
     
     
 
     
-    /*
+    
     GridMappingIterator iter = _boxes.iterator();
     //IteratorRange *range = new IteratorRange(xdim()-1, ydim()-1, zdim(), xdim()-1, ydim()-1, zdim());
     //iter.setCondition(range);
@@ -520,65 +603,17 @@ void MACGrid::draw(){
         glVertex3f(x1, y, z);
         glVertex3f(x1, y1, z);
         glEnd();
-    }*/
+    }
     //std::cout << counter << std::endl;
     
     
     //glTranslatef(0.5*_dx, 0.5*_dx, 0.5*_dx);
     
 }
+*/
 
 
-void MACGrid::advect(double dt){
-    
-     for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
-         int i,j,k;
-         iter.index(i, j, k);
-         double val = _advect->advect(dt, *this, *_u, i, j, k);
-         buffer()->_u->setValueAtIndex(val, i, j, k);
-    }
-    
-    for (GridFieldIterator<double> iter = _v->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double val = _advect->advect(dt, *this, *_v, i, j, k);
-        buffer()->_v->setValueAtIndex(val, i, j, k);
-    }
-    
-    for (GridFieldIterator<double> iter = _w->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double val = _advect->advect(dt, *this, *_w, i, j, k);
-        buffer()->_w->setValueAtIndex(val, i, j, k);
-    }
-    
-    swapBuffer();
-}
 
-void MACGrid::addForce(Vector3 vec, double dt){
-    for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double val = _u->valueAtIndex(i, j, k);
-        _u->setValueAtIndex(val+vec.x*dt, i, j, k);
-    }
-    
-    for (GridFieldIterator<double> iter = _v->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double val = _v->valueAtIndex(i, j, k);
-        _v->setValueAtIndex(val+vec.y*dt, i, j, k);
-    }
-    
-    for (GridFieldIterator<double> iter = _w->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double val = _w->valueAtIndex(i, j, k);
-        _w->setValueAtIndex(val+vec.z*dt, i, j, k);
-    }
-    
-    _cache->setAll(false);
-}
 
 
 
