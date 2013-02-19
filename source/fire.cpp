@@ -6,6 +6,8 @@
 
 #ifdef __APPLE__
 #include "glfw.h"
+#include "pcg_solver.h"
+#include <Accelerate/Accelerate.h>
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
 #endif
@@ -24,8 +26,9 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	rhsVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
 
 	const int matDim = phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim()*phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim();
-	//A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
-	//pcgSolver = new PCGSolver<double>();
+
+	A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
+
 	resid_out = new double();
 	iter_out = 10;
 
@@ -62,9 +65,96 @@ void Fire::advectLevelSet(double duration)
 	preset->advection->advect(u, &phi.grid, &phi.gridCopy, duration);
 }
 
+void Fire::project2D(double dt){
+    double x0,x1,y,z;
+    u._center->mapping.indexToWorld(0, 0, 0, x0, y, z);
+    u._center->mapping.indexToWorld(0, 0, 0, x1, y, z);
+
+    double dx = x1-x0;
+    double scale = 1.0/dx;
+
+	// b (rhs)
+	// sid. 45, Figure 4.2 (Bridson)
+    std::vector<double> rhs(u._center->mapping.size());
+    double mean = 0;
+    for (GridFieldIterator<double> iter = u._center->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        if (k == 0) {
+            rhs[iter.index()] = (u.valueAtFace(i,j,k,RIGHT) - u.valueAtFace(i,j,k,LEFT)) + (u.valueAtFace(i,j,k,UP) - u.valueAtFace(i,j,k,DOWN));
+            mean += rhs[iter.index()];
+        }
+    }
+    mean *= 1.0/((double)rhs.size());
+    for (int i = 0; i < rhs.size(); i++) {
+        rhs[i] += mean;
+    }
+    
+    
+    scale = (1.0 * dx*dx)/dt;
+
+	// A
+	unsigned int row = 0;
+    for (GridFieldIterator<double> iter = u._center->iterator(); !iter.done(); iter.next()) {
+        
+        int i,j,k;
+
+        iter.index(i, j, k);
+        if (k == 0) {
+            double mult = 0;
+            if (u._center->mapping.indexAt(i-1, j, k) >= 0) {
+                A->set_element(u._center->mapping.indexAt(i-1, j, k), j, scale);
+                mult++;
+            }
+            
+            if (u._center->mapping.indexAt(i+1, j, k) < u._center->mapping.size()) {
+                A->set_element(u._center->mapping.indexAt(i+1, j, k), j, scale);
+                mult++;
+            }
+            
+            if (u._center->mapping.indexAt(i, j+1, k) < u._center->mapping.size()) {
+                A->set_element(u._center->mapping.indexAt(i, j+1, k), j, scale);
+                mult++;
+            }
+            
+            if (u._center->mapping.indexAt(i, j-1, k) >= 0) {
+                A->set_element(u._center->mapping.indexAt(i, j-1, k), j, scale);
+                mult++;
+            }
+            
+            A->set_element(u._center->mapping.indexAt(i, j, k), j, mult*scale);
+
+
+            row++;
+        }
+	}
+    
+	// räkna fram nya p mha. A och b
+    PCGSolver<double> pcgSolver;
+	if(!pcgSolver.solve(*A, rhsVec, pVec, *resid_out, iter_out)){
+        
+    }
+    
+    
+    //scale = dt/(1.0*dx);
+
+    for (GridFieldIterator<double> iter = u._center->iterator(); !iter.done(); iter.next()) {
+        
+        int i,j,k;
+        iter.index(i, j, k);
+        u.setValueAtFace(u.valueAtFace(i, j, k, UP) + pVec[iter.value()], i, j, k, UP);
+        u.setValueAtFace(u.valueAtFace(i, j, k, DOWN) + pVec[iter.value()], i, j, k, DOWN);
+        u.setValueAtFace(u.valueAtFace(i, j, k, LEFT)  + pVec[iter.value()], i, j, k, LEFT);
+        u.setValueAtFace(u.valueAtFace(i, j, k, RIGHT)+ pVec[iter.value()] , i, j, k, RIGHT);
+
+	}
+
+    
+}
+
 void Fire::project(double dt)
 {
-	double scale = 1 / preset->dx;
+	double scale = 1.0 / preset->dx;
 
 	// b (rhs)
 	// sid. 45, Figure 4.2 (Bridson)
@@ -128,11 +218,27 @@ void Fire::project(double dt)
 	}
 
 	// räkna fram nya p mha. A och b
-	//pcgSolver->solve(*A, rhsVec, pVec, *resid_out, iter_out);
+    PCGSolver<double> pcgSolver;
+	if(!pcgSolver.solve(*A, rhsVec, pVec, *resid_out, iter_out)){
+        
+    }
 
 	// räkna fram u^(n+1) med nya p, 
 	// sid. 41, Figure 4.1 (Bridson)
-	for(int i = 0; i < phi.grid->xdim(); i ++)
+    /*for (GridFieldIterator<double> iter = u._center->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double p = pVec[iter.index()];
+        u.setValueAtFace(u.valueAtFace(i,j,k,LEFT) - (dt / (getDensity(i,j,k,LEFT) * preset->dx)) * p,i,j,k,LEFT);
+        u.setValueAtFace(u.valueAtFace(i,j,k,RIGHT) + (dt / (getDensity(i,j,k,RIGHT) * preset->dx)) * p,i,j,k,RIGHT);
+        u.setValueAtFace(u.valueAtFace(i,j,k,DOWN) - (dt / (getDensity(i,j,k,DOWN) * preset->dx)) * p,i,j,k,DOWN);
+        u.setValueAtFace(u.valueAtFace(i,j,k,UP) + (dt / (getDensity(i,j,k,UP) * preset->dx)) * p,i,j,k,UP);
+        u.setValueAtFace(u.valueAtFace(i,j,k,BACKWARD) - (dt / (getDensity(i,j,k,BACKWARD) * preset->dx)) * p,i,j,k,BACKWARD);
+        u.setValueAtFace(u.valueAtFace(i,j,k,FORWARD) + (dt / (getDensity(i,j,k,FORWARD) * preset->dx)) * p,i,j,k,FORWARD);
+    }*/
+    
+    
+	/*for(int i = 0; i < phi.grid->xdim(); i ++)
 		for(int j = 0; j < phi.grid->ydim(); j ++)
 			for(int k = 0; k < phi.grid->zdim(); k ++)
 			{
@@ -150,8 +256,8 @@ void Fire::project(double dt)
 				{
 
 				}
-			}
-
+			}*/
+     
 }
 
 double Fire::getAlpha(const int i, const int j, const int k, DirectionEnums d)
@@ -271,7 +377,11 @@ void Fire::runSimulation(){
 		//preset->externalForce->addForce(grid);
     
     //Project
+<<<<<<< HEAD
 	//project(preset->dt);
+=======
+	//project2D(preset->dt);
+>>>>>>> 174e4e5b396ab8c5d67fbde42fd5fdef1d495eae
   	
 	//Fixa signed distance field
 	phi.reinitialize();
@@ -311,7 +421,7 @@ void Fire::drawCenterVelocities()
         glBegin(GL_POINTS);
         glVertex3f(x, y, 0);
         glEnd();
-         */
+        */
         
     }
     /*
@@ -346,7 +456,8 @@ void Fire::drawCenterVelocities()
 void Fire::draw()
 {
 	phi.draw();
-	//drawCenterVelocities();
+    //u.draw();
+	drawCenterVelocities();
 }
 
 Fire::~Fire(){
