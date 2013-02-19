@@ -12,8 +12,6 @@
 #include "helper.h"
 #include "Pressure/pcgsolver/sparse_matrix.h"
 
-#include "armadillo/armadillo"
-
 class Fire{
 protected:
     double computeDT(double currentTime);
