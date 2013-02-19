@@ -1,6 +1,5 @@
 #ifndef GRADIENT_H
 #define GRADIENT_H
-#include "Grid.h"
 #include "Discretization.h"
 
 #include "Vector3.h"

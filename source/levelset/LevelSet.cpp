@@ -10,9 +10,12 @@
 
 #ifdef __APPLE__
 #include "firePresets.h"
+#include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
 #include "../presets/firePresets.h"
+#include <GL/glfw.h>
 #endif
+
 
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 {

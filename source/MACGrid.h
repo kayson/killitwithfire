@@ -12,19 +12,21 @@
 #include <iostream>
 #include "Vector3.h"
 #include "GridField.hpp"
-#include "datatype.h"
-#include "VectorGrid.h"
+#include "helper.h"
+
+template<class T>
+class MACAdvect;
 
 class MACGrid{
 private:
     MACGrid *_buffer;
     GridField<double> *_u,*_v,*_w;
     GridMapping _boxes;
-    GridMapping _fluid;
     
     GridField<bool> *_cacheFlag;
     GridField<Vector3> *_cache;
     
+    MACAdvect<double> *_advect;
 public:
     GridField<double> *_center;
 private:
@@ -36,7 +38,9 @@ public:
     MACGrid(const MACGrid &m);
     ~MACGrid();
     MACGrid& operator=(const MACGrid &g);
-
+    
+    //Inställningar
+    void setAdvection(MACAdvect<double> *advect){  _advect = advect;};
 
     //Buffer & cache
     MACGrid * buffer();
@@ -60,4 +64,8 @@ public:
 
     void draw();
 };
+
+
+
+
 #endif /* defined(__FuidFire__MACGrid__) */

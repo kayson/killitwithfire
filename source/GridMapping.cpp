@@ -14,45 +14,43 @@
 #endif
 
 //Konstruktor
-GridMapping::GridMapping(){
-    _trans = glm::mat4x4(1,0,0,0,
-                         0,1,0,0,
-                         0,0,1,0,
-                         0,0,0,1);
-    _itrans = glm::inverse(_trans);
-    _xdim = 1;
-    _ydim = 1;
-    _zdim = 1;
-}
-
-GridMapping::GridMapping(int dim, glm::mat4x4 t):_xdim(dim),_ydim(dim),_zdim(dim){
-    _trans = t;
-    _itrans = glm::inverse(_trans);
-}
-
-GridMapping::GridMapping(int xdim,int ydim,int zdim):_xdim(xdim),_ydim(ydim),_zdim(zdim){
+GridMapping::GridMapping():_xdim(1),_ydim(1),_zdim(1),_size(_xdim*_ydim*_zdim){
     _trans = glm::mat4x4(1,0,0,0,
                          0,1,0,0,
                          0,0,1,0,
                          0,0,0,1);
     _itrans = glm::inverse(_trans);
 }
-GridMapping::GridMapping(int xdim,int ydim,int zdim, glm::mat4x4 t):_xdim(xdim),_ydim(ydim),_zdim(zdim){
+
+GridMapping::GridMapping(int dim, glm::mat4x4 t):_xdim(dim),_ydim(dim),_zdim(dim),_size(_xdim*_ydim*_zdim){
     _trans = t;
     _itrans = glm::inverse(_trans);
 }
 
-GridMapping::GridMapping(int xdim,int ydim,int zdim, double size):_xdim(xdim),_ydim(ydim),_zdim(zdim){
+GridMapping::GridMapping(int xdim,int ydim,int zdim):_xdim(xdim),_ydim(ydim),_zdim(zdim),_size(_xdim*_ydim*_zdim){
+    _trans = glm::mat4x4(1,0,0,0,
+                         0,1,0,0,
+                         0,0,1,0,
+                         0,0,0,1);
+    _itrans = glm::inverse(_trans);
+
+}
+GridMapping::GridMapping(int xdim,int ydim,int zdim, glm::mat4x4 t):_xdim(xdim),_ydim(ydim),_zdim(zdim),_size(_xdim*_ydim*_zdim){
+    _trans = t;
+    _itrans = glm::inverse(_trans);
+
+}
+
+GridMapping::GridMapping(int xdim,int ydim,int zdim, double size):_xdim(xdim),_ydim(ydim),_zdim(zdim),_size(_xdim*_ydim*_zdim){
     _trans = glm::mat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1);
     _itrans = glm::inverse(_trans);
+
 }
 
-GridMapping::GridMapping(const GridMapping &g){
+GridMapping::GridMapping(const GridMapping &g):GridMapping(g._xdim,g._ydim,g._zdim){
     _trans = g._trans;
     _itrans = g._itrans;
-    _xdim = g.xdim();
-    _ydim = g.ydim();
-    _zdim = g.zdim();
+
 }
 
 GridMapping::~GridMapping(){
@@ -66,6 +64,7 @@ GridMapping & GridMapping::operator= (const GridMapping & other){
         _xdim = other.xdim();
         _ydim = other.ydim();
         _zdim = other.zdim();
+        _size = other._size;
     }
     return *this;
 }
@@ -74,7 +73,7 @@ GridMapping & GridMapping::operator= (const GridMapping & other){
 void GridMapping::setTransformation(double *t){
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            _trans[i][j] = t[i+j*4];
+            _trans[i][j] = t[i*4+j];
         }
     }
     _itrans = glm::inverse(_trans);
@@ -95,6 +94,9 @@ int GridMapping::ydim() const{
 int GridMapping::zdim() const{
     return _zdim;
 }
+int GridMapping::size() const{
+    return _size;
+}
 
 //Funktioner
 //Index to index
@@ -103,6 +105,8 @@ int GridMapping::zdim() const{
 }
 
 void GridMapping::indexAt(int index, int &i, int &j, int &k) const{
+    
+    
     k = index /(xdim()*ydim());
     j = (index-(k*xdim()*ydim()))/(xdim());
     i = (index-j*xdim()-k*xdim()*ydim());

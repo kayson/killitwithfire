@@ -6,7 +6,6 @@
 
 #include "presets/firePresets.h"
 
-#include "VelocityField.h"
 #include "levelset/LevelSet.h"
 #include "GridField.h"
 #include "GridMapping.h"

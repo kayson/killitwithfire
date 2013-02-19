@@ -8,7 +8,6 @@
 #define DISCRETIZATION_H
 #include <iostream>
 #include "GridField.hpp"
-#include "datatype.h"
 #include "MACGrid.h"
 #include "Vector3.h"
 #include "Extrapolation.h"
