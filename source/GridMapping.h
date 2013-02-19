@@ -76,7 +76,7 @@ protected:
     GridMappingIterator(const GridMapping *mapping):_i(0),_done(false),_mapping(mapping){  };
 public:
     GridMappingIterator(const GridMappingIterator &i):_i(i._i),_done(i._done),_mapping(i._mapping){  };
-    ~GridMappingIterator(){ _mapping = nullptr; };
+    ~GridMappingIterator(){ _mapping = NULL; };
     void step(){
         _i++;
         if(_i >= _mapping->xdim()*_mapping->ydim()*_mapping->zdim()) _done = true;

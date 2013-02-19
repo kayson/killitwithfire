@@ -97,7 +97,7 @@ protected:
     GridFieldIterator(const GridField<T> *grid):GridMappingIterator(&grid->mapping),_grid(grid){  };
 public:
     GridFieldIterator(const GridFieldIterator<T> &i):GridMappingIterator(&i._grid->mapping),_grid(i._grid){  };
-    ~GridFieldIterator(){ _grid = nullptr; };
+    ~GridFieldIterator(){ _grid = NULL; };
     T value() const{ return _grid->valueAtIndex(index());};
     friend class GridField<T>;
 };

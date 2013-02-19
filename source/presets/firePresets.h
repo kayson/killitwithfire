@@ -3,7 +3,8 @@
 
 
 #ifdef __APPLE__
-#include "Advect.h"
+//#include "Advect.h"
+#include "../advect/Advect.h"
 #elif defined _WIN32 || defined _WIN64
 #include "../advect/Advect.h"
 #endif
