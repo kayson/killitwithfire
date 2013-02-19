@@ -17,6 +17,8 @@
 
 #include "imageExporter.h"
 
+#include "integrateEuler.h"
+
 
 bool init();
 void showFPS();
