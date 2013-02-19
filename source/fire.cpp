@@ -10,7 +10,7 @@
 #include <Accelerate/Accelerate.h>
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
-//#include "Pressure/pcgsolver/pcg_solver.h"
+#include "Pressure/pcgsolver/pcg_solver.h"
 #endif
 
 Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
