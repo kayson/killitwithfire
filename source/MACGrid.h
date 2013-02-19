@@ -54,7 +54,7 @@ public:
 	GridField<double>* getCenterField() { return _center; };
     double getMax() const;
     Vector3 velocityAtWorld(const Vector3 &world) const;
-    Vector3 velocityAtCenter(const Vector3 &index) const;
+    Vector3 velocityAtCenter(int i,int j,int k) const;
     Vector3 operator()(int i ,int j,int k) const;
     void fillVelocity(Vector3 vel);
     double valueAtFace(const int i,const int j,const int k, DirectionEnums d) const;

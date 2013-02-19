@@ -24,7 +24,6 @@ void AdvectEuler::advect(MACGrid &u, GridField<double> **grid,GridField<double> 
 
 double AdvectEuler::evaluate(MACGrid &u, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k){
 	Vector3 pos = Vector3(i,j,k);
-	double xv, yv, zv;
 	
 	Vector3 gradPhi = Gradient::getGradient(g, i, j, k, *FirePresets::upwindDisc);
 
@@ -34,7 +33,6 @@ double AdvectEuler::evaluate(MACGrid &u, GridField<double> &g, unsigned int i, u
 	else
 		normal = Vector3(0.0, 1.0, 0.0);
 
-	//Vector3 vel = (u.velocityAtCenter(pos) - normal*FirePresets::S*0.2);
-	Vector3 vel = u.velocityAtCenter(pos);
+	Vector3 vel = u.velocityAtCenter(i,j,k);
 	return Vector3::dot(-vel, gradPhi);
 }
