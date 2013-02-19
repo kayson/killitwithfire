@@ -31,6 +31,11 @@ double Vector3::dot(Vector3 &vTemp)
 	return dotProduct;
 }
 
+double Vector3::dot(const Vector3 &v1, const Vector3 &v2)
+{
+	return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
+}
+
 // Multiplikation by f to all elements, void
 void Vector3::mult(double f)
 {
@@ -276,6 +281,8 @@ Vector3 operator* (const double f, const Vector3 &v)
 	return v;
 }
 
-
-
+Vector3 Vector3::operator- () const
+{
+	return Vector3(-x, -y, -z);
+}
 
