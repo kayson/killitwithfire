@@ -8,7 +8,7 @@
 #include <GL/glfw.h> // Takes care of everything GL-related
 #include <GL/freeglut.h> // Takes care of everything GL-related
 #endif
-
+#ifdef FREEIMAGE
 int BitsPerPixel = 24;
 
 char* merge(char* folder, char* filename)
@@ -51,3 +51,14 @@ bool ImageExporter::saveSequence(int *n, int range, int width, int height)
 	*n++;
 
 }
+#else
+bool ImageExporter::saveSequence(int *n, int range, int width, int height)
+{
+	
+}
+void ImageExporter::saveImage(char* filename, int width, int height)
+{
+	std::cout << "Hej!" << std::endl;
+}
+
+#endif

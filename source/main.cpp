@@ -45,6 +45,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	ImageExporter::saveImage("hej", WIDTH, HEIGHT);
+
     unsigned int t = (unsigned int)time(NULL);
     srand(t);
 

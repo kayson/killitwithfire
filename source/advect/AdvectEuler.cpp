@@ -11,10 +11,8 @@ void AdvectEuler::advect(MACGrid &u, GridField<double> *grid,GridField<double> *
 		{
 			for(int k = 0; k < grid->zdim(); k++)
 			{
-
 				double f = evaluate(u, *grid, i, j, k);
 				grid->setValueAtIndex((*grid)(i,j,k) + f * dt, i, j, k);
-				
 			}
 		}
 	}
