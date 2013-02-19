@@ -53,7 +53,7 @@ double Fire::computeDT(double currentTime){
 
 void Fire::advectLevelSet(double duration)
 {
-	preset->advection->advect(u, phi.grid, phi.gridCopy, duration);
+	preset->advection->advect(u, &phi.grid, &phi.gridCopy, duration);
 }
 
 void Fire::project(double dt)
@@ -229,6 +229,7 @@ void Fire::runSimulation(){
 		currentTime += dt;
     }
 
+
     advectLevelSet(preset->dt);
     u.advect(preset->dt);
     Vector3 force = Vector3(0.0, -0.05, 0.0);
@@ -317,7 +318,7 @@ void Fire::draw()
 {
 	phi.draw();
     //u.draw();
-	drawCenterVelocities();
+	//drawCenterVelocities();
 }
 
 Fire::~Fire(){
