@@ -10,6 +10,7 @@
 #include "GridField.h"
 #include "GridMapping.h"
 #include "helper.h"
+#include "Pressure\pcgsolver\blas_win.h"
 
 //#include "Pressure\pcgsolver\pcg_solver.h"
 
@@ -17,6 +18,7 @@
 #include "sparse_matrix.h"
 #elif defined _WIN32 || defined _WIN64
 #include "Pressure\pcgsolver\sparse_matrix.h"
+#include "Pressure/pcgsolver/pcg_solver.h"
 #endif
 
 class Fire{
@@ -55,7 +57,7 @@ private:
 
 	// Sparse matrix A and solver
 	SparseMatrix<double> *A;
-	//PCGSolver<double> *pcgSolver;
+	PCGSolver<double> *pcgSolver;
 	double* resid_out;
 	int iter_out;
 

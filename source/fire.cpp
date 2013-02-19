@@ -10,7 +10,6 @@
 #include <Accelerate/Accelerate.h>
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
-//#include "Pressure/pcgsolver/pcg_solver.h"
 #endif
 
 Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
@@ -29,9 +28,9 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	const int matDim = phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim()*phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim();
 
 	A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
-
+	pcgSolver = new PCGSolver<double>();
 	resid_out = new double();
-	iter_out = 10;
+	iter_out = 100;
 
 	_borderCondition = new BorderCondition();
 
@@ -218,9 +217,9 @@ void Fire::project(double dt)
 	}
 
 	// räkna fram nya p mha. A och b
-    /*PCGSolver<double> pcgSolver;
-	if(!pcgSolver.solve(*A, rhsVec, pVec, *resid_out, iter_out)){
-        
+    /*PCGSolver<double> pcgSolver;*/
+	/*if(!pcgSolver->solve(*A, rhsVec, pVec, *resid_out, iter_out)){
+        std::cout << "TRYCK OK!!\n";
     }*/
 
 	// räkna fram u^(n+1) med nya p, 
@@ -377,7 +376,7 @@ void Fire::runSimulation(){
 		//preset->externalForce->addForce(grid);
     
     //Project
-
+	//project(preset->dt);
 	//project2D(preset->dt);
 
   	

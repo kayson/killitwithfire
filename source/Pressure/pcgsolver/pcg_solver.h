@@ -13,7 +13,7 @@
 #ifdef __APPLE__
 #include "blas_wrapper.h"
 #elif defined _WIN32 || defined _WIN64
-#include "blas_win.h"
+//#include "blas_win.h"
 #endif
 
 
@@ -213,7 +213,9 @@ void solve_lower(const SparseColumnLowerFactor<T> &factor, const std::vector<T> 
 template<class T>
 void solve_lower_transpose_in_place(const SparseColumnLowerFactor<T> &factor, std::vector<T> &x)
 {
+	std::cout << "Before\n";
    assert(factor.n==x.size());
+   std::cout << "After\n";
    assert(factor.n>0);
    unsigned int i=factor.n;
    do{

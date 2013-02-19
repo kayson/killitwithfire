@@ -1,8 +1,10 @@
 #ifndef BLAS_WIN_H
 #define BLAS_WIN_H
+#include <vector>
 
 namespace BLASWIN{
-	double abs_max(std::vector<double> &v){
+	template <typename T>
+	T abs_max(std::vector<T> &v){
 		double max = 0;
 		for(int i=0; i<v.size(); ++i){
 			if(v[0] > max)
@@ -11,16 +13,18 @@ namespace BLASWIN{
 		return max;
 	}
 
-	double dot(std::vector<double> &v1, std::vector<double> &v2){
+	template <typename T>
+	T dot(std::vector<T> &v1, std::vector<T> &v2){
 		double sum=0;
-		for(int i=0; i< v1.size(), ++i){
+		for(int i=0; i< v1.size(); ++i){
 			sum += v1[i]*v2[i];
 		}
 
 		return sum;
 	}
 
-	void add_scaled(double alpha, std::vector<double> &s, std::vector<double> &res){
+	template <typename T>
+	void add_scaled(double alpha, std::vector<T> &s, std::vector<T> &res){
 		for(int i=0; i<s.size(); ++i){
 			res[i] = s[i] + alpha;
 		}
