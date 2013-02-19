@@ -12,7 +12,6 @@
 #include "helper.h"
 #include "Pressure/pcgsolver/sparse_matrix.h"
 
-
 class Fire{
 protected:
     double computeDT(double currentTime);

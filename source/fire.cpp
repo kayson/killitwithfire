@@ -26,9 +26,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	preset->upwindDiscretization->setMACGrid(&u);
 	preset->centralDiscretization->setMACGrid(&u);
 
-
 	preset->advection->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
-
 
 }
 
@@ -55,7 +53,7 @@ double Fire::computeDT(double currentTime){
 
 void Fire::advectLevelSet(double duration)
 {
-	preset->advection->advect(u, phi.grid, phi.gridCopy, duration);
+	preset->advection->advect(u, &phi.grid, &phi.gridCopy, duration);
 }
 
 void Fire::project(double dt)
@@ -78,7 +76,6 @@ void Fire::project(double dt)
 
 
 	// A
-	
 	for(int i = 0; i<u.xdim(); i++){
 		for(int j = 0; i<u.ydim(); j++){
 			for(int k = 0; k<u.zdim(); k++){
@@ -227,13 +224,16 @@ void Fire::runSimulation(){
 		double dt = computeDT(currentTime);
 
 		//Advektera hastighestsfältet
-		advectLevelSet(preset->dt);
+		//advectLevelSet(preset->dt);
 
 		currentTime += dt;
     }
 
+
+    advectLevelSet(preset->dt);
     u.advect(preset->dt);
-    //u.addForce(Vector3(0.0, -1.1, 0.0), preset->dt);
+    Vector3 force = Vector3(0.0, -0.05, 0.0);
+    u.addForce(force, preset->dt);
 
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 
@@ -317,7 +317,8 @@ void Fire::drawCenterVelocities()
 void Fire::draw()
 {
 	phi.draw();
-	drawCenterVelocities();
+    //u.draw();
+	//drawCenterVelocities();
 }
 
 Fire::~Fire(){
