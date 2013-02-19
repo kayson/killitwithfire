@@ -10,7 +10,7 @@
 #include "GridField.h"
 #include "GridMapping.h"
 #include "helper.h"
-#include "Pressure\pcgsolver\sparse_matrix.h"
+#include "Pressure/pcgsolver/sparse_matrix.h"
 
 
 class Fire{

@@ -12,7 +12,7 @@ bool BorderCondition::checkBorder(GridField<double> &g, const int i, const int j
 // Denna skall endast anropas om checkBorder(..) returnerat FALSE
 void BorderCondition::enforceBorderCondition(MACGrid &vel, GridField<double> &g, const int i, const int j, const int k) const{
     Vector3 p = Vector3(i,j,k);
-	Vector3 v = vel.velocityAtIndex(p);
+	Vector3 v = vel.velocityAtCenter(p);
     /*
 	if(i == 0 && v.x < 0){
 		v.x = 0;

@@ -47,9 +47,13 @@ GridMapping::GridMapping(int xdim,int ydim,int zdim, double size):_xdim(xdim),_y
 
 }
 
-GridMapping::GridMapping(const GridMapping &g):GridMapping(g._xdim,g._ydim,g._zdim){
+GridMapping::GridMapping(const GridMapping &g){
     _trans = g._trans;
     _itrans = g._itrans;
+    _xdim = g._xdim;
+    _ydim = g._ydim;
+    _zdim = g._zdim;
+    _size = g._size;
 
 }
 
