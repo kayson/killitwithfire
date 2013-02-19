@@ -32,6 +32,24 @@ void Godunov(GridField<double> &g, int i, int j, int k, double a, double &ddx2, 
 	}
 
 }
+double CalcMaxGradient(GridField<double> &g)
+{
+	Gradient *gradient = new Gradient();
+	double max = DBL_MIN;
+	for(int i = 0; i < g.xdim(); i++)
+	{
+		for(int j = 0; j < g.ydim(); j++)
+		{
+			for(int k = 0; k < g.zdim(); k++)
+			{
+				double v = (gradient->getGradient(g, i, j, k, *FirePresets::centralDisc)).norm();
+				if(v > max)
+					max = v;
+			}
+		}
+	}
+	return max;
+}
 
 double CalcMeanGradient(GridField<double> &g)
 {
@@ -65,7 +83,7 @@ namespace reinitialize{
 		double normalGradient = ddx * ddx + ddy * ddy + ddz * ddz;
 		double val = g.valueAtIndex(i,j,k);
 
-		double sign = val / sqrt(val * val + normalGradient * dx * dx);
+		double sign = -val / sqrt(val * val + normalGradient * dx * dx);
 
 		//Räkna ut upwind differences med Godunov
 		double ddx2, ddy2, ddz2;
@@ -76,26 +94,27 @@ namespace reinitialize{
 
 	void reinitializeGrid(GridField<double> &g)
 	{
-		double time = FirePresets::dt;
-		double dt = 0.5 * FirePresets::dx;
-		
-		for(double elapsed = 0; elapsed < time;)
+		//while(abs(CalcMaxGradient(g)-1.0) > 0.1)
+		while(abs(CalcMeanGradient(g) - 1.0) > 0.1)
 		{
-			if(dt > time)
-				dt = time - elapsed;
-			elapsed += dt;
-			//Integrate
-			double mean = CalcMeanGradient(g);
-			if(mean > 1.0)
-			{
-				IntegrateEuler *e = new IntegrateEuler();
-				e->calculateIntegral(g, dt, Evaluate);    ///(g, dt, *Evaluate);
-			
-				//Check if gradient is close to 1
-				std::cout << "Mean gradient: " << CalcMeanGradient(g) << std::endl;
+			double time = FirePresets::dt;
+			double dt = 0.5 * FirePresets::dx;
 		
+			for(double elapsed = 0; elapsed < time;)
+			{
+				if(dt > time)
+					dt = time - elapsed;
+				elapsed += dt;
+				//Integrate
+				double mean = CalcMeanGradient(g);
+
+				IntegrateEuler *e = new IntegrateEuler();
+				e->calculateIntegral(g, dt, Evaluate);
+			
+
 			}
 		}
+		//std::cout << "Max gradient: " << CalcMaxGradient(g) << std::endl;
 	}
 }
 

@@ -24,7 +24,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	rhsVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
 
 	const int matDim = phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim()*phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim();
-	A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
+	//A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
 	//pcgSolver = new PCGSolver<double>();
 	resid_out = new double();
 	iter_out = 10;
@@ -271,7 +271,7 @@ void Fire::runSimulation(){
 		//preset->externalForce->addForce(grid);
     
     //Project
-	project(preset->dt);
+	//project(preset->dt);
   	
 	//Fixa signed distance field
 	phi.reinitialize();
