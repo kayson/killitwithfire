@@ -3,6 +3,7 @@
 
 #include "../Vector3.h"
 #include "../GridField.hpp"
+#include "MACGrid.h"
 
 class LevelSet
 {
@@ -29,6 +30,8 @@ public:
 	GridField<double> *grid; //Signed distance field
 	GridField<double> *gridCopy;
 
+    
+    Vector3 getVelocity(MACGrid &g, int i, const int j, const int k);
 private:
 	
 	void (*render)();
