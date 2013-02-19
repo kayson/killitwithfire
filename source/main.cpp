@@ -145,7 +145,7 @@ void render(void)
 	camera.translateForCamera();
 
 	fire->draw();
-
+    
 	glfwSwapBuffers();
 }
 

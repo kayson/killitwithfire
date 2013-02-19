@@ -73,14 +73,14 @@ GridField<T>::GridField(const GridField<T> &g){
 
 template<class T>
 GridField<T>& GridField<T>::operator=(const GridField<T> &g){
-    if (this != g) {
+    if (this != &g) {
         mapping = g.mapping;
         
         //Allokera data-array
         _data = new T[cellCount()];
         for (int i = 0; i < cellCount(); i++) _data[i] = T();
 
-        *_extrapolation = *g._extrapolation;
+        _extrapolation = g._extrapolation;
 
     }
     
