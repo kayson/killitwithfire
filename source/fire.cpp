@@ -161,8 +161,7 @@ void Fire::project(double dt)
 	// sid. 45, Figure 4.2 (Bridson)
 	for(int i = 0; i < phi.grid->xdim(); i ++){
 		for(int j = 0; j < phi.grid->ydim(); j ++){
-			for(int k = 0; k < phi.grid->zdim(); k ++)
-			{
+			for(int k = 0; k < phi.grid->zdim(); k ++){
 				if(getCellType(i,j,k) == BLUECORE || getCellType(i,j,k) == IGNITED)
 					rhs->setValueAtIndex(
 					(u.valueAtFace(i,j,k,RIGHT) - u.valueAtFace(i,j,k,LEFT) +
