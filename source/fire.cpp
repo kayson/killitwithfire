@@ -19,8 +19,18 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
 
     preset->advection->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
+
+	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	pVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
+	rhsVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
+
 	const int matDim = phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim()*phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim();
-	//A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
+	A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
+	//pcgSolver = new PCGSolver<double>();
+	resid_out = new double();
+	iter_out = 10;
+
 	_borderCondition = new BorderCondition();
 
 	preset->upwindDiscretization->setMACGrid(&u);
@@ -62,8 +72,8 @@ void Fire::project(double dt)
 
 	// b (rhs)
 	// sid. 45, Figure 4.2 (Bridson)
-	for(int i = 0; i < phi.grid->xdim(); i ++)
-		for(int j = 0; j < phi.grid->ydim(); j ++)
+	for(int i = 0; i < phi.grid->xdim(); i ++){
+		for(int j = 0; j < phi.grid->ydim(); j ++){
 			for(int k = 0; k < phi.grid->zdim(); k ++)
 			{
 				if(getCellType(i,j,k) == BLUECORE || getCellType(i,j,k) == IGNITED)
@@ -73,29 +83,50 @@ void Fire::project(double dt)
 					u.valueAtFace(i,j,k,FORWARD) - u.valueAtFace(i,j,k,BACKWARD))
 					,i,j,k);
 			}
+		}
+	}
 
+	// Spåna om rhs och b till std::vector<double>
+	for(int i = 0; i < phi.grid->xdim(); i ++){
+		for(int j = 0; j < phi.grid->ydim(); j ++){
+			for(int k = 0; k < phi.grid->zdim(); k ++){
+				int index = u.getCenterField()->mapping.indexAt(i,j,k);
+				rhsVec[index] = u.getCenterField()->operator()(i,j,k);
+			}
+		}
+	}
 
 	// A
-	for(int i = 0; i<u.xdim(); i++){
-		for(int j = 0; i<u.ydim(); j++){
-			for(int k = 0; k<u.zdim(); k++){
+	unsigned int diagRow = 0;
+	for(int i = 0; i<u._center->xdim(); i++){
+		//std::cout << "Calc Ai\n";
+		for(int j = 0; j<u._center->ydim(); j++){
+			for(int k = 0; k<u._center->zdim(); k++){
+
+				double x,y,z;
+				u._center->mapping.indexToWorld(i,j,k,x,y,z);
+
 				// Korrekt skalningsfaktor
-				if(getCellType(i,j,k) == BLUECORE) // om bränsle
+				if( phi.grid->valueAtWorld(x,y,z) < 0 )//if(getCellType(i,j,k) == BLUECORE) // om bränsle
 					scale = dt/(preset->dx*preset->dx*preset->rhof);
-				else if(getCellType(i,j,k) == IGNITED) // om gas
+				else if( phi.grid->valueAtWorld(x,y,z) >= 0 )//else if(getCellType(i,j,k) == IGNITED) // om gas
 					scale = dt/(preset->dx*preset->dx*preset->rhoh);
 
-				/*if(!_borderCondition->checkBorder(*phi.grid,i,j,k))
-					_borderCondition->enforceBorderCondition(u, *phi.grid,i,j,k);*/
-				if(getCellType(i,j,k) == BLUECORE && getCellType(i+1,j,k) == BLUECORE){
-					//A->set_element(u.getCenterField()->
-				}
-				
+				A->set_element(diagRow, u._center->mapping.indexAt(i-1,j,k), u.valueAtFace(i,j,k,LEFT) + scale);
+				A->set_element(diagRow, u._center->mapping.indexAt(i+1,j,k), u.valueAtFace(i,j,k,RIGHT) + scale);
+				A->set_element(diagRow, u._center->mapping.indexAt(i,j+1,j), u.valueAtFace(i,j,k,UP) + scale);
+				A->set_element(diagRow, u._center->mapping.indexAt(i,j,k) , u.valueAtFace(i,j,k,CENTER) + scale);
+				A->set_element(diagRow, u._center->mapping.indexAt(i,j-1,k), u.valueAtFace(i,j,k,DOWN) + scale);
+				A->set_element(diagRow, u._center->mapping.indexAt(i,j,k-1), u.valueAtFace(i,j,k,BACKWARD) + scale);
+				A->set_element(diagRow, u._center->mapping.indexAt(i,j,k+1), u.valueAtFace(i,j,k,FORWARD) + scale);
+
+				++diagRow;
 			}
 		}
 	}
 
 	// räkna fram nya p mha. A och b
+	//pcgSolver->solve(*A, rhsVec, pVec, *resid_out, iter_out);
 
 	// räkna fram u^(n+1) med nya p, 
 	// sid. 41, Figure 4.1 (Bridson)
@@ -242,7 +273,7 @@ void Fire::runSimulation(){
 		//preset->externalForce->addForce(grid);
     
     //Project
-    
+	project(preset->dt);
   	
 	//Fixa signed distance field
 	phi.reinitialize();
@@ -323,6 +354,9 @@ void Fire::draw()
 
 Fire::~Fire(){
     delete preset;
-	//delete A;
+	//delete pcgSolver;
+	delete A;
+	delete rhs;
+	delete p;
 	delete _borderCondition;
 }

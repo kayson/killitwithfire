@@ -7,7 +7,9 @@
 //
 
 #include "MACGrid.h"
-#include "MACAdvect.h"
+
+#include "levelset\MACAdvect.h"
+
 #ifdef __APPLE__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64

@@ -10,7 +10,10 @@
 #include "GridField.h"
 #include "GridMapping.h"
 #include "helper.h"
-#include "Pressure/pcgsolver/sparse_matrix.h"
+
+#include "Pressure\pcgsolver\sparse_matrix.h"
+//#include "Pressure\pcgsolver\pcg_solver.h"
+
 
 class Fire{
 protected:
@@ -42,9 +45,14 @@ private:
 	//Pressure field
 	GridField<double> *p;
 	GridField<double> *rhs;
+	std::vector<double, std::allocator<double>> pVec;
+	std::vector<double, std::allocator<double>> rhsVec;
 
-	// Sparse matrix A
+	// Sparse matrix A and solver
 	SparseMatrix<double> *A;
+	//PCGSolver<double> *pcgSolver;
+	double* resid_out;
+	int iter_out;
 
 	// Border conditions
 	BorderCondition *_borderCondition;
