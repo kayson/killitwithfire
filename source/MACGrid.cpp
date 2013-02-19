@@ -97,12 +97,12 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     _center->mapping.setTransformation(c_matrix);
     
  
-    double randMax = 3;
+    double randMax = 0.5;
     //Fill U
     for (GridFieldIterator<double> iterator = _u->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        double v1 = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
+        double v1 = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
         _u->setValueAtIndex(v1, iterator.index());
     }
     
@@ -110,15 +110,15 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     for (GridFieldIterator<double> iterator = _v->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        double v1 =  ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
-        _v->setValueAtIndex(v1, iterator.index());
+        double v1 =  ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
+        _v->setValueAtIndex(0*v1, iterator.index());
     }
     
     //Fill W
     for (GridFieldIterator<double> iterator = _w->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
+        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
         _w->setValueAtIndex(0*v1, iterator.index());
     }
     
@@ -211,6 +211,7 @@ double MACGrid::getMax() const{
 
 
 Vector3 MACGrid::velocityAtWorld(const Vector3 &world) const{
+
     double u,v,w;
     //U
     u = _u->valueAtWorld(world.x, world.y, world.z);
@@ -222,8 +223,8 @@ Vector3 MACGrid::velocityAtWorld(const Vector3 &world) const{
     return Vector3(u,v,w);
 }
 
-Vector3 MACGrid::velocityAtIndex(const Vector3 &index) const{
-    
+Vector3 MACGrid::velocityAtCenter(const Vector3 &index) const{
+
     double x,y,z;
     
     if (_cacheFlag->valueAtIndex(index.x, index.y, index.z) == true) { //Finns det en tillgänglig cache?
@@ -250,7 +251,7 @@ Vector3 MACGrid::velocityAtIndex(const Vector3 &index) const{
 }
 
 Vector3 MACGrid::operator()(int i ,int j,int k) const{
-    return velocityAtIndex(Vector3(i,j,k));
+    return velocityAtCenter(Vector3(i,j,k));
 }
 
 void MACGrid::fillVelocity(Vector3 vel){

@@ -29,7 +29,7 @@ double AdvectEuler::evaluate(MACGrid &u, GridField<double> &g, unsigned int i, u
 
 	Vector3 normalGrad = Gradient::getGradient(g, i, j, k, *centralDiscretization);
 	
-	Vector3 vel = u.velocityAtIndex(pos)*-1.0;
+	Vector3 vel = u.velocityAtCenter(pos)*-1.0;
 	/*
 	double l = normalGrad.norm();
 	if(l != 0)
