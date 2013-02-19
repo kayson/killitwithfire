@@ -6,11 +6,11 @@
 
 #include "presets/firePresets.h"
 
-#include "VelocityField.h"
 #include "levelset/LevelSet.h"
 #include "GridField.h"
 #include "GridMapping.h"
 #include "helper.h"
+
 #include "Pressure\pcgsolver\sparse_matrix.h"
 //#include "Pressure\pcgsolver\pcg_solver.h"
 

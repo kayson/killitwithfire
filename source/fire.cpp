@@ -4,6 +4,12 @@
 
 #include "GridField.hpp"
 
+#ifdef __APPLE__
+#include "glfw.h"
+#elif defined _WIN32 || defined _WIN64
+#include <GL/glfw.h>
+#endif
+
 Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
 {
     //Presets
@@ -30,9 +36,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	preset->upwindDiscretization->setMACGrid(&u);
 	preset->centralDiscretization->setMACGrid(&u);
 
-
 	preset->advection->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
-
 
 }
 
@@ -59,7 +63,7 @@ double Fire::computeDT(double currentTime){
 
 void Fire::advectLevelSet(double duration)
 {
-	preset->advection->advect(u, phi.grid, phi.gridCopy, duration);
+	preset->advection->advect(u, &phi.grid, &phi.gridCopy, duration);
 }
 
 void Fire::project(double dt)
@@ -251,13 +255,16 @@ void Fire::runSimulation(){
 		double dt = computeDT(currentTime);
 
 		//Advektera hastighestsfältet
-		advectLevelSet(preset->dt);
+		//advectLevelSet(preset->dt);
 
 		currentTime += dt;
     }
 
+
+    advectLevelSet(preset->dt);
     u.advect(preset->dt);
-    u.addForce(Vector3(0.0, -0.5, 0.0), preset->dt);
+    Vector3 force = Vector3(0.0, -0.05, 0.0);
+    u.addForce(force, preset->dt);
 
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 
@@ -341,7 +348,8 @@ void Fire::drawCenterVelocities()
 void Fire::draw()
 {
 	phi.draw();
-	drawCenterVelocities();
+    //u.draw();
+	//drawCenterVelocities();
 }
 
 Fire::~Fire(){

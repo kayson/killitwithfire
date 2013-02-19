@@ -24,6 +24,7 @@ protected:
     glm::mat4x4 _trans;  //Local coordinates to worldcoordinates
     glm::mat4x4 _itrans; //World coordinates to localcoordinates
     int _xdim,_ydim,_zdim;
+    int _size;
 public:
     //Konstruktor
     GridMapping();
@@ -43,7 +44,8 @@ public:
     int xdim() const;
     int ydim() const;
     int zdim() const;
-    
+    int size() const;
+
     //Index to index
     int indexAt(int i, int j, int k) const;
     void indexAt(int index,int &i, int &j, int &k) const;

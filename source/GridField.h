@@ -46,7 +46,6 @@ public:
     int xdim() const;
     int ydim() const;
     int zdim() const;
-    int size() const;
 
     //Hämta värden
     T valueAtIndex(int i) const;

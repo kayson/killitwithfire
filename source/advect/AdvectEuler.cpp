@@ -4,23 +4,22 @@
 #include "../Gradient.h"
 
 
-void AdvectEuler::advect(MACGrid &u, GridField<double> *grid,GridField<double> *gridCopy, double dt){
-    for(int i = 0; i < grid->xdim(); i++)
+void AdvectEuler::advect(MACGrid &u, GridField<double> **grid,GridField<double> **gridCopy, double dt){
+    for(int i = 0; i < (*grid)->xdim(); i++)
 	{
-		for(int j = 0; j < grid->ydim(); j++)
+		for(int j = 0; j < (*grid)->ydim(); j++)
 		{
-			for(int k = 0; k < grid->zdim(); k++)
+			for(int k = 0; k < (*grid)->zdim(); k++)
 			{
-
-				double f = evaluate(u, *grid, i, j, k);
-				grid->setValueAtIndex((*grid)(i,j,k) + f * dt, i, j, k);
-				
+				double f = evaluate(u, **grid, i, j, k);
+				(*gridCopy)->setValueAtIndex((**grid)(i,j,k) + f * dt, i, j, k);
 			}
 		}
 	}
-	/*GridField<double> *temp = ng;
-	ng = g;
-	g = temp;*/
+
+	GridField<double> *temp = *grid;
+	*grid = *gridCopy;
+	*gridCopy = temp;
 }
 
 double AdvectEuler::evaluate(MACGrid &u, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k){
@@ -31,7 +30,7 @@ double AdvectEuler::evaluate(MACGrid &u, GridField<double> &g, unsigned int i, u
 
 	Vector3 normalGrad = Gradient::getGradient(g, i, j, k, *centralDiscretization);
 	
-	Vector3 vel = u.velocityAtIndex(pos)*-1.0;
+	Vector3 vel = u.velocityAtCenter(pos)*-1.0;
 	/*
 	double l = normalGrad.norm();
 	if(l != 0)

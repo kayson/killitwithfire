@@ -13,7 +13,6 @@
 #include "GridMapping.h"
 
 
-
 #ifdef __APPLE__
 #elif defined _WIN32 || defined _WIN64
 #define round(x) floor((x) >= 0 ? (x) + 0.5 : (x) - 0.5)
@@ -74,14 +73,14 @@ GridField<T>::GridField(const GridField<T> &g){
 
 template<class T>
 GridField<T>& GridField<T>::operator=(const GridField<T> &g){
-    if (this != g) {
+    if (this != &g) {
         mapping = g.mapping;
         
         //Allokera data-array
         _data = new T[cellCount()];
         for (int i = 0; i < cellCount(); i++) _data[i] = T();
 
-        *_extrapolation = *g._extrapolation;
+        _extrapolation = g._extrapolation;
 
     }
     
@@ -152,10 +151,7 @@ T GridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
     return t7;
 }
 
-template<class T>
-int GridField<T>::cellCount() const{
-    return (mapping.xdim())*(mapping.ydim())*(mapping.zdim());
-}
+
 //Dim
 template<class T>
 int GridField<T>::xdim() const{
@@ -171,8 +167,8 @@ int GridField<T>::zdim() const{
 }
 
 template<class T>
-int GridField<T>::size() const{
-    return mapping.xdim()*mapping.ydim()*mapping.zdim();
+int GridField<T>::cellCount() const{
+    return mapping.size();
 }
 
 template<class T>
