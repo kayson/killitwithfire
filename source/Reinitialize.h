@@ -14,12 +14,12 @@
 
 void Godunov(GridField<double> &g, int i, int j, int k, double a, double &ddx2, double &ddy2, double &ddz2)
 {
-	double ddxm = FirePresets::central->calcDxm(g, i, j, k);
-	double ddxp = FirePresets::central->calcDxp(g, i, j, k);
-	double ddym = FirePresets::central->calcDym(g, i, j, k);
-	double ddyp = FirePresets::central->calcDyp(g, i, j, k);
-	double ddzm = FirePresets::central->calcDzm(g, i, j, k);
-	double ddzp = FirePresets::central->calcDzp(g, i, j, k);
+	double ddxm = FirePresets::centralDisc->calcDxm(g, i, j, k);
+	double ddxp = FirePresets::centralDisc->calcDxp(g, i, j, k);
+	double ddym = FirePresets::centralDisc->calcDym(g, i, j, k);
+	double ddyp = FirePresets::centralDisc->calcDyp(g, i, j, k);
+	double ddzm = FirePresets::centralDisc->calcDzm(g, i, j, k);
+	double ddzp = FirePresets::centralDisc->calcDzp(g, i, j, k);
 	if (a > 0.0) {
 		ddx2 = std::max( std::pow(std::max(ddxm,0.0),2.0), std::pow(std::min(ddxp,0.0),2.0) );
 		ddy2 = std::max( std::pow(std::max(ddym,0.0),2.0), std::pow(std::min(ddyp,0.0),2.0) );
@@ -43,7 +43,7 @@ double CalcMeanGradient(GridField<double> &g)
 		{
 			for(int k = 0; k < g.zdim(); k++)
 			{
-				meanGradient += (gradient->getGradient(g, i, j, k, *FirePresets::central)).norm();
+				meanGradient += (gradient->getGradient(g, i, j, k, *FirePresets::centralDisc)).norm();
 			}
 		}
 	}
@@ -56,11 +56,11 @@ namespace reinitialize{
 	{
 		//Räkna ut sign-funktion (mha central diff)
 		double dx = FirePresets::dx;
-		double ddx = FirePresets::central->calcDx(g, i, j, k);
-		double ddy = FirePresets::central->calcDy(g, i, j, k);
+		double ddx = FirePresets::centralDisc->calcDx(g, i, j, k);
+		double ddy = FirePresets::centralDisc->calcDy(g, i, j, k);
 		double ddz = 0.0;
 		if(g.zdim() != 1)
-			ddz = FirePresets::central->calcDz(g, i, j, k);
+			ddz = FirePresets::centralDisc->calcDz(g, i, j, k);
 
 		double normalGradient = ddx * ddx + ddy * ddy + ddz * ddz;
 		double val = g.valueAtIndex(i,j,k);

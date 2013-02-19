@@ -22,21 +22,18 @@ public:
         
         //Rutiner
         advection = new AdvectEuler();
-		upwindDiscretization = new UpwindDiff();
-		centralDiscretization = new CentralDiff();
 		
 	};
 	~FirePresetsTwoDimension(){
         delete advection;
-        delete centralDiscretization;
-		delete upwindDiscretization;
     }
 
 private:
 
 };
-Discretization *FirePresets::upwind = new UpwindDiff();
-Discretization *FirePresets::central = new CentralDiff();
+
+Discretization *FirePresets::upwindDisc = new UpwindDiff();
+Discretization *FirePresets::centralDisc = new CentralDiff();
 
 const int FirePresets::GRID_DIM_X = 45;
 const int FirePresets::GRID_DIM_Y = 45;

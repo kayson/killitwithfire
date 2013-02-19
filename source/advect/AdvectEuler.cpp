@@ -26,9 +26,9 @@ double AdvectEuler::evaluate(MACGrid &u, GridField<double> &g, unsigned int i, u
 	Vector3 pos = Vector3(i,j,k);
 	double xv, yv, zv;
 	
-	Vector3 gradPhi = Gradient::getGradient(g, i, j, k, *upwindDiscretization);
+	Vector3 gradPhi = Gradient::getGradient(g, i, j, k, *FirePresets::upwindDisc);
 
-	Vector3 normal = Gradient::getGradient(g, i, j, k, *centralDiscretization);
+	Vector3 normal = Gradient::getGradient(g, i, j, k, *FirePresets::centralDisc);
 	if(normal.norm() > 0.0)
 		normal.normalize();
 	else

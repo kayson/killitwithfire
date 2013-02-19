@@ -34,10 +34,10 @@ public:
 
     //Rutiner
 	Advect *advection;
-    Discretization *upwindDiscretization;
-	Discretization *centralDiscretization;
-	static Discretization *upwind;
-	static Discretization *central;
+    //Discretization *upwindDiscretization;
+	//Discretization *centralDiscretization;
+	static Discretization *upwindDisc;
+	static Discretization *centralDisc;
 };
 
 

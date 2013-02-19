@@ -18,8 +18,6 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	phi.fillLevelSet(preset->implicitFunction);
 
 
-    preset->advection->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
-
 	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	pVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
@@ -33,10 +31,8 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
 	_borderCondition = new BorderCondition();
 
-	preset->upwindDiscretization->setMACGrid(&u);
-	preset->centralDiscretization->setMACGrid(&u);
-
-	preset->advection->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
+	preset->centralDisc->setMACGrid(&u);
+	preset->upwindDisc->setMACGrid(&u);
 
 }
 
