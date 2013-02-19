@@ -34,6 +34,7 @@ double AdvectEuler::evaluate(MACGrid &u, GridField<double> &g, unsigned int i, u
 	else
 		normal = Vector3(0.0, 1.0, 0.0);
 
-	Vector3 vel = (u.velocityAtCenter(pos) - normal*FirePresets::S*0.2);
+	//Vector3 vel = (u.velocityAtCenter(pos) - normal*FirePresets::S*0.2);
+	Vector3 vel = u.velocityAtCenter(pos);
 	return Vector3::dot(-vel, gradPhi);
 }

@@ -65,7 +65,7 @@ namespace reinitialize{
 		double normalGradient = ddx * ddx + ddy * ddy + ddz * ddz;
 		double val = g.valueAtIndex(i,j,k);
 
-		double sign = -val / sqrt(val * val + normalGradient * dx * dx);
+		double sign = val / sqrt(val * val + normalGradient * dx * dx);
 
 		//Räkna ut upwind differences med Godunov
 		double ddx2, ddy2, ddz2;
@@ -77,7 +77,7 @@ namespace reinitialize{
 	void reinitializeGrid(GridField<double> &g)
 	{
 		double time = FirePresets::dt;
-		double dt = 0.3 * time;
+		double dt = 0.5 * FirePresets::dx;
 		
 		for(double elapsed = 0; elapsed < time;)
 		{
@@ -85,11 +85,16 @@ namespace reinitialize{
 				dt = time - elapsed;
 			elapsed += dt;
 			//Integrate
-			//IntegrateEuler *e = new IntegrateEuler();
-			//e->calculateIntegral(g, dt, Evaluate);    ///(g, dt, *Evaluate);
+			double mean = CalcMeanGradient(g);
+			if(mean > 1.0)
+			{
+				IntegrateEuler *e = new IntegrateEuler();
+				e->calculateIntegral(g, dt, Evaluate);    ///(g, dt, *Evaluate);
 			
-			//Check if gradient is close to 1
-			//std::cout << "Mean gradient: " << CalcMeanGradient(g) << std::endl;
+				//Check if gradient is close to 1
+				std::cout << "Mean gradient: " << CalcMeanGradient(g) << std::endl;
+		
+			}
 		}
 	}
 }
