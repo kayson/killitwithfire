@@ -8,14 +8,14 @@
 
 #include "MACGrid.h"
 
-#include "advect\MACAdvect.h"
-
 #ifdef __APPLE__
 #include "glfw.h"
+#include "MACAdvect.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h> // Takes care of everything GL-related
 #include <GL/freeglut.h> // Takes care of everything GL-related
 #include <math.h>
+#include "advect\MACAdvect.h"
 #define M_PI 3.14159265358979323846264338
 #endif
 #include <algorithm>
@@ -41,7 +41,7 @@ MACGrid::MACGrid(int xdim,int ydim,int zdim, double size){
 
 void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     _boxes = GridMapping(xdim,ydim,zdim, glm::mat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1) );
-    _advect = new MACAdvectEuler<double>();
+    _advect = new MACAdvectRK2<double>();
 
     double dx = size/(double)_boxes.xdim();
     double dy = size/(double)_boxes.ydim();
@@ -100,12 +100,12 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     _center->mapping.setTransformation(c_matrix);
     
  
-    double randMax = 1.3;
+    double randMax = 2;
     //Fill U
     for (GridFieldIterator<double> iterator = _u->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        double v1 = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
+        double v1 = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
         _u->setValueAtIndex(v1, iterator.index());
         buffer()->_u->setValueAtIndex(v1, iterator.index());
     }
@@ -114,9 +114,9 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     for (GridFieldIterator<double> iterator = _v->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        double v1 =  ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
-        _v->setValueAtIndex(0*v1, iterator.index());
-        buffer()->_v->setValueAtIndex(0*v1, iterator.index());
+        double v1 =  ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
+        _v->setValueAtIndex(v1, iterator.index());
+        buffer()->_v->setValueAtIndex(v1, iterator.index());
 
     }
     
@@ -124,9 +124,9 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     for (GridFieldIterator<double> iterator = _w->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
         iterator.index(i, j, k);
-        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
-        _w->setValueAtIndex(0*v1, iterator.index());
-        buffer()->_w->setValueAtIndex(0*v1, iterator.index());
+        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
+        _w->setValueAtIndex(v1, iterator.index());
+        buffer()->_w->setValueAtIndex(v1, iterator.index());
     }
     
     //Fill Center
@@ -262,7 +262,7 @@ Vector3 MACGrid::velocityAtCenter(const Vector3 &index) const{
 
     double x,y,z;
     
-    if (false && _cacheFlag->valueAtIndex(index.x, index.y, index.z) == true) { //Finns det en tillgänglig cache?
+    if (_cacheFlag->valueAtIndex(index.x, index.y, index.z) == true) { //Finns det en tillgänglig cache?
         return _cache->valueAtIndex(index.x, index.y, index.z);
     }else{
 
@@ -319,9 +319,11 @@ double MACGrid::valueAtFace(const int i,const int j,const int k, DirectionEnums 
         return _v->valueAtIndex(i, j, k);
     }else  if (d == FORWARD){
         return _w->valueAtIndex(i, j, k+1);
-    }else{
-        //Backward
+    }else if(d == BACKWARD){
         return _w->valueAtIndex(i, j, k);
+    }else{
+        //Center?
+
     }
 }
 

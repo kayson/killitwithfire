@@ -6,7 +6,13 @@
 // For the moment, no complex number support, and many routines have been dropped.
 
 #include <vector>
+
+
+#ifdef __APPLE__
+#include <Accelerate/Accelerate.h>
+#elif defined _WIN32 || defined _WIN64
 #include "cblas.h"
+#endif
 
 namespace BLAS{
 

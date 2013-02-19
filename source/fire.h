@@ -11,9 +11,13 @@
 #include "GridMapping.h"
 #include "helper.h"
 
-#include "Pressure\pcgsolver\sparse_matrix.h"
 //#include "Pressure\pcgsolver\pcg_solver.h"
 
+#ifdef __APPLE__
+#include "sparse_matrix.h"
+#elif defined _WIN32 || defined _WIN64
+#include "Pressure\pcgsolver\sparse_matrix.h"
+#endif
 
 class Fire{
 protected:
@@ -21,6 +25,7 @@ protected:
 	void advectLevelSet(double duration);
 
 	void project(double duration);
+    void project2D(double duration);
 	double getAlpha(const int i, const int j, const int k, DirectionEnums d);
 	double getDensity(const int i, const int j, const int k, DirectionEnums d);
 
