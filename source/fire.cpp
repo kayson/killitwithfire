@@ -161,8 +161,7 @@ void Fire::project(double dt)
 	// sid. 45, Figure 4.2 (Bridson)
 	for(int i = 0; i < phi.grid->xdim(); i ++){
 		for(int j = 0; j < phi.grid->ydim(); j ++){
-			for(int k = 0; k < phi.grid->zdim(); k ++)
-			{
+			for(int k = 0; k < phi.grid->zdim(); k ++){
 				if(getCellType(i,j,k) == BLUECORE || getCellType(i,j,k) == IGNITED)
 					rhs->setValueAtIndex(
 					(u.valueAtFace(i,j,k,RIGHT) - u.valueAtFace(i,j,k,LEFT) +
@@ -368,7 +367,7 @@ void Fire::runSimulation(){
 
     advectLevelSet(preset->dt);
     u.advect(preset->dt);
-    Vector3 force = Vector3(0.0, -0.05, 0.0);
+    Vector3 force = Vector3(0.0, -0.1, 0.0);
     u.addForce(force, preset->dt);
 
 	//Beräkna om vad för typ voxlarna är
@@ -383,7 +382,7 @@ void Fire::runSimulation(){
 
   	
 	//Fixa signed distance field
-	phi.reinitialize();
+	//phi.reinitialize();
 }
 
 void Fire::drawCenterVelocities()
@@ -456,7 +455,7 @@ void Fire::draw()
 {
 	phi.draw();
     //u.draw();
-	drawCenterVelocities();
+	//drawCenterVelocities();
 }
 
 Fire::~Fire(){
