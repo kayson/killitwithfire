@@ -10,7 +10,9 @@ FILE(GLOB killitwithfire_SRCS ./*.cpp ./advect/*.cpp ./levelset/*.cpp ./presets/
 source_group(source FILES ${killitwithfire_SRCS})
 
 include_directories(	${CMAKE_SOURCE_DIR}/../externals
+			${CMAKE_SOURCE_DIR}/../externals/glm
 			${CMAKE_SOURCE_DIR}/../externals/GL
+			${CMAKE_SOURCE_DIR}/../externals/GL/GL
 			${CMAKE_SOURCE_DIR}/../externals/FreeImage		
 		)
 
