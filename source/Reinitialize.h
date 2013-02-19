@@ -14,7 +14,11 @@ double Evaluate(unsigned int i, unsigned int j, unsigned int k)
 
 namespace reinitialize{
 
-	
+	float Evaluate(GridField<double> &g, unsigned int i, unsigned int j, unsigned int k)
+	{
+		//Discretization *d = *FirePresets::centralDiscretization;
+
+	}
 
 	void reinitializeGrid(GridField<double> &g)
 	{

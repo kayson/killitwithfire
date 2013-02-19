@@ -58,7 +58,7 @@ bool ImageExporter::saveSequence(int *n, int range, int width, int height)
 }
 void ImageExporter::saveImage(char* filename, int width, int height)
 {
-	std::cout << "Hej!" << std::endl;
+	std::cout << "Not implemented!" << std::endl;
 }
 
 #endif

@@ -36,6 +36,7 @@ public:
 	Advect *advection;
     Discretization *upwindDiscretization;
 	Discretization *centralDiscretization;
+	//static Discretization *upwind;
 };
 
 
