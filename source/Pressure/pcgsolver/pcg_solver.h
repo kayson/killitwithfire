@@ -9,7 +9,13 @@
 
 #include <cmath>
 #include "sparse_matrix.h"
+
+#ifdef __APPLE__
 #include "blas_wrapper.h"
+#elif defined _WIN32 || defined _WIN64
+#include "blas_win.h"
+#endif
+
 
 //============================================================================
 // A simple compressed sparse column data structure (with separate diagonal)

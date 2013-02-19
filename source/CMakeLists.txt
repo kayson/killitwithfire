@@ -3,7 +3,7 @@ project(killitwithfire)
 
 set(CMAKE_BUILD_TYPE "Release")
 
-FILE(GLOB killitwithfire_HEADERS ./*.h* ./advect/*.h* ./levelset/*.h* ./presets/*.h*)
+FILE(GLOB killitwithfire_HEADERS ./*.h* ./advect/*.h* ./levelset/*.h* ./presets/*.h* ./Pressure/pcgsolver/*.h*)
 source_group(include FILES ${killitwithfire_HEADERS})
 
 FILE(GLOB killitwithfire_SRCS ./*.cpp ./advect/*.cpp ./levelset/*.cpp ./presets/*.cpp)
