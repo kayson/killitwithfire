@@ -367,7 +367,7 @@ void Fire::runSimulation(){
 
     advectLevelSet(preset->dt);
     u.advect(preset->dt);
-    Vector3 force = Vector3(0.0, -0.05, 0.0);
+    Vector3 force = Vector3(0.0, -0.1, 0.0);
     u.addForce(force, preset->dt);
 
 	//Beräkna om vad för typ voxlarna är
@@ -382,7 +382,7 @@ void Fire::runSimulation(){
 
   	
 	//Fixa signed distance field
-	phi.reinitialize();
+	//phi.reinitialize();
 }
 
 void Fire::drawCenterVelocities()
@@ -455,7 +455,7 @@ void Fire::draw()
 {
 	phi.draw();
     //u.draw();
-	drawCenterVelocities();
+	//drawCenterVelocities();
 }
 
 Fire::~Fire(){
