@@ -18,7 +18,7 @@ namespace implicitFunction
 		x += xo;
 		y += yo;
 		z += zo;
-		return sqrt(x * x + y * y + z * z) - sqrt(r * r);
+		return -sqrt(x * x + y * y + z * z) + sqrt(r * r);
 	}
 }
 

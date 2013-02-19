@@ -219,10 +219,6 @@ void Fire::computeCellTypes()
 		int i, j, k;
 		it.index(i, j, k);
         
-        if(celltype(i,j,k)){
-            
-        }   
-        
 		celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
 
 	}
@@ -232,7 +228,7 @@ CellType Fire::getCellType(const int i, const int j, const int k)
 {
 	if(false) //Check if is solid
 		return SOLID;
-	else if(phi.grid->valueAtIndex(i,j,k) <= 0.0)
+	else if(phi.grid->valueAtIndex(i,j,k) > 0.0)
 		return BLUECORE;
 	else 
 		return IGNITED;
@@ -348,8 +344,7 @@ void Fire::drawCenterVelocities()
 void Fire::draw()
 {
 	phi.draw();
-    //u.draw();
-	//drawCenterVelocities();
+	drawCenterVelocities();
 }
 
 Fire::~Fire(){

@@ -8,7 +8,7 @@
 
 #include "MACGrid.h"
 
-#include "levelset\MACAdvect.h"
+#include "advect\MACAdvect.h"
 
 #ifdef __APPLE__
 #include "glfw.h"
