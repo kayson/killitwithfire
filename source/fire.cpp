@@ -18,8 +18,6 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	phi.fillLevelSet(preset->implicitFunction);
 
 
-    preset->advection->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
-
 	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	pVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
@@ -33,10 +31,8 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
 	_borderCondition = new BorderCondition();
 
-	preset->upwindDiscretization->setMACGrid(&u);
-	preset->centralDiscretization->setMACGrid(&u);
-
-	preset->advection->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
+	preset->centralDisc->setMACGrid(&u);
+	preset->upwindDisc->setMACGrid(&u);
 
 }
 
@@ -111,14 +107,20 @@ void Fire::project(double dt)
 					scale = dt/(preset->dx*preset->dx*preset->rhof);
 				else if( phi.grid->valueAtWorld(x,y,z) >= 0 )//else if(getCellType(i,j,k) == IGNITED) // om gas
 					scale = dt/(preset->dx*preset->dx*preset->rhoh);
-
-				A->set_element(diagRow, u._center->mapping.indexAt(i-1,j,k), u.valueAtFace(i,j,k,LEFT) + scale);
-				A->set_element(diagRow, u._center->mapping.indexAt(i+1,j,k), u.valueAtFace(i,j,k,RIGHT) + scale);
-				A->set_element(diagRow, u._center->mapping.indexAt(i,j+1,j), u.valueAtFace(i,j,k,UP) + scale);
+				if(i>0)
+					A->set_element(diagRow, u._center->mapping.indexAt(i-1,j,k), u.valueAtFace(i,j,k,LEFT) + scale);
+				if(i<u._center->xdim()-1)
+					A->set_element(diagRow, u._center->mapping.indexAt(i+1,j,k), u.valueAtFace(i,j,k,RIGHT) + scale);
+				if(j<u._center->ydim()-1)
+					A->set_element(diagRow, u._center->mapping.indexAt(i,j+1,j), u.valueAtFace(i,j,k,UP) + scale);
+				if(j>0)
+					A->set_element(diagRow, u._center->mapping.indexAt(i,j-1,k), u.valueAtFace(i,j,k,DOWN) + scale);
+				if(k>0)
+					A->set_element(diagRow, u._center->mapping.indexAt(i,j,k-1), u.valueAtFace(i,j,k,BACKWARD) + scale);
+				if(k<u._center->zdim()-1)
+					A->set_element(diagRow, u._center->mapping.indexAt(i,j,k+1), u.valueAtFace(i,j,k,FORWARD) + scale);
+				
 				A->set_element(diagRow, u._center->mapping.indexAt(i,j,k) , u.valueAtFace(i,j,k,CENTER) + scale);
-				A->set_element(diagRow, u._center->mapping.indexAt(i,j-1,k), u.valueAtFace(i,j,k,DOWN) + scale);
-				A->set_element(diagRow, u._center->mapping.indexAt(i,j,k-1), u.valueAtFace(i,j,k,BACKWARD) + scale);
-				A->set_element(diagRow, u._center->mapping.indexAt(i,j,k+1), u.valueAtFace(i,j,k,FORWARD) + scale);
 
 				++diagRow;
 			}
@@ -219,10 +221,6 @@ void Fire::computeCellTypes()
 		int i, j, k;
 		it.index(i, j, k);
         
-        if(celltype(i,j,k)){
-            
-        }   
-        
 		celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
 
 	}
@@ -232,7 +230,7 @@ CellType Fire::getCellType(const int i, const int j, const int k)
 {
 	if(false) //Check if is solid
 		return SOLID;
-	else if(phi.grid->valueAtIndex(i,j,k) <= 0.0)
+	else if(phi.grid->valueAtIndex(i,j,k) > 0.0)
 		return BLUECORE;
 	else 
 		return IGNITED;
@@ -348,7 +346,6 @@ void Fire::drawCenterVelocities()
 void Fire::draw()
 {
 	phi.draw();
-    //u.draw();
 	//drawCenterVelocities();
 }
 

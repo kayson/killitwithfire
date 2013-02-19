@@ -15,6 +15,8 @@ public:
     
     void normalize();
     double dot(Vector3 &vTemp);
+	static double dot(const Vector3 &v1, const Vector3 &v2);
+
 	double norm();
 	double angle(Vector3 *vTemp);
     double cosA(Vector3 *vTemp);
@@ -43,6 +45,8 @@ public:
 	friend Vector3 operator+ (const double f, const Vector3 &v);
 	friend Vector3 operator- (const double f, const Vector3 &v);
 	friend Vector3 operator* (const double f, const Vector3 &v);
+
+	Vector3 operator- () const;
 	
 	friend std::ostream& operator<<(std::ostream& out, Vector3& v )
 	{

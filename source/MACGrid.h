@@ -61,8 +61,6 @@ public:
     void setValueAtFace(double val,const int i, const int j, const int k, DirectionEnums d);
     void advect(double dt);
     void addForce(Vector3 vec, double dt);
-
-    void draw();
 };
 
 
