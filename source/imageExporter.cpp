@@ -54,7 +54,7 @@ bool ImageExporter::saveSequence(int *n, int range, int width, int height)
 #else
 bool ImageExporter::saveSequence(int *n, int range, int width, int height)
 {
-	
+	return true;
 }
 void ImageExporter::saveImage(char* filename, int width, int height)
 {

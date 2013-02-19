@@ -12,9 +12,9 @@
 #include "Freeimage.h"
 
 //Stäng av freeimage med denna istället för undre raden.
-//#undef FREEIMAGE
+#undef FREEIMAGE
 
-#define FREEIMAGE
+//#define FREEIMAGE
 
 #endif
 

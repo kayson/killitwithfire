@@ -20,9 +20,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	preset->upwindDiscretization->setMACGrid(&u);
 	preset->centralDiscretization->setMACGrid(&u);
 
-
 	preset->advection->setDiscretization(preset->upwindDiscretization, preset->centralDiscretization);
-
 
 }
 
@@ -72,7 +70,6 @@ void Fire::project(double dt)
 
 
 	// A
-	
 	for(int i = 0; i<u.xdim(); i++){
 		for(int j = 0; i<u.ydim(); j++){
 			for(int k = 0; k<u.zdim(); k++){
