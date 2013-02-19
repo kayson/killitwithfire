@@ -3,7 +3,7 @@
 
 #include "../Vector3.h"
 #include "../GridField.hpp"
-#include "MACGrid.h"
+#include "../MACGrid.h"
 
 class LevelSet
 {
