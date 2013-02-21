@@ -515,8 +515,6 @@ void Fire::drawMAC(){
 
 void Fire::drawSolid(){
     
-
-    
     double dx = celltype.dx();
     double dy = celltype.dy();
     //double dz = celltype.mapping.dx();
@@ -666,8 +664,8 @@ void Fire::draw()
 {
 	phi.draw();
     //u.draw();
-	drawCenterVelocities();
-    drawFaceVelocities();
+	//drawCenterVelocities();
+    //drawFaceVelocities();
     //drawMAC();
     //drawSolid();
 

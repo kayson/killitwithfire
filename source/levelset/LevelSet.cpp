@@ -36,7 +36,7 @@ Vector3 LevelSet::getVelocity(MACGrid &g, int i, const int j, const int k){
 
 void LevelSet::reinitialize()
 {
-	reinitialize::reinitializeGrid(*grid);
+	reinitialize::reinitializeGrid(&grid, &gridCopy);
 }
 void LevelSet::printDistanceField()
 {
