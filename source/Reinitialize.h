@@ -92,10 +92,10 @@ namespace reinitialize{
 		return sign * (1 - std::sqrt(ddx2 + ddy2 + ddz2));
 	}
 
-	void reinitializeGrid(GridField<double> &g)
+	void reinitializeGrid(GridField<double> **g, GridField<double> **gridCopy)
 	{
-		//while(abs(CalcMaxGradient(g)-1.0) > 0.1)
-		while(abs(CalcMeanGradient(g) - 1.0) > 0.1)
+
+		while(abs(CalcMeanGradient(**g) - 1.0) > 0.1)
 		{
 			double time = FirePresets::dt;
 			double dt = 0.5 * FirePresets::dx;
@@ -105,16 +105,17 @@ namespace reinitialize{
 				if(dt > time)
 					dt = time - elapsed;
 				elapsed += dt;
+
 				//Integrate
-				double mean = CalcMeanGradient(g);
+				double mean = CalcMeanGradient(**g);
 
 				IntegrateEuler *e = new IntegrateEuler();
-				e->calculateIntegral(g, dt, Evaluate);
+				e->calculateIntegral(g, gridCopy, dt, Evaluate);
 			
 
 			}
 		}
-		//std::cout << "Max gradient: " << CalcMaxGradient(g) << std::endl;
+		
 	}
 }
 

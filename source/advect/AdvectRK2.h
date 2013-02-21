@@ -3,7 +3,7 @@
 #ifndef __FuidFire__AdvectRK2__
 #define __FuidFire__AdvectRK2__
 
-#include "Advect.h"
+#include "AdvectLevelSet.h"
 class AdvectRK2 : public AdvectLevelSet {
 
 public:

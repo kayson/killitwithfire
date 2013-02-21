@@ -6,36 +6,42 @@
 class IntegrateEuler : public IntegrateMethod
 {
 public:
-	IntegrateEuler(){};
+	IntegrateEuler(){}
 
-	virtual void calculateIntegral(GridField<double> &g, double dt, double (*Evaluate)(GridField<double> &g, int i, int j, int k))
+	virtual void calculateIntegral(GridField<double> **grid, GridField<double> **gridCopy, double dt, double (*Evaluate)(GridField<double> &grid, int i, int j, int k))
 	{
-		for(int i = 0; i < g.xdim(); i++)
+		for(int i = 0; i < (*grid)->xdim(); i++)
 		{
-			for(int j = 0; j < g.ydim(); j++)
+			for(int j = 0; j < (*grid)->ydim(); j++)
 			{
-				for(int k = 0; k < g.zdim(); k++)
+				for(int k = 0; k < (*grid)->zdim(); k++)
 				{
-					double ddt = Evaluate(g, i, j, k);
-					g.setValueAtIndex(g.valueAtIndex(i,j,k) + ddt * dt, i, j, k);
+					double ddt = Evaluate(**grid, i, j, k);
+					(*gridCopy)->setValueAtIndex((*grid)->valueAtIndex(i,j,k) + ddt * dt, i, j, k);
 				}
 			}
 		}
-	};
-	virtual void calculateIntegral(MACGrid &u, GridField<double> &g, double dt, double (*Evaluate)(MACGrid &u, GridField<double> &g, int i, int j, int k))
+		GridField<double> *temp = *gridCopy;
+		*gridCopy = *grid;
+		*grid = temp;
+	}
+	virtual void calculateIntegral(MACGrid &u, GridField<double> **grid,GridField<double> **gridCopy, double dt, double (*Evaluate)(MACGrid &u, GridField<double> &g, int i, int j, int k))
 	{
-		for(int i = 0; i < g.xdim(); i++)
+		for(int i = 0; i < (*grid)->xdim(); i++)
 		{
-			for(int j = 0; j < g.ydim(); j++)
+			for(int j = 0; j < (*grid)->ydim(); j++)
 			{
-				for(int k = 0; k < g.zdim(); k++)
+				for(int k = 0; k < (*grid)->zdim(); k++)
 				{
-					double ddt = Evaluate(u, g, i, j, k);
-					g.setValueAtIndex(g.valueAtIndex(i,j,k) + ddt * dt, i, j, k);
+					double ddt = Evaluate(u, **grid, i, j, k);
+					(*gridCopy)->setValueAtIndex((*grid)->valueAtIndex(i,j,k) + ddt * dt, i, j, k);
 				}
 			}
 		}
-	};
+		GridField<double> *temp = *gridCopy;
+		*gridCopy = *grid;
+		*grid = temp;
+	}
 
 };
 
