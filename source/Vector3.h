@@ -17,7 +17,7 @@ public:
     double dot(Vector3 &vTemp);
 	static double dot(const Vector3 &v1, const Vector3 &v2);
 
-	double norm();
+	double norm() const;
 	double angle(Vector3 *vTemp);
     double cosA(Vector3 *vTemp);
 
@@ -47,6 +47,7 @@ public:
 	friend Vector3 operator* (const double f, const Vector3 &v);
 
 	Vector3 operator- () const;
+	bool operator> (const Vector3 &v) const;
 	
 	friend std::ostream& operator<<(std::ostream& out, Vector3& v )
 	{

@@ -142,6 +142,28 @@ T GridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
     return t7;
 }
 
+template<class T> 
+T GridField<T>::getMax() const
+{
+	T max;
+	GridFieldIterator<T> it = iterator();
+	if(!it.done())
+		max = valueAtIndex(it.index());
+	else
+	{
+		std::cout << "GridField<T>::getMax() failed!" << std::endl;
+		throw;
+	}
+	
+	for(it; !it.done(); it.next())
+	{
+		T v = valueAtIndex(it.index());
+		if(v > max)
+			max = v;
+	}
+
+	return max;
+}
 
 template<class T>
 int GridField<T>::cellCount() const{

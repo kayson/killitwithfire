@@ -48,7 +48,7 @@ double Fire::computeDT(double currentTime){
 	//Bridson s. 35
 	double dx = preset->dx;
 	double alpha = preset->CFL_NUMBER;
-	double c = 1;// u.getMax();
+	double c = w.getMax().norm();
 	if(c != 0)
 		smallStep = alpha * dx / c;
 	else
@@ -66,7 +66,7 @@ double Fire::computeDT(double currentTime){
 void Fire::advectLevelSet(double duration)
 {
 	computeW();
-	preset->advection->advect(u, &phi.grid, &phi.gridCopy, duration);
+	preset->advection->advect(w, phi, duration);
 }
 
 void Fire::project2D(double dt){
@@ -655,7 +655,7 @@ void Fire::computeW()
 	{
 		int i, j, k;
 		it.index(i,j,k);
-		Vector3 v = u.velocityAtCenter(i, j, k);// + phi.getNormal(i, j, k)*FirePresets::S;
+		Vector3 v = u.velocityAtCenter(i, j, k) + phi.getNormal(i, j, k)*FirePresets::S;
 		w.setValueAtIndex(v, it.index());
 	}
 }

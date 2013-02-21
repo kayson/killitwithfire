@@ -9,9 +9,9 @@ class AdvectLevelSetEuler : public AdvectLevelSet {
 public:
     AdvectLevelSetEuler(){}
 
-    virtual void advect(MACGrid &u, GridField<double> **g,GridField<double> **gridCopy, double dt);
+    virtual void advect(GridField<Vector3> &w, LevelSet &phi, double dt);
 
 	void integrateEuler(MACGrid &u, GridField<double> &g, double dt);
-	double evaluate(MACGrid &u, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k);
+	double evaluate(GridField<Vector3> &w, LevelSet &phi, unsigned int i, unsigned int j, unsigned int k);
 };
 #endif /* defined(__FuidFire__AdvectLevelSetEuler__) */
