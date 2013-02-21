@@ -507,7 +507,7 @@ void Fire::drawMAC(){
         double x,y,z;
         u.indexToWorld(i, j, k, x, y, z);
 
-        glVertex3f(x, y, 0);
+        glVertex3d(x, y, 0);
     }
     glEnd();
 
@@ -528,17 +528,17 @@ void Fire::drawSolid(){
             int val = iter.value();
             
             if (val == SOLID){
-                glColor3f(0.1, 0.1, 0.1);
-                glVertex3f(x-dx*0.5, y-dy*0.5, 0);
-                glVertex3f(x+dx*0.5, y-dy*0.5, 0);
-                glVertex3f(x+dx*0.5, y+dy*0.5, 0);
-                glVertex3f(x-dx*0.5, y+dy*0.5, 0);
+                glColor3d(0.1, 0.1, 0.1);
+                glVertex3d(x-dx*0.5, y-dy*0.5, 0);
+                glVertex3d(x+dx*0.5, y-dy*0.5, 0);
+                glVertex3d(x+dx*0.5, y+dy*0.5, 0);
+                glVertex3d(x-dx*0.5, y+dy*0.5, 0);
             }else if (val == BLUECORE){
                 glColor3f(0, 0, 1);
-                glVertex3f(x-dx*0.5, y-dy*0.5, 0);
-                glVertex3f(x+dx*0.5, y-dy*0.5, 0);
-                glVertex3f(x+dx*0.5, y+dy*0.5, 0);
-                glVertex3f(x-dx*0.5, y+dy*0.5, 0);
+                glVertex3d(x-dx*0.5, y-dy*0.5, 0);
+                glVertex3d(x+dx*0.5, y-dy*0.5, 0);
+                glVertex3d(x+dx*0.5, y+dy*0.5, 0);
+                glVertex3d(x-dx*0.5, y+dy*0.5, 0);
             }else if (val == AIR){
                 //None dude
             }
@@ -559,8 +559,8 @@ void Fire::drawFaceVelocities(){
         double val = iter.value();
 
         glBegin(GL_LINE_STRIP);
-        glVertex3f(x, y, 0);
-        glVertex3f(x+val, y, 0);
+        glVertex3d(x, y, 0);
+        glVertex3d(x+val, y, 0);
         glEnd();
     }
     
@@ -572,8 +572,8 @@ void Fire::drawFaceVelocities(){
         u._v->indexToWorld(i, j, k, x, y, z);
         double val = iter.value();
         glBegin(GL_LINE_STRIP);
-        glVertex3f(x, y, 0);
-        glVertex3f(x, y+val, 0);
+        glVertex3d(x, y, 0);
+        glVertex3d(x, y+val, 0);
         glEnd();
     }
     
@@ -606,10 +606,10 @@ void Fire::drawCenterVelocities()
         
         //x = i; y = j; z = k;
                     
-        glColor3f(1,1,0);
+        glColor3d(1.0,1.0,0.0);
         glBegin(GL_LINE_STRIP);
-        glVertex3f(x, y, 0);
-        glVertex3f(x + v.x, y+v.y , 0);
+        glVertex3d(x, y, 0);
+        glVertex3d(x + v.x, y+v.y , 0);
         glEnd();
         
         /*
