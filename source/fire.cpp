@@ -38,8 +38,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
 	_borderCondition = new BorderCondition();
 
-	preset->centralDisc->setMACGrid(&u);
-	preset->upwindDisc->setMACGrid(&u);
+	preset->upwindDisc->setVelocityField(w);
 
 }
 
@@ -656,7 +655,7 @@ void Fire::computeW()
 	{
 		int i, j, k;
 		it.index(i,j,k);
-		Vector3 v = u.velocityAtCenter(i, j, k) + phi.getNormal(i, j, k)*FirePresets::S;
+		Vector3 v = u.velocityAtCenter(i, j, k);// + phi.getNormal(i, j, k)*FirePresets::S;
 		w.setValueAtIndex(v, it.index());
 	}
 }

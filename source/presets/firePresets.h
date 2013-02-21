@@ -9,6 +9,8 @@
 #include "../advect/AdvectLevelSet.h"
 #endif
 
+#include "../CentralDiff.h"
+#include "../UpwindDiff.h"
 
 class FirePresets
 {
@@ -37,8 +39,8 @@ public:
 	AdvectLevelSet *advection;
     //Discretization *upwindDiscretization;
 	//Discretization *centralDiscretization;
-	static Discretization *upwindDisc;
-	static Discretization *centralDisc;
+	static UpwindDiff *upwindDisc;
+	static CentralDiff *centralDisc;
 };
 
 
