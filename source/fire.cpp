@@ -603,7 +603,7 @@ void Fire::drawCenterGradients(Discretization *disc)
         double x,y,z;
         u.indexToWorld(i, j, k, x, y, z);
 		GridField<double> *g = phi.grid;
-		Vector3 v = Gradient::getGradient(*g, i, j, k, *disc) * 0.5;
+		Vector3 v = Gradient::getGradient(*g, i, j, k, *disc) * 0.2;
 		//std::cout << v.norm() << std::endl;
         /*glColor3f(0,1,0);
         glBegin(GL_LINES);
@@ -721,7 +721,7 @@ void Fire::draw()
 	phi.draw();
     //u.draw();
 	//drawCenterVelocities();
-	//drawCenterGradients(FirePresets::centralDisc);
+	//drawCenterGradients(FirePresets::upwindDisc);
     //drawFaceVelocities();
     //drawMAC();
     //drawSolid();

@@ -83,7 +83,7 @@ namespace reinitialize{
 		double normalGradient = ddx * ddx + ddy * ddy + ddz * ddz;
 		double val = g.valueAtIndex(i,j,k);
 
-		double sign = -val / sqrt(val * val + normalGradient * dx * dx);
+		double sign = val / sqrt(val * val + normalGradient * dx * dx);
 
 		//Räkna ut upwind differences med Godunov
 		double ddx2, ddy2, ddz2;

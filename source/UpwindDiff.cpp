@@ -76,8 +76,10 @@ double UpwindDiff::calcDzp(GridField<double> &g, const int i, const int j, const
 
 double UpwindDiff::calcDx(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(i <= 0 || i >= g.xdim()-1)
-		return (double)(g(i,j,k))/(FirePresets::dx);//ext->extrapolate(g,i,j,k,*this);	// Extrapolera
+	if(i <= 0)
+		return 1.0;
+	if(i >= g.xdim()-1)
+		return -1.0;
 	if((*_w)(i, j, k).x > 0)
 		return (g(i, j, k) - g(i-1, j, k))/FirePresets::dx;
 	else
@@ -85,8 +87,10 @@ double UpwindDiff::calcDx(GridField<double> &g, const int i, const int j, const 
 }
 double UpwindDiff::calcDy(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(j <= 0 || j >= g.ydim()-1)
-		return (double)(g(i,j,k))/(FirePresets::dx);//ext->extrapolate(g,i,j,k,*this);	// Extrapolera
+	if(j <= 0)
+		return 1.0;
+	if(j >= g.ydim()-1)
+		return -1.0;
 	if((*_w)(i, j, k).y > 0)
 		return (g(i, j, k) - g(i, j-1, k))/FirePresets::dx;
 	else
@@ -94,8 +98,10 @@ double UpwindDiff::calcDy(GridField<double> &g, const int i, const int j, const 
 }
 double UpwindDiff::calcDz(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(k <= 0 || k >= g.zdim()-1)
-		return (double)(g(i,j,k))/(FirePresets::dx);//ext->extrapolate(g,i,j,k,*this);	// Extrapolera
+	if(k <= 0)
+		return 1.0;
+	if(k >= g.zdim()-1)
+		return -1.0;
 	if((*_w)(i, j, k).z > 0)
 		return (g(i, j, k) - g(i, j, k-1))/FirePresets::dx;
 	else
