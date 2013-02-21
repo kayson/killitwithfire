@@ -3,6 +3,8 @@
 #include "Discretization.h"
 
 class UpwindDiff : public Discretization{
+protected:
+	GridField<Vector3> *_w;
 
 public:
 	UpwindDiff();
@@ -39,5 +41,7 @@ public:
 	Vector3 calcDyz(GridField<Vector3> &g, const int i, const int j, const int k);
 	Vector3 calcDxz(GridField<Vector3> &g, const int i, const int j, const int k);
 	Vector3 calcDxy(GridField<Vector3> &g, const int i, const int j, const int k);
+
+	virtual void setVelocityField(GridField<Vector3> &w) { _w = &w; }
 };
 #endif

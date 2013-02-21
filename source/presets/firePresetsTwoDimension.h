@@ -32,8 +32,8 @@ private:
 
 };
 
-Discretization *FirePresets::upwindDisc = new UpwindDiff();
-Discretization *FirePresets::centralDisc = new CentralDiff();
+UpwindDiff *FirePresets::upwindDisc = new UpwindDiff();
+CentralDiff *FirePresets::centralDisc = new CentralDiff();
 
 const int FirePresets::GRID_DIM_X = 45;
 const int FirePresets::GRID_DIM_Y = 45;

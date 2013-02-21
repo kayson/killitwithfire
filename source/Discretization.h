@@ -13,11 +13,9 @@
 #include "Extrapolation.h"
 
 class Discretization{
-protected:
-	MACGrid *_w;
 public:
 	//Discretization();
-	virtual ~Discretization(){};
+	virtual ~Discretization(){}
 
 	// Dessa skall och måste överlagras av subklasser
 	virtual double calcDxp(GridField<double> &g, const int i, const int j, const int k)=0;
@@ -51,8 +49,6 @@ public:
 	virtual  Vector3 calcDyz(GridField<Vector3> &g, const int i, const int j, const int k)=0;
 	virtual  Vector3 calcDxz(GridField<Vector3> &g, const int i, const int j, const int k)=0;
 	virtual  Vector3 calcDxy(GridField<Vector3> &g, const int i, const int j, const int k)=0;
-
-	virtual void setMACGrid(MACGrid *w){_w = w;};
 
 	Extrapolation<Discretization> *ext;
 };
