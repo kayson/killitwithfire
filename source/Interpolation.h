@@ -26,7 +26,7 @@ public:
      */
     
     inline T operator()(double t,T f1,T f2)const {
-        return f1+(f2-f1)*t;
+        return (T)(f1+(f2-f1)*t);
     }
 };
 
