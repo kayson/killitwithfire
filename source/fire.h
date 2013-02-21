@@ -42,6 +42,7 @@ public:
 
     void runSimulation();
 
+	void drawCenterGradients(Discretization *disc);
     void drawFaceVelocities();
 	void drawCenterVelocities();
 	void draw();

@@ -4,6 +4,7 @@
 
 #include "advect/AdvectLevelSet.h"
 #include "GridField.hpp"
+#include "Gradient.h"
 
 #ifdef __APPLE__
 #include "glfw.h"
@@ -494,7 +495,7 @@ void Fire::runSimulation(){
 
   	
 	//Fixa signed distance field
-	//phi.reinitialize();
+	phi.reinitialize();
 }
 
 void Fire::drawMAC(){
@@ -577,6 +578,45 @@ void Fire::drawFaceVelocities(){
         glEnd();
     }
     
+}
+
+void Fire::drawCenterGradients(Discretization *disc)
+{
+	 for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u.indexToWorld(i, j, k, x, y, z);
+		GridField<double> *g = phi.grid;
+		Vector3 v = Gradient::getGradient(*g, i, j, k, *disc) * 0.1;
+        /*glColor3f(0,1,0);
+        glBegin(GL_LINES);
+        glVertex3f(1, 1, 1);
+        glVertex3f(dx*i + 1, y + 1, z + 1);
+        glEnd();
+        
+        glColor3f(0,0,0);
+        glBegin(GL_POINTS);
+        glVertex3f(x + v.x, y + v.y, z + v.z);
+        glEnd();
+        */
+        
+        //x = i; y = j; z = k;
+                    
+        glColor3d(1.0,1.0,0.0);
+        glBegin(GL_LINE_STRIP);
+        glVertex3d(x, y, 0);
+        glVertex3d(x + v.x, y+v.y , 0);
+        glEnd();
+        
+        /*
+        glColor3f(1,0,0);
+        glBegin(GL_POINTS);
+        glVertex3f(x, y, 0);
+        glEnd();
+        */
+        
+    }
 }
 
 void Fire::drawCenterVelocities()
@@ -665,6 +705,7 @@ void Fire::draw()
 	phi.draw();
     //u.draw();
 	//drawCenterVelocities();
+	drawCenterGradients(FirePresets::centralDisc);
     //drawFaceVelocities();
     //drawMAC();
     //drawSolid();
