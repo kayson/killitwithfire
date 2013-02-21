@@ -23,8 +23,8 @@ class GridMapping {
 public:
     glm::dmat4x4 _trans;  //Local coordinates to worldcoordinates
     glm::dmat4x4 _itrans; //World coordinates to localcoordinates
-    unsigned int _xdim,_ydim,_zdim;
-    unsigned int _size;
+    int _xdim,_ydim,_zdim;
+    int _size;
     
 protected:
     //Local dim
@@ -47,10 +47,10 @@ public:
     void multTransformation(glm::dmat4x4 t);
 
     //Dim
-    unsigned int xdim() const;
-    unsigned int ydim() const;
-    unsigned int zdim() const;
-    unsigned int size() const;
+    int xdim() const;
+    int ydim() const;
+    int zdim() const;
+    int size() const;
     double dx() const;
     double dy() const;
     double dz() const;

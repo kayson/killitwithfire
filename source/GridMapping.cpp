@@ -90,16 +90,16 @@ double GridMapping::local_dz() const{
         return 1.0/zdim();
 }
 //Dim
-unsigned int GridMapping::xdim() const{
+int GridMapping::xdim() const{
     return _xdim;
 }
-unsigned int GridMapping::ydim() const{
+int GridMapping::ydim() const{
     return _ydim;
 }
-unsigned int GridMapping::zdim() const{
+int GridMapping::zdim() const{
     return _zdim;
 }
-unsigned int GridMapping::size() const{
+int GridMapping::size() const{
     return _size;
 }
 
@@ -159,9 +159,9 @@ void GridMapping::indexToLocal(int i,int j,int k, double &l_x, double &l_y,doubl
 
 //Local to...
 void GridMapping::localToIndex(double l_x, double l_y,double l_z,int &i,int &j,int &k) const{
-    i = round(l_x*((double)xdim()));
-    j = round(l_y*((double)ydim()));
-    k = round(l_z*((double)zdim()));
+    i = (int)round(l_x*((double)xdim()));
+    j = (int)round(l_y*((double)ydim()));
+    k = (int)round(l_z*((double)zdim()));
 }
 
 void GridMapping::localToWorld(double l_x, double l_y,double l_z, double &w_x,double &w_y,double &w_z) const{
@@ -171,9 +171,9 @@ void GridMapping::localToWorld(double l_x, double l_y,double l_z, double &w_x,do
 }
 
 void GridMapping::localToUpperLeftIndex(const double l_x,const double l_y,const double l_z, int &i,int &j,int &k) const{
-    i = floor(l_x*((double)xdim()));
-    j = floor(l_y*((double)ydim()));
-    k = floor(l_z*((double)zdim()));
+    i = (int)floor(l_x*((double)xdim()));
+    j = (int)floor(l_y*((double)ydim()));
+    k = (int)floor(l_z*((double)zdim()));
 }
 
 //World to...
