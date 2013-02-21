@@ -10,15 +10,15 @@
 #include "GridField.h"
 #include "GridMapping.h"
 #include "helper.h"
-#include "Pressure\pcgsolver\blas_win.h"
+//#include "Pressure\pcgsolver\blas_win.h"
 
-//#include "Pressure\pcgsolver\pcg_solver.h"
 
 #ifdef __APPLE__
 #include "sparse_matrix.h"
+#include "pcg_solver.h"
 #elif defined _WIN32 || defined _WIN64
 #include "Pressure\pcgsolver\sparse_matrix.h"
-#include "Pressure/pcgsolver/pcg_solver.h"
+#include "Pressure\pcgsolver\pcg_solver.h"
 #endif
 
 class Fire{

@@ -5,10 +5,10 @@
 namespace BLASWIN{
 	template <typename T>
 	T abs_max(std::vector<T> &v){
-		double max = 0;
-		for(int i=0; i<v.size(); ++i){
-			if(v[0] > max)
-				max = v[0];
+		double max = fabs(v[0]);
+		for(int i=1; i<v.size(); ++i){
+			if(fabs(v[i]) > max)
+				max = fabs(v[i]);
 		}
 		return max;
 	}
@@ -26,7 +26,7 @@ namespace BLASWIN{
 	template <typename T>
 	void add_scaled(double alpha, std::vector<T> &s, std::vector<T> &res){
 		for(int i=0; i<s.size(); ++i){
-			res[i] = s[i] + alpha;
+			res[i] = s[i] * alpha + res[i];
 		}
 		return;
 	}
