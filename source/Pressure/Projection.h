@@ -8,9 +8,9 @@
 
 #ifndef __FuidFire__Projection__
 #define __FuidFire__Projection__
-#include "MACGrid.h"
-#include "GridField.h"
-#include "pcg_solver.h"
+#include "../MACGrid.h"
+#include "../GridField.h"
+#include "pcgsolver\pcg_solver.h"
 #include <iostream>
 #include <algorithm>
 class Projection {
@@ -56,7 +56,7 @@ public:
         residual = 0.01;
     };
     virtual ~PCGProjection(){};
-    virtual void project() final{
+    virtual void project(){
         fillA(); //Fyll A-matrisen
         fillb(); //Fyll b-matrisen
         PCGSolver<double> solver;

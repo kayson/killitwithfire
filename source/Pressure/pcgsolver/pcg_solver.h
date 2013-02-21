@@ -13,7 +13,7 @@
 #ifdef __APPLE__
 #include "blas_wrapper.h"
 #elif defined _WIN32 || defined _WIN64
-//#include "blas_win.h"
+#include "blas_win.h"
 #endif
 
 
@@ -254,7 +254,7 @@ struct PCGSolver
       if(m.size()!=n){ m.resize(n); s.resize(n); z.resize(n); r.resize(n); }
       zero(result);
       r=rhs;
-      residual_out=BLAS::abs_max(r);
+      residual_out=BLASWIN::abs_max(r);
       if(residual_out==0) {
          iterations_out=0;
          return true;
@@ -263,7 +263,7 @@ struct PCGSolver
 
       form_preconditioner(matrix);
       apply_preconditioner(r, z);
-      double rho=BLAS::dot(z, r);
+      double rho=BLASWIN::dot(z, r);
       if(rho==0 || rho!=rho) {
          iterations_out=0;
          return false;
@@ -274,18 +274,18 @@ struct PCGSolver
       int iteration;
       for(iteration=0; iteration<max_iterations; ++iteration){
          multiply(fixed_matrix, s, z);
-         double alpha=rho/BLAS::dot(s, z);
-         BLAS::add_scaled(alpha, s, result);
-         BLAS::add_scaled(-alpha, z, r);
-         residual_out=BLAS::abs_max(r);
+         double alpha=rho/BLASWIN::dot(s, z);
+         BLASWIN::add_scaled(alpha, s, result);
+         BLASWIN::add_scaled(-alpha, z, r);
+         residual_out=BLASWIN::abs_max(r);
          if(residual_out<=tol) {
             iterations_out=iteration+1;
             return true; 
          }
          apply_preconditioner(r, z);
-         double rho_new=BLAS::dot(z, r);
+         double rho_new=BLASWIN::dot(z, r);
          double beta=rho_new/rho;
-         BLAS::add_scaled(beta, s, z); s.swap(z); // s=beta*s+z
+         BLASWIN::add_scaled(beta, s, z); s.swap(z); // s=beta*s+z
          rho=rho_new;
       }
       iterations_out=iteration;

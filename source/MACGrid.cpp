@@ -17,7 +17,7 @@
 #include <GL/freeglut.h> // Takes care of everything GL-related
 #include <math.h>
 #include "advect\MACAdvect.h"
-#include <glm/transform.hpp> 
+#include <glm/gtx/transform.hpp> 
 #define M_PI 3.14159265358979323846264338
 #endif
 #include <algorithm>
