@@ -2,7 +2,7 @@
 #define FIREPRESETSTWODIM_H
 #include "firePresets.h"
 #include"../levelset/ImplicitFunctions.h"
-#include "../advect/AdvectEuler.h"
+#include "../advect/AdvectLevelSetEuler.h"
 #include "../UpwindDiff.h"
 #include "../CentralDiff.h"
 
@@ -21,7 +21,7 @@ public:
 		implicitFunction = implicitFunction::sphere;
         
         //Rutiner
-        advection = new AdvectEuler();
+        advection = new AdvectLevelSetEuler();
 		
 	};
 	~FirePresetsTwoDimension(){

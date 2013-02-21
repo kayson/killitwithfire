@@ -1,17 +1,17 @@
 
 
-#ifndef __FuidFire__AdvectEuler__
-#define __FuidFire__AdvectEuler__
+#ifndef __FuidFire__AdvectLevelSetEuler__
+#define __FuidFire__AdvectLevelSetEuler__
 
 #include "AdvectLevelSet.h"
 
-class AdvectEuler : public AdvectLevelSet {
+class AdvectLevelSetEuler : public AdvectLevelSet {
 public:
-    AdvectEuler(){};
+    AdvectLevelSetEuler(){}
 
     virtual void advect(MACGrid &u, GridField<double> **g,GridField<double> **gridCopy, double dt);
 
 	void integrateEuler(MACGrid &u, GridField<double> &g, double dt);
 	double evaluate(MACGrid &u, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k);
 };
-#endif /* defined(__FuidFire__AdvectEuler__) */
+#endif /* defined(__FuidFire__AdvectLevelSetEuler__) */
