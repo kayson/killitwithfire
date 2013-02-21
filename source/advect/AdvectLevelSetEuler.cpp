@@ -1,10 +1,10 @@
-#include "AdvectEuler.h"
+#include "AdvectLevelSetEuler.h"
 #include <limits>
 #include "../presets/firePresets.h"
 #include "../Gradient.h"
 
 
-void AdvectEuler::advect(MACGrid &u, GridField<double> **grid,GridField<double> **gridCopy, double dt){
+void AdvectLevelSetEuler::advect(MACGrid &u, GridField<double> **grid,GridField<double> **gridCopy, double dt){
     for(int i = 0; i < (*grid)->xdim(); i++)
 	{
 		for(int j = 0; j < (*grid)->ydim(); j++)
@@ -22,7 +22,7 @@ void AdvectEuler::advect(MACGrid &u, GridField<double> **grid,GridField<double> 
 	*gridCopy = temp;
 }
 
-double AdvectEuler::evaluate(MACGrid &u, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k){
+double AdvectLevelSetEuler::evaluate(MACGrid &u, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k){
 	Vector3 gradPhi = Gradient::getGradient(g, i, j, k, *FirePresets::upwindDisc);
 
 	Vector3 vel = u.velocityAtCenter(i,j,k);
