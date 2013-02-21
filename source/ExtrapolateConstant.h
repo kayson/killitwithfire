@@ -59,6 +59,7 @@ public:
 
 	Vector3 extrapolate(GridField<Vector3>& g, const int i, const int j, const int k, Discretization &d)
 	{
+		throw; //Detta måste göras om för att användas!
 		if(typeid(d) == typeid(UpwindDiff))
 		{
 			if(i <= 0 || i >= g.xdim()-1)

@@ -116,6 +116,7 @@ double UpwindDiff::calcDxy(GridField<double> &g, const int i, const int j, const
 
 Vector3 UpwindDiff::calcDx(GridField<Vector3> &g, const int i, const int j, const int k)
 {
+	throw; //Detta måste göras om för att användas!
 	if(i <= 0 || i >= g.xdim()-1)
 		return ext->extrapolate(g,i,j,k,*this);	// Extrapolera
 	if((*_w)(i, j, k).x > 0)
@@ -125,6 +126,7 @@ Vector3 UpwindDiff::calcDx(GridField<Vector3> &g, const int i, const int j, cons
 }
 Vector3 UpwindDiff::calcDy(GridField<Vector3> &g, const int i, const int j, const int k)
 {
+	throw; //Detta måste göras om för att användas!
 	if(j <= 0 || j >= g.ydim()-1)
 		return ext->extrapolate(g,i,j,k,*this);	// Extrapolera
 	if((*_w)(i, j, k).y > 0)
@@ -134,6 +136,7 @@ Vector3 UpwindDiff::calcDy(GridField<Vector3> &g, const int i, const int j, cons
 }
 Vector3 UpwindDiff::calcDz(GridField<Vector3> &g, const int i, const int j, const int k)
 {
+	throw; //Detta måste göras om för att användas!
 	if(k <= 0 || k >= g.zdim()-1)
 		return ext->extrapolate(g,i,j,k,*this);	// Extrapolera
 	if((*_w)(i, j, k).z > 0)
