@@ -31,6 +31,7 @@ protected:
 	double getAlpha(const int i, const int j, const int k, DirectionEnums d);
 	double getDensity(const int i, const int j, const int k, DirectionEnums d);
 
+	void computeW();
 	void computeCellTypes();
 	CellType getCellType(const int i, const int j, const int k);
 
@@ -66,6 +67,8 @@ private:
 
     //Grid
     MACGrid u;
+	// Levelset Velocities u + S*N
+	GridField<Vector3> w;
 
 	GridField<int> celltype;
 };

@@ -1,6 +1,6 @@
 
 #include "fire.h"
-#include "advect/Advect.h"
+#include "advect/AdvectLevelSet.h"
 
 #include "GridField.hpp"
 
@@ -13,7 +13,7 @@
 
 #endif
 
-Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
+Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
 {
     //Presets
     preset = pre;
@@ -28,7 +28,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
 	const int matDim = phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim()*phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim();
 
-	A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
+	//A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
 	pcgSolver = new PCGSolver<double>();
 	resid_out = new double();
 	iter_out = 100;
@@ -63,6 +63,7 @@ double Fire::computeDT(double currentTime){
 
 void Fire::advectLevelSet(double duration)
 {
+	computeW();
 	preset->advection->advect(u, &phi.grid, &phi.gridCopy, duration);
 }
 
@@ -364,15 +365,15 @@ void Fire::runSimulation(){
 		currentTime += dt;
     }
 
+	//Beräkna om vad för typ voxlarna är
+	computeCellTypes(); 
 
-    advectLevelSet(preset->dt);
     u.advect(preset->dt);
     Vector3 force = Vector3(0.0, -0.1, 0.0);
     u.addForce(force, preset->dt);
 
-	//Beräkna om vad för typ voxlarna är
-	computeCellTypes(); 
-    
+	advectLevelSet(preset->dt);
+
     //Externa krafter  
 		//preset->externalForce->addForce(grid);
     
@@ -449,6 +450,17 @@ void Fire::drawCenterVelocities()
 		}
 	}*/
 	
+}
+
+void Fire::computeW()
+{
+	for(GridFieldIterator<Vector3> it = w.iterator(); !it.done(); it.next())
+	{
+		int i, j, k;
+		it.index(i,j,k);
+		Vector3 v = u.velocityAtCenter(i, j, k) + phi.getNormal(i, j, k)*FirePresets::S;
+		w.setValueAtIndex(v, it.index());
+	}
 }
 
 void Fire::draw()

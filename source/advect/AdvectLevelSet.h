@@ -6,12 +6,12 @@
 #include "../BorderCondition.h"
 #include "../MACGrid.h"
 
-class Advect {
+class AdvectLevelSet {
 protected:
 	BorderCondition borderCondition;
 
 public:
-    virtual ~Advect(){};
+    virtual ~AdvectLevelSet(){}
 
     
     virtual void advect(MACGrid &u, GridField<double> **g,GridField<double> **temp, double dt) = 0;
