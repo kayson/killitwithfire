@@ -32,9 +32,9 @@ double CentralDiff::calcDxm(GridField<double> &g, const int i, const int j, cons
 
 double CentralDiff::calcDym(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(i <= 0)
+	if(j <= 0)
 		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
-	if(i >= g.xdim()-1)
+	if(j >= g.ydim()-1)
 		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
 	else
 		return (double)(g(i, j, k) - g(i, j - 1, k))/(FirePresets::dx);
@@ -42,9 +42,9 @@ double CentralDiff::calcDym(GridField<double> &g, const int i, const int j, cons
 
 double CentralDiff::calcDzm(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(i <= 0)
+	if(k <= 0)
 		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
-	if(i >= g.xdim()-1)
+	if(k >= g.zdim()-1)
 		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
 	else
 		return (double)(g(i, j, k) - g(i, j, k - 1))/(FirePresets::dx);
@@ -62,9 +62,9 @@ double CentralDiff::calcDxp(GridField<double> &g, const int i, const int j, cons
 
 double CentralDiff::calcDyp(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(i <= 0)
+	if(j <= 0)
 		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
-	if(i >= g.xdim()-1)
+	if(j >= g.ydim()-1)
 		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
 	else
 		return (double)(g(i, j + 1, k) - g(i, j, k))/(FirePresets::dx);
@@ -72,9 +72,9 @@ double CentralDiff::calcDyp(GridField<double> &g, const int i, const int j, cons
 
 double CentralDiff::calcDzp(GridField<double> &g, const int i, const int j, const int k)
 {
-	if(i <= 0)
+	if(k <= 0)
 		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
-	if(i >= g.xdim()-1)
+	if(k >= g.zdim()-1)
 		return ext->extrapolate(g,i,j,k,*this); // Extrapolering
 	else
 		return (double)(g(i, j, k + 1) - g(i, j, k))/(FirePresets::dx);

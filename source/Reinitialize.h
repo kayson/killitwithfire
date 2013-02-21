@@ -14,12 +14,12 @@
 
 void Godunov(GridField<double> &g, int i, int j, int k, double a, double &ddx2, double &ddy2, double &ddz2)
 {
-	double ddxm = FirePresets::centralDisc->calcDxm(g, i, j, k);
-	double ddxp = FirePresets::centralDisc->calcDxp(g, i, j, k);
-	double ddym = FirePresets::centralDisc->calcDym(g, i, j, k);
-	double ddyp = FirePresets::centralDisc->calcDyp(g, i, j, k);
-	double ddzm = FirePresets::centralDisc->calcDzm(g, i, j, k);
-	double ddzp = FirePresets::centralDisc->calcDzp(g, i, j, k);
+	double ddxm = FirePresets::upwindDisc->calcDxm(g, i, j, k);
+	double ddxp = FirePresets::upwindDisc->calcDxp(g, i, j, k);
+	double ddym = FirePresets::upwindDisc->calcDym(g, i, j, k);
+	double ddyp = FirePresets::upwindDisc->calcDyp(g, i, j, k);
+	double ddzm = FirePresets::upwindDisc->calcDzm(g, i, j, k);
+	double ddzp = FirePresets::upwindDisc->calcDzp(g, i, j, k);
 	if (a > 0.0) {
 		ddx2 = std::max( std::pow(std::max(ddxm,0.0),2.0), std::pow(std::min(ddxp,0.0),2.0) );
 		ddy2 = std::max( std::pow(std::max(ddym,0.0),2.0), std::pow(std::min(ddyp,0.0),2.0) );
@@ -94,23 +94,25 @@ namespace reinitialize{
 
 	void reinitializeGrid(GridField<double> **g, GridField<double> **gridCopy)
 	{
-
-		double time = FirePresets::dt;
-		double dt = 0.5 * FirePresets::dx;
-		
-		for(double elapsed = 0; elapsed < time;)
+		//for(int i = 0; i < 5; i++)
 		{
-			if(dt > time)
-				dt = time - elapsed;
-			elapsed += dt;
+			double time = FirePresets::dt;
+			double dt = 0.5 * FirePresets::dx;
+		
+			for(double elapsed = 0; elapsed < time;)
+			{
+				if(dt > time)
+					dt = time - elapsed;
+				elapsed += dt;
 
-			//Integrate
-			double mean = CalcMeanGradient(**g);
+				//Integrate
+				double mean = CalcMeanGradient(**g);
 
-			IntegrateEuler *e = new IntegrateEuler();
-			e->calculateIntegral(g, gridCopy, dt, Evaluate);
+				IntegrateEuler *e = new IntegrateEuler();
+				e->calculateIntegral(g, gridCopy, dt, Evaluate);
 				
-			//std::cout << CalcMaxGradient(**g) << " " << CalcMeanGradient(**g) << std::endl;
+				//std::cout << CalcMaxGradient(**g) << " " << CalcMeanGradient(**g) << std::endl;
+			}
 		}
 		
 	}
