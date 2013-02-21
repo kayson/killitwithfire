@@ -22,12 +22,11 @@
 #define FuidFire_GridField_hpp
 
 template<class T>
-GridField<T>::GridField(const GridMapping &m){
-    mapping = m;
+GridField<T>::GridField(const GridMapping &m):GridMapping(m){
     
     //Allokera data-array
     _data = new T[cellCount()];
-    for (int i = 0; i < cellCount(); i++) _data[i] = T();
+    for (int i = 0; i < cellCount(); i++) _data[i] = T(0);
 }
 
 
@@ -37,10 +36,7 @@ GridField<T>::GridField():GridField(10,10,10){
 }
 
 template<class T>
-GridField<T>::GridField(int xdim,int ydim, int zdim){
-    //mapping
-    mapping = GridMapping(xdim,ydim,zdim);
-    
+GridField<T>::GridField(int xdim,int ydim, int zdim):GridMapping(xdim,ydim,zdim){    
     //Allokera data-array
     _data = new T[cellCount()];
     for (int i = 0; i < cellCount(); i++) _data[i] = T();
@@ -48,9 +44,7 @@ GridField<T>::GridField(int xdim,int ydim, int zdim){
 }
 
 template<class T>
-GridField<T>::GridField(int xdim,int ydim, int zdim, double size){
-    //mapping
-    mapping = GridMapping(xdim,ydim,zdim,size);
+GridField<T>::GridField(int xdim,int ydim, int zdim, double size):GridMapping(xdim,ydim,zdim,size){
     
     //Allokera data-array
     _data = new T[cellCount()];
@@ -59,9 +53,7 @@ GridField<T>::GridField(int xdim,int ydim, int zdim, double size){
 }
 
 template<class T>
-GridField<T>::GridField(const GridField<T> &g){
-
-    mapping = GridMapping(g.mapping);
+GridField<T>::GridField(const GridField<T> &g):GridMapping(g){
     
     _data = new T[g.cellCount()];
 
@@ -74,11 +66,10 @@ GridField<T>::GridField(const GridField<T> &g){
 template<class T>
 GridField<T>& GridField<T>::operator=(const GridField<T> &g){
     if (this != &g) {
-        mapping = g.mapping;
         
         //Allokera data-array
-        _data = new T[cellCount()];
-        for (int i = 0; i < cellCount(); i++) _data[i] = T();
+        _data = new T[g.cellCount()];
+        for (int i = 0; i < g.cellCount(); i++) _data[i] = T();
 
         _extrapolation = g._extrapolation;
 
@@ -115,7 +106,7 @@ T GridField<T>::valueAtIndex(int i,int j,int k) const{
         return T(0);
 
     }
-    return valueAtIndex(mapping.indexAt(i, j, k));
+    return valueAtIndex(indexAt(i, j, k));
 }
 
 template<class T>
@@ -127,9 +118,9 @@ T GridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
     double x,y,z;
 
     //Konvertera världskoordinater till cellkoordinater
-    mapping.worldToUpperLeftIndex(w_x, w_y, w_z, i, j, k);
-    mapping.indexToWorld(i, j, k, w_x0, w_y0, w_z0);
-    mapping.indexToWorld(i+1, j+1, k+1, w_x1, w_y1, w_z1);
+    worldToUpperLeftIndex(w_x, w_y, w_z, i, j, k);
+    indexToWorld(i, j, k, w_x0, w_y0, w_z0);
+    indexToWorld(i+1, j+1, k+1, w_x1, w_y1, w_z1);
 
     x = (w_x-w_x0)/(w_x1-w_x0);
     y = (w_y-w_y0)/(w_y1-w_y0);
@@ -152,28 +143,18 @@ T GridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
 }
 
 
-//Dim
-template<class T>
-int GridField<T>::xdim() const{
-    return mapping.xdim();
-}
-template<class T>
-int GridField<T>::ydim() const{
-    return mapping.ydim();
-}
-template<class T>
-int GridField<T>::zdim() const{
-    return mapping.zdim();
-}
-
 template<class T>
 int GridField<T>::cellCount() const{
-    return mapping.size();
+    return size();
 }
 
 template<class T>
 void GridField<T>::setValueAtIndex(T val,int i){
     _data[i] = val;
+}
+template<class T>
+void GridField<T>::addValueAtIndex(T val,int i){
+    _data[i] += val;
 }
 template<class T>
 void GridField<T>::setAll(T val){
@@ -182,11 +163,20 @@ void GridField<T>::setAll(T val){
 
 template<class T>
 void GridField<T>::setValueAtIndex(T val,int i,int j,int k){
-    int index = mapping.indexAt(i, j, k);
+    int index = indexAt(i, j, k);
     /*if (typeid(T) == typeid(bool) && i == 2 && j == 44 && k == 0) {
         std::cout << cellCount() << std::endl;
     }*/
     _data[index] = val;
+}
+
+template<class T>
+void GridField<T>::addValueAtIndex(T val,int i,int j,int k){
+    int index = indexAt(i, j, k);
+    /*if (typeid(T) == typeid(bool) && i == 2 && j == 44 && k == 0) {
+     std::cout << cellCount() << std::endl;
+     }*/
+    _data[index] += val;
 }
 
 //Operatorer

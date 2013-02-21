@@ -21,7 +21,7 @@ public:
 	void keyInput(double dt);
 	
 	void initListeners();
-	
+	int xpos,ypos;
 private:
 	Camera *camera;
 };

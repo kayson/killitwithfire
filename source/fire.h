@@ -41,9 +41,11 @@ public:
 
     void runSimulation();
 
+    void drawFaceVelocities();
 	void drawCenterVelocities();
 	void draw();
-
+    void drawMAC();
+    void drawSolid();
 private:
 
     FirePresets *preset;
@@ -52,8 +54,8 @@ private:
 	//Pressure field
 	GridField<double> *p;
 	GridField<double> *rhs;
-	std::vector<double, std::allocator<double>> pVec;
-	std::vector<double, std::allocator<double>> rhsVec;
+	std::vector<double> pVec;
+	std::vector<double> rhsVec;
 
 	// Sparse matrix A and solver
 	SparseMatrix<double> *A;
