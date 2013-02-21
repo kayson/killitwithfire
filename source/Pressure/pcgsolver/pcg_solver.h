@@ -12,6 +12,7 @@
 
 #ifdef __APPLE__
 #include "blas_wrapper.h"
+#include "blas_win.h"
 #elif defined _WIN32 || defined _WIN64
 #include "blas_win.h"
 #endif

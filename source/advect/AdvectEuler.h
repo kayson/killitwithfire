@@ -3,9 +3,9 @@
 #ifndef __FuidFire__AdvectEuler__
 #define __FuidFire__AdvectEuler__
 
-#include "Advect.h"
+#include "AdvectLevelSet.h"
 
-class AdvectEuler : public Advect {
+class AdvectEuler : public AdvectLevelSet {
 public:
     AdvectEuler(){};
 

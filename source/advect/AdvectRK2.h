@@ -4,7 +4,7 @@
 #define __FuidFire__AdvectRK2__
 
 #include "Advect.h"
-class AdvectRK2 : public Advect {
+class AdvectRK2 : public AdvectLevelSet {
 
 public:
     AdvectRK2();

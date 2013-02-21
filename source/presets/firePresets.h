@@ -4,9 +4,9 @@
 
 #ifdef __APPLE__
 //#include "Advect.h"
-#include "../advect/Advect.h"
+#include "../advect/AdvectLevelSet.h"
 #elif defined _WIN32 || defined _WIN64
-#include "../advect/Advect.h"
+#include "../advect/AdvectLevelSet.h"
 #endif
 
 
@@ -34,7 +34,7 @@ public:
 	static const double rhoh; // Hot gaseous products density (kg/m^3)
 
     //Rutiner
-	Advect *advection;
+	AdvectLevelSet *advection;
     //Discretization *upwindDiscretization;
 	//Discretization *centralDiscretization;
 	static Discretization *upwindDisc;

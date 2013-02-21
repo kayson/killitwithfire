@@ -10,15 +10,15 @@
 #include "GridField.h"
 #include "GridMapping.h"
 #include "helper.h"
-#include "Pressure\pcgsolver\blas_win.h"
+//#include "Pressure\pcgsolver\blas_win.h"
 
-//#include "Pressure\pcgsolver\pcg_solver.h"
 
 #ifdef __APPLE__
 #include "sparse_matrix.h"
+#include "pcg_solver.h"
 #elif defined _WIN32 || defined _WIN64
 #include "Pressure\pcgsolver\sparse_matrix.h"
-#include "Pressure/pcgsolver/pcg_solver.h"
+#include "Pressure\pcgsolver\pcg_solver.h"
 #endif
 
 class Fire{
@@ -31,6 +31,7 @@ protected:
 	double getAlpha(const int i, const int j, const int k, DirectionEnums d);
 	double getDensity(const int i, const int j, const int k, DirectionEnums d);
 
+	void computeW();
 	void computeCellTypes();
 	CellType getCellType(const int i, const int j, const int k);
 
@@ -68,6 +69,8 @@ private:
 
     //Grid
     MACGrid u;
+	// Levelset Velocities u + S*N
+	GridField<Vector3> w;
 
 	GridField<int> celltype;
 };
