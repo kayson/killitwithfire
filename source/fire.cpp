@@ -445,11 +445,26 @@ void Fire::computeCellTypes()
 	}
 }	
 
-CellType Fire::getCellType(const int i, const int j, const int k)
+CellType Fire::getCellType(const int i, const int j, const int k) const
 {
 	if(false) //Check if is solid
 		return SOLID;
 	else if(phi.grid->valueAtIndex(i,j,k) > 0.0)
+		return BLUECORE;
+	else 
+		return IGNITED;
+}
+
+CellType Fire::getCellType(double w_x, double w_y,double w_z) const
+{
+	return getCellType(phi.grid->valueAtWorld(w_x, w_y, w_z));
+}
+
+CellType Fire::getCellType(double phi)
+{
+	if(false) //Check if is solid
+		return SOLID;
+	else if(phi > 0.0)
 		return BLUECORE;
 	else 
 		return IGNITED;
