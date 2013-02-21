@@ -1,13 +1,15 @@
 
+#include <iomanip>
 #include "fire.h"
-#include "advect/AdvectLevelSet.h"
 
+#include "advect/AdvectLevelSet.h"
 #include "GridField.hpp"
 
 #ifdef __APPLE__
 #include "glfw.h"
 #include "pcg_solver.h"
 #include <Accelerate/Accelerate.h>
+#include "transform.hpp"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
 
@@ -19,7 +21,8 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
     preset = pre;
 
 	phi.fillLevelSet(preset->implicitFunction);
-
+    //2D grid
+    u = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
 
 	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
@@ -68,92 +71,201 @@ void Fire::advectLevelSet(double duration)
 }
 
 void Fire::project2D(double dt){
-    double x0,x1,y,z;
-    u._center->mapping.indexToWorld(0, 0, 0, x0, y, z);
-    u._center->mapping.indexToWorld(0, 0, 0, x1, y, z);
-
-    double dx = x1-x0;
-    double scale = 1.0/dx;
-
+    double rho = 0.5;
+    double dx = u.dx();
+    double residual = -1;
+    int iterations = -1;
+    int cells = u.size();
 	// b (rhs)
 	// sid. 45, Figure 4.2 (Bridson)
-    std::vector<double> rhs(u._center->mapping.size());
+    static std::vector< double> b(cells);
+    static std::vector< double > p(cells);
+    static SparseMatrix<double> A(cells,4);
+    
+    //Fill b
     double mean = 0;
-    for (GridFieldIterator<double> iter = u._center->iterator(); !iter.done(); iter.next()) {
+    for (GridMappingIterator iter = u.iterator(); !iter.done();iter.next()) {
+        double scale = 1.0/dx;
         int i,j,k;
+        double x,y,z;
         iter.index(i, j, k);
         if (k == 0) {
-            rhs[iter.index()] = (u.valueAtFace(i,j,k,RIGHT) - u.valueAtFace(i,j,k,LEFT)) + (u.valueAtFace(i,j,k,UP) - u.valueAtFace(i,j,k,DOWN));
-            mean += rhs[iter.index()];
-        }
-    }
-    mean *= 1.0/((double)rhs.size());
-    for (int i = 0; i < rhs.size(); i++) {
-        rhs[i] += mean;
-    }
-    
-    
-    scale = (1.0 * dx*dx)/dt;
 
-	// A
-	unsigned int row = 0;
-    for (GridFieldIterator<double> iter = u._center->iterator(); !iter.done(); iter.next()) {
+            u.indexToWorld(i, j, k, x, y, z);
+            
+            double left = u.valueAtFace(i,j,k, LEFT);
+            double right = u.valueAtFace(i,j , k, RIGHT);
+            double down = u.valueAtFace(i,j , k, DOWN);
+            double up = u.valueAtFace(i,j , k, UP);
+            
+            if (celltype.valueAtWorld(x, y, z) == BLUECORE) {
+                b[iter.index()] = -scale*(right-left+up-down);
+                mean += b[iter.index()];
+            }else{
+                b[iter.index()] = 0;
+            }
+        }
+
+        /*
+        scale = 1 / dx;
+        loop over i,j,k where cell(i,j,k)==FLUID:
+        rhs(i,j,k) = -scale * (u(i+1,j,k)-u(i,j,k) +v(i,j+1,k)-v(i,j,k)
+                               +w(i,j,k+1)-w(i,j,k));
+         */
         
+    }
+    mean /= (double)cells;
+    for (GridMappingIterator iter = u.iterator(); !iter.done();iter.next()) {
         int i,j,k;
-
+        double x,y,z;
         iter.index(i, j, k);
         if (k == 0) {
-            double mult = 0;
-            if (u._center->mapping.indexAt(i-1, j, k) >= 0) {
-                A->set_element(u._center->mapping.indexAt(i-1, j, k), j, scale);
-                mult++;
+            u.indexToWorld(i, j, k, x, y, z);
+            if (celltype.valueAtWorld(x, y, z) == BLUECORE) {
+                b[iter.index()] -= mean;
+            }else{
             }
-            
-            if (u._center->mapping.indexAt(i+1, j, k) < u._center->mapping.size()) {
-                A->set_element(u._center->mapping.indexAt(i+1, j, k), j, scale);
-                mult++;
-            }
-            
-            if (u._center->mapping.indexAt(i, j+1, k) < u._center->mapping.size()) {
-                A->set_element(u._center->mapping.indexAt(i, j+1, k), j, scale);
-                mult++;
-            }
-            
-            if (u._center->mapping.indexAt(i, j-1, k) >= 0) {
-                A->set_element(u._center->mapping.indexAt(i, j-1, k), j, scale);
-                mult++;
-            }
-            
-            A->set_element(u._center->mapping.indexAt(i, j, k), j, mult*scale);
-
-
-            row++;
         }
-	}
+        
+        /*
+         scale = 1 / dx;
+         loop over i,j,k where cell(i,j,k)==FLUID:
+         rhs(i,j,k) = -scale * (u(i+1,j,k)-u(i,j,k) +v(i,j+1,k)-v(i,j,k)
+         +w(i,j,k+1)-w(i,j,k));
+         */
+        
+    }
+    
+    //Ax=b
+    /*std::cout << std::endl;
+    for (int i = 0 ; i < cells; i++) {
+        std::cout << "|" << b[i] << "|" << std::endl;
+    }*/
+    
+    
+    int row = 0;
+    for (GridMappingIterator iter = u.iterator(); !iter.done();iter.next()) {
+        double scale = dt/(rho*dx*dx);
+
+        int i,j,k;
+        //double x,y,z;
+        iter.index(i, j, k);
+        if (k == 0) {
+            //u.indexToWorld(i, j, k, x, y, z);
+            
+            if (celltype.valueAtIndex(i, j, k) == BLUECORE){
+                
+                if (celltype.indexAt(i+1, j, k) < cells &&celltype.valueAtIndex(i+1, j, k) == BLUECORE) {
+                    A.add_to_element(celltype.indexAt(i+1, j, k), row, -scale);
+                    A.add_to_element(row, row, scale);
+                }else if (celltype.indexAt(i+1, j, k) < cells &&celltype.valueAtIndex(i+1, j, k) == AIR){
+                    A.add_to_element(row, row, scale);
+                }
+                
+                if (celltype.indexAt(i-1, j, k) >= 0 &&  celltype.valueAtIndex(i-1, j, k) == BLUECORE){
+                    A.add_to_element(celltype.indexAt(i-1, j, k), row, -scale);
+                    A.add_to_element(row, row, scale);
+                }else if (celltype.indexAt(i-1, j, k) >= 0 &&  celltype.valueAtIndex(i-1, j, k) == AIR){
+                    A.add_to_element(row, row, scale);
+                }
+                
+                if (celltype.indexAt(i, j+1, k) < cells && celltype.valueAtIndex(i, j+1, k) == BLUECORE){
+                    A.add_to_element(celltype.indexAt(i, j+1, k), row, -scale);
+                    A.add_to_element(row, row, scale);
+                }else if (celltype.indexAt(i, j+1, k) < cells && celltype.valueAtIndex(i, j+1, k) == AIR){
+                    A.add_to_element(row, row, scale);
+                }
+                
+                if (celltype.indexAt(i, j-1, k) >= 0 && celltype.valueAtIndex(i, j-1, k) == BLUECORE){
+                    A.add_to_element(celltype.indexAt(i, j-1, k), row, -scale);
+                    A.add_to_element(row, row, scale);
+                }else if (celltype.indexAt(i, j-1, k) >= 0 && celltype.valueAtIndex(i, j-1, k) == AIR){
+                    A.add_to_element(row, row, scale);
+                }
+
+            }else{
+                A.add_to_element(row, row, 0);
+            }
+            
+            row++;
+
+        }
+
+        
+        /*
+         scale = dt / (rho*dx*dx); loop over i,j,k:
+         if cell(i,j,k)==FLUID and cell(i+1,j,k)==FLUID: Adiag(i,j,k) += scale;
+         Adiag(i+1,j,k) += scale;
+         Aplusi(i,j,k) = -scale;
+         else if cell(i,j,k)==FLUID and cell(i+1,j,k)==EMPTY: Adiag(i,j,k) += scale;
+         if cell(i,j,k)==FLUID and cell(i,j+1,k)==FLUID: Adiag(i,j,k) += scale;
+         Adiag(i,j+1,k) += scale;
+         Aplusj(i,j,k) = -scale;
+         else if cell(i,j,k)==FLUID and cell(i,j+1,k)==EMPTY: Adiag(i,j,k) += scale;
+         if cell(i,j,k)==FLUID and cell(i,j,k+1)==FLUID: Adiag(i,j,k) += scale;
+         Adiag(i,j,k+1) += scale;
+         Aplusk(i,j,k) = -scale;
+         else if cell(i,j,k)==FLUID and cell(i,j,k+1)==EMPTY: Adiag(i,j,k) += scale;
+         */
+        
+    }
+    
+    
+    //Ax=b
+    /*std::cout << std::endl;
+    for (int i = 0 ; i < cells; i++) {
+        std::cout << "|";
+        for (int j = 0 ; j < cells; j++) {
+            std::cout << std::setw(3) << A(i,j) << " ";
+        }
+        std::cout << "| |x" << i << "| = |" << std::setw(1) << b[i] << "|" << std::endl;
+    }*/
     
 	// räkna fram nya p mha. A och b
-    /*PCGSolver<double> pcgSolver;
-	if(!pcgSolver.solve(*A, rhsVec, pVec, *resid_out, iter_out)){
+    PCGSolver<double> pcgSolver;
+	if(!pcgSolver.solve(A, b, p, residual, iterations)){
         
     }
-    */
     
-    //scale = dt/(1.0*dx);
-
-    for (GridFieldIterator<double> iter = u._center->iterator(); !iter.done(); iter.next()) {
+    
+    for (GridMappingIterator iter = u.iterator(); !iter.done();iter.next()) {
         
+        double scale = dt / (rho*dx);
         int i,j,k;
+        double x,y,z;
         iter.index(i, j, k);
-        u.setValueAtFace(u.valueAtFace(i, j, k, UP) + pVec[iter.value()], i, j, k, UP);
-        u.setValueAtFace(u.valueAtFace(i, j, k, DOWN) + pVec[iter.value()], i, j, k, DOWN);
-        u.setValueAtFace(u.valueAtFace(i, j, k, LEFT)  + pVec[iter.value()], i, j, k, LEFT);
-        u.setValueAtFace(u.valueAtFace(i, j, k, RIGHT)+ pVec[iter.value()] , i, j, k, RIGHT);
+        if (k == 0) {
 
-	}
+            u.indexToWorld(i, j, k, x, y, z);
+            if (celltype.valueAtWorld(x, y, z) == BLUECORE) {
+                //std::cout << p[iter.index()] << std::endl;
+                u.addValueAtFace(-scale*p[iter.index()], i, j, k, LEFT);
+                u.addValueAtFace(scale*p[iter.index()], i, j, k, RIGHT);
+                u.addValueAtFace(scale*p[iter.index()], i, j, k, UP);
+                u.addValueAtFace(-scale*p[iter.index()], i, j, k, DOWN);
+            }
+        }
+
+        
+    
+    }
+    
+    /*std::cout << std::endl;
+    for (int i = 0 ; i < cells; i++) {
+        std::cout << "|x" << i << "| = |" << std::setw(1) << b[i] << "|" << std::endl;
+    }*/
+    /*
+    loop over i,j,k where cell(i,j,k)==FLUID:
+    u(i,j,k) -= scale * p(i,j,k); 
+     u(i+1,j,k) += scale * p(i,j,k);
+     v(i,j,k) -= scale * p(i,j,k);
+     v(i,j+1,k) += scale * p(i,j,k);
+     w(i,j,k) -= scale * p(i,j,k); 
+     w(i,j,k+1) += scale * p(i,j,k);*/
 
     
 }
-
+/*
 void Fire::project(double dt)
 {
 	double scale = 1.0 / preset->dx;
@@ -177,21 +289,21 @@ void Fire::project(double dt)
 	for(int i = 0; i < phi.grid->xdim(); i ++){
 		for(int j = 0; j < phi.grid->ydim(); j ++){
 			for(int k = 0; k < phi.grid->zdim(); k ++){
-				int index = u.getCenterField()->mapping.indexAt(i,j,k);
-				rhsVec[index] = u.getCenterField()->operator()(i,j,k);
+				int index = u.indexAt(i,j,k);
+				rhsVec[index] = u(i,j,k);
 			}
 		}
 	}
 
 	// A
 	unsigned int diagRow = 0;
-	for(int i = 0; i<u._center->xdim(); i++){
+	for(int i = 0; i<u.xdim(); i++){
 		//std::cout << "Calc Ai\n";
-		for(int j = 0; j<u._center->ydim(); j++){
-			for(int k = 0; k<u._center->zdim(); k++){
+		for(int j = 0; j<u.ydim(); j++){
+			for(int k = 0; k<u..zdim(); k++){
 
 				double x,y,z;
-				u._center->mapping.indexToWorld(i,j,k,x,y,z);
+				u.indexToWorld(i,j,k,x,y,z);
 
 				// Korrekt skalningsfaktor
 				if( phi.grid->valueAtWorld(x,y,z) < 0 )//if(getCellType(i,j,k) == BLUECORE) // om bränsle
@@ -216,7 +328,7 @@ void Fire::project(double dt)
 				++diagRow;
 			}
 		}
-	}
+	}*/
 
 	// räkna fram nya p mha. A och b
     /*PCGSolver<double> pcgSolver;*/
@@ -259,7 +371,7 @@ void Fire::project(double dt)
 				}
 			}*/
      
-}
+//}
 
 double Fire::getAlpha(const int i, const int j, const int k, DirectionEnums d)
 {
@@ -386,14 +498,101 @@ void Fire::runSimulation(){
 	//phi.reinitialize();
 }
 
-void Fire::drawCenterVelocities()
-{
+void Fire::drawMAC(){
     
-    for (GridFieldIterator<double> iter = u._center->iterator(); !iter.done(); iter.next()) {
+    glColor3f(1,1,0);
+    glBegin(GL_POINTS);
+    for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
         int i,j,k;
         iter.index(i, j, k);
         double x,y,z;
-        u._center->mapping.indexToWorld(i, j, k, x, y, z);
+        u.indexToWorld(i, j, k, x, y, z);
+
+        glVertex3f(x, y, 0);
+    }
+    glEnd();
+
+}
+
+void Fire::drawSolid(){
+    
+
+    
+    double dx = celltype.dx();
+    double dy = celltype.dy();
+    //double dz = celltype.mapping.dx();
+    glBegin(GL_QUADS);
+    for (GridFieldIterator<int> iter = celltype.iterator(); !iter.done(); iter.next()) {
+        double x,y,z;
+        int i,j,k;
+        iter.index(i, j, k);
+        
+            celltype.indexToWorld(i, j, k, x, y, z);
+            int val = iter.value();
+            
+            if (val == SOLID){
+                glColor3f(0.1, 0.1, 0.1);
+                glVertex3f(x-dx*0.5, y-dy*0.5, 0);
+                glVertex3f(x+dx*0.5, y-dy*0.5, 0);
+                glVertex3f(x+dx*0.5, y+dy*0.5, 0);
+                glVertex3f(x-dx*0.5, y+dy*0.5, 0);
+            }else if (val == BLUECORE){
+                glColor3f(0, 0, 1);
+                glVertex3f(x-dx*0.5, y-dy*0.5, 0);
+                glVertex3f(x+dx*0.5, y-dy*0.5, 0);
+                glVertex3f(x+dx*0.5, y+dy*0.5, 0);
+                glVertex3f(x-dx*0.5, y+dy*0.5, 0);
+            }else if (val == AIR){
+                //None dude
+            }
+        
+
+    }
+
+    glEnd();
+}
+
+void Fire::drawFaceVelocities(){
+    glColor3f(0,1,0);
+    for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u._u->indexToWorld(i, j, k, x, y, z);
+        double val = iter.value();
+
+        glBegin(GL_LINE_STRIP);
+        glVertex3f(x, y, 0);
+        glVertex3f(x+val, y, 0);
+        glEnd();
+    }
+    
+    glColor3f(1,0,0);
+    for (GridFieldIterator<double> iter = u._v->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u._v->indexToWorld(i, j, k, x, y, z);
+        double val = iter.value();
+        glBegin(GL_LINE_STRIP);
+        glVertex3f(x, y, 0);
+        glVertex3f(x, y+val, 0);
+        glEnd();
+    }
+    
+}
+
+void Fire::drawCenterVelocities()
+{
+
+    for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u.indexToWorld(i, j, k, x, y, z);
+        
+        
+
         
         Vector3 v = u.velocityAtWorld(Vector3(x,y,z));//*FirePresets::dx;
         /*glColor3f(0,1,0);
@@ -410,11 +609,12 @@ void Fire::drawCenterVelocities()
         
         //x = i; y = j; z = k;
                     
-        glColor3f(0,1,0);
-        glBegin(GL_LINES);
+        glColor3f(1,1,0);
+        glBegin(GL_LINE_STRIP);
         glVertex3f(x, y, 0);
-        glVertex3f(x + v.x, y + v.y, 0);
+        glVertex3f(x + v.x, y+v.y , 0);
         glEnd();
+        
         /*
         glColor3f(1,0,0);
         glBegin(GL_POINTS);
@@ -465,9 +665,13 @@ void Fire::computeW()
 
 void Fire::draw()
 {
-	phi.draw();
+	//phi.draw();
     //u.draw();
-	//drawCenterVelocities();
+	drawCenterVelocities();
+    drawFaceVelocities();
+    //drawMAC();
+    //drawSolid();
+
 }
 
 Fire::~Fire(){

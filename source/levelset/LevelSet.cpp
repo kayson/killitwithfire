@@ -27,6 +27,7 @@ void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
             }
         }
     }
+    
 }
 
 Vector3 LevelSet::getVelocity(MACGrid &g, int i, const int j, const int k){
@@ -95,7 +96,7 @@ void LevelSet::draw() const
         int i,j,k;
         iter.index(i, j, k);
         double x,y,z;
-        grid->mapping.indexToWorld(i, j, k, x, y, z);
+        grid->indexToWorld(i, j, k, x, y, z);
         
         
         if(grid->valueAtIndex(i,j,k) > 0)

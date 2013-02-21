@@ -24,12 +24,10 @@ template <class T> class GridFieldIterator;
 template <class T> class GridExtrapolation;
 
 template <class T>
-class GridField{
+class GridField : public GridMapping {
 protected:
     T *_data;
     GridExtrapolation<T> *_extrapolation;
-public:
-    GridMapping mapping;
 private:
     GridField();
 public:
@@ -41,11 +39,6 @@ public:
     GridField<T>& operator=(const GridField<T> &g);
 
     ~GridField();
-    
-    //Dim
-    int xdim() const;
-    int ydim() const;
-    int zdim() const;
 
     //Hämta värden
     T valueAtIndex(int i) const;
@@ -56,7 +49,9 @@ public:
     //Setter
     void setAll(T val);
     void setValueAtIndex(T val,int i);
+    void addValueAtIndex(T val,int i);
     void setValueAtIndex(T val,int i,int j,int k);
+    void addValueAtIndex(T val,int i,int j,int k);
 
     //Operatorer
     T operator()(int i, int j, int k) const;
@@ -94,9 +89,9 @@ class GridFieldIterator : public GridMappingIterator {
 protected:
     const GridField<T> *_grid;
 protected:
-    GridFieldIterator(const GridField<T> *grid):GridMappingIterator(&grid->mapping),_grid(grid){  };
+    GridFieldIterator(const GridField<T> *grid):GridMappingIterator(grid),_grid(grid){  };
 public:
-    GridFieldIterator(const GridFieldIterator<T> &i):GridMappingIterator(&i._grid->mapping),_grid(i._grid){  };
+    GridFieldIterator(const GridFieldIterator<T> &i):GridMappingIterator(i._grid),_grid(i._grid){  };
     ~GridFieldIterator(){ _grid = NULL; };
     T value() const{ return _grid->valueAtIndex(index());};
     friend class GridField<T>;

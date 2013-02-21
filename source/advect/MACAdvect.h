@@ -24,10 +24,10 @@ class MACAdvectEuler : public MACAdvect<T> {
 public:
     virtual ~MACAdvectEuler(){};
     
-    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k){
+    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k) final{
         
         double x,y,z;
-        field.mapping.indexToWorld(i,j,k,x,y,z);
+        field.indexToWorld(i,j,k,x,y,z);
         Vector3 pos = Vector3(x,y,z);
         Vector3 vel = g.velocityAtWorld(pos);
         pos = Vector3(x,y,z)-vel*dt;
@@ -40,7 +40,7 @@ class MACAdvectRK2 : public MACAdvect<T> {
 public:
     virtual ~MACAdvectRK2(){};
     
-    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k){
+    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k) final{
         
         double x,y,z;
         field.mapping.indexToWorld(i,j,k,x,y,z);

@@ -1,10 +1,18 @@
 #include "Input.h"
 #include "helper.h"
+
+
+#ifdef __APPLE__
+#include "glfw.h"
+#elif defined _WIN32 || defined _WIN64
+#include <GL/glfw.h> // Takes care of everything GL-related
+#include <GL/freeglut.h> // Takes care of everything GL-related
+#endif
+
 void GLFWCALL keyButtonListener( int key, int action );
 void GLFWCALL mouseButtonListener(int button, int action);
 
 static Camera *sCam;
-
 Input::Input(void)
 {
 	glfwSetKeyCallback(keyButtonListener);
@@ -75,6 +83,19 @@ void Input::updateInput(double dt)
 
 void Input::mouseInput()
 {
+    
+
+    if(glfwGetMouseButton(0)){
+
+        glfwGetMousePos(&xpos, &ypos);
+
+        //std::cout << xpos << " " << ypos << std::endl;
+        
+        
+        
+    }
+    
+    
 }
 
 int CheckButton(int c)

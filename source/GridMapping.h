@@ -20,31 +20,40 @@
 class GridMappingIterator;
 
 class GridMapping {
+public:
+    glm::dmat4x4 _trans;  //Local coordinates to worldcoordinates
+    glm::dmat4x4 _itrans; //World coordinates to localcoordinates
+    unsigned int _xdim,_ydim,_zdim;
+    unsigned int _size;
+    
 protected:
-    glm::mat4x4 _trans;  //Local coordinates to worldcoordinates
-    glm::mat4x4 _itrans; //World coordinates to localcoordinates
-    int _xdim,_ydim,_zdim;
-    int _size;
+    //Local dim
+    double local_dx() const;
+    double local_dy() const;
+    double local_dz() const;
 public:
     //Konstruktor
     GridMapping();
-    GridMapping(int xdim,int ydim,int zdim);
-    GridMapping(int xdim,int ydim,int zdim, double size);
-    GridMapping(int dim,glm::mat4x4 t);
-    GridMapping(int xdim,int ydim,int zdim,glm::mat4x4 t);
+    GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim);
+    GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim, double size);
+    GridMapping(unsigned int dim,glm::dmat4x4 t);
+    GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim,glm::dmat4x4 t);
     GridMapping(const GridMapping &);
     ~GridMapping();
     GridMapping & operator= (const GridMapping & other);
     
     //Transformation
-    void setTransformation(double *t);
-    void setTransformation(glm::mat4x4 t);
-    
+    void setTransformation(glm::dmat4x4 t);
+    void multTransformation(glm::dmat4x4 t);
+
     //Dim
-    int xdim() const;
-    int ydim() const;
-    int zdim() const;
-    int size() const;
+    unsigned int xdim() const;
+    unsigned int ydim() const;
+    unsigned int zdim() const;
+    unsigned int size() const;
+    double dx() const;
+    double dy() const;
+    double dz() const;
 
     //Index to index
     int indexAt(int i, int j, int k) const;
