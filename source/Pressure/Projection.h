@@ -10,7 +10,13 @@
 #define __FuidFire__Projection__
 #include "../MACGrid.h"
 #include "../GridField.h"
+
+#ifdef __APPLE__
+#include "pcg_solver.h"
+#elif defined _WIN32 || defined _WIN64
 #include "pcgsolver\pcg_solver.h"
+#endif
+
 #include <iostream>
 #include <algorithm>
 class Projection {

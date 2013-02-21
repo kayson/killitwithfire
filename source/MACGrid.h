@@ -66,7 +66,8 @@ public:
     void advect(double dt);
     void advect(double dt, GridField<int > &cellType);
     void addForce(Vector3 vec, double dt);
-    
+    void extrapolate(double dt, GridField<int > &cellType);
+
     friend class Fire;
 };
 

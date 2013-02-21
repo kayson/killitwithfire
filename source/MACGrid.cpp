@@ -64,7 +64,7 @@ MACGrid MACGrid::createRandom2D(int xdim,int ydim, double size){
         int i,j,k;
         //double x,y,z;
         iterator.index(i, j, k);
-        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
+        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
         double vel = v1;
         m._w->setValueAtIndex(vel, iterator.index());
         m.buffer()->_w->setValueAtIndex(vel, iterator.index());
@@ -447,7 +447,6 @@ void MACGrid::addForce(Vector3 vec, double dt){
 
     _hasCache->setAll(false);
 }
-
 
 
 
