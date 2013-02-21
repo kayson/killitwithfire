@@ -45,6 +45,7 @@ public:
     T valueAtIndex(int i,int j,int k) const;
     T valueAtWorld(double w_x, double w_y,double w_z) const;
     int cellCount() const;
+	T getMax() const;
 
     //Setter
     void setAll(T val);

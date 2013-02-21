@@ -78,7 +78,7 @@ Vector3 Vector3::add(Vector3 *v){
 
 
 // Norm (length) of the vector, returns float
-double Vector3::norm()
+double Vector3::norm() const
 {
 	double norm = sqrt(pow(x,2)+pow(y,2)+pow(z,2));
 	return norm;
@@ -286,3 +286,7 @@ Vector3 Vector3::operator- () const
 	return Vector3(-x, -y, -z);
 }
 
+bool Vector3::operator> (const Vector3 &v) const
+{
+	return norm() > v.norm();
+}

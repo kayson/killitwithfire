@@ -82,7 +82,13 @@ Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 
 	//Osäker om detta är korrekt implementation
 	Vector3 g = Gradient::getGradient(*grid, i, j, j, *disc);
-	g.normalize();
+	
+	// l blir 0 ibland...
+	double l = g.norm();
+	if(l > 0.0)
+		g *= 1.0/l;
+	else
+		g = Vector3(0.0, 1.0, 0.0);
 
 	delete disc;
 	

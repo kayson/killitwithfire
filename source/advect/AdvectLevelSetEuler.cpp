@@ -4,27 +4,27 @@
 #include "../Gradient.h"
 
 
-void AdvectLevelSetEuler::advect(MACGrid &u, GridField<double> **grid,GridField<double> **gridCopy, double dt){
-    for(int i = 0; i < (*grid)->xdim(); i++)
+void AdvectLevelSetEuler::advect(GridField<Vector3> &w, LevelSet &phi, double dt){
+    for(int i = 0; i < (phi.grid)->xdim(); i++)
 	{
-		for(int j = 0; j < (*grid)->ydim(); j++)
+		for(int j = 0; j < (phi.grid)->ydim(); j++)
 		{
-			for(int k = 0; k < (*grid)->zdim(); k++)
+			for(int k = 0; k < (phi.grid)->zdim(); k++)
 			{
-				double f = evaluate(u, **grid, i, j, k);
-				(*gridCopy)->setValueAtIndex((**grid)(i,j,k) + f * dt, i, j, k);
+				double f = evaluate(w, phi, i, j, k);
+				phi.gridCopy->setValueAtIndex((*phi.grid)(i,j,k) + f * dt, i, j, k);
 			}
 		}
 	}
 
-	GridField<double> *temp = *grid;
-	*grid = *gridCopy;
-	*gridCopy = temp;
+	GridField<double> *temp = phi.grid;
+	phi.grid = phi.gridCopy;
+	phi.gridCopy = temp;
 }
 
-double AdvectLevelSetEuler::evaluate(MACGrid &u, GridField<double> &g, unsigned int i, unsigned int j, unsigned int k){
-	Vector3 gradPhi = Gradient::getGradient(g, i, j, k, *FirePresets::upwindDisc);
+double AdvectLevelSetEuler::evaluate(GridField<Vector3> &w, LevelSet &phi, unsigned int i, unsigned int j, unsigned int k){
+	Vector3 gradPhi = Gradient::getGradient(*phi.grid, i, j, k, *FirePresets::upwindDisc);
 
-	Vector3 vel = u.velocityAtCenter(i,j,k);
-	return Vector3::dot(-vel, gradPhi);
+	Vector3 vel = w(i,j,k);
+	return -Vector3::dot(vel, gradPhi);
 }
