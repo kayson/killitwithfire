@@ -72,49 +72,50 @@ namespace reinitialize{
 
 	double Evaluate(GridField<double> &g, int i, int j, int k)
 	{
-		//Räkna ut sign-funktion (mha central diff)
-		double dx = FirePresets::dx;
-		double ddx = FirePresets::centralDisc->calcDx(g, i, j, k);
-		double ddy = FirePresets::centralDisc->calcDy(g, i, j, k);
-		double ddz = 0.0;
-		if(g.zdim() != 1)
-			ddz = FirePresets::centralDisc->calcDz(g, i, j, k);
+		if(g.valueAtIndex(i,j,k) < 0)
+		{
+			//Räkna ut sign-funktion (mha central diff)
+			double dx = FirePresets::dx;
+			double ddx = FirePresets::centralDisc->calcDx(g, i, j, k);
+			double ddy = FirePresets::centralDisc->calcDy(g, i, j, k);
+			double ddz = 0.0;
+			if(g.zdim() != 1)
+				ddz = FirePresets::centralDisc->calcDz(g, i, j, k);
 
-		double normalGradient = ddx * ddx + ddy * ddy + ddz * ddz;
-		double val = g.valueAtIndex(i,j,k);
+			double normalGradient = ddx * ddx + ddy * ddy + ddz * ddz;
+			double val = g.valueAtIndex(i,j,k);
 
-		double sign = val / sqrt(val * val + normalGradient * dx * dx);
+			double sign = val / sqrt(val * val + normalGradient * dx * dx);
 
-		//Räkna ut upwind differences med Godunov
-		double ddx2, ddy2, ddz2;
-		Godunov(g, i, j, k, sign, ddx2, ddy2, ddz2);
-		//std::cout << "godunov:" << ddx2 + ddy2 << "sign:" << sign << std::endl;
-		return sign * (1 - std::sqrt(ddx2 + ddy2 + ddz2));
+			//Räkna ut upwind differences med Godunov
+			double ddx2, ddy2, ddz2;
+			Godunov(g, i, j, k, sign, ddx2, ddy2, ddz2);
+			//std::cout << "godunov:" << ddx2 + ddy2 << "sign:" << sign << std::endl;
+			return sign * (1 - std::sqrt(ddx2 + ddy2 + ddz2));
+		}
+		else
+			return 0;
 	}
 
 	void reinitializeGrid(GridField<double> **g, GridField<double> **gridCopy)
 	{
-		//for(int i = 0; i < 5; i++)
+		double time = FirePresets::dt;
+		double dt = 0.5 * FirePresets::dx;
+		
+		for(double elapsed = 0; elapsed < time;)
 		{
-			double time = FirePresets::dt;
-			double dt = 0.5 * FirePresets::dx;
-		
-			for(double elapsed = 0; elapsed < time;)
-			{
-				if(dt > time)
-					dt = time - elapsed;
-				elapsed += dt;
+			if(dt > time)
+				dt = time - elapsed;
+			elapsed += dt;
 
-				//Integrate
-				double mean = CalcMeanGradient(**g);
+			//Integrate
+			double mean = CalcMeanGradient(**g);
 
-				IntegrateEuler *e = new IntegrateEuler();
-				e->calculateIntegral(g, gridCopy, dt, Evaluate);
+			IntegrateEuler *e = new IntegrateEuler();
+			e->calculateIntegral(g, gridCopy, dt, Evaluate);
 				
-				//std::cout << CalcMaxGradient(**g) << " " << CalcMeanGradient(**g) << std::endl;
-			}
+			//std::cout << CalcMaxGradient(**g) << " " << CalcMeanGradient(**g) << std::endl;
 		}
-		
 	}
 }
 
