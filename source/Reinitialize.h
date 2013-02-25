@@ -112,9 +112,7 @@ namespace reinitialize{
 			double mean = CalcMeanGradient(**g);
 
 			IntegrateEuler *e = new IntegrateEuler();
-			e->calculateIntegral(g, gridCopy, dt, Evaluate);
-				
-			//std::cout << CalcMaxGradient(**g) << " " << CalcMeanGradient(**g) << std::endl;
+			e->calculateIntegral(g, gridCopy, dt, Evaluate);		
 		}
 	}
 }
