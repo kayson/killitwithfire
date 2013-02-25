@@ -102,7 +102,8 @@ void Water2D::runSimulation(double dt){
     particles.integrate(u, dt);
     
     //Advect velocity field
-    u.advect(dt);
+    MACAdvectRK2<double> advect = MACAdvectRK2<double>();
+    advect.MACAdvect<double>::advect(u, dt);
 
     //Add exernal forces
     u.addForce(g, dt);

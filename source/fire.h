@@ -80,6 +80,7 @@ private:
 
     //Grid
     MACGrid u;
+    MACAdvect<double> *_advect;
 	// Levelset Velocities u + S*N
 	GridField<Vector3> w;
     //Projektion

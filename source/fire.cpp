@@ -25,7 +25,9 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	phi.fillLevelSet(preset->implicitFunction);
     //2D grid
     u = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
-
+    //Advect
+    _advect = new MACAdvectRK2<double>();
+    
 	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	pVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
@@ -185,7 +187,8 @@ void Fire::runSimulation(){
 	computeCellTypes(); 
 
     //u.advect(preset->dt);
-	advect(preset->dt);
+    _advect->advect(u, preset->dt);
+
     Vector3 force = Vector3(0.0, -0.1, 0.0);
     u.addForce(force, preset->dt);
 
@@ -383,7 +386,7 @@ Fire::~Fire(){
 	delete p;
 	delete _borderCondition;
 }
-
+/*
 void Fire::advect(double dt){
     
     for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
@@ -426,6 +429,8 @@ void Fire::advect(double dt, GridField<int > &cellType){
         double x,y,z;
         u._u->indexToWorld(i, j, k, x, y, z);
         double val;
+        
+        
         if (cellType.valueAtWorld(x, y, z) == BLUECORE) 
 		{
 			val = preset->advectVelocities->advect(dt, u, *u._u, i, j, k);
@@ -472,4 +477,4 @@ void Fire::advect(double dt, GridField<int > &cellType){
     }
     
     u.swapBuffer();
-}
+}*/
