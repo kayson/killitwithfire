@@ -40,7 +40,7 @@ CentralDiff *FirePresets::centralDisc = new CentralDiff();
 
 const int FirePresets::GRID_DIM_X = 40;
 const int FirePresets::GRID_DIM_Y = 47;
-const int FirePresets::GRID_DIM_Z = 1;
+const int FirePresets::GRID_DIM_Z = 10;
 const double FirePresets::GRID_SIZE = 18;
 const double FirePresets::dt = 1./80.;
 const double FirePresets::dx = 1./8.;

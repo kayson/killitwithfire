@@ -471,15 +471,6 @@ CellType Fire::getCellType(double phi)
 }
 
 void Fire::runSimulation(){
-    
-    //Beräkna tidssteget
-	for(double currentTime = 0; currentTime < preset->dt;)
-	{
-		double dt = computeDT(currentTime);
-
-		currentTime += dt;
-	}	
-
 
 	 //Advektera levelset
     for(double currentTime = 0; currentTime < preset->dt;)
@@ -511,7 +502,7 @@ void Fire::runSimulation(){
 
   	
 	//Fixa signed distance field
-	phi.reinitialize();
+	//phi.reinitialize();
 }
 
 void Fire::drawMAC(){

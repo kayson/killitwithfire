@@ -237,7 +237,7 @@ Vector3 MACGrid::velocityAtWorld(const Vector3 &world) const{
 Vector3 MACGrid::velocityAtCenter(int i,int j,int k) const{
 
     double x,y,z;
-    
+
     if (_hasCache->valueAtIndex(i, j, k)) {
         return _cache->valueAtIndex(i, j, k);
     }else{
@@ -254,8 +254,8 @@ Vector3 MACGrid::velocityAtCenter(int i,int j,int k) const{
 
         Vector3 vel(u,v,w);
 
-        _hasCache->setValueAtIndex(true,i, j, k);
-        _cache->setValueAtIndex(vel,i, j, k);
+        //_hasCache->setValueAtIndex(true,i, j, k);
+        //_cache->setValueAtIndex(vel,i, j, k);
         
         return vel;
     }
