@@ -31,6 +31,16 @@ Water2D::Water2D():u(30,30,1,18),cellTypes(30,30,1,18){
         }
     }
     
+    for (GridFieldIterator<int> iter = cellTypes.iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double l_x,l_y,l_z;
+        cellTypes.indexToLocal(i, j, k, l_x, l_y, l_z);
+        if (l_x > 0.4 && l_x < 0.7 && l_y > 0.2 && l_y < 0.3 ) {
+            cellTypes.setValueAtIndex(SOLID, iter.index());
+        }
+    }
+    
     //GridFieldFileManager::writeToFile(cellTypes, "circle");
 
     
@@ -164,7 +174,7 @@ void Water2D::drawMAC(){
         iter.index(i, j, k);
         double x,y,z;
         u.indexToWorld(i, j, k, x, y, z);
-        glColor3f(0.0, 0.0, 0.0);
+        glColor3f(0.0f, 0.0f, 0.0f);
         glBegin(GL_LINE_STRIP);
         glVertex3d(x-dx*0.5, y-dy*0.5, 0);
         glVertex3d(x+dx*0.5, y-dy*0.5, 0);
