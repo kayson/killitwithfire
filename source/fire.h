@@ -11,7 +11,8 @@
 #include "GridMapping.h"
 #include "helper.h"
 //#include "Pressure\pcgsolver\blas_win.h"
-
+#include "Projection2D.h"
+#include "Particles.h"
 
 #ifdef __APPLE__
 #include "sparse_matrix.h"
@@ -53,6 +54,10 @@ public:
 	void draw();
     void drawMAC();
     void drawSolid();
+    void drawCellTypes();
+    void drawDivergence();
+    void drawScalar();
+    void drawParticles();
 private:
 
     FirePresets *preset;
@@ -77,8 +82,11 @@ private:
     MACGrid u;
 	// Levelset Velocities u + S*N
 	GridField<Vector3> w;
-
+    //Projektion
+    Particles particles;
+    PCGProjection2D *_project;
 	GridField<int> celltype;
+    //GridField<double> scalar;
 };
 
 #endif //FIRE_H

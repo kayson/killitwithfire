@@ -37,13 +37,12 @@ private:
 
 UpwindDiff *FirePresets::upwindDisc = new UpwindDiff();
 CentralDiff *FirePresets::centralDisc = new CentralDiff();
-
-const int FirePresets::GRID_DIM_X = 40;
-const int FirePresets::GRID_DIM_Y = 47;
+const int FirePresets::GRID_DIM_X = 36;
+const int FirePresets::GRID_DIM_Y = 36;
 const int FirePresets::GRID_DIM_Z = 1;
 const double FirePresets::GRID_SIZE = 18;
-const double FirePresets::dt = 1./80.;
-const double FirePresets::dx = 1./8.;
+const double FirePresets::dt = 1.0/10.0;
+const double FirePresets::dx = 1.0/8.0;
 const double FirePresets::CFL_NUMBER = .2;
 const double FirePresets::S = .5;
 const double FirePresets::rhof = 1;

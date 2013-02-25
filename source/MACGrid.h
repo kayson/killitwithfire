@@ -18,7 +18,7 @@ template<class T>
 class MACAdvect;
 
 class MACGrid : public GridMapping{
-private:
+public:
     GridField<double> *_u,*_v,*_w;    
     GridField<bool> *_hasCache;
     GridField<Vector3> *_cache;
@@ -42,6 +42,10 @@ public:
     
     //Advektion
     //void setAdvection(MACAdvect<double> *advect){  _advect = advect;};
+
+    //Interpolation
+    template<class T>
+    void setInterpolation(Interpolation<T> *interpolation);
 
     //Transformation
     void setTransformation(glm::dmat4x4 t);
@@ -67,6 +71,7 @@ public:
     //void advect(double dt, GridField<int > &cellType);
     void addForce(Vector3 vec, double dt);
     void extrapolate(double dt, GridField<int > &cellType);
+    void extrapolate3D(double dt, GridField<int > &cellType);
 
     friend class Fire;
 };

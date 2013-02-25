@@ -41,11 +41,13 @@ public:
     GridMapping(const GridMapping &);
     ~GridMapping();
     GridMapping & operator= (const GridMapping & other);
-    
+    bool operator== (const GridMapping & other);
+
+
     //Transformation
     void setTransformation(glm::dmat4x4 t);
     void multTransformation(glm::dmat4x4 t);
-
+    
     //Dim
     int xdim() const;
     int ydim() const;
@@ -58,7 +60,8 @@ public:
     //Index to index
     int indexAt(int i, int j, int k) const;
     void indexAt(int index,int &i, int &j, int &k) const;
-    
+    bool isValid(int i, int j, int k) const;
+
     //Index to...
     void indexToWorld(int i,int j,int k, double &w_x, double &w_y,double &w_z) const;
     void indexToLocal(int i,int j,int k, double &l_x, double &l_y,double &l_z) const;
@@ -74,6 +77,7 @@ public:
     void worldToUpperLeftIndex(const double w_x,const double w_y,const double w_z, int &i,int &j,int &k) const;
     
     GridMappingIterator iterator() const;
+
 };
 
 class GridMappingIterator {

@@ -33,7 +33,7 @@ MACGrid::MACGrid():MACGrid(10,10,10,50){
 MACGrid MACGrid::createRandom2D(int xdim,int ydim, double size){
     
     MACGrid m = MACGrid(xdim,ydim,1,size);
-    double randMax = 1.0;
+    double randMax = -0.0;
     //Fill U
     for (GridFieldIterator<double> iterator = m._u->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
@@ -70,19 +70,12 @@ MACGrid MACGrid::createRandom2D(int xdim,int ydim, double size){
         m.buffer()->_w->setValueAtIndex(vel, iterator.index());
     }
     
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            std::cout << m._trans[i][j] << "" ;
-        }
-        std::cout << std::endl;
-    }
-    
     return m;
 }
 
 //Konstruktor
 MACGrid::MACGrid():GridMapping(10,10,10,1){
-    _buffer = nullptr;
+    _buffer = NULL;
     initialize(10,10,10,1);
 }
 MACGrid::MACGrid(int dim, double size):GridMapping(dim,dim,dim,size){
@@ -98,11 +91,11 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     //_advect = new MACAdvectEuler<double>();
 
     //Initiera variabler
-    _buffer = nullptr;
+    _buffer = NULL;
     
     _u = new GridField<double>(xdim+1,ydim,zdim);
     _v = new GridField<double>(xdim,ydim+1,zdim);
-    _w = new GridField<double>(xdim,ydim,zdim);
+    _w = new GridField<double>(xdim,ydim,zdim+1);
     
     _cache = new GridField<Vector3>(xdim,ydim,zdim );
     _cache->setTransformation(glm::dmat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
@@ -125,7 +118,7 @@ MACGrid::MACGrid(const MACGrid &m):GridMapping(m){
     _w = new GridField<double>(*m._w);
     _hasCache = new GridField<bool>(*m._hasCache);
     _cache = new GridField<Vector3>(*m._cache);
-    _buffer = nullptr;
+    _buffer = NULL;
      
 }
 
@@ -136,7 +129,7 @@ MACGrid::~MACGrid(){
     delete _hasCache;
     delete _cache;
     
-    if (_buffer != nullptr) {
+    if (_buffer != NULL) {
         delete _buffer;
     }
 }
@@ -146,7 +139,7 @@ MACGrid& MACGrid::operator=(const MACGrid &g){
     if (this != &g) {
         GridMapping::operator=(g);
         
-        _buffer = nullptr;
+        _buffer = NULL;
         _u = new GridField<double>(*g._u);
         _v = new GridField<double>(*g._v);
         _w = new GridField<double>(*g._w);
@@ -158,10 +151,19 @@ MACGrid& MACGrid::operator=(const MACGrid &g){
     return *this;
 }
 
+template<class T>
+void MACGrid::setInterpolation(Interpolation<T> *interpolation){
+    _u->setInterpolation(interpolation);
+    _v->setInterpolation(interpolation);
+    _w->setInterpolation(interpolation);
+}
+
 void MACGrid::setTransformation(glm::dmat4x4 t){
     GridMapping::setTransformation(t);
     
     //Reset to original position
+    //2D!
+    /*
     _u->setTransformation(glm::scale(1.0+local_dx(), 1.0, 1.0));
     _u->multTransformation(glm::translate(-0.5*GridMapping::dx(), 0.0, 0.0));
     
@@ -169,6 +171,18 @@ void MACGrid::setTransformation(glm::dmat4x4 t){
     _v->multTransformation(glm::translate(0.0, -0.5*GridMapping::dy() ,0.0));
 
     //_w->setTransformation(glm::translate(0.0, 0.0, 0.0));
+    */
+    
+     //3D!
+    
+    _u->setTransformation(glm::translate(-0.5*GridMapping::dx(),0.0,0.0));
+    _u->multTransformation(glm::scale(1.0+local_dx(), 1.0, 1.0));
+    
+    _v->setTransformation(glm::translate(0.0, -0.5*GridMapping::dy() ,0.0));
+    _v->multTransformation(glm::scale(1.0, 1.0+local_dy(), 1.0));
+    
+    _w->setTransformation(glm::translate(0.0, 0.0 ,-0.5*GridMapping::dz()));
+    _w->multTransformation(glm::scale(1.0, 1.0, 1.0+local_dz()));
     
     //Apply to children
     _u->multTransformation(t);
@@ -177,14 +191,14 @@ void MACGrid::setTransformation(glm::dmat4x4 t){
     
 }
 void MACGrid::multTransformation(glm::dmat4x4 t){
-    GridMapping::multTransformation(t);
-    _u->multTransformation(t);
-    _v->multTransformation(t);
-    _w->multTransformation(t);
+    GridMapping::setTransformation(t*_trans);
+    _u->setTransformation(t*_u->_trans);
+    _v->setTransformation(t*_v->_trans);
+    _w->setTransformation(t*_w->_trans);
 }
 
 MACGrid * MACGrid::buffer(){
-    if (_buffer == nullptr) {
+    if (_buffer == NULL) {
         _buffer = new MACGrid(*this);
     }
     return _buffer;
@@ -281,6 +295,8 @@ void MACGrid::fillVelocity(Vector3 vel){
         _w->setValueAtIndex(vel.z, iter.index());
         buffer()->_w->setValueAtIndex(vel.z,iter.index());
     }
+    
+    
 }
 
 double MACGrid::valueAtFace(const int i,const int j,const int k, DirectionEnums d) const{
@@ -294,9 +310,9 @@ double MACGrid::valueAtFace(const int i,const int j,const int k, DirectionEnums 
     }else if (d == UP){
         return _v->valueAtIndex(i, j+1, k);
     }else  if (d == FORWARD){
-        return _w->valueAtIndex(i, j, k+1);
-    }else if(d == BACKWARD){
         return _w->valueAtIndex(i, j, k);
+    }else if(d == BACKWARD){
+        return _w->valueAtIndex(i, j, k+1);
     }else{
         //Center?
     }
@@ -312,10 +328,10 @@ void MACGrid::setValueAtFace(double val,const int i, const int j, const int k, D
     }else if (d == UP){
         _v->setValueAtIndex(val, i, j+1, k);
     }else  if (d == FORWARD){
-        _w->setValueAtIndex(val, i, j, k+1);
+        _w->setValueAtIndex(val, i, j, k);
     }else{
         //Backward
-        _w->setValueAtIndex(val, i, j, k);
+        _w->setValueAtIndex(val, i, j, k+1);
     }
 }
 
@@ -329,43 +345,42 @@ void MACGrid::addValueAtFace(double val,const int i, const int j, const int k, D
     }else if (d == UP){
         _v->addValueAtIndex(val, i, j+1, k);
     }else  if (d == FORWARD){
-        _w->addValueAtIndex(val, i, j, k+1);
+        _w->addValueAtIndex(val, i, j, k);
     }else{
         //Backward
-        _w->addValueAtIndex(val, i, j, k);
+        _w->addValueAtIndex(val, i, j, k+1);
     }
 }
 /*
 void MACGrid::advect(double dt){
-    
-    for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        _u->indexToWorld(i, j, k, x, y, z);
-        double val = _advect->advect(dt, *this, *_u, i, j, k);
-        buffer()->_u->setValueAtIndex(val, i, j, k);
+#pragma omp parallel for
+    for (int index = 0; index < 3; index++) {
+        GridField<double> *field;
+        if (index == 0) {
+            field = _u;
+        }else if (index == 1){
+            field = _v;
+        }else{
+            field = _w;
+        }
         
+        for (GridFieldIterator<double> iter = field->iterator(); !iter.done(); iter.next()) {
+            int i,j,k;
+            iter.index(i, j, k);
+            double x,y,z;
+            field->indexToWorld(i, j, k, x, y, z);
+            double val = _advect->advect(dt, *this, *field, i, j, k);
+
+            if (index == 0) {
+                buffer()->_u->setValueAtIndex(val, i, j, k);
+            }else if (index == 1){
+                buffer()->_v->setValueAtIndex(val, i, j, k);
+            }else{
+                buffer()->_w->setValueAtIndex(val, i, j, k);
+            }
+        }
     }
-    
-    for (GridFieldIterator<double> iter = _v->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        _v->indexToWorld(i, j, k, x, y, z);
-        double val = _advect->advect(dt, *this, *_v, i, j, k);
-        buffer()->_v->setValueAtIndex(val, i, j, k);
-        
-    }
-    
-    for (GridFieldIterator<double> iter = _w->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        _w->indexToWorld(i, j, k, x, y, z);
-        double val = _advect->advect(dt, *this, *_w, i, j, k);
-        buffer()->_w->setValueAtIndex(val, i, j, k);
-    }
+
     
     swapBuffer();
 }
@@ -424,28 +439,212 @@ void MACGrid::advect(double dt, GridField<int > &cellType){
 }*/
 
 void MACGrid::addForce(Vector3 vec, double dt){
-    for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double val = _u->valueAtIndex(i, j, k);
-        _u->setValueAtIndex(val+vec.x*dt, i, j, k);
+    
+    #pragma omp parallel for
+    for (int index = 0; index < 3; index++) {
+        GridField<double> *field;
+        if (index == 0) {
+            field = _u;
+        }else if (index == 1){
+            field = _v;
+        }else{
+            field = _w;
+        }
+        
+        for (GridFieldIterator<double> iter = field->iterator(); !iter.done(); iter.next()) {
+            int i,j,k;
+            iter.index(i, j, k);
+            double x,y,z;
+            field->indexToWorld(i, j, k, x, y, z);
+            
+            if (index == 0) {
+                double val = _u->valueAtIndex(i, j, k);
+                _u->setValueAtIndex(val+vec.x*dt, i, j, k);
+            }else if (index == 1){
+                double val = _v->valueAtIndex(i, j, k);
+                _v->setValueAtIndex(val+vec.y*dt, i, j, k);
+            }else{
+                double val = _w->valueAtIndex(i, j, k);
+                _w->setValueAtIndex(val+vec.z*dt, i, j, k);
+            }
+        }
     }
     
-    for (GridFieldIterator<double> iter = _v->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double val = _v->valueAtIndex(i, j, k);
-        _v->setValueAtIndex(val+vec.y*dt, i, j, k);
-    }
-    
-    for (GridFieldIterator<double> iter = _w->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double val = _w->valueAtIndex(i, j, k);
-        _w->setValueAtIndex(val+vec.z*dt, i, j, k);
-    }
-
     _hasCache->setAll(false);
+}
+
+void MACGrid::extrapolate(double dt, GridField<int > &cellType){
+    assert(*this == cellType);
+    
+    for (GridFieldIterator<int> it = cellType.iterator(); !it.done(); it.next()) {
+        int i,j,k;
+        it.index(i, j, k);
+        /*
+        if (cellType.valueAtIndex(i,j,k) == SOLID) {
+            setValueAtFace(0, i, j, k, LEFT);
+            setValueAtFace(0, i, j, k, RIGHT);
+            setValueAtFace(0, i, j, k, UP);
+            setValueAtFace(0, i, j, k, DOWN);
+
+        }
+        
+        */
+        
+        if (k == 0) {
+            if (cellType.valueAtIndex(i, j, k) == SOLID){
+                    setValueAtFace(0, i, j, k, LEFT);
+                    setValueAtFace(0, i, j, k, RIGHT);
+                    setValueAtFace(0, i, j, k, UP);
+                    setValueAtFace(0, i, j, k, DOWN);
+            }else if (cellType.valueAtIndex(i, j, k) == AIR){
+                
+                if (cellType.valueAtIndex(i-1,j,k) == AIR) {
+                    setValueAtFace(0, i, j, k, LEFT);
+                }
+                
+                if (cellType.valueAtIndex(i+1,j,k) == AIR) {
+                    setValueAtFace(0, i, j, k, RIGHT);
+                }
+                
+                if (cellType.valueAtIndex(i,j+1,k) == AIR) {
+                    setValueAtFace(0, i, j, k, UP);
+                }
+                
+                if (cellType.valueAtIndex(i,j-1,k) == AIR) {
+                    setValueAtFace(0, i, j, k, DOWN);
+                }
+            }else if(cellType.valueAtIndex(i, j, k) == SOLID){
+                setValueAtFace(0, i, j, k, UP);
+                setValueAtFace(0, i, j, k, DOWN);
+                setValueAtFace(0, i, j, k, LEFT);
+                setValueAtFace(0, i, j, k, RIGHT);
+
+            }
+        }
+    }
+    
+    for (GridFieldIterator<int> it = cellType.iterator(); !it.done(); it.next()) {
+        int i,j,k;
+        it.index(i, j, k);
+        /*
+         if (cellType.valueAtIndex(i,j,k) == SOLID) {
+         setValueAtFace(0, i, j, k, LEFT);
+         setValueAtFace(0, i, j, k, RIGHT);
+         setValueAtFace(0, i, j, k, UP);
+         setValueAtFace(0, i, j, k, DOWN);
+         
+         }
+         
+         */
+        
+        if (k == 0) {
+            if (cellType.valueAtIndex(i, j, k) == IGNITED){
+                
+                if (cellType.valueAtIndex(i-1,j,k) == AIR) {
+                    setValueAtFace(valueAtFace(i, j, k, LEFT), i-1, j, k, LEFT);
+                }
+                
+                if (cellType.valueAtIndex(i+1,j,k) == AIR) {
+                    setValueAtFace(valueAtFace(i, j, k, RIGHT), i+1, j, k, RIGHT);
+                }
+                
+                if (cellType.valueAtIndex(i,j+1,k) == AIR) {
+                    setValueAtFace(valueAtFace(i, j, k, UP), i, j+1, k, UP);
+                }
+                
+                if (cellType.valueAtIndex(i,j-1,k) == AIR) {
+                    setValueAtFace(valueAtFace(i, j, k, DOWN), i, j-1, k, DOWN);
+                }
+            }
+        }
+    }
+}
+
+void MACGrid::extrapolate3D(double dt, GridField<int > &cellType){
+    assert(*this == cellType);
+    
+    for (GridFieldIterator<int> it = cellType.iterator(); !it.done(); it.next()) {
+        int i,j,k;
+        it.index(i, j, k);
+
+            if (cellType.valueAtIndex(i, j, k) == SOLID){
+                setValueAtFace(0, i, j, k, LEFT);
+                setValueAtFace(0, i, j, k, RIGHT);
+                setValueAtFace(0, i, j, k, UP);
+                setValueAtFace(0, i, j, k, DOWN);
+                setValueAtFace(0, i, j, k, FORWARD);
+                setValueAtFace(0, i, j, k, BACKWARD);
+            }else if (cellType.valueAtIndex(i, j, k) == AIR){
+                
+                if (cellType.valueAtIndex(i-1,j,k) == AIR) {
+                    setValueAtFace(0, i, j, k, LEFT);
+                }
+                
+                if (cellType.valueAtIndex(i+1,j,k) == AIR) {
+                    setValueAtFace(0, i, j, k, RIGHT);
+                }
+                
+                if (cellType.valueAtIndex(i,j+1,k) == AIR) {
+                    setValueAtFace(0, i, j, k, UP);
+                }
+                
+                if (cellType.valueAtIndex(i,j-1,k) == AIR) {
+                    setValueAtFace(0, i, j, k, DOWN);
+                }
+                
+                if (cellType.valueAtIndex(i,j,k+1) == AIR) {
+                    setValueAtFace(0, i, j, k, FORWARD);
+                }
+                
+                if (cellType.valueAtIndex(i,j,k-1) == AIR) {
+                    setValueAtFace(0, i, j, k, BACKWARD);
+                }
+            }else if(cellType.valueAtIndex(i, j, k) == SOLID){
+                setValueAtFace(0, i, j, k, UP);
+                setValueAtFace(0, i, j, k, DOWN);
+                setValueAtFace(0, i, j, k, LEFT);
+                setValueAtFace(0, i, j, k, RIGHT);
+                setValueAtFace(0, i, j, k, FORWARD);
+                setValueAtFace(0, i, j, k, BACKWARD);
+                
+            }
+        
+    }
+    
+    for (GridFieldIterator<int> it = cellType.iterator(); !it.done(); it.next()) {
+        int i,j,k;
+        it.index(i, j, k);
+
+            if (cellType.valueAtIndex(i, j, k) == IGNITED){
+                
+                if (cellType.valueAtIndex(i-1,j,k) == AIR) {
+                    setValueAtFace(valueAtFace(i, j, k, LEFT), i-1, j, k, LEFT);
+                }
+                
+                if (cellType.valueAtIndex(i+1,j,k) == AIR) {
+                    setValueAtFace(valueAtFace(i, j, k, RIGHT), i+1, j, k, RIGHT);
+                }
+                
+                if (cellType.valueAtIndex(i,j+1,k) == AIR) {
+                    setValueAtFace(valueAtFace(i, j, k, UP), i, j+1, k, UP);
+                }
+                
+                if (cellType.valueAtIndex(i,j-1,k) == AIR) {
+                    setValueAtFace(valueAtFace(i, j, k, DOWN), i, j-1, k, DOWN);
+                }
+                
+                if (cellType.valueAtIndex(i,j,k+1) == AIR) {
+                    setValueAtFace(valueAtFace(i, j, k, FORWARD), i, j, k+1, FORWARD);
+                }
+                
+                if (cellType.valueAtIndex(i,j,k-1) == AIR) {
+                    setValueAtFace(valueAtFace(i, j, k, BACKWARD), i, j, k-1, BACKWARD);
+                }
+                
+                
+            }
+        }
+    
 }
 
 

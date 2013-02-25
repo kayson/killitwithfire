@@ -68,6 +68,17 @@ GridMapping & GridMapping::operator= (const GridMapping & other){
     return *this;
 }
 
+bool GridMapping::operator== (const GridMapping & other){
+    
+    
+    return (other.xdim() == xdim() &&
+            other.ydim() == ydim() &&
+            other.zdim() == zdim() &&
+            other._trans == _trans &&
+            other._itrans == _itrans &&
+            other.size() == size());
+}
+
 //Transformation
 void GridMapping::setTransformation(glm::dmat4x4 t){
     _trans = glm::dmat4x4(t);
@@ -143,6 +154,12 @@ void GridMapping::indexAt(int index, int &i, int &j, int &k) const{
     k = index /(xdim()*ydim());
     j = (index-(k*xdim()*ydim()))/(xdim());
     i = (index-j*xdim()-k*xdim()*ydim());
+}
+
+bool GridMapping::isValid(int i, int j, int k) const{
+    return (   i >= 0 && i < xdim()
+            && j >= 0 && j < ydim()
+            && k >= 0 && k < zdim());
 }
 
 //Index to...
