@@ -117,15 +117,16 @@ void Water2D::draw(){
     drawCellTypes();
     //drawMAC();
     drawParticles();
-    //drawCenterVelocities();
+    drawCenterVelocities();
     //drawFaceVelocities();
 
 }
 
 void Water2D::drawParticles(){
-    
+	glEnable(GL_POINT_SMOOTH);
+	glPointSize(15.0f);    
     for (int i = 0; i < particles.size(); i++) {
-        glColor3d(1.0, 0.0, 0.0);
+        glColor3d(0.6, 0.6, 1.0);
         glBegin(GL_POINTS);
         glVertex3d(particles[i].x, particles[i].y, 0);
         glEnd();
