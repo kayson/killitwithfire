@@ -13,6 +13,7 @@
 #include "../GridField.h"
 #include "../levelset/LevelSet.h"
 #include "../helper.h"
+#include "../fire.h"
 
 template<class T>
 class MACAdvect {
@@ -100,13 +101,41 @@ public:
         return field.valueAtWorld(pos.x,pos.y,pos.z);
     }
     
+	// Vs = Velocity start, Ve = Velocity end osv
     virtual double advect(double dt,const MACGrid &g, GridField<T> &field, LevelSet& phi, int i, int j, int k){
 		double x,y,z;
         field.indexToWorld(i,j,k,x,y,z);
-        Vector3 pos = Vector3(x,y,z);
-        Vector3 vel = g.velocityAtWorld(pos);
-        pos = Vector3(x,y,z)-vel*dt;
-        return field.valueAtWorld(pos.x,pos.y,pos.z);
+        
+		Vector3 sPos = Vector3(x,y,z);
+		CellType sType = Fire::getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
+        Vector3 sVel = g.velocityAtWorld(sPos);
+
+        Vector3 ePos = sPos-sVel*dt;
+		CellType eType = Fire::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
+
+		if(sType == eType)
+			return field.valueAtWorld(ePos.x,ePos.y,ePos.z);
+		else
+		{
+			Vector3 n = phi.getNormal(sPos.x, sPos.y, sPos.z);
+			double Vs = Vector3::dot(sVel, n);
+			
+			double Ve = 0;
+			if(sType == BLUECORE)
+				Ve = Vs + (FirePresets::rhof/FirePresets::rhoh - 1.0)*FirePresets::S;
+			else if(sType == IGNITED)
+				Ve = Vs + (FirePresets::rhoh/FirePresets::rhof - 1.0)*FirePresets::S;
+			else
+			{
+				std::cout << "Fel i MACAdvect" << std::endl;
+				throw;
+			}
+
+			Vector3 ue = Ve*n + sVel - Vs*n;
+			//Hur vet jag om det är u, v, w som jag skall använda?
+
+			return field.valueAtWorld(ePos.x,ePos.y,ePos.z);
+		}
     }
 };
 
@@ -116,7 +145,6 @@ public:
     virtual ~MACAdvectRK2(){};
     
     virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k){
-        
         double x,y,z;
         field.indexToWorld(i,j,k,x,y,z);
         Vector3 pos = Vector3(x,y,z);

@@ -21,6 +21,8 @@
 #include "Pressure\pcgsolver\pcg_solver.h"
 #endif
 
+class FirePresets;
+
 class Fire{
 protected:
     double computeDT(double currentTime);
@@ -35,10 +37,6 @@ protected:
 	void computeCellTypes();
 	CellType getCellType(const int i, const int j, const int k) const;
 	CellType getCellType(double w_x, double w_y,double w_z) const;
-
-	void advect(double dt);
-    void advect(double dt, GridField<int > &cellType);
-
 	//void 
 public:
 	Fire(FirePresets *preset);

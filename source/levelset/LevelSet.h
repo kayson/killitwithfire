@@ -24,6 +24,7 @@ public:
 	void printDistanceField();
 	double getCurvature(const int i, const int j, const int k);
 	Vector3 getNormal(const int i, const int j, const int k);
+	Vector3 getNormal(const double w_x, const double w_y, const double w_z);
 
 	void reinitialize();
 

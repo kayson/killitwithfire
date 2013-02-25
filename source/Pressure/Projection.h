@@ -11,6 +11,7 @@
 
 #include "../MACGrid.h"
 #include "pcgsolver/pcg_solver.h"
+
 class FireProjection {
 private:
     void resize();

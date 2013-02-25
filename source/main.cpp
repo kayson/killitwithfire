@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     srand(t);
 
 	fire = new Fire(new FirePresetsTwoDimension());
-    water = new Water2D();
+    //water = new Water2D();
 
 	// Main loop
 	while(running)

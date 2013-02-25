@@ -79,8 +79,27 @@ Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 {
 
 	//Osäker om detta är korrekt implementation
-	Vector3 g = Gradient::getGradient(*grid, i, j, j, *(FirePresets::centralDisc));
+	Vector3 g = Gradient::getGradient(*grid, i, j, k, *(FirePresets::centralDisc));
 	
+	// l blir 0 ibland...
+	double l = g.norm();
+	if(l > 0.0)
+		g *= 1.0/l;
+	else
+		g = Vector3(0.0, 1.0, 0.0);
+
+	return g;
+}
+
+Vector3 LevelSet::getNormal(const double w_x, const double w_y, const double w_z)
+{
+	double i, j, k;
+	grid->worldToLocal(w_x, w_y, w_z, i, j, k);
+
+	// TODO FIXA!!!
+	//Ej korrekt implementation, då normalen måste interpoleras
+	Vector3 g = Gradient::getGradient(*grid, i, j, k, *(FirePresets::centralDisc));
+
 	// l blir 0 ibland...
 	double l = g.norm();
 	if(l > 0.0)
