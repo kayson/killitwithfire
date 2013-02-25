@@ -36,7 +36,6 @@ protected:
 	void computeCellTypes();
 	CellType getCellType(const int i, const int j, const int k) const;
 	CellType getCellType(double w_x, double w_y,double w_z) const;
-	static CellType getCellType(double phi);
 
 	void advect(double dt);
     void advect(double dt, GridField<int > &cellType);
@@ -58,6 +57,8 @@ public:
     void drawDivergence();
     void drawScalar();
     void drawParticles();
+
+	static CellType getCellType(double phi);
 private:
 
     FirePresets *preset;
@@ -80,7 +81,6 @@ private:
 
     //Grid
     MACGrid u;
-    MACAdvect<double> *_advect;
 	// Levelset Velocities u + S*N
 	GridField<Vector3> w;
     //Projektion
