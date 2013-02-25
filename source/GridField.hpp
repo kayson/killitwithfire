@@ -17,6 +17,7 @@
 #elif defined _WIN32 || defined _WIN64
 #define round(x) floor((x) >= 0 ? (x) + 0.5 : (x) - 0.5)
 #endif
+#define nullptr NULL
 
 #ifndef FuidFire_GridField_hpp
 #define FuidFire_GridField_hpp
@@ -27,6 +28,9 @@ GridField<T>::GridField(const GridMapping &m):GridMapping(m){
     //Allokera data-array
     _data = new T[cellCount()];
     for (int i = 0; i < cellCount(); i++) _data[i] = T(0);
+    
+    //Interpolation
+    _interpolation = Interpolation<T>::defaultInterpolation();
 }
 
 
@@ -41,6 +45,8 @@ GridField<T>::GridField(int xdim,int ydim, int zdim):GridMapping(xdim,ydim,zdim)
     _data = new T[cellCount()];
     for (int i = 0; i < cellCount(); i++) _data[i] = T();
     
+    //Interpolation
+    _interpolation = Interpolation<T>::defaultInterpolation();
 }
 
 template<class T>
@@ -50,6 +56,8 @@ GridField<T>::GridField(int xdim,int ydim, int zdim, double size):GridMapping(xd
     _data = new T[cellCount()];
     for (int i = 0; i < cellCount(); i++) _data[i] = T();
 
+    //Interpolation
+    _interpolation = Interpolation<T>::defaultInterpolation();
 }
 
 template<class T>
@@ -61,6 +69,9 @@ GridField<T>::GridField(const GridField<T> &g):GridMapping(g){
     for (GridFieldIterator<T> iter = g.iterator(); !iter.done(); iter.next()) {
         setValueAtIndex(iter.value(), iter.index());
     }
+    
+    //Interpolation
+    _interpolation = Interpolation<T>::defaultInterpolation();
 }
 
 template<class T>
@@ -69,10 +80,10 @@ GridField<T>& GridField<T>::operator=(const GridField<T> &g){
         
         //Allokera data-array
         _data = new T[g.cellCount()];
-        for (int i = 0; i < g.cellCount(); i++) _data[i] = T();
+        for (int i = 0; i < g.cellCount(); i++) _data[i] = g._data[i];
 
-        _extrapolation = g._extrapolation;
-
+        //Interpolation
+        _interpolation = g._interpolation->clone();
     }
     
     return *this;
@@ -82,6 +93,16 @@ GridField<T>& GridField<T>::operator=(const GridField<T> &g){
 template<class T>
 GridField<T>::~GridField(){
     delete [] _data;
+    if(_interpolation != nullptr) delete _interpolation;
+}
+
+template<class T>
+void GridField<T>::setInterpolation(Interpolation<T> *i){
+    
+    if (_interpolation != nullptr) {
+        delete _interpolation;
+    }
+    _interpolation = i->clone();
 }
 
 template<class T>
@@ -128,18 +149,22 @@ T GridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
     //assert(i < 100);
     //FIXA!!! -->    
     //Interpolera...
-    LinearInterpolation<T> interpolation = LinearInterpolation<T>();
-    T t1 = interpolation(x,valueAtIndex(i,j,k),valueAtIndex(i+1,j,k));
-    T t2 = interpolation(x,valueAtIndex(i,j+1,k),valueAtIndex(i+1,j+1,k));
-    T t3 = interpolation(x,valueAtIndex(i,j,k+1),valueAtIndex(i+1,j,k+1));
-    T t4 = interpolation(x,valueAtIndex(i,j+1,k+1),valueAtIndex(i+1,j+1,k+1));
     
-    T t5 = interpolation(y,t1,t2);
-    T t6 = interpolation(y,t3,t4);
+    /*
+    CatmullRomInterpolation<T> interpolation = CatmullRomInterpolation<T>();
+    T ty[4];
+    for (int slice = 0; slice < 4; slice++) {
+        T t1 = interpolation(x,valueAtIndex(i-1,j-1,k),valueAtIndex(i,j-1,k),valueAtIndex(i+1,j-1,k),valueAtIndex(i+2,j-1,k));
+        T t2 = interpolation(x,valueAtIndex(i-1,j,k),valueAtIndex(i,j,k),valueAtIndex(i+1,j,k),valueAtIndex(i+2,j,k));
+        T t3 = interpolation(x,valueAtIndex(i-1,j+1,k),valueAtIndex(i,j+1,k),valueAtIndex(i+1,j+1,k),valueAtIndex(i+2,j+1,k));
+        T t4 = interpolation(x,valueAtIndex(i-1,j+2,k),valueAtIndex(i,j+2,k),valueAtIndex(i+1,j+2,k),valueAtIndex(i+2,j+2,k));
+        
+        ty[slice] = interpolation(y,t1,t2,t3,t4);
+    }*/
     
-    T t7 = interpolation(z,t5,t6);
+
     
-    return t7;
+    return _interpolation->interpolate(*this,i,j,k,x,y,z);
 }
 
 template<class T> 
@@ -155,7 +180,7 @@ T GridField<T>::getMax() const
 		throw;
 	}
 	
-	for(it; !it.done(); it.next())
+	for(; !it.done(); it.next())
 	{
 		T v = valueAtIndex(it.index());
 		if(v > max)

@@ -9,7 +9,7 @@ Camera::Camera()
 void Camera::translateForCamera()
 {
 	glLoadIdentity();
-	glTranslatef(-position_.x, -position_.y, -position_.z);
+	glTranslated(-position_.x, -position_.y, -position_.z);
 }
 
 void Camera::moveCamera(Vector3 dP)
@@ -46,6 +46,11 @@ void GLFWCALL Camera::reshape( int width, int height )
         // Select and setup the modelview matrix.
         glMatrixMode( GL_MODELVIEW ); // "We want to edit the modelview matrix"
         glLoadIdentity(); // Reset the matrix to identity
+        
+
+        glEnable(GL_DEPTH_TEST);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         // Look from 0,-5,0 towards 0,0,0 with Z as "up" in the image
         /*
         gluLookAt( 7.5f, 0.0, 7.5f,    // Eye position

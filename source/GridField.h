@@ -11,7 +11,6 @@
 
 #include "Vector3.h"
 #include "GridMapping.h"
-
 #ifdef __APPLE__
 #include "glm.hpp"
 #elif defined _WIN32 || defined _WIN64
@@ -21,13 +20,12 @@
 #define FuidFire_GridField_h
 
 template <class T> class GridFieldIterator;
-template <class T> class GridExtrapolation;
-
+template<class T> class Interpolation;
 template <class T>
 class GridField : public GridMapping {
-protected:
+public:
     T *_data;
-    GridExtrapolation<T> *_extrapolation;
+    Interpolation<T> *_interpolation;
 private:
     GridField();
 public:
@@ -37,9 +35,11 @@ public:
     GridField(int xdim,int ydim, int zdim, double size);
     GridField(const GridField<T> &g);
     GridField<T>& operator=(const GridField<T> &g);
-
     ~GridField();
-
+    
+    //
+    void setInterpolation(Interpolation<T> *i);
+    
     //Hämta värden
     T valueAtIndex(int i) const;
     T valueAtIndex(int i,int j,int k) const;
@@ -61,6 +61,7 @@ public:
     const GridFieldIterator<T> iterator() const;
     
     friend class GridFieldIterator<T>;
+    friend class GridFieldFileManager;
 };
 
 /**

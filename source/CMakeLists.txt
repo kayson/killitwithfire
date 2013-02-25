@@ -3,10 +3,25 @@ project(killitwithfire)
 
 set(CMAKE_BUILD_TYPE "Release")
 
-FILE(GLOB killitwithfire_HEADERS ./*.h* ./advect/*.h* ./levelset/*.h* ./presets/*.h* ./Pressure/pcgsolver/*.h*)
+FILE(GLOB killitwithfire_HEADERS 
+  ./*.h* 
+  ./advect/*.h* 
+  ./levelset/*.h* 
+  ./presets/*.h*
+  ./Pressure/*.h*
+  ./Pressure/pcgsolver/*.h*
+  ./Water/*.h*
+  )
 source_group(include FILES ${killitwithfire_HEADERS})
 
-FILE(GLOB killitwithfire_SRCS ./*.cpp ./advect/*.cpp ./levelset/*.cpp ./presets/*.cpp)
+FILE(GLOB killitwithfire_SRCS 
+  ./*.cpp 
+  ./advect/*.cpp 
+  ./levelset/*.cpp 
+  ./presets/*.cpp
+  ./Pressure/*.cpp
+  ./Pressure/pcgsolver/*.cpp
+  ./Water/*.cpp)
 source_group(source FILES ${killitwithfire_SRCS})
 
 include_directories(	${CMAKE_SOURCE_DIR}/../externals

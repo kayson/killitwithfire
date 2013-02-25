@@ -14,6 +14,8 @@
 #include "presets/firePresetsTwoDimension.h"
 
 #include "fire.h"
+#include "Water/Water2D.h"
+#include "Water/Water3D.h"
 
 #include "imageExporter.h"
 
@@ -37,6 +39,7 @@ int HEIGHT = 600, WIDTH = 800;
 bool running = false;
 
 Fire *fire;
+Water2D *water;
 Input controller;
 static Camera camera;
 
@@ -53,16 +56,23 @@ int main(int argc, char *argv[])
     srand(t);
 
 	fire = new Fire(new FirePresetsTwoDimension());
+    water = new Water2D();
+
 	// Main loop
 	while(running)
 	{
 		// Calculate and update the frames per second (FPS) display
 		showFPS();
+        glClear (GL_COLOR_BUFFER_BIT);
 
-		update();
 
 		// Draw the scene.
-		render();		
+        update();
+
+		render();
+
+        glfwSwapBuffers();
+
 
 		// Check if the ESC key was pressed or the window was closed.
 		if(glfwGetKey(GLFW_KEY_ESC) || !glfwGetWindowParam(GLFW_OPENED))
@@ -136,18 +146,17 @@ void update()
 	controller.updateInput(fps); //updatera mus och tangentbord
 
 	//Update physics
-	fire->runSimulation();
+	//fire->runSimulation();
+    water->runSimulation(0.2);
 }
 
 //renderar objekt
 void render(void)
 {
-	glClear (GL_COLOR_BUFFER_BIT);
 
 	camera.translateForCamera();
 
-	fire->draw();
-    
-	glfwSwapBuffers();
+	//fire->draw();
+    water->draw();
 }
 
