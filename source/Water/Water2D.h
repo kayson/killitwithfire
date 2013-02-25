@@ -12,7 +12,7 @@
 #include <iostream>
 #include "../MACGrid.h"
 #include "Particles.h"
-#include "../Pressure/Projection2D.h"
+#include "Projection2D.h"
 
 class Water2D {
     

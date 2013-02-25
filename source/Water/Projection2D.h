@@ -10,7 +10,7 @@
 #define __FuidFire__Projection2__
 
 #include "../MACGrid.h"
-#include "pcgsolver/pcg_solver.h"
+#include "../Pressure/pcgsolver/pcg_solver.h"
 class PCGProjection2D {
 private:
     void resize();

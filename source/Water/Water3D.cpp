@@ -7,7 +7,7 @@
 //
 
 #include "Water3D.h"
-#include "../Pressure/Projection3D.h"
+#include "Projection3D.h"
 #include "../GridFieldFileManager.h"
 #include "glfw.h"
 
@@ -372,23 +372,23 @@ void Water3D::drawCellTypes(){
     }
 }
 
-void Water3D::drawSphere(float r, int segs) {
+void Water3D::drawSphere(double r, int segs) {
     int i, j;
-    float x, y, z, z1, z2, R, R1, R2;
+    double x, y, z, z1, z2, R, R1, R2;
     
     // Top cap: a triangle fan
     glBegin(GL_TRIANGLE_FAN);
     //glColor4d(0.0, 0.0, 0.5, 0.9);
     //glColor3f(0.0, 0.5, 0.7);
-    glNormal3f(0,0,1);
-    glVertex3f(0,0,r);
+    glNormal3d(0,0,1);
+    glVertex3d(0,0,r);
     z = cos(M_PI/segs);
     R = sin(M_PI/segs);
     for(i = 0; i <= 2*segs; i++) {
         x = R*cos(i*2.0*M_PI/(2*segs));
         y = R*sin(i*2.0*M_PI/(2*segs));
-        glNormal3f(x, y, z);
-        glVertex3f(r*x, r*y, r*z);
+        glNormal3d(x, y, z);
+        glVertex3d(r*x, r*y, r*z);
     }
     glEnd();
     
@@ -403,20 +403,20 @@ void Water3D::drawSphere(float r, int segs) {
         for(i = 0; i <= 2*segs; i++) {
             x = R1*cos(i*2.0*M_PI/(2*segs));
             y = R1*sin(i*2.0*M_PI/(2*segs));
-            glNormal3f(x, y, z1);
-            glVertex3f(r*x, r*y, r*z1);
+            glNormal3d(x, y, z1);
+            glVertex3d(r*x, r*y, r*z1);
             x = R2*cos(i*2.0*M_PI/(2*segs));
             y = R2*sin(i*2.0*M_PI/(2*segs));
-            glNormal3f(x, y, z2);
-            glVertex3f(r*x, r*y, r*z2);
+            glNormal3d(x, y, z2);
+            glVertex3d(r*x, r*y, r*z2);
         }
         glEnd();
     }
     
     // Bottom cap: a triangle fan
     glBegin(GL_TRIANGLE_FAN);
-    glNormal3f(0,0,-1);
-    glVertex3f(0,0,-r);
+    glNormal3d(0,0,-1);
+    glVertex3d(0,0,-r);
     z = -cos(M_PI/segs);
     R = sin(M_PI/segs);
     //glColor3f(0.0, 0.5, 0.7);
@@ -424,8 +424,8 @@ void Water3D::drawSphere(float r, int segs) {
     for(i = 2*segs; i >= 0; i--) {
         x = R*cos(i*2.0*M_PI/(2*segs));
         y = R*sin(i*2.0*M_PI/(2*segs));
-        glNormal3f(x, y, z);
-        glVertex3f(r*x, r*y, r*z);
+        glNormal3d(x, y, z);
+        glVertex3d(r*x, r*y, r*z);
     }
     glEnd();
 }

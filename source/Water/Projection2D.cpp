@@ -9,7 +9,7 @@
 #include "Projection2D.h"
 #include <iomanip>
 #include "glfw.h"
-#include "pcgsolver/pcg_solver.h"
+#include "../Pressure/pcgsolver/pcg_solver.h"
 
 #define nullptr NULL
 

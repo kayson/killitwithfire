@@ -5,7 +5,6 @@
 #include "advect/AdvectLevelSet.h"
 #include "GridField.hpp"
 #include "Gradient.h"
-#include "Pressure/Projection2D.h"
 #include "GridFieldFileManager.h"
 #ifdef __APPLE__
 #include "glfw.h"
@@ -26,8 +25,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
     //2D grid
     u = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
     //Advect
-    _advect = new MACAdvectRK2<double>();
-    
+
 	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	pVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
@@ -187,7 +185,7 @@ void Fire::runSimulation(){
 	computeCellTypes(); 
 
     //u.advect(preset->dt);
-    _advect->advect(u, preset->dt);
+	preset->advectVelocities->advect(u, phi, preset->dt);
 
     Vector3 force = Vector3(0.0, -0.1, 0.0);
     u.addForce(force, preset->dt);
@@ -203,7 +201,7 @@ void Fire::runSimulation(){
 
   	
 	//Fixa signed distance field
-	//phi.reinitialize();
+	phi.reinitialize();
 }
 
 void Fire::drawMAC(){

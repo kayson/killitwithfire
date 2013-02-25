@@ -6,14 +6,14 @@
 //  Copyright (c) 2013 Johannes Deligiannis. All rights reserved.
 //
 
-#include "Projection3D.h"
+#include "FireProjection3D.h"
 #include <iomanip>
 #include "glfw.h"
 #include "pcgsolver/pcg_solver.h"
 
-void PCGProjection3D::resize(){
+void FireProjection::resize(){
     //Compute size
-    
+    /*
     _size = _cellType->size();
 
     
@@ -34,11 +34,11 @@ void PCGProjection3D::resize(){
     
     A->resize(_size);
     b->resize(_size);
-    x->resize(_size);
+    x->resize(_size);*/
 }
 
-void PCGProjection3D::fillA(){
-    assert(*_cellType == *_u);
+void FireProjection::fillA(){
+    /*assert(*_cellType == *_u);
     double scale = _dt/(_rho*_dx*_dx);
     int row = 0;
     for (GridFieldIterator<int> it = _cellType->iterator(); !it.done(); it.next()) {
@@ -98,12 +98,12 @@ void PCGProjection3D::fillA(){
 
         }
 
-    
+    */
 }
 
-void PCGProjection3D::fillb(){
+void FireProjection::fillb(){
     
-    
+    /*
     //Fillb
     double scale = _dt/(_rho*_dx);
     int index = 0;
@@ -121,10 +121,11 @@ void PCGProjection3D::fillb(){
             (*b)[index] = 0;
         }
         index++;
-    }
+    }*/
 
 }
-void PCGProjection3D::applyPressure(){
+void FireProjection::applyPressure(){
+    /*
     double scale = _dt/(_rho*_dx);
     int index = 0;
     for (GridFieldIterator<int> it = _cellType->iterator(); !it.done(); it.next()) {
@@ -143,7 +144,7 @@ void PCGProjection3D::applyPressure(){
                 
                 //double c_x,y,z;
                 //_u->indexToWorld(i, j, k, c_x, y, z);
-                /*glBegin(GL_QUADS);
+                *//*glBegin(GL_QUADS);
                 //glColor3d(scale*(*x)[index]*1000000.0,scale*(*x)[index], scale*(*x)[index]);
                 
                 if (scale*(*x)[index] > 0) {
@@ -157,16 +158,16 @@ void PCGProjection3D::applyPressure(){
                 glVertex3d(c_x+_dx*0.5, y+_dx*0.5, 0);
                 glVertex3d(c_x-_dx*0.5, y+_dx*0.5, 0);
                 glEnd();
-                */
+                *//*
             }
             index++;
         }
-    
+    */
 }
 
 
-void PCGProjection3D::project(double dt,double rho){
-    _dx = _u->dx();
+void FireProjection::project(double dt,double rho){
+    /*_dx = _u->dx();
     _dt = dt;
     _rho = rho;
     
@@ -179,4 +180,5 @@ void PCGProjection3D::project(double dt,double rho){
     PCGSolver<double> solver;
     solver.solve(*A, *b, *x, residual, iterations); //Gör magi...
     applyPressure();
+     */
 }

@@ -13,7 +13,7 @@
 #include <iostream>
 #include "../MACGrid.h"
 #include "Particles.h"
-#include "../Pressure/Projection3D.h"
+#include "Projection3D.h"
 
 class Water3D {
     
@@ -43,7 +43,7 @@ private:
     void drawCellTypes();
     void drawFaceVelocities();
     void drawVoxel(double x,double y,double z, double dx,double dy,double dz);
-    void drawSphere(float r, int segs);
+    void drawSphere(double r, int segs);
 public:
     Water3D(int dim = 15);
     void draw();

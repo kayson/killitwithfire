@@ -9,8 +9,9 @@
 #ifndef __FuidFire__Projection3__
 #define __FuidFire__Projection3__
 
-#include "MACGrid.h"
-#include "pcg_solver.h"
+#include "../MACGrid.h"
+#include "../Pressure/pcgsolver/pcg_solver.h"
+
 class PCGProjection3D {
 private:
     void resize();

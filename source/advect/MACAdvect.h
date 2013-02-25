@@ -11,6 +11,8 @@
 
 #include "../MACGrid.h"
 #include "../GridField.h"
+#include "../levelset/LevelSet.h"
+#include "../helper.h"
 
 template<class T>
 class MACAdvect {
@@ -48,7 +50,7 @@ public:
         
         u.swapBuffer();
     }
-    void advect(MACGrid &u,GridField<double> &phi, double dt){
+    void advect(MACGrid &u, LevelSet& phi, double dt){
         for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
             int i,j,k;
             iter.index(i, j, k);
@@ -80,7 +82,7 @@ public:
     }
     
     virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k) = 0;
-    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, GridField<T> &phi, int i,int j,int k) = 0;
+    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, LevelSet& phi, int i,int j,int k) = 0;
 
 };
 
@@ -90,7 +92,6 @@ public:
     virtual ~MACAdvectEuler(){}
     
     virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k){
-        
         double x,y,z;
         field.indexToWorld(i,j,k,x,y,z);
         Vector3 pos = Vector3(x,y,z);
@@ -99,8 +100,13 @@ public:
         return field.valueAtWorld(pos.x,pos.y,pos.z);
     }
     
-    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, GridField<T> &phi, int i,int j,int k){
-        return 0;
+    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, LevelSet& phi, int i, int j, int k){
+		double x,y,z;
+        field.indexToWorld(i,j,k,x,y,z);
+        Vector3 pos = Vector3(x,y,z);
+        Vector3 vel = g.velocityAtWorld(pos);
+        pos = Vector3(x,y,z)-vel*dt;
+        return field.valueAtWorld(pos.x,pos.y,pos.z);
     }
 };
 
@@ -121,9 +127,15 @@ public:
         return field.valueAtWorld(pos.x,pos.y,pos.z);
     }
     
-    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, GridField<T> &phi, int i,int j,int k){
-        return 0;
-
+    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, LevelSet& phi, int i,int j,int k){
+        double x,y,z;
+        field.indexToWorld(i,j,k,x,y,z);
+        Vector3 pos = Vector3(x,y,z);
+        Vector3 vel = g.velocityAtWorld(pos);
+        pos = Vector3(x,y,z)-vel*0.5*dt;
+        vel = g.velocityAtWorld(pos);
+        pos = Vector3(x,y,z)-vel*dt;
+        return field.valueAtWorld(pos.x,pos.y,pos.z);
     }
 
 };

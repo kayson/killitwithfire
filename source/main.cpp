@@ -146,8 +146,8 @@ void update()
 	controller.updateInput(fps); //updatera mus och tangentbord
 
 	//Update physics
-	//fire->runSimulation();
-    water->runSimulation(0.2);
+	fire->runSimulation();
+    //water->runSimulation(0.2);
 }
 
 //renderar objekt
@@ -156,7 +156,7 @@ void render(void)
 
 	camera.translateForCamera();
 
-	//fire->draw();
-    water->draw();
+	fire->draw();
+    //water->draw();
 }
 
