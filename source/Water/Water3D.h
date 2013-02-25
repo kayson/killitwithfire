@@ -45,7 +45,7 @@ private:
     void drawVoxel(double x,double y,double z, double dx,double dy,double dz);
     void drawSphere(float r, int segs);
 public:
-    Water3D(int dim = 50);
+    Water3D(int dim = 15);
     void draw();
     void runSimulation(double dt);
 };
