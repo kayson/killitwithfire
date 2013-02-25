@@ -3,38 +3,83 @@ project(killitwithfire)
 
 set(CMAKE_BUILD_TYPE "Release")
 
-FILE(GLOB killitwithfire_HEADERS 
-  ./*.h* 
-  ./advect/*.h* 
-  ./levelset/*.h* 
-  ./presets/*.h*
-  ./Pressure/*.h*
-  ./Pressure/pcgsolver/*.h*
-  ./Water/*.h*
+FILE(GLOB killitwithfire_HEADERS  ./*.h)
+FILE(GLOB killitwithfire_ADVECT_HEADERS   ./advect/*.h)
+FILE(GLOB killitwithfire_LEVELSET_HEADERS   ./levelset/*.h)
+FILE(GLOB killitwithfire_PRESETS_HEADERS   ./presets/*.h)
+FILE(GLOB killitwithfire_PRESSURE_HEADERS   ./Pressure/*.h)
+FILE(GLOB killitwithfire_PRESSURE_PCGSOLVER_HEADERS   ./Pressure/pcgsolver/*.h)
+FILE(GLOB killitwithfire_WATER_HEADERS   ./Water/*.h)
+
+list(APPEND killitwithfire_ALL_HEADERS 
+  ${killitwithfire_HEADERS}
+  ${killitwithfire_ADVECT_HEADERS}
+  ${killitwithfire_LEVELSET_HEADERS}
+  ${killitwithfire_PRESETS_HEADERS}
+  ${killitwithfire_PRESSURE_HEADERS}
+  ${killitwithfire_PRESSURE_PCGSOLVER_HEADERS}
+  ${killitwithfire_WATER_HEADERS}
   )
-source_group(include FILES ${killitwithfire_HEADERS})
 
-FILE(GLOB killitwithfire_SRCS 
-  ./*.cpp 
-  ./advect/*.cpp 
-  ./levelset/*.cpp 
-  ./presets/*.cpp
-  ./Pressure/*.cpp
-  ./Pressure/pcgsolver/*.cpp
-  ./Water/*.cpp)
-source_group(source FILES ${killitwithfire_SRCS})
+source_group("include" FILES ${killitwithfire_HEADERS})
+source_group("include\\Advect" FILES ${killitwithfire_ADVECT_HEADERS})
+source_group("include\\Levelset" FILES ${killitwithfire_LEVELSET_HEADERS})
+source_group("include\\Presets" FILES ${killitwithfire_PRESETS_HEADERS})
+source_group("include\\Pressure" FILES ${killitwithfire_PRESSURE_HEADERS})
+source_group("include\\Pressure\\pcgsolver" FILES ${killitwithfire_PRESSURE_PCGSOLVER_HEADERS})
+source_group("include\\Water" FILES ${killitwithfire_WATER_HEADERS})
 
-include_directories(	${CMAKE_SOURCE_DIR}/../externals
-			${CMAKE_SOURCE_DIR}/../externals/glm
-			${CMAKE_SOURCE_DIR}/../externals/GL
-			${CMAKE_SOURCE_DIR}/../externals/GL/GL
-			${CMAKE_SOURCE_DIR}/../externals/FreeImage		
-		)
 
-link_directories(	${CMAKE_SOURCE_DIR}/../externals/GL/lib
-		) 
+FILE(GLOB killitwithfire_SRCS  ./*.cpp)
+FILE(GLOB killitwithfire_ADVECT_SRCS   ./advect/*.cpp)
+FILE(GLOB killitwithfire_LEVELSET_SRCS   ./levelset/*.cpp)
+FILE(GLOB killitwithfire_PRESETS_SRCS   ./presets/*.cpp)
+FILE(GLOB killitwithfire_PRESSURE_SRCS   ./Pressure/*.cpp)
+FILE(GLOB killitwithfire_PRESSURE_PCGSOLVER_SRCS   ./Pressure/pcgsolver/*.cpp)
+FILE(GLOB killitwithfire_WATER_SRCS   ./Water/*.cpp)
 
-add_executable(killitwithfire ${killitwithfire_HEADERS} ${killitwithfire_SRCS})
+list(APPEND killitwithfire_ALL_SRCS 
+  ${killitwithfire_SRCS}
+  ${killitwithfire_ADVECT_SRCS}
+  ${killitwithfire_LEVELSET_SRCS}
+  ${killitwithfire_PRESETS_SRCS}
+  ${killitwithfire_PRESSURE_SRCS}
+  ${killitwithfire_PRESSURE_PCGSOLVER_SRCS}
+  ${killitwithfire_WATER_SRCS}
+  )
+
+source_group("source" FILES ${killitwithfire_SRCS})
+source_group("source\\Advect" FILES ${killitwithfire_ADVECT_SRCS})
+source_group("source\\Levelset" FILES ${killitwithfire_LEVELSET_SRCS})
+source_group("source\\Presets" FILES ${killitwithfire_PRESETS_SRCS})
+source_group("source\\Pressure" FILES ${killitwithfire_PRESSURE_SRCS})
+source_group("source\\Pressure\\pcgsolver" FILES ${killitwithfire_PRESSURE_PCGSOLVER_SRCS})
+source_group("source\\Water" FILES ${killitwithfire_WATER_SRCS})
+
+
+include_directories(	
+  ${CMAKE_SOURCE_DIR}/../externals
+  ${CMAKE_SOURCE_DIR}/../externals/glm
+  ${CMAKE_SOURCE_DIR}/../externals/GL
+  ${CMAKE_SOURCE_DIR}/../externals/GL/GL
+  ${CMAKE_SOURCE_DIR}/../externals/FreeImage
+# Fixar includes
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/advect
+  ${CMAKE_CURRENT_SOURCE_DIR}/levelSet
+  ${CMAKE_CURRENT_SOURCE_DIR}/presets  
+  ${CMAKE_CURRENT_SOURCE_DIR}/Water
+  ${CMAKE_CURRENT_SOURCE_DIR}/Pressure
+  ${CMAKE_CURRENT_SOURCE_DIR}/Pressure/pcgsolver
+  )
+
+link_directories(
+  ${CMAKE_SOURCE_DIR}/../externals/GL/lib
+  ) 
+
+
+
+add_executable(killitwithfire ${killitwithfire_ALL_HEADERS} ${killitwithfire_ALL_SRCS})
 
 target_link_libraries(killitwithfire freeglut.lib GLFW.lib)
 
