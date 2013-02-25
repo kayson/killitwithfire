@@ -5,7 +5,6 @@
 #include "advect/AdvectLevelSet.h"
 #include "GridField.hpp"
 #include "Gradient.h"
-#include "Pressure/Projection2D.h"
 #include "GridFieldFileManager.h"
 #ifdef __APPLE__
 #include "glfw.h"

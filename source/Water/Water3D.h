@@ -13,7 +13,7 @@
 #include <iostream>
 #include "../MACGrid.h"
 #include "Particles.h"
-#include "../Pressure/Projection3D.h"
+#include "Projection3D.h"
 
 class Water3D {
     

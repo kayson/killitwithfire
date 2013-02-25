@@ -7,7 +7,7 @@
 //
 
 #include "Water2D.h"
-#include "../Pressure/Projection2D.h"
+#include "Projection2D.h"
 #include "../GridFieldFileManager.h"
 #include "glfw.h"
 #include "../Advect/MACAdvect.h"

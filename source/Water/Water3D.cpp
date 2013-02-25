@@ -7,7 +7,7 @@
 //
 
 #include "Water3D.h"
-#include "../Pressure/Projection3D.h"
+#include "Projection3D.h"
 #include "../GridFieldFileManager.h"
 #include "glfw.h"
 

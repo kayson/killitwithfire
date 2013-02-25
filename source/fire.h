@@ -11,7 +11,6 @@
 #include "GridMapping.h"
 #include "helper.h"
 //#include "Pressure\pcgsolver\blas_win.h"
-#include "Pressure/Projection2D.h"
 #include "Water/Particles.h"
 
 #ifdef __APPLE__
@@ -85,7 +84,6 @@ private:
 	GridField<Vector3> w;
     //Projektion
     Particles particles;
-    PCGProjection2D *_project;
 	GridField<int> celltype;
     //GridField<double> scalar;
 };
