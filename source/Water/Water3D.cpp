@@ -11,6 +11,7 @@
 #include "GridFieldFileManager.h"
 #include "glfw.h"
 #include "Interpolation.h"
+#include "MACAdvect.h"
 
 #ifdef __APPLE__
 #include "transform.hpp"
@@ -26,6 +27,7 @@ Water3D::Water3D(int dim):u(dim,dim,dim,2600),cellTypes(dim,dim,dim,2600){
     rho = 1.0;
     
     //
+    _advect = new MACAdvectRK2<double>();
     
     //Translate dude
     u.multTransformation(glm::translate(-1300.0, -600.0, -800.0));

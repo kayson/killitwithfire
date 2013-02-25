@@ -32,7 +32,7 @@ private:
 public:
     Vector3 g;
     double rho;
-    
+    MACAdvect<double> *_advect;
     
 private:
     void recomputeCellTypes();
