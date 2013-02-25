@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 2.4.0)
 project(killitwithfire)
 
-set(CMAKE_BUILD_TYPE "Release")
+## Fixa openMP-flagga ################################################
 
-## Fixa openMP-flagga
 IF (WIN32)
    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 ENDIF (WIN32)
+
+## Fixa alla headers ##################################################
 
 FILE(GLOB killitwithfire_HEADERS  ./*.h)
 FILE(GLOB killitwithfire_ADVECT_HEADERS   ./advect/*.h)
@@ -34,6 +35,7 @@ source_group("include\\Pressure" FILES ${killitwithfire_PRESSURE_HEADERS})
 source_group("include\\Pressure\\pcgsolver" FILES ${killitwithfire_PRESSURE_PCGSOLVER_HEADERS})
 source_group("include\\Water" FILES ${killitwithfire_WATER_HEADERS})
 
+## Fixa alla source-filer ################################################
 
 FILE(GLOB killitwithfire_SRCS  ./*.cpp)
 FILE(GLOB killitwithfire_ADVECT_SRCS   ./advect/*.cpp)
@@ -61,14 +63,9 @@ source_group("source\\Pressure" FILES ${killitwithfire_PRESSURE_SRCS})
 source_group("source\\Pressure\\pcgsolver" FILES ${killitwithfire_PRESSURE_PCGSOLVER_SRCS})
 source_group("source\\Water" FILES ${killitwithfire_WATER_SRCS})
 
+## Include dirs för att slippa länkar mellan mappar ###################
 
-include_directories(	
-  ${CMAKE_SOURCE_DIR}/../externals
-  ${CMAKE_SOURCE_DIR}/../externals/glm
-  ${CMAKE_SOURCE_DIR}/../externals/GL
-  ${CMAKE_SOURCE_DIR}/../externals/GL/GL
-  ${CMAKE_SOURCE_DIR}/../externals/FreeImage
-# Fixar includes
+list(APPEND killitwithfire_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/advect
   ${CMAKE_CURRENT_SOURCE_DIR}/levelSet
@@ -78,11 +75,27 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/Pressure/pcgsolver
   )
 
+## Fixar länkar till bibliotek ########################################
+
+list(APPEND killitwithfire_INCLUDE_DIRS
+  ${CMAKE_SOURCE_DIR}/../externals
+  ${CMAKE_SOURCE_DIR}/../externals/glm
+  ${CMAKE_SOURCE_DIR}/../externals/GL
+  ${CMAKE_SOURCE_DIR}/../externals/GL/GL
+  ${CMAKE_SOURCE_DIR}/../externals/FreeImage
+)
+
+## Lägger till dem ################################################
+
+include_directories(	
+  ${killitwithfire_INCLUDE_DIRS}
+  )
+
+#################################################################
+
 link_directories(
   ${CMAKE_SOURCE_DIR}/../externals/GL/lib
   ) 
-
-
 
 add_executable(killitwithfire ${killitwithfire_ALL_HEADERS} ${killitwithfire_ALL_SRCS})
 
