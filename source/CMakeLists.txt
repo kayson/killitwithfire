@@ -3,6 +3,11 @@ project(killitwithfire)
 
 set(CMAKE_BUILD_TYPE "Release")
 
+## Fixa openMP-flagga
+IF (WIN32)
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+ENDIF (WIN32)
+
 FILE(GLOB killitwithfire_HEADERS  ./*.h)
 FILE(GLOB killitwithfire_ADVECT_HEADERS   ./advect/*.h)
 FILE(GLOB killitwithfire_LEVELSET_HEADERS   ./levelset/*.h)
