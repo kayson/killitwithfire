@@ -17,9 +17,7 @@ UpwindDiff::~UpwindDiff()
 double UpwindDiff::calcDxm(GridField<double> &g, const int i, const int j, const int k)
 {
 	if(i <= 0)
-		return (double)(g(i,j,k))/(FirePresets::dx);//ext->extrapolate(g,i,j,k,*this); // Extrapolering
-	//if(i >= g.xdim()-1)
-		//return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+		return 1.0;
 	else
 		return (double)(g(i, j, k) - g(i-1, j, k))/(FirePresets::dx);
 }
@@ -27,9 +25,7 @@ double UpwindDiff::calcDxm(GridField<double> &g, const int i, const int j, const
 double UpwindDiff::calcDym(GridField<double> &g, const int i, const int j, const int k)
 {
 	if(j <= 0)
-		return (double)(g(i,j,k))/(FirePresets::dx);//ext->extrapolate(g,i,j,k,*this); // Extrapolering
-	//if(i >= g.ydim()-1)
-		//return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+		return 1.0;
 	else
 		return (double)(g(i, j, k) - g(i, j-1, k))/(FirePresets::dx);
 }
@@ -37,39 +33,33 @@ double UpwindDiff::calcDym(GridField<double> &g, const int i, const int j, const
 double UpwindDiff::calcDzm(GridField<double> &g, const int i, const int j, const int k)
 {
 	if(k <= 0)
-		return (double)(g(i,j,k))/(FirePresets::dx);//ext->extrapolate(g,i,j,k,*this); // Extrapolering
-	//if(i >= g.zdim()-1)
-		//return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+		return 1.0;
 	else
 		return (double)(g(i, j, k) - g(i, j, k-1))/(FirePresets::dx);
 }
 
 double UpwindDiff::calcDxp(GridField<double> &g, const int i, const int j, const int k)
 {
-	//if(i <= 0)
-		//return ext->extrapolate(g,i,j,k,*this); // Extrapolering
 	if(i >= g.xdim()-1)
-		return (double)(g(i,j,k))/(FirePresets::dx);//ext->extrapolate(g,i,j,k,*this); // Extrapolering
+		return -1.0;
 	else
 		return (double)(g(i+1, j, k) - g(i, j, k))/(FirePresets::dx);
 }
 
 double UpwindDiff::calcDyp(GridField<double> &g, const int i, const int j, const int k)
 {
-	//if(j <= 0)
-		//return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+
 	if(j >= g.ydim()-1)
-		return (double)(g(i,j,k))/(FirePresets::dx);//ext->extrapolate(g,i,j,k,*this); // Extrapolering
+		return -1.0;
 	else
 		return (double)(g(i, j + 1, k) - g(i, j, k))/(FirePresets::dx);
 }
 
 double UpwindDiff::calcDzp(GridField<double> &g, const int i, const int j, const int k)
 {
-	//if(k <= 0)
-		//return ext->extrapolate(g,i,j,k,*this); // Extrapolering
+
 	if(k >= g.zdim()-1)
-		return (double)(g(i,j,k))/(FirePresets::dx);//ext->extrapolate(g,i,j,k,*this); // Extrapolering
+		return -1.0;
 	else
 		return (double)(g(i, j, k + 1) - g(i, j, k))/(FirePresets::dx);
 }
@@ -126,6 +116,7 @@ double UpwindDiff::calcDxy(GridField<double> &g, const int i, const int j, const
 
 Vector3 UpwindDiff::calcDx(GridField<Vector3> &g, const int i, const int j, const int k)
 {
+	throw; //Detta måste göras om för att användas!
 	if(i <= 0 || i >= g.xdim()-1)
 		return ext->extrapolate(g,i,j,k,*this);	// Extrapolera
 	if((*_w)(i, j, k).x > 0)
@@ -135,6 +126,7 @@ Vector3 UpwindDiff::calcDx(GridField<Vector3> &g, const int i, const int j, cons
 }
 Vector3 UpwindDiff::calcDy(GridField<Vector3> &g, const int i, const int j, const int k)
 {
+	throw; //Detta måste göras om för att användas!
 	if(j <= 0 || j >= g.ydim()-1)
 		return ext->extrapolate(g,i,j,k,*this);	// Extrapolera
 	if((*_w)(i, j, k).y > 0)
@@ -144,6 +136,7 @@ Vector3 UpwindDiff::calcDy(GridField<Vector3> &g, const int i, const int j, cons
 }
 Vector3 UpwindDiff::calcDz(GridField<Vector3> &g, const int i, const int j, const int k)
 {
+	throw; //Detta måste göras om för att användas!
 	if(k <= 0 || k >= g.zdim()-1)
 		return ext->extrapolate(g,i,j,k,*this);	// Extrapolera
 	if((*_w)(i, j, k).z > 0)

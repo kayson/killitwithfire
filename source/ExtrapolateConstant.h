@@ -25,6 +25,7 @@ public:
 		if(typeid(d) == typeid(CentralDiff))
 		{
 			// Första-derivata
+			/*
 			if(i <= 0)
 				return (double)(g(i+1, j, k) - g(i, j, k))/(FirePresets::dx*2.0);
 			if(i >= g.xdim()-1)
@@ -37,7 +38,19 @@ public:
 				return (double)(g(i, j, k+1) - g(i, j, k))/(FirePresets::dx*2.0);
 			if(k >= g.zdim()-1)
 				return (double)(g(i, j, k) - g(i, j, k-1))/(FirePresets::dx*2.0);
-
+			*/
+			if(i <= 0)
+				return 1.0/1.0;
+			if(i >= g.xdim()-1)
+				return -1.0/1.0;
+			if(j <= 0)
+				return 1.0/1.0;
+			if(j >= g.ydim()-1)
+				return -1.0/1.0;
+			if(k <= 0)
+				return 1.0/1.0;
+			if(k >= g.zdim()-1)
+				return -1.0/1.0;
 			// Andra-derivata
 		}
 
@@ -46,6 +59,7 @@ public:
 
 	Vector3 extrapolate(GridField<Vector3>& g, const int i, const int j, const int k, Discretization &d)
 	{
+		throw; //Detta måste göras om för att användas!
 		if(typeid(d) == typeid(UpwindDiff))
 		{
 			if(i <= 0 || i >= g.xdim()-1)

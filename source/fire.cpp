@@ -510,7 +510,7 @@ void Fire::runSimulation(){
 
   	
 	//Fixa signed distance field
-	//phi.reinitialize();
+	phi.reinitialize();
 }
 
 void Fire::drawMAC(){
@@ -721,7 +721,7 @@ void Fire::draw()
 	phi.draw();
     //u.draw();
 	//drawCenterVelocities();
-	//drawCenterGradients(FirePresets::upwindDisc);
+	drawCenterGradients(FirePresets::centralDisc);
     //drawFaceVelocities();
     //drawMAC();
     //drawSolid();
