@@ -17,15 +17,18 @@
 class FirePresetsTwoDimension : public FirePresets
 {
 public:
-	FirePresetsTwoDimension(){
+	FirePresetsTwoDimension()  
+	{
 		implicitFunction = implicitFunction::sphere;
         
         //Rutiner
         advection = new AdvectLevelSetEuler();
-		
-	};
+		advectVelocities = new MACAdvectEuler<double>();
+	}
+
 	~FirePresetsTwoDimension(){
         delete advection;
+		delete advectVelocities;
     }
 
 private:

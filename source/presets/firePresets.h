@@ -11,12 +11,13 @@
 
 #include "../CentralDiff.h"
 #include "../UpwindDiff.h"
+#include "../advect/MACAdvect.h"
 
 class FirePresets
 {
 public:
-	FirePresets(){};
-	~FirePresets(){};
+	FirePresets(){}
+	~FirePresets(){}
 	double (*implicitFunction)(int x, int y, int z);
 
 
@@ -37,6 +38,8 @@ public:
 
     //Rutiner
 	AdvectLevelSet *advection;
+	MACAdvect<double> *advectVelocities;
+	void advectLevelSet(double duration);
     //Discretization *upwindDiscretization;
 	//Discretization *centralDiscretization;
 	static UpwindDiff *upwindDisc;

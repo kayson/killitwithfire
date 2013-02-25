@@ -24,7 +24,7 @@ private:
     GridField<Vector3> *_cache;
     MACGrid *_buffer;
 
-    MACAdvect<double> *_advect;
+    //MACAdvect<double> *_advect;
 private:
     void initialize(int xdim,int ydim,int zdim, double size);
 public:
@@ -41,7 +41,7 @@ public:
     MACGrid& operator=(const MACGrid &g);
     
     //Advektion
-    void setAdvection(MACAdvect<double> *advect){  _advect = advect;};
+    //void setAdvection(MACAdvect<double> *advect){  _advect = advect;};
 
     //Transformation
     void setTransformation(glm::dmat4x4 t);
@@ -63,8 +63,8 @@ public:
     double valueAtFace(const int i,const int j,const int k, DirectionEnums d) const;
     void setValueAtFace(double val,const int i, const int j, const int k, DirectionEnums d);
     void addValueAtFace(double val,const int i, const int j, const int k, DirectionEnums d);
-    void advect(double dt);
-    void advect(double dt, GridField<int > &cellType);
+    //void advect(double dt);
+    //void advect(double dt, GridField<int > &cellType);
     void addForce(Vector3 vec, double dt);
     void extrapolate(double dt, GridField<int > &cellType);
 

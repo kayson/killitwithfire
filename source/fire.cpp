@@ -445,11 +445,26 @@ void Fire::computeCellTypes()
 	}
 }	
 
-CellType Fire::getCellType(const int i, const int j, const int k)
+CellType Fire::getCellType(const int i, const int j, const int k) const
 {
 	if(false) //Check if is solid
 		return SOLID;
 	else if(phi.grid->valueAtIndex(i,j,k) > 0.0)
+		return BLUECORE;
+	else 
+		return IGNITED;
+}
+
+CellType Fire::getCellType(double w_x, double w_y,double w_z) const
+{
+	return getCellType(phi.grid->valueAtWorld(w_x, w_y, w_z));
+}
+
+CellType Fire::getCellType(double phi)
+{
+	if(false) //Check if is solid
+		return SOLID;
+	else if(phi > 0.0)
 		return BLUECORE;
 	else 
 		return IGNITED;
@@ -480,7 +495,8 @@ void Fire::runSimulation(){
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 
 
-    u.advect(preset->dt);
+    //u.advect(preset->dt);
+	advect(preset->dt);
     Vector3 force = Vector3(0.0, -0.1, 0.0);
     u.addForce(force, preset->dt);
 
@@ -720,4 +736,94 @@ Fire::~Fire(){
 	delete rhs;
 	delete p;
 	delete _borderCondition;
+}
+
+void Fire::advect(double dt){
+    
+    for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u._u->indexToWorld(i, j, k, x, y, z);
+        double val = preset->advectVelocities->advect(dt, u, *u._u, i, j, k);
+        u.buffer()->_u->setValueAtIndex(val, i, j, k);
+        
+    }
+    
+    for (GridFieldIterator<double> iter = u._v->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u._v->indexToWorld(i, j, k, x, y, z);
+        double val = preset->advectVelocities->advect(dt, u, *u._v, i, j, k);
+        u.buffer()->_v->setValueAtIndex(val, i, j, k);
+        
+    }
+    
+    for (GridFieldIterator<double> iter = u._w->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u._w->indexToWorld(i, j, k, x, y, z);
+        double val = preset->advectVelocities->advect(dt, u, *u._w, i, j, k);
+        u.buffer()->_w->setValueAtIndex(val, i, j, k);
+    }
+    
+    u.swapBuffer();
+}
+
+void Fire::advect(double dt, GridField<int > &cellType){
+    
+    for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u._u->indexToWorld(i, j, k, x, y, z);
+        double val;
+        if (cellType.valueAtWorld(x, y, z) == BLUECORE) 
+		{
+			val = preset->advectVelocities->advect(dt, u, *u._u, i, j, k);
+        }
+		else
+		{
+            val = 0;// _u->valueAtIndex(iter.index());
+        }
+        
+        u.buffer()->_u->setValueAtIndex(val, i, j, k);
+
+    }
+    
+    for (GridFieldIterator<double> iter = u._v->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u._v->indexToWorld(i, j, k, x, y, z);
+        double val;
+        if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
+			val = preset->advectVelocities->advect(dt, u, *u._v, i, j, k);
+        }else{
+            val = 0;//_v->valueAtIndex(iter.index());
+        }
+        
+        u.buffer()->_v->setValueAtIndex(val, i, j, k);
+
+    }
+    
+    for (GridFieldIterator<double> iter = u._w->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u._w->indexToWorld(i, j, k, x, y, z);
+        double val;
+        if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
+            val = preset->advectVelocities->advect(dt, u, *u._w, i, j, k);
+        }else{
+            val = 0;//_w->valueAtIndex(iter.index());
+        }
+        
+        u.buffer()->_w->setValueAtIndex(val, i, j, k);
+
+    }
+    
+    u.swapBuffer();
 }

@@ -9,20 +9,21 @@
 #ifndef __FuidFire__SelfAdvect__
 #define __FuidFire__SelfAdvect__
 
-#include "MACGrid.h"
-#include "GridField.h"
+#include "../MACGrid.h"
+#include "../GridField.h"
 
 template<class T>
 class MACAdvect {
 public:
-    virtual ~MACAdvect(){};
+	MACAdvect(){}
+    virtual ~MACAdvect(){}
     virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k) = 0;
 };
 
 template<class T>
 class MACAdvectEuler : public MACAdvect<T> {
 public:
-    virtual ~MACAdvectEuler(){};
+    virtual ~MACAdvectEuler(){}
     
     virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k){
         
