@@ -333,38 +333,6 @@ void MACGrid::addValueAtFace(double val,const int i, const int j, const int k, D
     }
 }
 
-void MACGrid::advect(double dt){
-    #pragma omp parallel for
-    for (int index = 0; index < 3; index++) {
-        GridField<double> *field;
-        if (index == 0) {
-            field = _u;
-        }else if (index == 1){
-            field = _v;
-        }else{
-            field = _w;
-        }
-        
-        for (GridFieldIterator<double> iter = field->iterator(); !iter.done(); iter.next()) {
-            int i,j,k;
-            iter.index(i, j, k);
-            double x,y,z;
-            field->indexToWorld(i, j, k, x, y, z);
-            double val = _advect->advect(dt, *this, *field, i, j, k);
-
-            if (index == 0) {
-                buffer()->_u->setValueAtIndex(val, i, j, k);
-            }else if (index == 1){
-                buffer()->_v->setValueAtIndex(val, i, j, k);
-            }else{
-                buffer()->_w->setValueAtIndex(val, i, j, k);
-            }
-        }
-    }
-
-    
-    swapBuffer();
-}
 /*
 void MACGrid::advect(double dt, GridField<int > &cellType){
     
