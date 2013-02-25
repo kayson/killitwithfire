@@ -4,7 +4,9 @@ project(killitwithfire)
 ## Fixa openMP-flagga ################################################
 
 IF (WIN32)
-   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+  IF(MSVC)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+  ENDIF(MSVC)
 ENDIF (WIN32)
 
 ## Fixa alla headers ##################################################
