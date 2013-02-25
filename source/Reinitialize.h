@@ -42,9 +42,11 @@ double CalcMaxGradient(GridField<double> &g)
 		{
 			for(int k = 0; k < g.zdim(); k++)
 			{
-				double v = (gradient->getGradient(g, i, j, k, *FirePresets::upwindDisc)).norm();
-				if(v > max)
-					max = v;
+				if(g.valueAtIndex(i,j,k) < 0){
+					double v = (gradient->getGradient(g, i, j, k, *FirePresets::upwindDisc)).norm();
+					if(v > max)
+						max = v;
+				}
 			}
 		}
 	}
@@ -90,11 +92,11 @@ namespace reinitialize{
 			//Räkna ut upwind differences med Godunov
 			double ddx2, ddy2, ddz2;
 			Godunov(g, i, j, k, sign, ddx2, ddy2, ddz2);
-			//std::cout << "godunov:" << ddx2 + ddy2 << "sign:" << sign << std::endl;
 			return sign * (1 - std::sqrt(ddx2 + ddy2 + ddz2));
 		}
 		else
 			return 0;
+		
 	}
 
 	void reinitializeGrid(GridField<double> **g, GridField<double> **gridCopy)

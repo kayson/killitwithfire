@@ -56,32 +56,30 @@ void LevelSet::printDistanceField()
 
 double LevelSet::getCurvature(const int i, const int j, const int k)
 {
-    
-	Discretization *disc = new CentralDiff();
 	
 	double 
-	dx = disc->calcDx(*grid, i, j, k),
-	dy = disc->calcDy(*grid, i, j, k),
-	dz = disc->calcDz(*grid, i, j, k),
-	d2x = disc->calcD2x(*grid, i, j, k),
-	d2y = disc->calcD2y(*grid, i, j, k),
-	d2z = disc->calcD2z(*grid, i, j, k),
-	dxy = disc->calcDxy(*grid, i, j, k),
-	dxz = disc->calcDxz(*grid, i, j, k),
-	dyz = disc->calcDyz(*grid, i, j, k);
+		dx = FirePresets::centralDisc->calcDx(*grid, i, j, k),
+		dy = FirePresets::centralDisc->calcDy(*grid, i, j, k),
+		dz = FirePresets::centralDisc->calcDz(*grid, i, j, k),
+		d2x = FirePresets::centralDisc->calcD2x(*grid, i, j, k),
+		d2y = FirePresets::centralDisc->calcD2y(*grid, i, j, k),
+		d2z = FirePresets::centralDisc->calcD2z(*grid, i, j, k),
+		dxy = FirePresets::centralDisc->calcDxy(*grid, i, j, k),
+		dxz = FirePresets::centralDisc->calcDxz(*grid, i, j, k),
+		dyz = FirePresets::centralDisc->calcDyz(*grid, i, j, k);
 	double a = 2.0000000000;
     
-    delete disc;
-    
-	return (dx*dx*(d2y + d2z) - a*dy*dz*dyz + dy*dy*(d2x*d2z) - a*dx*dz*dxz + dz*dz*(d2x + d2y) - a*dx*dy*dxy)/(a*std::pow(dx*dx+dy*dy+dz*dz, 1.5));
+	return (dx*dx*(d2y + d2z) - a*dy*dz*dyz + 
+		dy*dy*(d2x*d2z) - a*dx*dz*dxz + 
+		dz*dz*(d2x + d2y) - a*dx*dy*dxy) /
+		(a*std::pow(dx*dx+dy*dy+dz*dz, 1.5));
 }
 
 Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 {
-	Discretization *disc = new CentralDiff();
 
 	//Osäker om detta är korrekt implementation
-	Vector3 g = Gradient::getGradient(*grid, i, j, j, *disc);
+	Vector3 g = Gradient::getGradient(*grid, i, j, j, *(FirePresets::centralDisc));
 	
 	// l blir 0 ibland...
 	double l = g.norm();
@@ -90,8 +88,6 @@ Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 	else
 		g = Vector3(0.0, 1.0, 0.0);
 
-	delete disc;
-	
 	return g;
 }
 
