@@ -10,8 +10,9 @@
 #include "../Pressure/Projection2D.h"
 #include "../GridFieldFileManager.h"
 #include "glfw.h"
+#include "../Advect/MACAdvect.h"
 
-Water2D::Water2D():u(40,40,1,18),cellTypes(40,40,1,18){
+Water2D::Water2D():u(30,30,1,18),cellTypes(30,30,1,18){
     
     //Default variables
     g = Vector3(0.0,-0.15,0.0);
@@ -102,7 +103,7 @@ void Water2D::runSimulation(double dt){
     
     //Advect velocity field
     u.advect(dt);
-    
+
     //Add exernal forces
     u.addForce(g, dt);
     

@@ -88,7 +88,7 @@ MACGrid::MACGrid(int xdim,int ydim,int zdim, double size):GridMapping(xdim,ydim,
 void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
 
     //Default advektionsalgoritm
-    //_advect = new MACAdvectEuler<double>();
+    _advect = new MACAdvectRK2<double>();
 
     //Initiera variabler
     _buffer = NULL;
@@ -279,25 +279,6 @@ Vector3 MACGrid::operator()(int i ,int j,int k) const{
     return velocityAtCenter(i,j,k);
 }
 
-void MACGrid::fillVelocity(Vector3 vel){
-    
-    for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
-        _u->setValueAtIndex(vel.x, iter.index());
-        buffer()->_u->setValueAtIndex(vel.x,iter.index());
-    }
-    
-    for (GridFieldIterator<double> iter = _v->iterator(); !iter.done(); iter.next()) {
-        _v->setValueAtIndex(vel.y, iter.index());
-        buffer()->_v->setValueAtIndex(vel.y,iter.index());
-    }
-    
-    for (GridFieldIterator<double> iter = _w->iterator(); !iter.done(); iter.next()) {
-        _w->setValueAtIndex(vel.z, iter.index());
-        buffer()->_w->setValueAtIndex(vel.z,iter.index());
-    }
-    
-    
-}
 
 double MACGrid::valueAtFace(const int i,const int j,const int k, DirectionEnums d) const{
     
@@ -351,9 +332,9 @@ void MACGrid::addValueAtFace(double val,const int i, const int j, const int k, D
         _w->addValueAtIndex(val, i, j, k+1);
     }
 }
-/*
+
 void MACGrid::advect(double dt){
-#pragma omp parallel for
+    #pragma omp parallel for
     for (int index = 0; index < 3; index++) {
         GridField<double> *field;
         if (index == 0) {
@@ -384,7 +365,7 @@ void MACGrid::advect(double dt){
     
     swapBuffer();
 }
-
+/*
 void MACGrid::advect(double dt, GridField<int > &cellType){
     
     for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
@@ -437,6 +418,8 @@ void MACGrid::advect(double dt, GridField<int > &cellType){
     
     swapBuffer();
 }*/
+
+
 
 void MACGrid::addForce(Vector3 vec, double dt){
     
