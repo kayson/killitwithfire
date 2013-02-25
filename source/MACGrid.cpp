@@ -95,7 +95,7 @@ MACGrid::MACGrid(int xdim,int ydim,int zdim, double size):GridMapping(xdim,ydim,
 void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
 
     //Default advektionsalgoritm
-    _advect = new MACAdvectEuler<double>();
+    //_advect = new MACAdvectEuler<double>();
 
     //Initiera variabler
     _buffer = nullptr;
@@ -335,7 +335,7 @@ void MACGrid::addValueAtFace(double val,const int i, const int j, const int k, D
         _w->addValueAtIndex(val, i, j, k);
     }
 }
-
+/*
 void MACGrid::advect(double dt){
     
     for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
@@ -421,7 +421,7 @@ void MACGrid::advect(double dt, GridField<int > &cellType){
     }
     
     swapBuffer();
-}
+}*/
 
 void MACGrid::addForce(Vector3 vec, double dt){
     for (GridFieldIterator<double> iter = _u->iterator(); !iter.done(); iter.next()) {
