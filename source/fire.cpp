@@ -181,8 +181,12 @@ void Fire::runSimulation(){
     }
 
 	static int counter = 0;
-    if (counter % 200 == 0) {
-		phi.grid->addValueAtIndex(0.1,preset->GRID_DIM_X/2,0,0);
+    if (counter % 1 == 0) {
+		for(int i = -4; i < 4; i++)
+		{
+			phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
+			u.addValueAtFace(3,preset->GRID_DIM_X/2+i,0,0,UP);
+		}
     }
     counter++;
 
@@ -192,7 +196,7 @@ void Fire::runSimulation(){
     //u.advect(preset->dt);
 	preset->advectVelocities->advect(u, phi, preset->dt);
 
-    Vector3 force = Vector3(0.0, -0.1, 0.0);
+    Vector3 force = Vector3(0.0, 0.1, 0.0);
     u.addForce(force, preset->dt);
 
 	advectLevelSet(preset->dt);
@@ -374,7 +378,7 @@ void Fire::draw()
 	phi.draw();
     //u.draw();
 	//drawCenterVelocities();
-	drawCenterGradients(FirePresets::centralDisc);
+	//drawCenterGradients(FirePresets::centralDisc);
     //drawFaceVelocities();
     //drawMAC();
     //drawSolid();
