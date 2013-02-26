@@ -136,30 +136,36 @@ public:
 			return field->valueAtWorld(ePos.x,ePos.y,ePos.z);
 		else
 		{
-			Vector3 n = phi.getNormal(sPos.x, sPos.y, sPos.z);
-			double Vs = Vector3::dot(sVel, n);
-			
-			double Ve = 0;
-			if(sType == BLUECORE)
-				Ve = Vs + (FirePresets::rhof/FirePresets::rhoh - 1.0)*FirePresets::S;
-			else if(sType == IGNITED)
-				Ve = Vs + (FirePresets::rhoh/FirePresets::rhof - 1.0)*FirePresets::S;
-			else
-			{
-				std::cout << "Fel i MACAdvect" << std::endl;
-				throw;
-			}
+			Vector3 uG = fireGhostFluid(phi, sPos, sVel, sType);
 
-			Vector3 ue = Ve*n + sVel - Vs*n;
-			
 			if(dir == VelocityDirection::UDIR)
-				return ue.x;
+				return uG.x;
 			else if(dir == VelocityDirection::VDIR)
-				return ue.y;
+				return uG.y;
 			else //(dir == VelocityDirection::WDIR)
-				return ue.x;
+				return uG.x;
 		}
     }
+
+	//Retunerar true om ett 
+	Vector3 fireGhostFluid(LevelSet& phi, const Vector3 &startPos, const Vector3 &startVel,  const CellType startType)
+	{
+		Vector3 N = phi.getNormal(startPos.x, startPos.y, startPos.z);
+		double Vs = Vector3::dot(startVel, N);
+			
+		double VeG = 0; //Ghost end Velocity, can be both Vf and Vh
+		if(startType == BLUECORE)
+			VeG = Vs + (FirePresets::rhof/FirePresets::rhoh - 1.0)*FirePresets::S;
+		else if(startType == IGNITED)
+			VeG = Vs + (FirePresets::rhoh/FirePresets::rhof - 1.0)*FirePresets::S;
+		else
+		{
+			std::cout << "Fel i MACAdvect" << std::endl;
+			throw;
+		}
+
+		return VeG*N + startVel - Vs*N;
+	}
 };
 
 template<class T>
@@ -179,7 +185,7 @@ public:
     }
     
     virtual double advect(double dt,const MACGrid &g, const VelocityDirection dir, LevelSet& phi, int i,int j,int k){
-       /* GridField<T> *field;
+		GridField<T> *field;
 		if(dir == VelocityDirection::UDIR)
 			field = g._u;
 		else if(dir == VelocityDirection::VDIR)
@@ -189,12 +195,12 @@ public:
 		
 		double x,y,z;
         field->indexToWorld(i,j,k,x,y,z);
-        Vector3 pos = Vector3(x,y,z);
+		Vector3 pos = Vector3(x,y,z);
         Vector3 vel = g.velocityAtWorld(pos);
         pos = Vector3(x,y,z)-vel*0.5*dt;
         vel = g.velocityAtWorld(pos);
-        pos = Vector3(x,y,z)-vel*dt;*/
-        return 0.0;
+        pos = Vector3(x,y,z)-vel*dt;
+        return field->valueAtWorld(pos.x,pos.y,pos.z);
     }
 
 };
