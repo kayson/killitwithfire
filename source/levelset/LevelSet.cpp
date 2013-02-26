@@ -93,8 +93,8 @@ Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 
 Vector3 LevelSet::getNormal(const double w_x, const double w_y, const double w_z)
 {
-	double i, j, k;
-	grid->worldToLocal(w_x, w_y, w_z, i, j, k);
+	int i, j, k;
+	grid->worldToIndex(i, j, k, w_x, w_y, w_z);
 
 	// TODO FIXA!!!
 	//Ej korrekt implementation, då normalen måste interpoleras
@@ -122,10 +122,10 @@ void LevelSet::draw() const
         
         if(grid->valueAtIndex(i,j,k) > 0)
         {
-            glColor3d(0,0,grid->valueAtIndex(i, j, k));
+			glColor3d(0,0,grid->valueAtIndex(i, j, k)*3);
             
         }else{
-            glColor3d(-grid->valueAtIndex(i, j, k)/3.0,0,0);
+            glColor3d(-grid->valueAtIndex(i, j, k),0,0);
             
         }
         glBegin(GL_QUADS);

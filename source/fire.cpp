@@ -13,7 +13,6 @@
 #include "transform.hpp"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
-
 #endif
 
 Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
@@ -182,6 +181,16 @@ void Fire::runSimulation(){
 
 		currentTime += dt;
     }
+
+	/*static int counter = 0;
+    if (counter % 1 == 0) {
+		for(int i = -4; i < 4; i++)
+		{
+			phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
+			u.addValueAtFace(3,preset->GRID_DIM_X/2+i,0,0,UP);
+		}
+    }
+    counter++;*/
 
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 

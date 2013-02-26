@@ -174,7 +174,6 @@ void MACGrid::setTransformation(glm::dmat4x4 t){
     */
     
      //3D!
-    
     _u->setTransformation(glm::translate(-0.5*GridMapping::dx(),0.0,0.0));
     _u->multTransformation(glm::scale(1.0+local_dx(), 1.0, 1.0));
     
@@ -223,7 +222,7 @@ void MACGrid::swapBuffer(){
     _w = &(*_w_buffer);
     _hasCache = &(*_hasCache_buffer);
     _cache = &(*_cache_buffer);
-
+    
     
     /*std::iter_swap(buffer()->_u, _u);
     std::iter_swap(buffer()->_v, _v);
@@ -421,7 +420,6 @@ void MACGrid::addForce(Vector3 vec, double dt){
         }
     }
     
-    _hasCache->setAll(false);
 }
 
 void MACGrid::extrapolate(double dt, GridField<int > &cellType){
@@ -464,12 +462,6 @@ void MACGrid::extrapolate(double dt, GridField<int > &cellType){
                 if (cellType.valueAtIndex(i,j-1,k) == AIR) {
                     setValueAtFace(0, i, j, k, DOWN);
                 }
-            }else if(cellType.valueAtIndex(i, j, k) == SOLID){
-                setValueAtFace(0, i, j, k, UP);
-                setValueAtFace(0, i, j, k, DOWN);
-                setValueAtFace(0, i, j, k, LEFT);
-                setValueAtFace(0, i, j, k, RIGHT);
-
             }
         }
     }
@@ -477,16 +469,6 @@ void MACGrid::extrapolate(double dt, GridField<int > &cellType){
     for (GridFieldIterator<int> it = cellType.iterator(); !it.done(); it.next()) {
         int i,j,k;
         it.index(i, j, k);
-        /*
-         if (cellType.valueAtIndex(i,j,k) == SOLID) {
-         setValueAtFace(0, i, j, k, LEFT);
-         setValueAtFace(0, i, j, k, RIGHT);
-         setValueAtFace(0, i, j, k, UP);
-         setValueAtFace(0, i, j, k, DOWN);
-         
-         }
-         
-         */
         
         if (k == 0) {
             if (cellType.valueAtIndex(i, j, k) == IGNITED){

@@ -17,30 +17,34 @@ void PCGProjection3D::resize(){
     _size = _cellType->size();
 
     
-    if(A == nullptr ){
-        A = new SparseMatrix<double>(_size,7);
+    if(A != nullptr ){
+        delete A;
     }
+    
     A = new SparseMatrix<double>(_size,7);
     
-    if (b == nullptr){
-        b = new std::vector<double>(_size);
+    
+    if (b != nullptr){
+        delete b;
     }
+    
     b = new std::vector<double>(_size);
+
     
     
     if (x == nullptr){
         x = new std::vector<double>(_size);
     }
     
-    A->resize(_size);
-    b->resize(_size);
     x->resize(_size);
+    
 }
 
 void PCGProjection3D::fillA(){
     assert(*_cellType == *_u);
     double scale = _dt/(_rho*_dx*_dx);
     int row = 0;
+
     for (GridFieldIterator<int> it = _cellType->iterator(); !it.done(); it.next()) {
         
         int i,j,k;

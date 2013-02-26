@@ -19,10 +19,25 @@ class Particles : public std::vector<Vector3> {
 public:
      
 public:
-    void integrate(const MACGrid& grid, double dt){
-    #pragma omp parallel for
-        for (int i = 0; i < size(); i++) {
-            (*this)[i] += grid.velocityAtWorld((*this)[i])*dt;
+    void integrateEuler(const MACGrid& grid, double dt){
+        int i;
+    #pragma omp parallel for private (i)
+        for (i = 0; i < size(); i++) {
+            
+            (*this)[i] += grid.velocityAtWorld(this->operator[](i))*dt;
+        }
+    }
+    
+    void integrateRK3(const MACGrid& grid, double dt){
+        int i;
+    #pragma omp parallel for private (i)
+        for (i = 0; i < size(); i++) {
+            
+            Vector3 k1 = grid.velocityAtWorld((*this)[i]);
+            Vector3 k2 = grid.velocityAtWorld((*this)[i]+k1*dt*0.5);
+            Vector3 k3 = grid.velocityAtWorld((*this)[i]+k2*dt*0.75);
+            
+            (*this)[i] += k1*2.0/9.0*dt+k2*3.0/9.0*dt+k3*4.0/9.0*dt;
         }
     }
 };
