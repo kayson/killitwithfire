@@ -93,8 +93,8 @@ Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 
 Vector3 LevelSet::getNormal(const double w_x, const double w_y, const double w_z)
 {
-	double i, j, k;
-	grid->worldToLocal(w_x, w_y, w_z, i, j, k);
+	int i, j, k;
+	grid->worldToIndex(i, j, k, w_x, w_y, w_z);
 
 	// TODO FIXA!!!
 	//Ej korrekt implementation, då normalen måste interpoleras
