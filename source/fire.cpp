@@ -13,6 +13,7 @@
 #include "transform.hpp"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
+#include "Vorticity.h"
 
 #endif
 
@@ -169,7 +170,6 @@ CellType Fire::getCellType(double phi)
 }
 
 void Fire::runSimulation(){
-
 	 //Advektera levelset
     for(double currentTime = 0; currentTime < preset->dt;)
 	{
@@ -189,10 +189,13 @@ void Fire::runSimulation(){
 
     Vector3 force = Vector3(0.0, -0.1, 0.0);
     u.addForce(force, preset->dt);
+	
+	/*u.addForce(Vorticity::addVorticity(u, 20, FirePresets::dx, phi.grid->xdim(), 
+		phi.grid->ydim(), phi.grid->zdim()), preset->dt);*/
 
 	advectLevelSet(preset->dt);
 
-    //Externa krafter  
+    //Externa krafter
 		//preset->externalForce->addForce(grid);
     
     //Project

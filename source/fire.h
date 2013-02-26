@@ -3,13 +3,13 @@
 #ifndef FIRE_H
 #define FIRE_H
 
-
 #include "presets/firePresets.h"
 
 #include "levelset/LevelSet.h"
 #include "GridField.h"
 #include "GridMapping.h"
 #include "helper.h"
+
 //#include "Pressure\pcgsolver\blas_win.h"
 #include "Water/Particles.h"
 
@@ -84,6 +84,9 @@ private:
     Particles particles;
 	GridField<int> celltype;
     //GridField<double> scalar;
+
+	//Vorticity confinement
+	//GridField<Vector3> vorticity;
 };
 
 #endif //FIRE_H
