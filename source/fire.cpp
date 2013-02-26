@@ -42,6 +42,8 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
 	preset->upwindDisc->setVelocityField(w);
 
+	T = new Temperature(phi.grid);
+
 }
 
 double Fire::computeDT(double currentTime){
@@ -199,9 +201,11 @@ void Fire::runSimulation(){
 	//project(preset->dt);
 	//project2D(preset->dt);
 
-  	
 	//Fixa signed distance field
 	phi.reinitialize();
+
+	//Uppdatera temperatur
+	T->Update(phi.grid);
 }
 
 void Fire::drawMAC(){
@@ -366,7 +370,8 @@ void Fire::computeW()
 
 void Fire::draw()
 {
-	phi.draw();
+	//phi.draw();
+	T->draw();
     //u.draw();
 	//drawCenterVelocities();
 	drawCenterGradients(FirePresets::centralDisc);

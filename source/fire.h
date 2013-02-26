@@ -6,7 +6,10 @@
 
 #include "presets/firePresets.h"
 
+
+
 #include "levelset/LevelSet.h"
+
 #include "GridField.h"
 #include "GridMapping.h"
 #include "helper.h"
@@ -20,6 +23,8 @@
 #include "Pressure\pcgsolver\sparse_matrix.h"
 #include "Pressure\pcgsolver\pcg_solver.h"
 #endif
+
+#include "Temperature.h"
 
 class FirePresets;
 
@@ -54,12 +59,15 @@ public:
     void drawDivergence();
     void drawScalar();
     void drawParticles();
+	void drawGridField(GridField<double> *grid);
 
 	static CellType getCellType(double phi);
 private:
 
     FirePresets *preset;
     LevelSet phi;
+
+	Temperature *T;
 
 	//Pressure field
 	GridField<double> *p;
@@ -84,6 +92,9 @@ private:
     Particles particles;
 	GridField<int> celltype;
     //GridField<double> scalar;
+
+
+
 };
 
 #endif //FIRE_H

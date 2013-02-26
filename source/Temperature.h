@@ -1,14 +1,29 @@
-#ifndef DETONATION_SHOCK_DYNAMICS
-#define DETONATION_SHOCK_DYNAMICS
+#ifndef TEMPERATURE_H
+#define TEMPERATURE_H
 
-class DetonationShockDynamics{
+#include "Vector3.h"
+#include "GridField.h"
+#include "helper.h"
+
+class Temperature{
 
 public:
-	DetonationShockDynamics();
-	~DetonationShockDynamics();
-	void Update_D_With_DSD();
-private:
+	Temperature(){};
+	Temperature(GridField<double> *phi);
+	~Temperature(){};
 
+	void SetToMax(int i, int j, int k);
+	void SetToAir(int i, int j, int k);
+	void SetToIgnite(int i, int j, int k);
+	GridField<double> GetTemperatureGrid() const;
+	void draw();
+	void Update(GridField<double> *phi);
+private:
+	GridField<double> *grid; 
+
+	void UpdateT();
+
+	void InitCell(int i, int j, int k, CellType type);
 };
 
-#endif //DETONATION_SHOCK_DYNAMICS
+#endif //TEMPERATURE_H

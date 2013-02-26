@@ -42,6 +42,10 @@ const int FirePresets::GRID_DIM_X = 36;
 const int FirePresets::GRID_DIM_Y = 36;
 const int FirePresets::GRID_DIM_Z = 1;
 
+const double FirePresets::T_IGNITION = 50.0;
+const double FirePresets::T_MAX = 80.0;
+const double FirePresets::T_AIR = 25.0;
+
 const double FirePresets::GRID_SIZE = 18;
 const double FirePresets::dt = 1.0/10.0;
 const double FirePresets::dx = 1.0/8.0;

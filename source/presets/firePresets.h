@@ -30,6 +30,10 @@ public:
 	static const int GRID_DIM_Y;
 	static const int GRID_DIM_Z;
 	static const double GRID_SIZE;
+	static const double T_IGNITION;
+	static const double T_MAX;
+	static const double T_AIR;
+
 
 	static const double S;
 
