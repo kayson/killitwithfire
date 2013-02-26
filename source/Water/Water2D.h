@@ -34,6 +34,8 @@ public:
     
     
 private:
+    
+    double random(double size) const;
     void recomputeCellTypes();
     
     void drawCellTypes();
@@ -44,7 +46,7 @@ private:
     void drawFaceVelocities();
 
 public:
-    Water2D();
+    Water2D(int size = 25);
     void draw();
     void runSimulation(double dt);
     void addBlob();

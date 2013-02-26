@@ -25,7 +25,7 @@
 Water3D::Water3D(int dim):u(dim,dim,dim,2600),cellTypes(dim,dim,dim,2600){
     
     //Default variables
-    g = Vector3(0.0,-2.0,0.0);
+    g = Vector3(0.0,-3.0,0.0);
     rho = 1.0;
     
     //
@@ -60,7 +60,7 @@ Water3D::Water3D(int dim):u(dim,dim,dim,2600),cellTypes(dim,dim,dim,2600){
         cellTypes.indexToLocal(i, j, k, l_x, l_y, l_z);
         double r = 0.25;
         double c_x = 0.5;
-        double c_y = 0.8;
+        double c_y = 0.6;
         double c_z = 0.5;
 
         if (r*r > (l_x-c_x)*(l_x-c_x)+(l_y-c_y)*(l_y-c_y)+(l_z-c_z)*(l_z-c_z) && iter.value() != SOLID) {
@@ -110,6 +110,7 @@ void Water3D::recomputeCellTypes(){
     }
     
     //Set IGNITED if inhabited with marker partile
+    #pragma omp parallel for
     for (int index = 0; index < particles.size(); index++) {
         int i,j,k;
         cellTypes.worldToIndex(i, j, k, particles[index].x, particles[index].y, particles[index].z);
@@ -129,7 +130,7 @@ void Water3D::runSimulation(double dt){
     u.extrapolate3D(dt, cellTypes);
     
     //Integrera partiklar
-    particles.integrate(u, dt);
+    particles.integrateRK3(u, dt);
     
     //Advect velocity field
     MACAdvectRK2<double> advect = MACAdvectRK2<double>();

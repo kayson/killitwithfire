@@ -33,7 +33,7 @@ public:
     
     template<class T>
     static bool writeToFile(const GridField<T> &field,std::string name ){
-        name = name.append(".bin"); //Filnamn
+        /*name = name.append(".bin"); //Filnamn
         std::fstream file(name, std::ios::out | std::ios::binary);
         file.seekp(0);
         file.write((char*)(&field), sizeof(GridField<T>));
@@ -44,6 +44,7 @@ public:
         std::cout << file.tellp() << std::endl;
 
         file.close();
+         */
         return true;
     }
 
