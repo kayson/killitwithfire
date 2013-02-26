@@ -122,10 +122,10 @@ void LevelSet::draw() const
         
         if(grid->valueAtIndex(i,j,k) > 0)
         {
-            glColor3d(0,0,grid->valueAtIndex(i, j, k));
+			glColor3d(0,0,grid->valueAtIndex(i, j, k)*3);
             
         }else{
-            glColor3d(-grid->valueAtIndex(i, j, k)/3.0,0,0);
+            glColor3d(-grid->valueAtIndex(i, j, k),0,0);
             
         }
         glBegin(GL_QUADS);
