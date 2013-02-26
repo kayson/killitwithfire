@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.4.0)
+﻿cmake_minimum_required(VERSION 2.4.0)
 project(killitwithfire)
 
 ## Fixa openMP-flagga ################################################
@@ -11,13 +11,13 @@ ENDIF (WIN32)
 
 ## Fixa alla headers ##################################################
 
-FILE(GLOB killitwithfire_HEADERS  ./*.h)
-FILE(GLOB killitwithfire_ADVECT_HEADERS   ./advect/*.h)
-FILE(GLOB killitwithfire_LEVELSET_HEADERS   ./levelset/*.h)
-FILE(GLOB killitwithfire_PRESETS_HEADERS   ./presets/*.h)
-FILE(GLOB killitwithfire_PRESSURE_HEADERS   ./Pressure/*.h)
-FILE(GLOB killitwithfire_PRESSURE_PCGSOLVER_HEADERS   ./Pressure/pcgsolver/*.h)
-FILE(GLOB killitwithfire_WATER_HEADERS   ./Water/*.h)
+FILE(GLOB killitwithfire_HEADERS  ./*.h*)
+FILE(GLOB killitwithfire_ADVECT_HEADERS   ./advect/*.h*)
+FILE(GLOB killitwithfire_LEVELSET_HEADERS   ./levelset/*.h*)
+FILE(GLOB killitwithfire_PRESETS_HEADERS   ./presets/*.h*)
+FILE(GLOB killitwithfire_PRESSURE_HEADERS   ./Pressure/*.h*)
+FILE(GLOB killitwithfire_PRESSURE_PCGSOLVER_HEADERS   ./Pressure/pcgsolver/*.h*)
+FILE(GLOB killitwithfire_WATER_HEADERS   ./Water/*.h*)
 
 list(APPEND killitwithfire_ALL_HEADERS 
   ${killitwithfire_HEADERS}
