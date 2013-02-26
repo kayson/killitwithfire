@@ -147,7 +147,7 @@ void update()
 
 	//Update physics
 	fire->runSimulation();
-    //water->runSimulation(0.2);
+    //water->runSimulation(0.03);
 }
 
 //renderar objekt

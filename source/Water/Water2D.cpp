@@ -12,10 +12,10 @@
 #include "glfw.h"
 #include "../Advect/MACAdvect.h"
 
-Water2D::Water2D():u(30,30,1,18),cellTypes(30,30,1,18){
+Water2D::Water2D(int size):u(size,size,1,18),cellTypes(size,size,1,18){
     
     //Default variables
-    g = Vector3(0.0,-0.15,0.0);
+    g = Vector3(0.0,-0.35,0.0);
     rho = 0.1;
 
     //Init environment
@@ -49,6 +49,11 @@ Water2D::Water2D():u(30,30,1,18),cellTypes(30,30,1,18){
     _projection = new PCGProjection2D(&u,&cellTypes);
 }
 
+double Water2D::random(double size) const{
+    double val = size*static_cast<double>(rand() % RAND_MAX)/static_cast<double>(RAND_MAX);
+    return val;
+}
+
 void Water2D::addBlob(){
     //Init marker-particles
     for (GridFieldIterator<int> iter = cellTypes.iterator(); !iter.done(); iter.next()) {
@@ -63,10 +68,11 @@ void Water2D::addBlob(){
         if (r*r > (l_x-c_x)*(l_x-c_x)+(l_y-c_y)*(l_y-c_y)+l_z*l_z && iter.value() != SOLID) {
             double x,y,z;
             cellTypes.indexToWorld(i, j, k, x, y, z);
-            particles.push_back(Vector3(x-cellTypes.dx()*0.25,y-cellTypes.dy()*0.25,z));
-            particles.push_back(Vector3(x-cellTypes.dx()*0.25,y+cellTypes.dy()*0.25,z));
-            particles.push_back(Vector3(x+cellTypes.dx()*0.25,y-cellTypes.dy()*0.25,z));
-            particles.push_back(Vector3(x+cellTypes.dx()*0.25,y+cellTypes.dy()*0.25,z));
+            double interval = 0.125;
+            particles.push_back(Vector3(x-cellTypes.dx()*0.25+random(interval),y-cellTypes.dy()*0.25+random(interval),z));
+            particles.push_back(Vector3(x-cellTypes.dx()*0.25+random(interval),y+cellTypes.dy()*0.25+random(interval),z));
+            particles.push_back(Vector3(x+cellTypes.dx()*0.25+random(interval),y-cellTypes.dy()*0.25+random(interval),z));
+            particles.push_back(Vector3(x+cellTypes.dx()*0.25+random(interval),y+cellTypes.dy()*0.25+random(interval),z));
         }
     }
 }
@@ -109,7 +115,7 @@ void Water2D::runSimulation(double dt){
     u.extrapolate(dt, cellTypes);
     
     //Integrera partiklar
-    particles.integrate(u, dt);
+    particles.integrateRK3(u, dt);
     
     //Advect velocity field
     MACAdvectRK2<double> advect = MACAdvectRK2<double>();
