@@ -96,7 +96,7 @@ include_directories(
 #################################################################
 
 link_directories(
-  //${CMAKE_SOURCE_DIR}/../externals/GL/lib
+  ${CMAKE_SOURCE_DIR}/../externals/GL/lib
   ) 
 
 add_executable(killitwithfire ${killitwithfire_ALL_HEADERS} ${killitwithfire_ALL_SRCS})
