@@ -67,7 +67,7 @@ public:
             iter.index(i, j, k);
             double x,y,z;
             u._u->indexToWorld(i, j, k, x, y, z);
-            double val = advect(dt, u, *u._u,phi, i, j, k);
+            double val = advect(dt, u, VelocityDirection::UDIR , phi, i, j, k);
             u.buffer()->_u->setValueAtIndex(val, i, j, k);
         }
         
@@ -76,7 +76,7 @@ public:
             iter.index(i, j, k);
             double x,y,z;
             u._v->indexToWorld(i, j, k, x, y, z);
-            double val = advect(dt, u, *u._v,phi, i, j, k);
+            double val = advect(dt, u, VelocityDirection::VDIR ,phi, i, j, k);
             u.buffer()->_v->setValueAtIndex(val, i, j, k);
         }
         
@@ -85,7 +85,7 @@ public:
             iter.index(i, j, k);
             double x,y,z;
             u._w->indexToWorld(i, j, k, x, y, z);
-            double val = advect(dt, u, *u._w,phi, i, j, k);
+            double val = advect(dt, u, VelocityDirection::WDIR, phi, i, j, k);
             u.buffer()->_w->setValueAtIndex(val, i, j, k);
         }
         
@@ -93,7 +93,7 @@ public:
     }
     
     virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k) = 0;
-    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, LevelSet& phi, int i,int j,int k) = 0;
+    virtual double advect(double dt,const MACGrid &g, const VelocityDirection dir, LevelSet& phi, int i,int j,int k) = 0;
 
 };
 
@@ -112,9 +112,18 @@ public:
     }
     
 	// Vs = Velocity start, Ve = Velocity end osv
-    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, LevelSet& phi, int i, int j, int k){
+    virtual double advect(double dt,const MACGrid &g, const VelocityDirection dir, LevelSet& phi, int i, int j, int k){
+		GridField<double> *field;
+		
+		if(dir == VelocityDirection::UDIR)
+			field = g._u;
+		else if(dir == VelocityDirection::VDIR)
+			field = g._v;
+		else //(dir == VelocityDirection::WDIR)
+			field = g._w;
+
 		double x,y,z;
-        field.indexToWorld(i,j,k,x,y,z);
+        field->indexToWorld(i,j,k,x,y,z);
         
 		Vector3 sPos = Vector3(x,y,z);
 		CellType sType = Fire::getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
@@ -124,7 +133,7 @@ public:
 		CellType eType = Fire::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
 
 		if(sType == eType)
-			return field.valueAtWorld(ePos.x,ePos.y,ePos.z);
+			return field->valueAtWorld(ePos.x,ePos.y,ePos.z);
 		else
 		{
 			Vector3 n = phi.getNormal(sPos.x, sPos.y, sPos.z);
@@ -142,9 +151,13 @@ public:
 			}
 
 			Vector3 ue = Ve*n + sVel - Vs*n;
-			//Hur vet jag om det är u, v, w som jag skall använda?
-
-			return field.valueAtWorld(ePos.x,ePos.y,ePos.z);
+			
+			if(dir == VelocityDirection::UDIR)
+				return ue.x;
+			else if(dir == VelocityDirection::VDIR)
+				return ue.y;
+			else //(dir == VelocityDirection::WDIR)
+				return ue.x;
 		}
     }
 };
@@ -165,15 +178,23 @@ public:
         return field.valueAtWorld(pos.x,pos.y,pos.z);
     }
     
-    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, LevelSet& phi, int i,int j,int k){
-        double x,y,z;
-        field.indexToWorld(i,j,k,x,y,z);
+    virtual double advect(double dt,const MACGrid &g, const VelocityDirection dir, LevelSet& phi, int i,int j,int k){
+       /* GridField<T> *field;
+		if(dir == VelocityDirection::UDIR)
+			field = g._u;
+		else if(dir == VelocityDirection::VDIR)
+			field = g._v;
+		else //(dir == VelocityDirection::WDIR)
+			field = g._w;
+		
+		double x,y,z;
+        field->indexToWorld(i,j,k,x,y,z);
         Vector3 pos = Vector3(x,y,z);
         Vector3 vel = g.velocityAtWorld(pos);
         pos = Vector3(x,y,z)-vel*0.5*dt;
         vel = g.velocityAtWorld(pos);
-        pos = Vector3(x,y,z)-vel*dt;
-        return field.valueAtWorld(pos.x,pos.y,pos.z);
+        pos = Vector3(x,y,z)-vel*dt;*/
+        return 0.0;
     }
 
 };
