@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Johannes Deligiannis. All rights reserved.
 //
 
-#ifndef __FuidFire__Projection3__
-#define __FuidFire__Projection3__
+#ifndef __FuidFire__Projection__
+#define __FuidFire__Projection__
 
 #include "../MACGrid.h"
 #include "pcgsolver/pcg_solver.h"

@@ -153,9 +153,14 @@ void Vector3::rotate(Vector3 *axisRotate, double *angle, double a, double b, dou
 // Smallest angle between two vectors, returns float
 double Vector3::angle(Vector3 *vTemp)
 {
-	double angle = acos(dot(*vTemp)/(norm()*vTemp->norm()));
-     
-	return angle;
+	if(*this == *vTemp)
+		return 0;
+	else if(*vTemp == Vector3(0.,0.,0))
+		return 0;
+	else {
+		double angle = acos(dot(*vTemp)/(norm()*vTemp->norm()));
+		return angle;
+	}
 }
 
 // Smallest angle between two vectors, returns float
@@ -231,6 +236,9 @@ Vector3 Vector3::operator* (const Vector3 &v) const {
     return Vector3(x*v.x,y*v.y,z*v.z);
 }
 
+bool Vector3::operator==(const Vector3 &v) const {
+	return (x == v.x) && (y == v.y) && (z == v.z);
+}
 
 void Vector3::description(){
     

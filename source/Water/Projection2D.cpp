@@ -225,7 +225,7 @@ void PCGProjection2D::project(double dt,double rho){
     double residual;
     int iterations;
     PCGSolver<double> solver;
-    solver.set_solver_parameters(1e-5, 100);
+    //solver.set_solver_parameters(1e-5, 100);
     solver.solve(*A, *b, *x, residual, iterations); //Gör magi...
     applyPressure();
 }

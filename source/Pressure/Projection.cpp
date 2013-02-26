@@ -6,7 +6,8 @@
 //  Copyright (c) 2013 Johannes Deligiannis. All rights reserved.
 //
 
-#include "Projection.h" //#include "FireProjection3D.h"
+
+#include "Projection.h"
 #include <iomanip>
 #include "glfw.h"
 #include "pcgsolver/pcg_solver.h"

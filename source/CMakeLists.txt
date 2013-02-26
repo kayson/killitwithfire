@@ -11,13 +11,13 @@ ENDIF (WIN32)
 
 ## Fixa alla headers ##################################################
 
-FILE(GLOB killitwithfire_HEADERS  ./*.h)
-FILE(GLOB killitwithfire_ADVECT_HEADERS   ./advect/*.h)
-FILE(GLOB killitwithfire_LEVELSET_HEADERS   ./levelset/*.h)
-FILE(GLOB killitwithfire_PRESETS_HEADERS   ./presets/*.h)
-FILE(GLOB killitwithfire_PRESSURE_HEADERS   ./Pressure/*.h)
-FILE(GLOB killitwithfire_PRESSURE_PCGSOLVER_HEADERS   ./Pressure/pcgsolver/*.h)
-FILE(GLOB killitwithfire_WATER_HEADERS   ./Water/*.h)
+FILE(GLOB killitwithfire_HEADERS  ./*.h*)
+FILE(GLOB killitwithfire_ADVECT_HEADERS   ./advect/*.h*)
+FILE(GLOB killitwithfire_LEVELSET_HEADERS   ./levelset/*.h*)
+FILE(GLOB killitwithfire_PRESETS_HEADERS   ./presets/*.h*)
+FILE(GLOB killitwithfire_PRESSURE_HEADERS   ./Pressure/*.h*)
+FILE(GLOB killitwithfire_PRESSURE_PCGSOLVER_HEADERS   ./Pressure/pcgsolver/*.h*)
+FILE(GLOB killitwithfire_WATER_HEADERS   ./Water/*.h*)
 
 list(APPEND killitwithfire_ALL_HEADERS 
   ${killitwithfire_HEADERS}
@@ -65,7 +65,7 @@ source_group("source\\Pressure" FILES ${killitwithfire_PRESSURE_SRCS})
 source_group("source\\Pressure\\pcgsolver" FILES ${killitwithfire_PRESSURE_PCGSOLVER_SRCS})
 source_group("source\\Water" FILES ${killitwithfire_WATER_SRCS})
 
-## Include dirs f√∂r att slippa l√§nkar mellan mappar ###################
+## Include dirs fˆr att slippa l‰nkar mellan mappar ###################
 
 list(APPEND killitwithfire_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -77,7 +77,7 @@ list(APPEND killitwithfire_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}/Pressure/pcgsolver
   )
 
-## Fixar l√§nkar till bibliotek ########################################
+## Fixar l‰nkar till bibliotek ########################################
 
 list(APPEND killitwithfire_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/../externals
@@ -87,7 +87,7 @@ list(APPEND killitwithfire_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/../externals/FreeImage
 )
 
-## L√§gger till dem ################################################
+## L‰gger till dem ################################################
 
 include_directories(	
   ${killitwithfire_INCLUDE_DIRS}
