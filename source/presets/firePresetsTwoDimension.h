@@ -23,7 +23,7 @@ public:
         
         //Rutiner
         advection = new AdvectLevelSetEuler();
-		advectVelocities = new MACAdvectEuler<double>();
+		advectVelocities = new MACAdvectRK2<double>();
 	}
 
 	~FirePresetsTwoDimension(){
