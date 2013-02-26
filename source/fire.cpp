@@ -181,6 +181,12 @@ void Fire::runSimulation(){
 		currentTime += dt;
     }
 
+	static int counter = 0;
+    if (counter % 200 == 0) {
+		phi.grid->addValueAtIndex(0.1,preset->GRID_DIM_X/2,0,0);
+    }
+    counter++;
+
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 
 

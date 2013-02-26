@@ -1,4 +1,4 @@
-Ôªøcmake_minimum_required(VERSION 2.4.0)
+cmake_minimum_required(VERSION 2.4.0)
 project(killitwithfire)
 
 ## Fixa openMP-flagga ################################################
@@ -65,7 +65,7 @@ source_group("source\\Pressure" FILES ${killitwithfire_PRESSURE_SRCS})
 source_group("source\\Pressure\\pcgsolver" FILES ${killitwithfire_PRESSURE_PCGSOLVER_SRCS})
 source_group("source\\Water" FILES ${killitwithfire_WATER_SRCS})
 
-## Include dirs f√∂r att slippa l√§nkar mellan mappar ###################
+## Include dirs fˆr att slippa l‰nkar mellan mappar ###################
 
 list(APPEND killitwithfire_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -77,7 +77,7 @@ list(APPEND killitwithfire_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}/Pressure/pcgsolver
   )
 
-## Fixar l√§nkar till bibliotek ########################################
+## Fixar l‰nkar till bibliotek ########################################
 
 list(APPEND killitwithfire_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/../externals
@@ -87,7 +87,7 @@ list(APPEND killitwithfire_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/../externals/FreeImage
 )
 
-## L√§gger till dem ################################################
+## L‰gger till dem ################################################
 
 include_directories(	
   ${killitwithfire_INCLUDE_DIRS}
