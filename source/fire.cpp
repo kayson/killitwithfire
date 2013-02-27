@@ -201,9 +201,12 @@ void Fire::runSimulation(){
     Vector3 force = Vector3(0.0, 0.05, 0.0);
     u.addForce(force, preset->dt);
 	
+	GridField<Vector3> vortForces(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
 	// OBS felaktigt anrop, använd EJ!!
-	/*u.addForce(Vorticity::addVorticity(u, .1, FirePresets::dx, 
-		phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim()), preset->dt);*/
+	Vorticity::addVorticity(u, vortForces, 0.2, FirePresets::dx, 
+		phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+
+	//u.addForceGrid(vortForces, preset->dt);
 
 	advectLevelSet(preset->dt);
 

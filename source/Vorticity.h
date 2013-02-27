@@ -13,11 +13,16 @@ namespace Vorticity{
 	//		N kommer då peka från låg-vorticity-områden till områden med
 	//		hög vorticity.
 
-	Vector3 addVorticity(const MACGrid &u, const double epsilon, const double dx,
+	// Krafterna som beräknas är per cell, så krafterna måste lagras i ett
+	// GridField<Vector3> som sedan appliceras på hastighets-fältet
+	// antingen här eller i någon annan central kraft-metod.
+
+	Vector3 addVorticity(const MACGrid &u, GridField<Vector3> &forces, const double epsilon, const double dx,
 		const int dimx, const int dimy, const int dimz){
 		
-		GridField<double> *ohm = new GridField<double>(dimx, dimy, dimz);
-		GridField<Vector3> *angles = new GridField<Vector3>(dimx, dimy, dimz);
+		GridField<double> ohm = GridField<double>(dimx, dimy, dimz);
+		GridField<Vector3> angles = GridField<Vector3>(dimx, dimy, dimz);
+		
 		Discretization *d = new CentralDiff();
 		Gradient g;
 		Vector3 fconf, ohmVec, n, N;
@@ -52,20 +57,20 @@ namespace Vorticity{
 						z = (centerVelRight.y - centerVelLeft.y - centerVelUp.x + centerVelDown.x)/(2*dx);
 						ohmVec = Vector3(x,y,z);
 
-						ohm->setValueAtIndex(ohmVec.norm(),i,j,k);
-						angles->setValueAtIndex(ohmVec,i,j,k);
+						ohm.setValueAtIndex(ohmVec.norm(),i,j,k);
+						angles.setValueAtIndex(ohmVec,i,j,k);
 					}
 				}
 			}
 		}
 
-		// Calculate
+		// Calculate n, N and resulting vorticity confinement force fcont
 		for(int i=0; i < dimx; ++i){
 			for(int j=0; j < dimy; ++j){
 				for(int k=0; k< dimz; ++k){
 					// Ful-fix för boundaries
 					if( (i > 1) && (j > 1) /*&& (k > 0)*/ && (i < dimx-2) && (j < dimy-2) /*&& (k < dimz)*/ ){
-						n = g.getGradient(*ohm, i, j, k, *d); // För denna krävs att hela ohm är def.
+						n = g.getGradient(ohm, i, j, k, *d); // För denna krävs att hela ohm är def.
 
 						if(n.norm() != 0.)
 							N = n/n.norm();
@@ -73,11 +78,13 @@ namespace Vorticity{
 							N = Vector3();
 
 						// Enl. def. |u x v| = |u|*|v|*sin(theta), där theta = vinkeln mellan u och v
-						Vector3 ang = angles->valueAtIndex(i,j,k);
-						double sineAngle = sin(N.angle(&ang));
-						
-						if((sineAngle == sineAngle)) // Om sineAngle är NaN
-							fconf += epsilon*dx*( N.norm() * ohm->valueAtIndex(i,j,k) * sineAngle); // för angle krävs vektorn ohmVec
+						//Vector3 ang = angles->valueAtIndex(i,j,k);
+						double sineAngle = sin(N.angle(&angles.valueAtIndex(i,j,k)));
+						if((sineAngle == sineAngle)) // Om sineAngle ej är NaN
+						{
+							fconf = epsilon*dx*( N.norm() * ohm.valueAtIndex(i,j,k) * sineAngle); // för angle krävs vektorn ohmVec
+							forces.setValueAtIndex(fconf, i,j,k);
+						}
 						
 						/*if(!(fconf == Vector3(0.,0.,0.)))
 							std::cout << "Buuuuu!\n";*/
@@ -85,8 +92,6 @@ namespace Vorticity{
 				}
 			}
 		}
-		delete angles;
-		delete ohm;
 		delete d;
 		return fconf;
 	}

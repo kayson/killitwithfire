@@ -85,8 +85,8 @@ private:
 	GridField<int> celltype;
     //GridField<double> scalar;
 
-	//Vorticity confinement
-	//GridField<Vector3> vorticity;
+	//Vorticity confinement forces
+	//GridField<Vector3> vorticityForces;
 };
 
 #endif //FIRE_H
