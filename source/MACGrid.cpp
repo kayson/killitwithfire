@@ -433,6 +433,7 @@ void MACGrid::addForceGrid(GridField<Vector3> &f, double dt){
 		else
 			field = _w;
 
+		// Från Fedkiw 2001, Smoke etc. s.7
 		for(GridFieldIterator<double> iter = field->iterator(); !iter.done(); iter.next()) {
 			int i,j,k;
 			iter.index(i,j,k);

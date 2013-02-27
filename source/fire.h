@@ -54,6 +54,7 @@ public:
     void drawDivergence();
     void drawScalar();
     void drawParticles();
+	void drawVorticities(GridField<Vector3>&);
 
 	static CellType getCellType(double phi);
 private:
@@ -86,7 +87,7 @@ private:
     //GridField<double> scalar;
 
 	//Vorticity confinement forces
-	//GridField<Vector3> vorticityForces;
+	GridField<Vector3> *vorticityForces;
 };
 
 #endif //FIRE_H

@@ -20,12 +20,12 @@ namespace Vorticity{
 	Vector3 addVorticity(const MACGrid &u, GridField<Vector3> &forces, const double epsilon, const double dx,
 		const int dimx, const int dimy, const int dimz){
 		
-		GridField<double> ohm = GridField<double>(dimx, dimy, dimz);
-		GridField<Vector3> angles = GridField<Vector3>(dimx, dimy, dimz);
+		GridField<double> ohmNorm = GridField<double>(dimx, dimy, dimz);
+		GridField<Vector3> ohmVecGrid = GridField<Vector3>(dimx, dimy, dimz);
 		
 		Discretization *d = new CentralDiff();
 		Gradient g;
-		Vector3 fconf, ohmVec, n, N;
+		Vector3 fconf, ohmVecTemp, n, N;
 
 		// Populate GridField ohm with vorticity values
 		for(int i=0; i < dimx; ++i){
@@ -51,48 +51,64 @@ namespace Vorticity{
 						ohmVec.y = (centerVelFront.x - centerVelBack.x - centerVelRight.z + centerVelLeft.z)/(2*dx);
 						ohmVec.z = (centerVelRight.y - centerVelLeft.y - centerVelUp.x + centerVelDown.x)/(2*dx);*/
 
+						// Från Fedkiw 2001, Smoke etc. ekv (9) s.3 samt diskretisering enl. s.6
+						// ohm = nabla x û
 						double x, y, z;
 						x = (centerVelUp.z - centerVelDown.z - centerVelFront.y + centerVelBack.y)/(2*dx);
 						y = (centerVelFront.x - centerVelBack.x - centerVelRight.z + centerVelLeft.z)/(2*dx);
 						z = (centerVelRight.y - centerVelLeft.y - centerVelUp.x + centerVelDown.x)/(2*dx);
-						ohmVec = Vector3(x,y,z);
+						ohmVecTemp = Vector3(x,y,z);
 
-						ohm.setValueAtIndex(ohmVec.norm(),i,j,k);
-						angles.setValueAtIndex(ohmVec,i,j,k);
+						ohmNorm.setValueAtIndex(ohmVecTemp.norm(),i,j,k);
+						ohmVecGrid.setValueAtIndex(ohmVecTemp,i,j,k);
 					}
 				}
 			}
 		}
-
-		// Calculate n, N and resulting vorticity confinement force fcont
+		double max = 0;
+		// Calculate n, N and fcont
 		for(int i=0; i < dimx; ++i){
 			for(int j=0; j < dimy; ++j){
 				for(int k=0; k< dimz; ++k){
 					// Ful-fix för boundaries
 					if( (i > 1) && (j > 1) /*&& (k > 0)*/ && (i < dimx-2) && (j < dimy-2) /*&& (k < dimz)*/ ){
-						n = g.getGradient(ohm, i, j, k, *d); // För denna krävs att hela ohm är def.
+						
+						n = g.getGradient(ohmNorm, i, j, k, *d); // För denna krävs att hela ohm är def.
 
 						if(n.norm() != 0.)
 							N = n/n.norm();
 						else
-							N = Vector3();
+							N = Vector3(0.,0.,0.);
 
-						// Enl. def. |u x v| = |u|*|v|*sin(theta), där theta = vinkeln mellan u och v
-						//Vector3 ang = angles->valueAtIndex(i,j,k);
-						double sineAngle = sin(N.angle(&angles.valueAtIndex(i,j,k)));
-						if((sineAngle == sineAngle)) // Om sineAngle ej är NaN
-						{
-							fconf = epsilon*dx*( N.norm() * ohm.valueAtIndex(i,j,k) * sineAngle); // för angle krävs vektorn ohmVec
-							forces.setValueAtIndex(fconf, i,j,k);
-						}
-						
-						/*if(!(fconf == Vector3(0.,0.,0.)))
-							std::cout << "Buuuuu!\n";*/
+
+						Vector3 crossprod, ohmVecTemp;
+						double x, y, z;
+
+						ohmVecTemp = ohmVecGrid.valueAtIndex(i,j,k);
+
+						x = N.z * ohmVecTemp.y - N.y * ohmVecTemp.z;
+						y = N.z * ohmVecTemp.x - N.x * ohmVecTemp.z;
+						z = N.x * ohmVecTemp.y - N.y * ohmVecTemp.x;
+
+						crossprod = Vector3(x,y,z);	
+
+						if(crossprod.norm() > max)
+							max = crossprod.norm();
+
+						if(crossprod.norm() < 0.5)
+							fconf = Vector3(0.,0.,0.);
+						else
+							fconf = crossprod*dx*epsilon;
+
+						forces.setValueAtIndex(fconf,i,j,k);
 					}
 				}
 			}
 		}
 		delete d;
+
+		std::cout << "Max norm: " << max << std::endl;
+
 		return fconf;
 	}
 }

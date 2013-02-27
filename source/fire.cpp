@@ -44,6 +44,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
 	preset->upwindDisc->setVelocityField(w);
 
+	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
 }
 
 double Fire::computeDT(double currentTime){
@@ -201,12 +202,12 @@ void Fire::runSimulation(){
     Vector3 force = Vector3(0.0, 0.05, 0.0);
     u.addForce(force, preset->dt);
 	
-	GridField<Vector3> vortForces(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
-	// OBS felaktigt anrop, använd EJ!!
-	Vorticity::addVorticity(u, vortForces, 0.2, FirePresets::dx, 
+	// Vorticity confinement forces
+	//GridField<Vector3> vorticityForces(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z); // Borde def. i fire.h
+	Vorticity::addVorticity(u, *vorticityForces, 0.1, FirePresets::dx, 
 		phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 
-	//u.addForceGrid(vortForces, preset->dt);
+	u.addForceGrid(*vorticityForces, preset->dt);	
 
 	advectLevelSet(preset->dt);
 
@@ -220,6 +221,25 @@ void Fire::runSimulation(){
   	
 	//Fixa signed distance field
 	phi.reinitialize();
+}
+
+void Fire::drawVorticities(GridField<Vector3> &f){
+	glColor3d(1.0,1.0,1.0);
+	for( GridFieldIterator<Vector3> iter = f.iterator(); !iter.done(); iter.next() ){
+		int i,j,k;
+		iter.index(i,j,k);
+		double x,y,z;
+		f.indexToWorld(i,j,k,x,y,z);
+		Vector3 val = iter.value();
+
+		/*std::cout << "ijk: "<< i << " " << j << " " << k <<std::endl;
+		std::cout << "xyz: "<< x << " " << y << " " << z <<std::endl<<std::endl;*/
+
+		glBegin(GL_LINE_STRIP);
+		glVertex3d(x,y,0);
+		glVertex3d(x+val.x, y+val.y,0);
+		glEnd();
+	}
 }
 
 void Fire::drawMAC(){
@@ -385,6 +405,7 @@ void Fire::computeW()
 void Fire::draw()
 {
 	phi.draw();
+	//drawVorticities(*vorticityForces);
     //u.draw();
 	//drawCenterVelocities();
 	//drawCenterGradients(FirePresets::centralDisc);
@@ -395,6 +416,7 @@ void Fire::draw()
 }
 
 Fire::~Fire(){
+	delete vorticityForces;
     delete preset;
 	//delete pcgSolver;
 	delete A;
