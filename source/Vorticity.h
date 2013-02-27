@@ -42,22 +42,11 @@ namespace Vorticity{
 						centerVelBack = Vector3(0.,0.,0.),//u.velocityAtCenter(i,j,k-1),
 						centerVel = u.velocityAtCenter(i,j,k);
 						
-						// Från Fedkiw 2001, Smoke etc.
-						//ohmVec = Vector3( (centerVelUp.z - centerVelDown.z - centerVelFront.y + centerVelBack.y)/(2*dx),
-							//				(centerVelFront.x - centerVelBack.x - centerVelRight.z + centerVelLeft.z)/(2*dx),
-								//				(centerVelRight.y - centerVelLeft.y - centerVelUp.x + centerVelDown.x)/(2*dx) );*/
-
-						/*ohmVec.x = (centerVelUp.z - centerVelDown.z - centerVelFront.y + centerVelBack.y)/(2*dx);
-						ohmVec.y = (centerVelFront.x - centerVelBack.x - centerVelRight.z + centerVelLeft.z)/(2*dx);
-						ohmVec.z = (centerVelRight.y - centerVelLeft.y - centerVelUp.x + centerVelDown.x)/(2*dx);*/
-
 						// Från Fedkiw 2001, Smoke etc. ekv (9) s.3 samt diskretisering enl. s.6
 						// ohm = nabla x û
-						double x, y, z;
-						x = (centerVelUp.z - centerVelDown.z - centerVelFront.y + centerVelBack.y)/(2*dx);
-						y = (centerVelFront.x - centerVelBack.x - centerVelRight.z + centerVelLeft.z)/(2*dx);
-						z = (centerVelRight.y - centerVelLeft.y - centerVelUp.x + centerVelDown.x)/(2*dx);
-						ohmVecTemp = Vector3(x,y,z);
+						ohmVecTemp = Vector3(	(centerVelUp.z - centerVelDown.z - centerVelFront.y + centerVelBack.y)/(2*dx),
+												(centerVelFront.x - centerVelBack.x - centerVelRight.z + centerVelLeft.z)/(2*dx),
+												(centerVelRight.y - centerVelLeft.y - centerVelUp.x + centerVelDown.x)/(2*dx) );			
 
 						ohmNorm.setValueAtIndex(ohmVecTemp.norm(),i,j,k);
 						ohmVecGrid.setValueAtIndex(ohmVecTemp,i,j,k);
@@ -65,7 +54,7 @@ namespace Vorticity{
 				}
 			}
 		}
-		double max = 0;
+
 		// Calculate n, N and fcont
 		for(int i=0; i < dimx; ++i){
 			for(int j=0; j < dimy; ++j){
@@ -75,30 +64,18 @@ namespace Vorticity{
 						
 						n = g.getGradient(ohmNorm, i, j, k, *d); // För denna krävs att hela ohm är def.
 
-						if(n.norm() != 0.)
-							N = n/n.norm();
-						else
-							N = Vector3(0.,0.,0.);
+						(n.norm() != 0.) ? N = n/n.norm() : N = Vector3(0.);
 
-
-						Vector3 crossprod, ohmVecTemp;
+						Vector3 ohmVecTemp;
 						double x, y, z;
 
 						ohmVecTemp = ohmVecGrid.valueAtIndex(i,j,k);
 
-						x = N.z * ohmVecTemp.y - N.y * ohmVecTemp.z;
-						y = N.z * ohmVecTemp.x - N.x * ohmVecTemp.z;
-						z = N.x * ohmVecTemp.y - N.y * ohmVecTemp.x;
+						Vector3 crossprod(	N.z * ohmVecTemp.y - N.y * ohmVecTemp.z,
+											N.z * ohmVecTemp.x - N.x * ohmVecTemp.z,
+											N.x * ohmVecTemp.y - N.y * ohmVecTemp.x);
 
-						crossprod = Vector3(x,y,z);	
-
-						if(crossprod.norm() > max)
-							max = crossprod.norm();
-
-						if(crossprod.norm() < 0.5)
-							fconf = Vector3(0.,0.,0.);
-						else
-							fconf = crossprod*dx*epsilon;
+						fconf = crossprod*dx*epsilon;
 
 						forces.setValueAtIndex(fconf,i,j,k);
 					}
@@ -106,9 +83,6 @@ namespace Vorticity{
 			}
 		}
 		delete d;
-
-		std::cout << "Max norm: " << max << std::endl;
-
 		return fconf;
 	}
 }

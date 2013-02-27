@@ -203,8 +203,7 @@ void Fire::runSimulation(){
     u.addForce(force, preset->dt);
 	
 	// Vorticity confinement forces
-	//GridField<Vector3> vorticityForces(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z); // Borde def. i fire.h
-	Vorticity::addVorticity(u, *vorticityForces, 0.1, FirePresets::dx, 
+	Vorticity::addVorticity(u, *vorticityForces, 0.05, FirePresets::dx, 
 		phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 
 	u.addForceGrid(*vorticityForces, preset->dt);	
@@ -405,7 +404,7 @@ void Fire::computeW()
 void Fire::draw()
 {
 	phi.draw();
-	//drawVorticities(*vorticityForces);
+	drawVorticities(*vorticityForces);
     //u.draw();
 	//drawCenterVelocities();
 	//drawCenterGradients(FirePresets::centralDisc);
