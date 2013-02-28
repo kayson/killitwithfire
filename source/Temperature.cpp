@@ -16,6 +16,8 @@ Temperature::Temperature(GridField<double> *phi)
 		ZDIM = FirePresets::GRID_DIM_Z;
 
 	grid = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE);
+	gridCopy = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE);
+
 	
 	for(int i = 0; i < XDIM; i++){
 		for(int j = 0; j < YDIM; j++){
@@ -29,11 +31,32 @@ Temperature::Temperature(GridField<double> *phi)
 void Temperature::InitCell(int i, int j, int k, CellType type)
 {
 	if(type == CellType::BLUECORE){
-		grid->setValueAtIndex(FirePresets::T_IGNITION, i, j, k);
+        grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
 	}
 	else if(type == CellType::IGNITED){
 		grid->setValueAtIndex(FirePresets::T_AIR, i, j, k);
 	}
+    gridCopy->setValueAtIndex(grid->valueAtIndex(i, j, k), i, j, k);
+}
+
+double Temperature::calculateTemperatureLoss(int i, int j, int k){
+    double c_T = 1.0;
+
+    double T = grid->valueAtIndex(i, j, k);
+
+
+    return pow((T-FirePresets::T_AIR)/(FirePresets::T_MAX - FirePresets::T_AIR), 4.0) * c_T;
+}
+
+void Temperature::AdvectTemperatureField(double dt, MACGrid m){
+    for(int i = 0; i < grid->xdim(); i++)
+        for(int j = 0; j < grid->ydim(); j++)
+            for(int k = 0; k < grid->zdim(); k++){
+
+                double c = calculateTemperatureLoss(i, j, k);
+                double v = FirePresets::tempAdvect->advect(dt, m, *grid, i, j, k);
+                grid->setValueAtIndex(v - c, i, j, k);
+            }
 }
 
 
@@ -58,13 +81,9 @@ void Temperature::draw(){
         double x,y,z;
         grid->indexToWorld(i, j, k, x, y, z);
         
-		if(grid->valueAtIndex(i,j,k) > FirePresets::T_AIR){
-			glColor3d(grid->valueAtIndex(i, j, k)/FirePresets::T_MAX, 0, 0);
-        }
-		else{
-            glColor3d(0,0,0);
-            
-		}
+		
+        glColor3d((grid->valueAtIndex(i, j, k) - FirePresets::T_AIR)/10.0, 0, 0);
+
 
         glVertex3f((float)x, (float)y, (float)z);
         glVertex3f(((float)x+1.f), (float)y, (float)z);

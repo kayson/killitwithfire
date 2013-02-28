@@ -66,6 +66,52 @@ public:
         u.swapBuffer();
     }
     
+    void advect(MACGrid &u, GridField<double> &grid, double dt){
+        double x,y,z;
+
+#pragma omp parallel for private (x,y,z)
+        for (int i = 0; i < u._u->xdim(); i++) {
+            for (int j = 0; j < u._u->ydim(); j++) {
+                for (int k = 0; k < u._u->zdim(); k++) {
+                    u._u->indexToWorld(i, j, k, x, y, z);
+
+					double val = advect(dt, u, *grid, i, j, k);
+
+                    grid.setValueAtIndex(val, i, j, k);
+                }
+            }
+        }
+        
+        
+    #pragma omp parallel for private (x,y,z)
+
+        for (int i = 0; i < u._v->xdim(); i++) {
+            for (int j = 0; j < u._v->ydim(); j++) {
+                for (int k = 0; k < u._v->zdim(); k++) {
+                    u._v->indexToWorld(i, j, k, x, y, z);
+
+                    double val = advect(dt, u, *grid, i, j, k);
+
+                    grid.setValueAtIndex(val, i, j, k);
+                }
+            }
+        }
+        
+#pragma omp parallel for private (x,y,z)
+        for (int i = 0; i < u._w->xdim(); i++) {
+            for (int j = 0; j < u._w->ydim(); j++) {
+                for (int k = 0; k < u._w->zdim(); k++) {
+                    u._w->indexToWorld(i, j, k, x, y, z);
+                    double val = advect(dt, u, *grid, i, j, k);
+                    grid.setValueAtIndex(val, i, j, k);
+                }
+            }
+        }
+        
+        u.swapBuffer();
+    }
+    
+
     void advect(MACGrid &u, LevelSet& phi, double dt){
         for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
             int i,j,k;

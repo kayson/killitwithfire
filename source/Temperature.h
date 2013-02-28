@@ -17,11 +17,15 @@ public:
 	void SetToAir(int i, int j, int k);
 	void SetToIgnite(int i, int j, int k);
 	GridField<double> GetTemperatureGrid();
+
+    void AdvectTemperatureField(double dt, MACGrid m);
+
 	void draw();
 
 private:
 	GridField<double> *grid; 
-
+    GridField<double> *gridCopy;
+    double calculateTemperatureLoss(int i, int j, int k);
 	void InitCell(int i, int j, int k, CellType type);
 };
 

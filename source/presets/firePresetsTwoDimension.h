@@ -38,6 +38,8 @@ private:
 UpwindDiff *FirePresets::upwindDisc = new UpwindDiff();
 CentralDiff *FirePresets::centralDisc = new CentralDiff();
 
+MACAdvect<double> *FirePresets::tempAdvect = new MACAdvectRK2<double>();
+
 const int FirePresets::GRID_DIM_X = 64;
 const int FirePresets::GRID_DIM_Y = 64;
 const int FirePresets::GRID_DIM_Z = 1;

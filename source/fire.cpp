@@ -79,7 +79,7 @@ void Fire::advectLevelSet(double duration)
 
 void Fire::advectTemperature(double dt)
 {
-
+    T->AdvectTemperatureField(dt, u);
 }
 
 double Fire::getAlpha(const int i, const int j, const int k, DirectionEnums d)
@@ -434,11 +434,12 @@ void Fire::computeW()
 void Fire::draw()
 {
 	phi.draw();
+    //T->draw();
 
 	//drawVorticities();
     //u.draw();
-	drawCenterVelocities();
-	//drawCenterGradients(FirePresets::centralDisc);
+	//drawCenterVelocities();
+    //drawCenterGradients(FirePresets::upwindDisc);
     //drawFaceVelocities();
     //drawMAC();
     //drawSolid();

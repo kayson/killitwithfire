@@ -44,10 +44,9 @@ public:
 	AdvectLevelSet *advection;
 	MACAdvect<double> *advectVelocities;
 	void advectLevelSet(double duration);
-    //Discretization *upwindDiscretization;
-	//Discretization *centralDiscretization;
 	static UpwindDiff *upwindDisc;
 	static CentralDiff *centralDisc;
+    static MACAdvect<double> *tempAdvect;
 };
 
 

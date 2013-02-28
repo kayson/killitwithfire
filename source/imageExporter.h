@@ -1,11 +1,7 @@
 #ifndef IMAGEEXPORTER_H
 #define IMAGEEXPORTER_H
 
-
-
-
 #include <string.h>
-
 
 #ifdef __APPLE__
 #elif defined _WIN32 || defined _WIN64
