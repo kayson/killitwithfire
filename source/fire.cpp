@@ -79,7 +79,7 @@ void Fire::advectLevelSet(double duration)
 
 void Fire::advectTemperature(double dt)
 {
-    T->AdvectTemperatureField(dt, u);
+    T->AdvectTemperatureField(dt, u, phi);
 }
 
 double Fire::getAlpha(const int i, const int j, const int k, DirectionEnums d)

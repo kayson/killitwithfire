@@ -28,6 +28,15 @@ Temperature::Temperature(GridField<double> *phi)
 	}
 }
 
+void Temperature::ResetCell(int i, int j, int k, CellType type)
+{
+    double x, y, z;
+    grid->indexToWorld(i, j, k, x, y, z);
+    if(type == CellType::BLUECORE){
+        grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
+    }
+}
+
 void Temperature::InitCell(int i, int j, int k, CellType type)
 {
 	if(type == CellType::BLUECORE){
@@ -48,11 +57,11 @@ double Temperature::calculateTemperatureLoss(int i, int j, int k){
     return pow((T-FirePresets::T_AIR)/(FirePresets::T_MAX - FirePresets::T_AIR), 4.0) * c_T;
 }
 
-void Temperature::AdvectTemperatureField(double dt, MACGrid m){
+void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
     for(int i = 0; i < grid->xdim(); i++)
         for(int j = 0; j < grid->ydim(); j++)
             for(int k = 0; k < grid->zdim(); k++){
-
+                ResetCell(i, j, k, Fire::getCellType(ls.grid->valueAtIndex(i, j, k)));
                 double c = calculateTemperatureLoss(i, j, k);
                 double v = FirePresets::tempAdvect->advect(dt, m, *grid, i, j, k);
                 grid->setValueAtIndex(v - c, i, j, k);

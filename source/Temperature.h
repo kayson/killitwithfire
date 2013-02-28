@@ -5,6 +5,7 @@
 #include "GridField.h"
 #include "helper.h"
 #include "MACGrid.h"
+#include "LevelSet.h"
 
 class Temperature{
 
@@ -18,7 +19,7 @@ public:
 	void SetToIgnite(int i, int j, int k);
 	GridField<double> GetTemperatureGrid();
 
-    void AdvectTemperatureField(double dt, MACGrid m);
+    void AdvectTemperatureField(double dt, MACGrid m, LevelSet ls);
 
 	void draw();
 
@@ -27,6 +28,7 @@ private:
     GridField<double> *gridCopy;
     double calculateTemperatureLoss(int i, int j, int k);
 	void InitCell(int i, int j, int k, CellType type);
+    void ResetCell(int i, int j, int k, CellType type);
 };
 
 #endif //TEMPERATURE_H
