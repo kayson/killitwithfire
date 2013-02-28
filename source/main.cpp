@@ -26,7 +26,7 @@
 
 #define SIMULAITON FIRE
 //#define SIMULATION WATER2D
-//#define SIMULATION WATER3D //Fungerar inte???
+//#define SIMULATION WATER3D
 
 bool init();
 void showFPS();
@@ -177,7 +177,7 @@ void render(void)
 #elif SIMULATION == WATER2D
     water->draw();
 #elif SIMULATION == WATER3D
-	water->draw();
+	water3d->draw();
 #endif
 }
 
