@@ -14,6 +14,9 @@
 #include "transform.hpp"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
+
+#include "Vorticity.h"
+
 #endif
 
 Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
@@ -44,6 +47,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
 	T = new Temperature(phi.grid);
 
+	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
 }
 
 double Fire::computeDT(double currentTime){
@@ -177,8 +181,8 @@ CellType Fire::getCellType(double phi)
 
 void Fire::runSimulation(){
 
-	//Advektera levelset
-	for(double currentTime = 0; currentTime < preset->dt;)
+	 //Advektera levelset
+    for(double currentTime = 0; currentTime < preset->dt;)
 	{
 		double dt = computeDT(currentTime);
 
@@ -188,15 +192,16 @@ void Fire::runSimulation(){
 		currentTime += dt;
 	}
 
-	/*static int counter = 0;
-	if (counter % 1 == 0) {
-	for(int i = -4; i < 4; i++)
-	{
-	phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
-	u.addValueAtFace(3,preset->GRID_DIM_X/2+i,0,0,UP);
-	}
-	}
-	counter++;*/
+
+	static int counter = 0;
+    if (counter % 1 == 0) {
+		for(int i = -4; i < 4; i++)
+		{
+			phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
+			u.addValueAtFace(3,preset->GRID_DIM_X/2+i,0,0,UP);
+		}
+    }
+    counter++;
 
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 
@@ -204,15 +209,22 @@ void Fire::runSimulation(){
 	//u.advect(preset->dt);
 	preset->advectVelocities->advect(u, phi, preset->dt);
 
-	Vector3 force = Vector3(0.0, -0.1, 0.0);
-	u.addForce(force, preset->dt);
+
+    Vector3 force = Vector3(0.0, 0.05, 0.0);
+    u.addForce(force, preset->dt);
+	
+	// Vorticity confinement forces
+	Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, 
+		phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+
+	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
 	advectLevelSet(preset->dt);
 
-	//Externa krafter  
-	//preset->externalForce->addForce(grid);
-
-	//Project
+    //Externa krafter
+		//preset->externalForce->addForce(grid);
+    
+    //Project
 	//project(preset->dt);
 	//project2D(preset->dt);
 
@@ -223,6 +235,24 @@ void Fire::runSimulation(){
 	//Fixa signed distance field
 	phi.reinitialize();
 
+}
+
+void Fire::drawVorticities(){
+	glColor3d(1.0,1.0,1.0);
+	for( GridFieldIterator<Vector3> iter = vorticityForces->iterator(); !iter.done(); iter.next() ){
+		int i,j,k;
+		iter.index(i,j,k);
+		double x,y,z;
+		vorticityForces->indexToWorld(i,j,k,x,y,z);
+		Vector3 val = iter.value();
+		/*std::cout << "ijk: "<< i << " " << j << " " << k <<std::endl;
+		std::cout << "xyz: "<< x << " " << y << " " << z <<std::endl<<std::endl;*/
+
+		glBegin(GL_LINE_STRIP);
+		glVertex3d(x,y,0);
+		glVertex3d(x+val.x, y+val.y,0);
+		glEnd();
+	}
 }
 
 void Fire::drawMAC(){
@@ -374,6 +404,22 @@ void Fire::drawCenterGradients(Discretization *disc)
 
 }
 
+void Fire::drawCenterVelocities(){
+    for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u.indexToWorld(i, j, k, x, y, z);
+    
+        Vector3 v = u.velocityAtWorld(Vector3(x,y,z));//*FirePresets::dx;
+        glColor3d(1.0,1.0,0.0);
+        glBegin(GL_LINE_STRIP);
+        glVertex3d(x, y, 0);
+        glVertex3d(x + v.x, y +v.y , 0);
+        glEnd();
+    }
+}
+
 void Fire::computeW()
 {
 	for(GridFieldIterator<Vector3> it = w.iterator(); !it.done(); it.next())
@@ -388,18 +434,20 @@ void Fire::computeW()
 void Fire::draw()
 {
 	phi.draw();
-	//T->draw();
-	//u.draw();
-	//drawCenterVelocities();
-	drawCenterGradients(FirePresets::centralDisc);
-	//drawFaceVelocities();
-	//drawMAC();
-	//drawSolid();
+
+	//drawVorticities();
+    //u.draw();
+	drawCenterVelocities();
+	//drawCenterGradients(FirePresets::centralDisc);
+    //drawFaceVelocities();
+    //drawMAC();
+    //drawSolid();
 
 }
 
 Fire::~Fire(){
-	delete preset;
+
+    delete preset;
 	//delete pcgSolver;
 	delete A;
 	delete rhs;

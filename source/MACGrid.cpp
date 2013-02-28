@@ -422,6 +422,43 @@ void MACGrid::addForce(Vector3 vec, double dt){
     
 }
 
+void MACGrid::addForceGrid(GridField<Vector3> &f, double dt){
+	#pragma omp parallel for
+	for(int index = 0; index < 3; ++index){
+		GridField<double> *field;
+		if(index == 0)
+			field = _u;
+		else if(index == 1)
+			field = _v;
+		else
+			field = _w;
+
+		// Från Fedkiw 2001, Smoke etc. s.7
+		for(GridFieldIterator<double> iter = field->iterator(); !iter.done(); iter.next()) {
+			int i,j,k;
+			iter.index(i,j,k);
+			double x,y,z;
+			field->indexToWorld(i,j,k,x,y,z);
+
+			if(index == 0){
+				double val = _u->valueAtIndex(i,j,k);
+				double forceval = ( f.valueAtIndex(i,j,k).x + f.valueAtIndex(i+1,j,k).x )/2;
+				_u->setValueAtIndex(val+forceval*dt,i,j,k);
+			}
+			else if(index == 1){
+				double val = _v->valueAtIndex(i,j,k);
+				double forceval = ( f.valueAtIndex(i,j,k).y + f.valueAtIndex(i,j+1,k).y )/2;
+				_v->setValueAtIndex(val+forceval*dt,i,j,k);
+			}
+			else if(index == 3){
+				double val = _w->valueAtIndex(i,j,k);
+				//double forceval = ( f.valueAtIndex(i,j,k).z + f.valueAtIndex(i,j,k+1).z )/2;
+				_w->setValueAtIndex(val, i,j,k);//_w->setValueAtIndex(val+forceval*dt, i,j,k);
+			}
+		}
+	}
+}
+
 void MACGrid::extrapolate(double dt, GridField<int > &cellType){
     assert(*this == cellType);
     

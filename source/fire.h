@@ -3,7 +3,6 @@
 #ifndef FIRE_H
 #define FIRE_H
 
-
 #include "presets/firePresets.h"
 
 
@@ -13,6 +12,7 @@
 #include "GridField.h"
 #include "GridMapping.h"
 #include "helper.h"
+
 //#include "Pressure\pcgsolver\blas_win.h"
 #include "Water/Particles.h"
 
@@ -60,7 +60,7 @@ public:
     void drawDivergence();
     void drawScalar();
     void drawParticles();
-	void drawGridField(GridField<double> *grid);
+	void drawVorticities();
 
 	static CellType getCellType(double phi);
 private:
@@ -94,8 +94,8 @@ private:
 	GridField<int> celltype;
     //GridField<double> scalar;
 
-
-
+	//Vorticity confinement forces
+	GridField<Vector3> *vorticityForces;
 };
 
 #endif //FIRE_H

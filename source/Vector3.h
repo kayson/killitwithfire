@@ -35,6 +35,7 @@ public:
     Vector3 operator* (const Vector3 &v) const;
     Vector3 operator+ (const Vector3 &v) const;
     Vector3 operator- (const Vector3 &v) const;
+	bool operator==(const Vector3 &v) const;
 	
 	void operator*= (const double f);
 	Vector3 operator* (const double f) const;
