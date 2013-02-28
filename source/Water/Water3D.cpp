@@ -134,7 +134,8 @@ void Water3D::runSimulation(double dt){
     
     //Advect velocity field
     MACAdvectRK2<double> advect = MACAdvectRK2<double>();
-    advect.MACAdvect<double>::advect(u, dt);
+	advect.MACAdvect<double>::advect(u, dt);
+
 
     //Add exernal forces
     u.addForce(g, dt);

@@ -1,6 +1,7 @@
 #include "Temperature.h"
 #include "FirePresets.h"
-
+#include "MACAdvect.h"
+#include "fire.h"
 #ifdef __APPLE__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
@@ -35,15 +36,6 @@ void Temperature::InitCell(int i, int j, int k, CellType type)
 	}
 }
 
-void Temperature::Update(GridField<double> *phi){
-
-	//Advect T
-	
-}
-
-void Temperature::UpdateT(){
-
-}
 
 void Temperature::SetToMax(int i, int j, int k){
 	grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
@@ -54,7 +46,7 @@ void Temperature::SetToIgnite(int i, int j, int k)
 	grid->setValueAtIndex(FirePresets::T_IGNITION, i, j, k);
 }
 
-GridField<double> Temperature::GetTemperatureGrid() const{
+GridField<double> Temperature::GetTemperatureGrid(){
 	return *grid;
 }
 

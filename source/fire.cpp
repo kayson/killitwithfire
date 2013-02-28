@@ -6,6 +6,7 @@
 #include "GridField.hpp"
 #include "Gradient.h"
 #include "GridFieldFileManager.h"
+
 #ifdef __APPLE__
 #include "glfw.h"
 #include "pcg_solver.h"
@@ -17,13 +18,13 @@
 
 Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
 {
-    //Presets
-    preset = pre;
+	//Presets
+	preset = pre;
 
 	phi.fillLevelSet(preset->implicitFunction);
-    //2D grid
-    u = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
-    //Advect
+	//2D grid
+	u = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
+	//Advect
 
 	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
@@ -72,6 +73,11 @@ void Fire::advectLevelSet(double duration)
 	preset->advection->advect(w, phi, duration);
 }
 
+void Fire::advectTemperature(double dt)
+{
+
+}
+
 double Fire::getAlpha(const int i, const int j, const int k, DirectionEnums d)
 {
 	// sid. 104 (Bridson)
@@ -94,10 +100,10 @@ double Fire::getAlpha(const int i, const int j, const int k, DirectionEnums d)
 		return 1;
 	else if(phi.grid->valueAtIndex(i,j,k) <= 0 && temp > 0)
 		return (phi.grid->valueAtIndex(i,j,k) / 
-			(phi.grid->valueAtIndex(i,j,k) - temp));
+		(phi.grid->valueAtIndex(i,j,k) - temp));
 	else if(phi.grid->valueAtIndex(i,j,k) > 0 && temp <= 0)
 		return 1 - (phi.grid->valueAtIndex(i,j,k) / 
-			(phi.grid->valueAtIndex(i,j,k) - temp));
+		(phi.grid->valueAtIndex(i,j,k) - temp));
 	else if(phi.grid->valueAtIndex(i,j,k) > 0 && temp > 0)
 		return 0;
 }
@@ -120,7 +126,7 @@ double Fire::getDensity(const int i, const int j, const int k, DirectionEnums d)
 		temp = getCellType(i,j,k-1);
 	if(d == FORWARD)
 		temp = getCellType(i,j,k+1);
-			
+
 	if(getCellType(i,j,k) == BLUECORE && temp == BLUECORE)
 		return preset->rhof;
 	else if(getCellType(i,j,k) == BLUECORE && temp == IGNITED)
@@ -138,7 +144,7 @@ void Fire::computeCellTypes()
 	{
 		int i, j, k;
 		it.index(i, j, k);
-        
+
 		celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
 
 	}
@@ -171,8 +177,8 @@ CellType Fire::getCellType(double phi)
 
 void Fire::runSimulation(){
 
-	 //Advektera levelset
-    for(double currentTime = 0; currentTime < preset->dt;)
+	//Advektera levelset
+	for(double currentTime = 0; currentTime < preset->dt;)
 	{
 		double dt = computeDT(currentTime);
 
@@ -180,190 +186,192 @@ void Fire::runSimulation(){
 		//advectLevelSet(preset->dt);
 
 		currentTime += dt;
-    }
+	}
 
 	/*static int counter = 0;
-    if (counter % 1 == 0) {
-		for(int i = -4; i < 4; i++)
-		{
-			phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
-			u.addValueAtFace(3,preset->GRID_DIM_X/2+i,0,0,UP);
-		}
-    }
-    counter++;*/
+	if (counter % 1 == 0) {
+	for(int i = -4; i < 4; i++)
+	{
+	phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
+	u.addValueAtFace(3,preset->GRID_DIM_X/2+i,0,0,UP);
+	}
+	}
+	counter++;*/
 
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 
 
-    //u.advect(preset->dt);
+	//u.advect(preset->dt);
 	preset->advectVelocities->advect(u, phi, preset->dt);
 
-    Vector3 force = Vector3(0.0, -0.1, 0.0);
-    u.addForce(force, preset->dt);
+	Vector3 force = Vector3(0.0, -0.1, 0.0);
+	u.addForce(force, preset->dt);
 
 	advectLevelSet(preset->dt);
 
-    //Externa krafter  
-		//preset->externalForce->addForce(grid);
-    
-    //Project
+	//Externa krafter  
+	//preset->externalForce->addForce(grid);
+
+	//Project
 	//project(preset->dt);
 	//project2D(preset->dt);
+
+	//Advektera temperatur
+	//advectTemperature(preset->dt);
+
 
 	//Fixa signed distance field
 	phi.reinitialize();
 
-	//Uppdatera temperatur
-	T->Update(phi.grid);
 }
 
 void Fire::drawMAC(){
-    
-    glColor3f(1,1,0);
-    glBegin(GL_POINTS);
-    for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        u.indexToWorld(i, j, k, x, y, z);
 
-        glVertex3d(x, y, 0);
-    }
-    glEnd();
+	glColor3f(1,1,0);
+	glBegin(GL_POINTS);
+	for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
+		int i,j,k;
+		iter.index(i, j, k);
+		double x,y,z;
+		u.indexToWorld(i, j, k, x, y, z);
+
+		glVertex3d(x, y, 0);
+	}
+	glEnd();
 
 }
 
 void Fire::drawSolid(){
-    
-    double dx = celltype.dx();
-    double dy = celltype.dy();
-    //double dz = celltype.mapping.dx();
-    glBegin(GL_QUADS);
-    for (GridFieldIterator<int> iter = celltype.iterator(); !iter.done(); iter.next()) {
-        double x,y,z;
-        int i,j,k;
-        iter.index(i, j, k);
-        
-            celltype.indexToWorld(i, j, k, x, y, z);
-            int val = iter.value();
-            
-            if (val == SOLID){
-                glColor3d(0.1, 0.1, 0.1);
-                glVertex3d(x-dx*0.5, y-dy*0.5, 0);
-                glVertex3d(x+dx*0.5, y-dy*0.5, 0);
-                glVertex3d(x+dx*0.5, y+dy*0.5, 0);
-                glVertex3d(x-dx*0.5, y+dy*0.5, 0);
-            }else if (val == BLUECORE){
-                glColor3f(0, 0, 1);
-                glVertex3d(x-dx*0.5, y-dy*0.5, 0);
-                glVertex3d(x+dx*0.5, y-dy*0.5, 0);
-                glVertex3d(x+dx*0.5, y+dy*0.5, 0);
-                glVertex3d(x-dx*0.5, y+dy*0.5, 0);
-            }else if (val == AIR){
-                //None dude
-            }
-        
 
-    }
+	double dx = celltype.dx();
+	double dy = celltype.dy();
+	//double dz = celltype.mapping.dx();
+	glBegin(GL_QUADS);
+	for (GridFieldIterator<int> iter = celltype.iterator(); !iter.done(); iter.next()) {
+		double x,y,z;
+		int i,j,k;
+		iter.index(i, j, k);
 
-    glEnd();
+		celltype.indexToWorld(i, j, k, x, y, z);
+		int val = iter.value();
+
+		if (val == SOLID){
+			glColor3d(0.1, 0.1, 0.1);
+			glVertex3d(x-dx*0.5, y-dy*0.5, 0);
+			glVertex3d(x+dx*0.5, y-dy*0.5, 0);
+			glVertex3d(x+dx*0.5, y+dy*0.5, 0);
+			glVertex3d(x-dx*0.5, y+dy*0.5, 0);
+		}else if (val == BLUECORE){
+			glColor3f(0, 0, 1);
+			glVertex3d(x-dx*0.5, y-dy*0.5, 0);
+			glVertex3d(x+dx*0.5, y-dy*0.5, 0);
+			glVertex3d(x+dx*0.5, y+dy*0.5, 0);
+			glVertex3d(x-dx*0.5, y+dy*0.5, 0);
+		}else if (val == AIR){
+			//None dude
+		}
+
+
+	}
+
+	glEnd();
 }
 
 void Fire::drawFaceVelocities(){
-    glColor3f(0,1,0);
-    for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        u._u->indexToWorld(i, j, k, x, y, z);
-        double val = iter.value();
+	glColor3f(0,1,0);
+	for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
+		int i,j,k;
+		iter.index(i, j, k);
+		double x,y,z;
+		u._u->indexToWorld(i, j, k, x, y, z);
+		double val = iter.value();
 
-        glBegin(GL_LINE_STRIP);
-        glVertex3d(x, y, 0);
-        glVertex3d(x+val, y, 0);
-        glEnd();
-    }
-    
-    glColor3f(1,0,0);
-    for (GridFieldIterator<double> iter = u._v->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        u._v->indexToWorld(i, j, k, x, y, z);
-        double val = iter.value();
-        glBegin(GL_LINE_STRIP);
-        glVertex3d(x, y, 0);
-        glVertex3d(x, y+val, 0);
-        glEnd();
-    }
-    
+		glBegin(GL_LINE_STRIP);
+		glVertex3d(x, y, 0);
+		glVertex3d(x+val, y, 0);
+		glEnd();
+	}
+
+	glColor3f(1,0,0);
+	for (GridFieldIterator<double> iter = u._v->iterator(); !iter.done(); iter.next()) {
+		int i,j,k;
+		iter.index(i, j, k);
+		double x,y,z;
+		u._v->indexToWorld(i, j, k, x, y, z);
+		double val = iter.value();
+		glBegin(GL_LINE_STRIP);
+		glVertex3d(x, y, 0);
+		glVertex3d(x, y+val, 0);
+		glEnd();
+	}
+
 }
 
 void Fire::drawCenterGradients(Discretization *disc)
 {
-	 for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        u.indexToWorld(i, j, k, x, y, z);
+	for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
+		int i,j,k;
+		iter.index(i, j, k);
+		double x,y,z;
+		u.indexToWorld(i, j, k, x, y, z);
 		GridField<double> *g = phi.grid;
 		Vector3 v = Gradient::getGradient(*g, i, j, k, *disc) * 0.2;
 		//std::cout << v.norm() << std::endl;
-        /*glColor3f(0,1,0);
-        glBegin(GL_LINES);
-        glVertex3f(1, 1, 1);
-        glVertex3f(dx*i + 1, y + 1, z + 1);
-        glEnd();
-        
-        glColor3f(0,0,0);
-        glBegin(GL_POINTS);
-        glVertex3f(x + v.x, y + v.y, z + v.z);
-        glEnd();
-        */
-        
-        //x = i; y = j; z = k;
-                    
-        glColor3d(1.0,1.0,0.0);
-        glBegin(GL_LINE_STRIP);
-        glVertex3d(x, y, 0);
-        glVertex3d(x + v.x, y+v.y , 0);
-        glEnd();
-        
-        /*
-        glColor3f(1,0,0);
-        glBegin(GL_POINTS);
-        glVertex3f(x, y, 0);
-        glEnd();
-        */
-        
-    }
-    /*
-	for(int i = 0; i < phi.grid.xdim(); i += 5)
->>>>>>> Tagit bort vectorgrid
-	{
-		for(int j = 0; j < phi.grid->ydim(); j += 5)
-		{
-			for(int k = 0; k < phi.grid->zdim(); k += 5)
-			{
-				float x0 = FirePresets::dx*((double)(i) + 0.5);
-				float y0 = FirePresets::dx*((double)(j) + 0.5);
-				float z0 = FirePresets::dx*((double)(k) + 0.5);
-                
-				Vector3 v = u.velocityAtIndex(Vector3(i, j, k))*FirePresets::dx;
-				glColor3f(0,1,0);
-				glBegin(GL_LINES);
-					glVertex3f(x0, y0, z0);
-					glVertex3f(x0 + v.x, y0 + v.y, z0 + v.z);
-				glEnd();
+		/*glColor3f(0,1,0);
+		glBegin(GL_LINES);
+		glVertex3f(1, 1, 1);
+		glVertex3f(dx*i + 1, y + 1, z + 1);
+		glEnd();
 
-				glColor3f(0,0,0);
-				glBegin(GL_POINTS);
-					glVertex3f(x0 + v.x, y0 + v.y, z0 + v.z);
-				glEnd();
-			}
-		}
+		glColor3f(0,0,0);
+		glBegin(GL_POINTS);
+		glVertex3f(x + v.x, y + v.y, z + v.z);
+		glEnd();
+		*/
+
+		//x = i; y = j; z = k;
+
+		glColor3d(1.0,1.0,0.0);
+		glBegin(GL_LINE_STRIP);
+		glVertex3d(x, y, 0);
+		glVertex3d(x + v.x, y+v.y , 0);
+		glEnd();
+
+		/*
+		glColor3f(1,0,0);
+		glBegin(GL_POINTS);
+		glVertex3f(x, y, 0);
+		glEnd();
+		*/
+
+	}
+	/*
+	for(int i = 0; i < phi.grid.xdim(); i += 5)
+	>>>>>>> Tagit bort vectorgrid
+	{
+	for(int j = 0; j < phi.grid->ydim(); j += 5)
+	{
+	for(int k = 0; k < phi.grid->zdim(); k += 5)
+	{
+	float x0 = FirePresets::dx*((double)(i) + 0.5);
+	float y0 = FirePresets::dx*((double)(j) + 0.5);
+	float z0 = FirePresets::dx*((double)(k) + 0.5);
+
+	Vector3 v = u.velocityAtIndex(Vector3(i, j, k))*FirePresets::dx;
+	glColor3f(0,1,0);
+	glBegin(GL_LINES);
+	glVertex3f(x0, y0, z0);
+	glVertex3f(x0 + v.x, y0 + v.y, z0 + v.z);
+	glEnd();
+
+	glColor3f(0,0,0);
+	glBegin(GL_POINTS);
+	glVertex3f(x0 + v.x, y0 + v.y, z0 + v.z);
+	glEnd();
+	}
+	}
 	}*/
-	
+
 }
 
 void Fire::computeW()
@@ -379,19 +387,19 @@ void Fire::computeW()
 
 void Fire::draw()
 {
-	//phi.draw();
-	T->draw();
-    //u.draw();
+	phi.draw();
+	//T->draw();
+	//u.draw();
 	//drawCenterVelocities();
 	drawCenterGradients(FirePresets::centralDisc);
-    //drawFaceVelocities();
-    //drawMAC();
-    //drawSolid();
+	//drawFaceVelocities();
+	//drawMAC();
+	//drawSolid();
 
 }
 
 Fire::~Fire(){
-    delete preset;
+	delete preset;
 	//delete pcgSolver;
 	delete A;
 	delete rhs;
@@ -400,93 +408,93 @@ Fire::~Fire(){
 }
 /*
 void Fire::advect(double dt){
-    
-    for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        u._u->indexToWorld(i, j, k, x, y, z);
-        double val = preset->advectVelocities->advect(dt, u, *u._u, i, j, k);
-        u.buffer()->_u->setValueAtIndex(val, i, j, k);
-        
-    }
-    
-    for (GridFieldIterator<double> iter = u._v->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        u._v->indexToWorld(i, j, k, x, y, z);
-        double val = preset->advectVelocities->advect(dt, u, *u._v, i, j, k);
-        u.buffer()->_v->setValueAtIndex(val, i, j, k);
-        
-    }
-    
-    for (GridFieldIterator<double> iter = u._w->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        u._w->indexToWorld(i, j, k, x, y, z);
-        double val = preset->advectVelocities->advect(dt, u, *u._w, i, j, k);
-        u.buffer()->_w->setValueAtIndex(val, i, j, k);
-    }
-    
-    u.swapBuffer();
+
+for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
+int i,j,k;
+iter.index(i, j, k);
+double x,y,z;
+u._u->indexToWorld(i, j, k, x, y, z);
+double val = preset->advectVelocities->advect(dt, u, *u._u, i, j, k);
+u.buffer()->_u->setValueAtIndex(val, i, j, k);
+
+}
+
+for (GridFieldIterator<double> iter = u._v->iterator(); !iter.done(); iter.next()) {
+int i,j,k;
+iter.index(i, j, k);
+double x,y,z;
+u._v->indexToWorld(i, j, k, x, y, z);
+double val = preset->advectVelocities->advect(dt, u, *u._v, i, j, k);
+u.buffer()->_v->setValueAtIndex(val, i, j, k);
+
+}
+
+for (GridFieldIterator<double> iter = u._w->iterator(); !iter.done(); iter.next()) {
+int i,j,k;
+iter.index(i, j, k);
+double x,y,z;
+u._w->indexToWorld(i, j, k, x, y, z);
+double val = preset->advectVelocities->advect(dt, u, *u._w, i, j, k);
+u.buffer()->_w->setValueAtIndex(val, i, j, k);
+}
+
+u.swapBuffer();
 }
 
 void Fire::advect(double dt, GridField<int > &cellType){
-    
-    for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        u._u->indexToWorld(i, j, k, x, y, z);
-        double val;
-        
-        
-        if (cellType.valueAtWorld(x, y, z) == BLUECORE) 
-		{
-			val = preset->advectVelocities->advect(dt, u, *u._u, i, j, k);
-        }
-		else
-		{
-            val = 0;// _u->valueAtIndex(iter.index());
-        }
-        
-        u.buffer()->_u->setValueAtIndex(val, i, j, k);
 
-    }
-    
-    for (GridFieldIterator<double> iter = u._v->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        u._v->indexToWorld(i, j, k, x, y, z);
-        double val;
-        if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
-			val = preset->advectVelocities->advect(dt, u, *u._v, i, j, k);
-        }else{
-            val = 0;//_v->valueAtIndex(iter.index());
-        }
-        
-        u.buffer()->_v->setValueAtIndex(val, i, j, k);
+for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
+int i,j,k;
+iter.index(i, j, k);
+double x,y,z;
+u._u->indexToWorld(i, j, k, x, y, z);
+double val;
 
-    }
-    
-    for (GridFieldIterator<double> iter = u._w->iterator(); !iter.done(); iter.next()) {
-        int i,j,k;
-        iter.index(i, j, k);
-        double x,y,z;
-        u._w->indexToWorld(i, j, k, x, y, z);
-        double val;
-        if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
-            val = preset->advectVelocities->advect(dt, u, *u._w, i, j, k);
-        }else{
-            val = 0;//_w->valueAtIndex(iter.index());
-        }
-        
-        u.buffer()->_w->setValueAtIndex(val, i, j, k);
 
-    }
-    
-    u.swapBuffer();
+if (cellType.valueAtWorld(x, y, z) == BLUECORE) 
+{
+val = preset->advectVelocities->advect(dt, u, *u._u, i, j, k);
+}
+else
+{
+val = 0;// _u->valueAtIndex(iter.index());
+}
+
+u.buffer()->_u->setValueAtIndex(val, i, j, k);
+
+}
+
+for (GridFieldIterator<double> iter = u._v->iterator(); !iter.done(); iter.next()) {
+int i,j,k;
+iter.index(i, j, k);
+double x,y,z;
+u._v->indexToWorld(i, j, k, x, y, z);
+double val;
+if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
+val = preset->advectVelocities->advect(dt, u, *u._v, i, j, k);
+}else{
+val = 0;//_v->valueAtIndex(iter.index());
+}
+
+u.buffer()->_v->setValueAtIndex(val, i, j, k);
+
+}
+
+for (GridFieldIterator<double> iter = u._w->iterator(); !iter.done(); iter.next()) {
+int i,j,k;
+iter.index(i, j, k);
+double x,y,z;
+u._w->indexToWorld(i, j, k, x, y, z);
+double val;
+if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
+val = preset->advectVelocities->advect(dt, u, *u._w, i, j, k);
+}else{
+val = 0;//_w->valueAtIndex(iter.index());
+}
+
+u.buffer()->_w->setValueAtIndex(val, i, j, k);
+
+}
+
+u.swapBuffer();
 }*/

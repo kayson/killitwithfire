@@ -32,6 +32,7 @@ class Fire{
 protected:
     double computeDT(double currentTime);
 	void advectLevelSet(double duration);
+	void advectTemperature(double duration);
 
 	void project(double duration);
     void project2D(double duration);

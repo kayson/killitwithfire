@@ -20,6 +20,7 @@ class MACAdvect {
 public:
 	MACAdvect(){}
     virtual ~MACAdvect(){}
+	
     void advect(MACGrid &u, double dt){
         double x,y,z;
 
@@ -28,7 +29,9 @@ public:
             for (int j = 0; j < u._u->ydim(); j++) {
                 for (int k = 0; k < u._u->zdim(); k++) {
                     u._u->indexToWorld(i, j, k, x, y, z);
-                    double val = advect(dt, u, *u._u, i, j, k);
+
+					double val = advect(dt, u, *u._u, i, j, k);
+
                     u.buffer()->_u->setValueAtIndex(val, i, j, k);
                 }
             }
@@ -41,7 +44,9 @@ public:
             for (int j = 0; j < u._v->ydim(); j++) {
                 for (int k = 0; k < u._v->zdim(); k++) {
                     u._v->indexToWorld(i, j, k, x, y, z);
+
                     double val = advect(dt, u, *u._v, i, j, k);
+
                     u.buffer()->_v->setValueAtIndex(val, i, j, k);
                 }
             }

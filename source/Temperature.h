@@ -4,6 +4,7 @@
 #include "Vector3.h"
 #include "GridField.h"
 #include "helper.h"
+#include "MACGrid.h"
 
 class Temperature{
 
@@ -15,13 +16,11 @@ public:
 	void SetToMax(int i, int j, int k);
 	void SetToAir(int i, int j, int k);
 	void SetToIgnite(int i, int j, int k);
-	GridField<double> GetTemperatureGrid() const;
+	GridField<double> GetTemperatureGrid();
 	void draw();
-	void Update(GridField<double> *phi);
+
 private:
 	GridField<double> *grid; 
-
-	void UpdateT();
 
 	void InitCell(int i, int j, int k, CellType type);
 };
