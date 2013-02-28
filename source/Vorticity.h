@@ -67,7 +67,6 @@ namespace Vorticity{
 						(n.norm() != 0.) ? N = n/n.norm() : N = Vector3(0.);
 
 						Vector3 ohmVecTemp;
-						double x, y, z;
 
 						ohmVecTemp = ohmVecGrid.valueAtIndex(i,j,k);
 
@@ -75,7 +74,7 @@ namespace Vorticity{
 											N.z * ohmVecTemp.x - N.x * ohmVecTemp.z,
 											N.x * ohmVecTemp.y - N.y * ohmVecTemp.x);
 
-						fconf = crossprod*dx*epsilon;
+						fconf = crossprod*dx*epsilon*-1;
 
 						forces.setValueAtIndex(fconf,i,j,k);
 					}

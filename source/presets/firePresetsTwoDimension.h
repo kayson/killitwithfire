@@ -38,8 +38,8 @@ private:
 UpwindDiff *FirePresets::upwindDisc = new UpwindDiff();
 CentralDiff *FirePresets::centralDisc = new CentralDiff();
 
-const int FirePresets::GRID_DIM_X = 36;
-const int FirePresets::GRID_DIM_Y = 36;
+const int FirePresets::GRID_DIM_X = 64;
+const int FirePresets::GRID_DIM_Y = 64;
 const int FirePresets::GRID_DIM_Z = 1;
 
 const double FirePresets::GRID_SIZE = 18;

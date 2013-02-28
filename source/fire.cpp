@@ -203,10 +203,10 @@ void Fire::runSimulation(){
     u.addForce(force, preset->dt);
 	
 	// Vorticity confinement forces
-	Vorticity::addVorticity(u, *vorticityForces, 0.05, FirePresets::dx, 
+	Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, 
 		phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 
-	u.addForceGrid(*vorticityForces, preset->dt);	
+	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
 	advectLevelSet(preset->dt);
 
@@ -222,15 +222,14 @@ void Fire::runSimulation(){
 	phi.reinitialize();
 }
 
-void Fire::drawVorticities(GridField<Vector3> &f){
+void Fire::drawVorticities(){
 	glColor3d(1.0,1.0,1.0);
-	for( GridFieldIterator<Vector3> iter = f.iterator(); !iter.done(); iter.next() ){
+	for( GridFieldIterator<Vector3> iter = vorticityForces->iterator(); !iter.done(); iter.next() ){
 		int i,j,k;
 		iter.index(i,j,k);
 		double x,y,z;
-		f.indexToWorld(i,j,k,x,y,z);
+		vorticityForces->indexToWorld(i,j,k,x,y,z);
 		Vector3 val = iter.value();
-
 		/*std::cout << "ijk: "<< i << " " << j << " " << k <<std::endl;
 		std::cout << "xyz: "<< x << " " << y << " " << z <<std::endl<<std::endl;*/
 
@@ -390,6 +389,22 @@ void Fire::drawCenterGradients(Discretization *disc)
 	
 }
 
+void Fire::drawCenterVelocities(){
+    for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        u.indexToWorld(i, j, k, x, y, z);
+    
+        Vector3 v = u.velocityAtWorld(Vector3(x,y,z));//*FirePresets::dx;
+        glColor3d(1.0,1.0,0.0);
+        glBegin(GL_LINE_STRIP);
+        glVertex3d(x, y, 0);
+        glVertex3d(x + v.x, y +v.y , 0);
+        glEnd();
+    }
+}
+
 void Fire::computeW()
 {
 	for(GridFieldIterator<Vector3> it = w.iterator(); !it.done(); it.next())
@@ -404,9 +419,9 @@ void Fire::computeW()
 void Fire::draw()
 {
 	phi.draw();
-	drawVorticities(*vorticityForces);
+	//drawVorticities();
     //u.draw();
-	//drawCenterVelocities();
+	drawCenterVelocities();
 	//drawCenterGradients(FirePresets::centralDisc);
     //drawFaceVelocities();
     //drawMAC();

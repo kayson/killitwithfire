@@ -54,7 +54,7 @@ public:
     void drawDivergence();
     void drawScalar();
     void drawParticles();
-	void drawVorticities(GridField<Vector3>&);
+	void drawVorticities();
 
 	static CellType getCellType(double phi);
 private:
