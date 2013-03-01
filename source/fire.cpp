@@ -6,6 +6,9 @@
 #include "GridField.hpp"
 #include "Gradient.h"
 #include "GridFieldFileManager.h"
+#include "GridMapping.h"
+#include "presets/firePresets.h"
+#include "MACAdvect.h"
 
 #ifdef __APPLE__
 #include "glfw.h"
@@ -19,7 +22,7 @@
 
 #endif
 
-Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
+Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),projection(&u, &phi)
 {
 	//Presets
 	preset = pre;
@@ -142,6 +145,7 @@ double Fire::getDensity(const int i, const int j, const int k, DirectionEnums d)
 
 }
 
+
 void Fire::computeCellTypes()
 {
 	for(GridFieldIterator<int> it = celltype.iterator(); !it.done(); it.next())
@@ -149,8 +153,14 @@ void Fire::computeCellTypes()
 		int i, j, k;
 		it.index(i, j, k);
 
+
 		celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
 
+        if (i == 0 || i == celltype.xdim() || j == 0 || j == celltype.ydim()) {
+            celltype.setValueAtIndex(SOLID, it.index());
+        }else{
+            celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
+        }
 	}
 }	
 
@@ -223,9 +233,16 @@ void Fire::runSimulation(){
 
     //Externa krafter
 		//preset->externalForce->addForce(grid);
+    //Vector3 force = Vector3(0.0, -0.1, 0.0);
+    //u.addForce(force, preset->dt);
+
+	advectLevelSet(preset->dt);
+
+    //Externa krafter  
+    //preset->externalForce->addForce(grid);
     
     //Project
-	//project(preset->dt);
+	projection.project(preset->dt, 0.1, 1);
 	//project2D(preset->dt);
 
 	//Advektera temperatur

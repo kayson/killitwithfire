@@ -92,7 +92,7 @@ namespace reinitialize{
 			//Räkna ut upwind differences med Godunov
 			double ddx2, ddy2, ddz2;
 			Godunov(g, i, j, k, sign, ddx2, ddy2, ddz2);
-			return sign * (1 - std::sqrt(ddx2 + ddy2 + ddz2));
+			return sign * (1.0 - std::sqrt(ddx2 + ddy2 + ddz2));
 		}
 		else
 			return 0;

@@ -17,26 +17,21 @@ void PCGProjection3D::resize(){
     _size = _cellType->size();
 
     
-    if(A != nullptr ){
-        delete A;
+    if(A == nullptr ){
+        A = new SparseMatrix<double>(_size,7);
     }
     
-    A = new SparseMatrix<double>(_size,7);
+    A->zero();
     
-    
-    if (b != nullptr){
-        delete b;
+    if (b == nullptr){
+        b = new std::vector<double>(_size);
     }
     
-    b = new std::vector<double>(_size);
 
-    
     
     if (x == nullptr){
         x = new std::vector<double>(_size);
     }
-    
-    x->resize(_size);
     
 }
 

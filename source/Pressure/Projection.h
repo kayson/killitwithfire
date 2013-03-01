@@ -11,35 +11,41 @@
 
 #include "../MACGrid.h"
 #include "pcgsolver/pcg_solver.h"
-
-class FireProjection {
+#include "LevelSet.h"
+class Projection {
 private:
     void resize();
     void fillA();
     void fillb();
+    double densityAt(int i,int j,int k,DirectionEnums direction);
+    double getAlpha(const int i, const int j, const int k, DirectionEnums d);
+    double getDensity(const int i, const int j, const int k, DirectionEnums d);
     void applyPressure();
 private:
     MACGrid *_u;
-    GridField<int> *_cellType;
+    LevelSet *_phi;
     
     int _size;
     double _dx;
     double _dt;
-    double _rho;
+    double _rho_ignited;
+    double _rho_fuel;
     SparseMatrix<double> *A;
     std::vector<double> *b;
     std::vector<double> *x;
+    GridField<double> *p;
 public:
-    FireProjection(MACGrid *u, GridField<int> *cellType):_u(u),_cellType(cellType){
+    Projection(MACGrid *u, LevelSet *phi):_u(u),_phi(phi){
         A = nullptr;
         b = nullptr;
         x = nullptr;
     };
-    ~FireProjection(){
+
+    ~Projection(){
         delete A;
         delete b;
         delete x;    
     };
-    void project(double dt,double rho);
+    void project(double dt,double rho_ignited,double rho_fuel);
 };
 #endif /* defined(__FuidFire__Projection2__) */

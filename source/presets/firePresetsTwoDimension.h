@@ -5,6 +5,7 @@
 #include "../advect/AdvectLevelSetEuler.h"
 #include "../UpwindDiff.h"
 #include "../CentralDiff.h"
+#include "../advect/MACAdvect.h"
 
 #ifdef __APPLE__
 #include "AdvectRK2.h"
@@ -52,7 +53,7 @@ const double FirePresets::GRID_SIZE = 18;
 const double FirePresets::dt = 1.0/10.0;
 const double FirePresets::dx = 1.0/8.0;
 const double FirePresets::CFL_NUMBER = .2;
-const double FirePresets::S = .1;
+const double FirePresets::S = 0.5;
 const double FirePresets::rhof = 1;
 const double FirePresets::rhoh = 0.1;
 
