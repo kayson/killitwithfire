@@ -7,7 +7,6 @@
 #include <iostream>
 #include <cmath>
 
-
 #ifdef __APPLE__
 #include "firePresets.h"
 #include "glfw.h"

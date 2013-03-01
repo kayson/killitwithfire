@@ -49,7 +49,7 @@ void Temperature::InitCell(int i, int j, int k, CellType type)
 }
 
 double Temperature::calculateTemperatureLoss(int i, int j, int k){
-    double c_T = 1.0;
+    double c_T = .7;
 
     double T = grid->valueAtIndex(i, j, k);
 
@@ -90,7 +90,7 @@ void Temperature::draw(){
         double x,y,z;
         grid->indexToWorld(i, j, k, x, y, z);
         
-		
+
         glColor3d((grid->valueAtIndex(i, j, k) - FirePresets::T_AIR)/10.0, 0, 0);
 
 

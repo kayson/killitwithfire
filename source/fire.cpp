@@ -195,7 +195,7 @@ void Fire::runSimulation(){
 
 	static int counter = 0;
     if (counter % 1 == 0) {
-		for(int i = -4; i < 4; i++)
+		for(int i = -7; i < 7; i++)
 		{
 			phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
 			u.addValueAtFace(3,preset->GRID_DIM_X/2+i,0,0,UP);
@@ -229,7 +229,7 @@ void Fire::runSimulation(){
 	//project2D(preset->dt);
 
 	//Advektera temperatur
-	//advectTemperature(preset->dt);
+	advectTemperature(preset->dt);
 
 
 	//Fixa signed distance field
@@ -433,8 +433,8 @@ void Fire::computeW()
 
 void Fire::draw()
 {
-	phi.draw();
-    //T->draw();
+	//phi.draw();
+    T->draw();
 
 	//drawVorticities();
     //u.draw();
