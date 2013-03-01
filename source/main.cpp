@@ -45,12 +45,9 @@ int HEIGHT = 600, WIDTH = 800;
 bool running = false;
 
 Fire *fire;
-<<<<<<< HEAD
 Water2D *water;
 Water3D *water3d;
-=======
-//Water3D *water;
->>>>>>> Strukturerat om includes
+
 Input controller;
 static Camera camera;
 
@@ -67,16 +64,12 @@ int main(int argc, char *argv[])
     srand(t);
 #if SIMULATION == FIRE
 	fire = new Fire(new FirePresetsTwoDimension());
-<<<<<<< HEAD
 #elif SIMULATION == WATER2D
     water = new Water2D();
 #elif SIMULATION == WATER3D
 	water3d = new Water3D();
 #endif
-=======
-    //water = new Water3D();
 
->>>>>>> Strukturerat om includes
 	// Main loop
 	while(running)
 	{
@@ -171,16 +164,13 @@ void update()
 	//Update physics
 #if SIMULATION == FIRE
 	fire->runSimulation();
-<<<<<<< HEAD
 #elif SIMULATION == WATER2D
     water->runSimulation(0.03);
 #elif SIMULATION == WATER3D
 	water3d->runSimulation(0.03);
 #endif
     
-=======
-    //water->runSimulation(0.5);
->>>>>>> Strukturerat om includes
+ //water->runSimulation(0.5);
 }
 
 //renderar objekt
