@@ -83,17 +83,16 @@ void Projection::fillA(){
 
 
 double Projection::div(int i ,int j ,int k,DirectionEnums d, CellType centerCellType){
+    static double DV = (FirePresets::rhof/FirePresets::rhoh-1.0)*FirePresets::S;
+
     double x,y,z;
     _u->halfIndexToWorld(i, j, k, d, x, y, z);
     if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == IGNITED && centerCellType == IGNITED) {
-        //Inget jättespeciellt
         return _u->valueAtFace(i, j, k, d);
     }else if(Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == BLUECORE && centerCellType == BLUECORE){
-        //Inget jättespeciellt
         return _u->valueAtFace(i, j, k, d);
     }else if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == IGNITED && centerCellType == BLUECORE){
         //På flame front
-        double DV = getDensity(i, j, k, d)*FirePresets::S;
         Vector3 n = _phi->getNormal(x, y, z);
         n.mult(DV);
         
@@ -107,7 +106,6 @@ double Projection::div(int i ,int j ,int k,DirectionEnums d, CellType centerCell
         
     }else{// if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == IGNITED && centerCellType == BLUECORE){
         //På flame front
-        double DV = getDensity(i, j, k, d)*FirePresets::S;
         Vector3 n = _phi->getNormal(x, y, z);
         n.mult(DV);
         
@@ -118,10 +116,7 @@ double Projection::div(int i ,int j ,int k,DirectionEnums d, CellType centerCell
         }else if(d == FORWARD || d == BACKWARD){
             
         }
-        
     }
-    
-    
 }
 
 void Projection::fillb(){
@@ -142,9 +137,9 @@ void Projection::fillb(){
                 CellType currType = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k));
                 
                 d -= div(i, j, k, RIGHT, currType)*scale/getDensity(i, j, k, RIGHT);
-                d = div(i, j, k, LEFT,currType)*scale/getDensity(i, j, k, LEFT);
+                d += div(i, j, k, LEFT,currType)*scale/getDensity(i, j, k, LEFT);
                 d -= div(i, j, k, DOWN,currType)*scale/getDensity(i, j, k, DOWN);
-                d = div(i, j, k, UP,currType)*scale/getDensity(i, j, k, UP);
+                d += div(i, j, k, UP,currType)*scale/getDensity(i, j, k, UP);
                 
                 (*b)[index] = d;
             }else{
@@ -204,7 +199,7 @@ void Projection::applyPressure(){
             _phi->grid->indexToWorld(i, j, k, x, y, z);
             double p = (*b)[index]/max_pressure;
             double dx = _phi->grid->dx();
-            glColor3d(p == 0 ? 0.3 : 0, p < 0 ? fabs(p) : 0, p > 0 ? p : 0);
+            glColor3d(p == 0 ? 0.0 : 0, p < 0 ? fabs(p) : 0, p > 0 ? p : 0);
             glBegin(GL_QUADS);
             glVertex3d(x-0.5*dx, y-0.5*dx, 0);
             glVertex3d(x+0.5*dx, y-0.5*dx, 0);

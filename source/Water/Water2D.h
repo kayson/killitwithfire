@@ -16,7 +16,7 @@
 
 class Water2D {
     
-private:
+protected:
     //Velocity field (MACGRID)
     MACGrid u;
     
@@ -33,7 +33,7 @@ public:
     double rho;
     
     
-private:
+protected:
     
     double random(double size) const;
     void recomputeCellTypes();
@@ -47,8 +47,8 @@ private:
 
 public:
     Water2D(int size = 25);
-    void draw();
-    void runSimulation(double dt);
+    virtual void runSimulation(double dt);
+    virtual void draw();
     void addBlob();
 };
 #endif /* defined(__FuidFire__water2D__) */
