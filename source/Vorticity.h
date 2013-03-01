@@ -12,12 +12,9 @@ namespace Vorticity{
 	// 2.	Skapa N genom N = (gradienten av normen av ohm)/(gradient av täljaren)
 	//		N kommer då peka från låg-vorticity-områden till områden med
 	//		hög vorticity.
+	// 3.	Gör (N x ohm)*dx*epsilon och spara i GridField-referensen forces.
 
-	// Krafterna som beräknas är per cell, så krafterna måste lagras i ett
-	// GridField<Vector3> som sedan appliceras på hastighets-fältet
-	// antingen här eller i någon annan central kraft-metod.
-
-	Vector3 addVorticity(const MACGrid &u, GridField<Vector3> &forces, const double epsilon, const double dx,
+	void addVorticity(const MACGrid &u, GridField<Vector3> &forces, const double epsilon, const double dx,
 		const int dimx, const int dimy, const int dimz){
 		
 		GridField<double> ohmNorm = GridField<double>(dimx, dimy, dimz);
@@ -27,7 +24,7 @@ namespace Vorticity{
 		Gradient g;
 		Vector3 fconf, ohmVecTemp, n, N;
 
-		// Populate GridField ohm with vorticity values
+		// Populera GridField ohm med vorticity värden
 		for(int i=0; i < dimx; ++i){
 			for(int j=0; j < dimy; ++j){
 				for(int k=0; k< dimz; ++k){
@@ -55,14 +52,14 @@ namespace Vorticity{
 			}
 		}
 
-		// Calculate n, N and fcont
+		// Beräkna n, N and fcont
 		for(int i=0; i < dimx; ++i){
 			for(int j=0; j < dimy; ++j){
 				for(int k=0; k< dimz; ++k){
 					// Ful-fix för boundaries
 					if( (i > 1) && (j > 1) /*&& (k > 0)*/ && (i < dimx-2) && (j < dimy-2) /*&& (k < dimz)*/ ){
 						
-						n = g.getGradient(ohmNorm, i, j, k, *d); // För denna krävs att hela ohm är def.
+						n = g.getGradient(ohmNorm, i, j, k, *d);
 
 						(n.norm() != 0.) ? N = n/n.norm() : N = Vector3(0.);
 
@@ -82,7 +79,6 @@ namespace Vorticity{
 			}
 		}
 		delete d;
-		return fconf;
 	}
 }
 
