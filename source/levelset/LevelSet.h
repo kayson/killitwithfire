@@ -4,7 +4,7 @@
 #include "../Vector3.h"
 #include "../GridField.hpp"
 #include "../MACGrid.h"
-
+#include "transform.hpp"
 class LevelSet
 {
 public:
@@ -15,6 +15,12 @@ public:
 	LevelSet(int xDim, int yDim, int zDim, double size){
 		grid  = new GridField<double>(xDim,yDim,zDim,size);
 		gridCopy = new GridField<double>(xDim,yDim,zDim,size);
+        
+        
+        grid->multTransformation(glm::scale(1.0, 1.0, 1.0));
+        gridCopy->multTransformation(glm::scale(1.0, 1.0, 1.0));
+
+        
 	};
 	~LevelSet(){};
 	void fillLevelSet(double (*implicitFunction)(int x, int y, int z));

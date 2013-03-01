@@ -222,32 +222,14 @@ void Fire::runSimulation(){
     Vector3 force = Vector3(0.0, 0.05, 0.0);
     u.addForce(force, preset->dt);
 	
-	// Vorticity confinement forces
-	Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, 
-		phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	//Vorticity confinement forces
+	//Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 
-	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
+	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
-	advectLevelSet(preset->dt);
-
-    //Externa krafter
-		//preset->externalForce->addForce(grid);
-    //Vector3 force = Vector3(0.0, -0.1, 0.0);
-    //u.addForce(force, preset->dt);
-
-	advectLevelSet(preset->dt);
-
-    //Externa krafter  
-    //preset->externalForce->addForce(grid);
-    
     //Project
-	projection.project(preset->dt, 0.1, 1);
-	//project2D(preset->dt);
-
-	//Advektera temperatur
-	//advectTemperature(preset->dt);
-
-
+	//projection.project(preset->dt, 0.1, 1);
+    
 	//Fixa signed distance field
 	phi.reinitialize();
 
