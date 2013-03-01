@@ -204,10 +204,10 @@ void Fire::runSimulation(){
 
 	static int counter = 0;
     if (counter % 1 == 0) {
-		for(int i = -7; i < 7; i++)
+		for(int i = -6; i < 6; i++)
 		{
 			phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
-			u.addValueAtFace(3,preset->GRID_DIM_X/2+i,0,0,UP);
+			u.addValueAtFace(0.5,preset->GRID_DIM_X/2+i,0,0,DOWN);
 		}
     }
     counter++;
@@ -223,9 +223,9 @@ void Fire::runSimulation(){
     u.addForce(force, preset->dt);
 	
 	//Vorticity confinement forces
-	//Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 
-	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
+	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
     //Project
 	//projection.project(preset->dt, 0.1, 1);
@@ -233,7 +233,7 @@ void Fire::runSimulation(){
 	//Advektera temperatur
 	advectTemperature(preset->dt);
 
-
+	advectLevelSet(preset->dt);
 	
 
 	//Fixa signed distance field
@@ -437,12 +437,12 @@ void Fire::computeW()
 
 void Fire::draw()
 {
-	//phi.draw();
-    T->draw();
+	phi.draw();
+    //T->draw();
 
 	//drawVorticities();
     //u.draw();
-	//drawCenterVelocities();
+	drawCenterVelocities();
     //drawCenterGradients(FirePresets::upwindDisc);
     //drawFaceVelocities();
     //drawMAC();
