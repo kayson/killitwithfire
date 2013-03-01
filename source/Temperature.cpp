@@ -19,11 +19,11 @@ Temperature::Temperature(GridField<double> *phi)
 	gridCopy = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE);
 	beyonce = new GridField<Vector3>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE);
 
-	double scale = (double)XDIM / (double)YDIM;
+	/*double scale = (double)XDIM / (double)YDIM;
 	grid->multTransformation(glm::scale(scale, 1.0, 1.0));
 	gridCopy->multTransformation(glm::scale(scale, 1.0, 1.0));
 	beyonce->multTransformation(glm::scale(scale, 1.0, 1.0));
-	
+	*/
 	for(int i = 0; i < XDIM; i++){
 		for(int j = 0; j < YDIM; j++){
 			for(int k = 0; k < ZDIM; k++){
@@ -75,14 +75,11 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
 
 void Temperature::CalculateBuoyancyForceField()
 {
-	double alpha = 100.0;
+	double alpha = 1.0;
 
 	int xdim = FirePresets::GRID_DIM_X,
 		ydim = FirePresets::GRID_DIM_Y,
 		zdim = FirePresets::GRID_DIM_Z;
-	GridField<Vector3> buoyancyForceField = GridField<Vector3>(xdim, ydim, zdim);
-	double scale = (double)ydim / (double)xdim;
-	buoyancyForceField.multTransformation(glm::scale(scale, 1.0, 1.0));
 
 	for(int i = 0; i < xdim; i++)
 		for(int j = 0; j < ydim; j++)
@@ -91,7 +88,7 @@ void Temperature::CalculateBuoyancyForceField()
 				double amplitude = abs((grid->valueAtIndex(i,j,k) - FirePresets::T_AIR)) * alpha;
 
 				force *= amplitude;
-				buoyancyForceField.setValueAtIndex(force, i, j, k);
+				beyonce->setValueAtIndex(force, i, j, k);
 	}
 
 }
@@ -103,7 +100,7 @@ void Temperature::drawBuoyancyForce(){
         double x,y,z;
         grid->indexToWorld(i, j, k, x, y, z);
     
-		Vector3 v = beyonce->valueAtIndex(iter.index());
+		Vector3 v = beyonce->valueAtIndex(i,j,k)/100;
         glColor3d(1.0,1.0,0.0);
         glBegin(GL_LINE_STRIP);
         glVertex3d(x, y, 0);
@@ -145,5 +142,5 @@ void Temperature::draw(){
     }
 	glEnd();
 
-	//drawBuoyancyForce();
+	drawBuoyancyForce();
 }

@@ -25,10 +25,12 @@ public:
 
 	void draw();
 
+	GridField<Vector3> *beyonce;
+
+
 private:
 	GridField<double> *grid; 
     GridField<double> *gridCopy;
-	GridField<Vector3> *beyonce;
     double calculateTemperatureLoss(int i, int j, int k);
 	void InitCell(int i, int j, int k, CellType type);
     void ResetCell(int i, int j, int k, CellType type);

@@ -202,7 +202,7 @@ void Fire::runSimulation(){
 	}*/
 
     advectLevelSet(preset->dt);
-
+	
 	static int counter = 0;
     if (counter % 1 == 0) {
 		for(int i = -7; i < 7; i++)
@@ -227,15 +227,16 @@ void Fire::runSimulation(){
 	
     advectLevelSet(preset->dt);
 	//Vorticity confinement forces
-	//Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 
-	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
+	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
 	//projection.project(preset->dt, 0.1, 1);
 
 	//Advektera temperatur
 	advectTemperature(preset->dt);
 
+	T->CalculateBuoyancyForceField();
 	//projection.project(preset->dt);
 
 	//Fixa signed distance field
@@ -452,8 +453,8 @@ void Fire::computeW()
 
 void Fire::draw()
 {
-	//phi.draw();
-    T->draw();
+	phi.draw();
+    //T->draw();
 
 	//drawVorticities();
     //u.draw();
