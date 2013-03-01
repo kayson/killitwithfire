@@ -21,14 +21,18 @@ public:
 
     void AdvectTemperatureField(double dt, MACGrid m, LevelSet ls);
 
+	void CalculateBuoyancyForceField();
+
 	void draw();
 
 private:
 	GridField<double> *grid; 
     GridField<double> *gridCopy;
+	GridField<Vector3> *beyonce;
     double calculateTemperatureLoss(int i, int j, int k);
 	void InitCell(int i, int j, int k, CellType type);
     void ResetCell(int i, int j, int k, CellType type);
+	void drawBuoyancyForce();
 };
 
 #endif //TEMPERATURE_H
