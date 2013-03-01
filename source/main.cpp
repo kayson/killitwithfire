@@ -62,14 +62,14 @@ int main(int argc, char *argv[])
 
     unsigned int t = (unsigned int)time(NULL);
     srand(t);
-/*#if SIMULATION == FIRE
+#if SIMULATION == FIRE
 	fire = new Fire(new FirePresetsTwoDimension());
 #elif SIMULATION == WATER2D
     water = new Water2D();
 #elif SIMULATION == WATER3D
 	water3d = new Water3D();
 #endif
-*/
+
 	// Main loop
 	while(running)
 	{
@@ -158,14 +158,14 @@ void update()
 	controller.updateInput(fps); //updatera mus och tangentbord
 
 	//Update physics
-/*#if SIMULATION == FIRE
+#if SIMULATION == FIRE
 	fire->runSimulation();
 #elif SIMULATION == WATER2D
     water->runSimulation(0.03);
 #elif SIMULATION == WATER3D
 	water3d->runSimulation(0.03);
 #endif
-*/
+
 }
 
 //renderar objekt
@@ -173,7 +173,7 @@ void render(void)
 {
 
 	camera.translateForCamera();
-  /*
+  
 #if SIMULATION == FIRE
 	fire->draw();
 #elif SIMULATION == WATER2D
@@ -181,6 +181,6 @@ void render(void)
 #elif SIMULATION == WATER3D
 	water3d->draw();
 #endif
-    */
+    
 }
 
