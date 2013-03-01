@@ -90,6 +90,10 @@ void GridMapping::multTransformation(glm::dmat4x4 t){
     _itrans = glm::inverse(_trans);
 }
 
+glm::dmat4x4 GridMapping::getTrans() const{
+    return _trans;
+}
+
 //Local dim
 double GridMapping::local_dx() const{
     return 1.0/xdim();

@@ -191,9 +191,9 @@ void MACGrid::setTransformation(glm::dmat4x4 t){
 }
 void MACGrid::multTransformation(glm::dmat4x4 t){
     GridMapping::setTransformation(t*_trans);
-    _u->setTransformation(t*_u->_trans);
-    _v->setTransformation(t*_v->_trans);
-    _w->setTransformation(t*_w->_trans);
+    _u->setTransformation(t*_u->getTrans());
+    _v->setTransformation(t*_v->getTrans());
+    _w->setTransformation(t*_w->getTrans());
 }
 
 MACGrid * MACGrid::buffer(){
@@ -228,6 +228,11 @@ void MACGrid::swapBuffer(){
     std::iter_swap(buffer()->_v, _v);
     std::iter_swap(buffer()->_w, _w);
      */
+}
+
+//Index to...
+void MACGrid::halfIndexToWorld(int i,int j,int k, DirectionEnums d, double &x,double &y, double &z){
+    
 }
 
 double MACGrid::getMax() const{

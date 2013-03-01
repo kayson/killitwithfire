@@ -165,7 +165,7 @@ void Fire::computeCellTypes()
 
 CellType Fire::getCellType(const int i, const int j, const int k) const
 {
-	if(false) //Check if is solid
+	if(i < 2 || i >= (phi.grid->xdim() - 2) || j< 2 || j >= (phi.grid->ydim() - 2) ) //Check if is solid
 		return SOLID;
 	else if(phi.grid->valueAtIndex(i,j,k) > 0.0)
 		return BLUECORE;
@@ -191,16 +191,17 @@ CellType Fire::getCellType(double phi)
 void Fire::runSimulation(){
 
 	 //Advektera levelset
-    for(double currentTime = 0; currentTime < preset->dt;)
+    /*for(double currentTime = 0; currentTime < preset->dt;)
 	{
 		double dt = computeDT(currentTime);
 
 		//Advektera hastighestsfältet
-		//advectLevelSet(preset->dt);
+		advectLevelSet(dt);
 
 		currentTime += dt;
-	}
+	}*/
 
+    advectLevelSet(preset->dt);
 
 	static int counter = 0;
     if (counter % 1 == 0) {
@@ -215,30 +216,44 @@ void Fire::runSimulation(){
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 
 
+    //Sätt solider till 0...
+    enforceBorderCondition();
+    
 	//u.advect(preset->dt);
 	preset->advectVelocities->advect(u, phi, preset->dt);
-
 
     Vector3 force = Vector3(0.0, 0.05, 0.0);
     u.addForce(force, preset->dt);
 	
+    advectLevelSet(preset->dt);
 	//Vorticity confinement forces
 	//Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 
 	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
-    //Project
 	//projection.project(preset->dt, 0.1, 1);
 
 	//Advektera temperatur
 	advectTemperature(preset->dt);
 
-
-	
+	//projection.project(preset->dt);
 
 	//Fixa signed distance field
 	phi.reinitialize();
 
+}
+
+void Fire::enforceBorderCondition(){
+    for (GridMappingIterator it = u.iterator(); !it.done(); it.next()) {
+        int i,j,k;
+        it.index(i, j, k);
+        if (i < 2 || i > u.xdim()-2 || j < 2 || j> u.ydim()-2) {
+            u.setValueAtFace(0, i, j, k, RIGHT);
+            u.setValueAtFace(0, i, j, k, LEFT);
+            u.setValueAtFace(0, i, j, k, UP);
+            u.setValueAtFace(0, i, j, k, DOWN);
+        }
+    }
 }
 
 void Fire::drawVorticities(){
