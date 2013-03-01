@@ -4,6 +4,12 @@
 #include "../Vector3.h"
 #include "../GridField.hpp"
 #include "../MACGrid.h"
+#ifdef __APPLE__
+#include "transform.hpp"
+#elif defined _WIN32 || defined _WIN64
+#include "glm.hpp"
+#include "glm/gtx/transform.hpp"
+#endif
 
 class LevelSet
 {
@@ -15,6 +21,12 @@ public:
 	LevelSet(int xDim, int yDim, int zDim, double size){
 		grid  = new GridField<double>(xDim,yDim,zDim,size);
 		gridCopy = new GridField<double>(xDim,yDim,zDim,size);
+        
+        
+        grid->multTransformation(glm::scale(1.0, 1.0, 1.0));
+        gridCopy->multTransformation(glm::scale(1.0, 1.0, 1.0));
+
+        
 	};
 	~LevelSet(){};
 	void fillLevelSet(double (*implicitFunction)(int x, int y, int z));

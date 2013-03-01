@@ -14,6 +14,8 @@
 #include "../levelset/LevelSet.h"
 #include "../helper.h"
 #include "../fire.h"
+#include "firePresets.h"
+
 
 template<class T>
 class MACAdvect {
@@ -24,7 +26,7 @@ public:
     void advect(MACGrid &u, double dt){
         double x,y,z;
 
-#pragma omp parallel for private (x,y,z)
+#pragma omp parallel for
         for (int i = 0; i < u._u->xdim(); i++) {
             for (int j = 0; j < u._u->ydim(); j++) {
                 for (int k = 0; k < u._u->zdim(); k++) {
@@ -38,7 +40,7 @@ public:
         }
         
         
-    #pragma omp parallel for private (x,y,z)
+    #pragma omp parallel for
 
         for (int i = 0; i < u._v->xdim(); i++) {
             for (int j = 0; j < u._v->ydim(); j++) {
@@ -52,7 +54,7 @@ public:
             }
         }
         
-#pragma omp parallel for private (x,y,z)
+#pragma omp parallel for
         for (int i = 0; i < u._w->xdim(); i++) {
             for (int j = 0; j < u._w->ydim(); j++) {
                 for (int k = 0; k < u._w->zdim(); k++) {
@@ -69,13 +71,13 @@ public:
     void advect(MACGrid &u, GridField<double> &grid, double dt){
         double x,y,z;
 
-#pragma omp parallel for private (x,y,z)
+#pragma omp parallel for
         for (int i = 0; i < u._u->xdim(); i++) {
             for (int j = 0; j < u._u->ydim(); j++) {
                 for (int k = 0; k < u._u->zdim(); k++) {
                     u._u->indexToWorld(i, j, k, x, y, z);
 
-					double val = advect(dt, u, *grid, i, j, k);
+					double val = advect(dt, u, grid, i, j, k);
 
                     grid.setValueAtIndex(val, i, j, k);
                 }
@@ -83,26 +85,26 @@ public:
         }
         
         
-    #pragma omp parallel for private (x,y,z)
+    #pragma omp parallel for
 
         for (int i = 0; i < u._v->xdim(); i++) {
             for (int j = 0; j < u._v->ydim(); j++) {
                 for (int k = 0; k < u._v->zdim(); k++) {
                     u._v->indexToWorld(i, j, k, x, y, z);
 
-                    double val = advect(dt, u, *grid, i, j, k);
+                    double val = advect(dt, u, grid, i, j, k);
 
                     grid.setValueAtIndex(val, i, j, k);
                 }
             }
         }
         
-#pragma omp parallel for private (x,y,z)
+#pragma omp parallel for
         for (int i = 0; i < u._w->xdim(); i++) {
             for (int j = 0; j < u._w->ydim(); j++) {
                 for (int k = 0; k < u._w->zdim(); k++) {
                     u._w->indexToWorld(i, j, k, x, y, z);
-                    double val = advect(dt, u, *grid, i, j, k);
+                    double val = advect(dt, u, grid, i, j, k);
                     grid.setValueAtIndex(val, i, j, k);
                 }
             }
@@ -118,7 +120,8 @@ public:
             iter.index(i, j, k);
             double x,y,z;
             u._u->indexToWorld(i, j, k, x, y, z);
-            double val = advect(dt, u, VelocityDirection::UDIR , phi, i, j, k);
+            double val = advect(dt, u,
+                                UDIR , phi, i, j, k);
             u.buffer()->_u->setValueAtIndex(val, i, j, k);
         }
         
@@ -127,7 +130,7 @@ public:
             iter.index(i, j, k);
             double x,y,z;
             u._v->indexToWorld(i, j, k, x, y, z);
-            double val = advect(dt, u, VelocityDirection::VDIR ,phi, i, j, k);
+            double val = advect(dt, u, VDIR ,phi, i, j, k);
             u.buffer()->_v->setValueAtIndex(val, i, j, k);
         }
         
@@ -136,7 +139,7 @@ public:
             iter.index(i, j, k);
             double x,y,z;
             u._w->indexToWorld(i, j, k, x, y, z);
-            double val = advect(dt, u, VelocityDirection::WDIR, phi, i, j, k);
+            double val = advect(dt, u, WDIR, phi, i, j, k);
             u.buffer()->_w->setValueAtIndex(val, i, j, k);
         }
         
@@ -185,9 +188,9 @@ public:
     virtual double advect(double dt,const MACGrid &g, const VelocityDirection dir, LevelSet& phi, int i, int j, int k){
 		GridField<double> *field;
 		
-		if(dir == VelocityDirection::UDIR)
+		if(dir == UDIR)
 			field = g._u;
-		else if(dir == VelocityDirection::VDIR)
+		else if(dir == VDIR)
 			field = g._v;
 		else //(dir == VelocityDirection::WDIR)
 			field = g._w;
@@ -206,11 +209,11 @@ public:
 			return field->valueAtWorld(ePos.x,ePos.y,ePos.z);
 		else
 		{
-			Vector3 uG = fireGhostFluid(phi, sPos, sVel, sType);
+			Vector3 uG = MACAdvect<T>::fireGhostFluid(phi, sPos, sVel, sType);
 
-			if(dir == VelocityDirection::UDIR)
+			if(dir == UDIR)
 				return uG.x;
-			else if(dir == VelocityDirection::VDIR)
+			else if(dir == VDIR)
 				return uG.y;
 			else //(dir == VelocityDirection::WDIR)
 				return uG.x;
@@ -236,9 +239,9 @@ public:
     
     virtual double advect(double dt,const MACGrid &g, const VelocityDirection dir, LevelSet& phi, int i,int j,int k){
 		GridField<T> *field;
-		if(dir == VelocityDirection::UDIR)
+		if(dir == UDIR)
 			field = g._u;
-		else if(dir == VelocityDirection::VDIR)
+		else if(dir == VDIR)
 			field = g._v;
 		else //(dir == VelocityDirection::WDIR)
 			field = g._w;
@@ -266,11 +269,11 @@ public:
 				return field->valueAtWorld(ePos.x, ePos.y, ePos.z);
 			else
 			{
-				Vector3 uG = fireGhostFluid(phi, sPos, sVel, sType);
+				Vector3 uG = MACAdvect<T>::fireGhostFluid(phi, sPos, sVel, sType);
 
-				if(dir == VelocityDirection::UDIR)
+				if(dir == UDIR)
 					return uG.x;
-				else if(dir == VelocityDirection::VDIR)
+				else if(dir == VDIR)
 					return uG.y;
 				else //(dir == VelocityDirection::WDIR)
 					return uG.x;
@@ -279,7 +282,7 @@ public:
 		}
 		else
 		{
-			sVel = fireGhostFluid(phi, sPos, sVel, sType);
+			sVel = MACAdvect<T>::fireGhostFluid(phi, sPos, sVel, sType);
 			sPos = ePos;
 			ePos = oPos-sVel*dt;
 
@@ -290,11 +293,11 @@ public:
 				return field->valueAtWorld(ePos.x, ePos.y, ePos.z);
 			else
 			{
-				Vector3 uG = fireGhostFluid(phi, sPos, sVel, sType);
+				Vector3 uG = MACAdvect<T>::fireGhostFluid(phi, sPos, sVel, sType);
 
-				if(dir == VelocityDirection::UDIR)
+				if(dir == UDIR)
 					return uG.x;
-				else if(dir == VelocityDirection::VDIR)
+				else if(dir == VDIR)
 					return uG.y;
 				else //(dir == VelocityDirection::WDIR)
 					return uG.x;

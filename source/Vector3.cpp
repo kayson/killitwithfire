@@ -242,7 +242,7 @@ bool Vector3::operator==(const Vector3 &v) const {
 
 void Vector3::description(){
     
-    std::cout << "(" << x << " " << y << " " << z << ")" << std::endl;
+    std::cout << "(" << x << " " << y << " " << z << ")";
     
 }
 

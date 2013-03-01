@@ -6,6 +6,9 @@
 #include "GridField.hpp"
 #include "Gradient.h"
 #include "GridFieldFileManager.h"
+#include "GridMapping.h"
+#include "presets/firePresets.h"
+#include "MACAdvect.h"
 
 #ifdef __APPLE__
 #include "glfw.h"
@@ -14,12 +17,11 @@
 #include "transform.hpp"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
-
+#endif
 #include "Vorticity.h"
 
-#endif
 
-Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
+Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),projection(&u, &phi)
 {
 	//Presets
 	preset = pre;
@@ -142,6 +144,7 @@ double Fire::getDensity(const int i, const int j, const int k, DirectionEnums d)
 
 }
 
+
 void Fire::computeCellTypes()
 {
 	for(GridFieldIterator<int> it = celltype.iterator(); !it.done(); it.next())
@@ -149,8 +152,14 @@ void Fire::computeCellTypes()
 		int i, j, k;
 		it.index(i, j, k);
 
+
 		celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
 
+        if (i == 0 || i == celltype.xdim() || j == 0 || j == celltype.ydim()) {
+            celltype.setValueAtIndex(SOLID, it.index());
+        }else{
+            celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
+        }
 	}
 }	
 
@@ -213,24 +222,19 @@ void Fire::runSimulation(){
     Vector3 force = Vector3(0.0, 0.05, 0.0);
     u.addForce(force, preset->dt);
 	
-	// Vorticity confinement forces
-	Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, 
-		phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	//Vorticity confinement forces
+	//Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 
-	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
+	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
-	advectLevelSet(preset->dt);
-
-    //Externa krafter
-		//preset->externalForce->addForce(grid);
-    
     //Project
-	//project(preset->dt);
-	//project2D(preset->dt);
+	//projection.project(preset->dt, 0.1, 1);
 
 	//Advektera temperatur
 	advectTemperature(preset->dt);
 
+
+	
 
 	//Fixa signed distance field
 	phi.reinitialize();
