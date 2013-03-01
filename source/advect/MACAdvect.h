@@ -14,6 +14,8 @@
 #include "../levelset/LevelSet.h"
 #include "../helper.h"
 #include "../fire.h"
+#include "firePresets.h"
+
 
 template<class T>
 class MACAdvect {
@@ -24,7 +26,7 @@ public:
     void advect(MACGrid &u, double dt){
         double x,y,z;
 
-#pragma omp parallel for private (x,y,z)
+#pragma omp parallel for
         for (int i = 0; i < u._u->xdim(); i++) {
             for (int j = 0; j < u._u->ydim(); j++) {
                 for (int k = 0; k < u._u->zdim(); k++) {
@@ -38,7 +40,7 @@ public:
         }
         
         
-    #pragma omp parallel for private (x,y,z)
+    #pragma omp parallel for
 
         for (int i = 0; i < u._v->xdim(); i++) {
             for (int j = 0; j < u._v->ydim(); j++) {
@@ -52,7 +54,7 @@ public:
             }
         }
         
-#pragma omp parallel for private (x,y,z)
+#pragma omp parallel for
         for (int i = 0; i < u._w->xdim(); i++) {
             for (int j = 0; j < u._w->ydim(); j++) {
                 for (int k = 0; k < u._w->zdim(); k++) {

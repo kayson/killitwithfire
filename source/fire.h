@@ -5,8 +5,6 @@
 
 #include "presets/firePresets.h"
 
-
-
 #include "levelset/LevelSet.h"
 
 #include "GridField.h"
@@ -15,6 +13,9 @@
 
 //#include "Pressure\pcgsolver\blas_win.h"
 #include "Water/Particles.h"
+#include "Discretization.h"
+#include "BorderCondition.h"
+#include "Projection.h"
 
 #ifdef __APPLE__
 #include "sparse_matrix.h"
@@ -27,7 +28,8 @@
 #include "Temperature.h"
 
 class FirePresets;
-
+template<class T> class GridField;
+class GridMapping;
 class Fire{
 protected:
     double computeDT(double currentTime);
@@ -90,6 +92,7 @@ private:
 	// Levelset Velocities u + S*N
 	GridField<Vector3> w;
     //Projektion
+    Projection projection;
     Particles particles;
 	GridField<int> celltype;
     //GridField<double> scalar;

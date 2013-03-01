@@ -9,6 +9,8 @@
 #include "Extrapolation.h"
 #include "CentralDiff.h"
 #include "UpwindDiff.h"
+#include "firePresets.h"
+
 class ExtrapolateConstant : public Extrapolation<Discretization>{
 public:
 	double extrapolate(GridField<double>& g, const int i, const int j, const int k, Discretization &d)

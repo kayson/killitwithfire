@@ -11,8 +11,8 @@
 
 #include "../CentralDiff.h"
 #include "../UpwindDiff.h"
-#include "../advect/MACAdvect.h"
 
+template<class T> class MACAdvect;
 class FirePresets
 {
 public:
