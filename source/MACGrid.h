@@ -56,12 +56,14 @@ public:
     void swapBuffer();
     void resetCache();
 
+    //Index to...
+    void halfIndexToWorld(int i,int j,int k, DirectionEnums d, double &x,double &y, double &z);
+    
     //Värden
     double getMax() const;
     Vector3 velocityAtWorld(const Vector3 &world) const;
     Vector3 velocityAtCenter(int i,int j,int k) const;
     Vector3 operator()(int i ,int j,int k) const;
-
     
     double valueAtFace(const int i,const int j,const int k, DirectionEnums d) const;
     void setValueAtFace(double val,const int i, const int j, const int k, DirectionEnums d);

@@ -20,7 +20,7 @@
 class GridMappingIterator;
 
 class GridMapping {
-public:
+protected:
     glm::dmat4x4 _trans;  //Local coordinates to worldcoordinates
     glm::dmat4x4 _itrans; //World coordinates to localcoordinates
     int _xdim,_ydim,_zdim;
@@ -47,6 +47,7 @@ public:
     //Transformation
     void setTransformation(glm::dmat4x4 t);
     void multTransformation(glm::dmat4x4 t);
+    glm::dmat4x4 getTrans() const;
     
     //Dim
     int xdim() const;
