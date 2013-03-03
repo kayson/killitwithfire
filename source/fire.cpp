@@ -205,10 +205,10 @@ void Fire::runSimulation(){
 	
 	static int counter = 0;
     if (counter % 1 == 0) {
-		for(int i = -7; i < 7; i++)
+		for(int i = -6; i < 6; i++)
 		{
 			phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
-			u.addValueAtFace(3,preset->GRID_DIM_X/2+i,0,0,UP);
+			u.addValueAtFace(0.5,preset->GRID_DIM_X/2+i,0,0,DOWN);
 		}
     }
     counter++;
@@ -236,8 +236,13 @@ void Fire::runSimulation(){
 	//Advektera temperatur
 	advectTemperature(preset->dt);
 
+
 	T->CalculateBuoyancyForceField();
 	//projection.project(preset->dt);
+
+	advectLevelSet(preset->dt);
+	
+
 
 	//Fixa signed distance field
 	phi.reinitialize();
@@ -458,7 +463,7 @@ void Fire::draw()
 
 	//drawVorticities();
     //u.draw();
-	//drawCenterVelocities();
+	drawCenterVelocities();
     //drawCenterGradients(FirePresets::upwindDisc);
     //drawFaceVelocities();
     //drawMAC();
