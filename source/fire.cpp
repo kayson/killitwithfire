@@ -82,6 +82,7 @@ void Fire::advectLevelSet(double duration)
 void Fire::advectTemperature(double dt)
 {
     T->AdvectTemperatureField(dt, u, phi);
+    T->CalculateBuoyancyForceField();
 }
 
 double Fire::getAlpha(const int i, const int j, const int k, DirectionEnums d)
@@ -218,8 +219,10 @@ void Fire::runSimulation(){
 
 	//enforceBorderCondition();
 
-    Vector3 force = Vector3(0.0, 0.05, 0.0);
-    u.addForce(force, preset->dt);
+    u.addForceGrid(*T->beyonce, preset->dt);
+
+    Vector3 gravity = Vector3(0.0, -0.005, 0.0);
+    u.addForce(gravity, preset->dt);
 	
 	//Vorticity confinement forces
 	Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());

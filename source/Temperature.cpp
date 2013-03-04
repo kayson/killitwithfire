@@ -75,7 +75,7 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
 
 void Temperature::CalculateBuoyancyForceField()
 {
-	double alpha = 1.0;
+	double alpha = 0.007;
 
 	int xdim = FirePresets::GRID_DIM_X,
 		ydim = FirePresets::GRID_DIM_Y,
@@ -85,7 +85,7 @@ void Temperature::CalculateBuoyancyForceField()
 		for(int j = 0; j < ydim; j++)
 			for(int k = 0; k < zdim; k++){
 				Vector3 force = Vector3(0.0, 1.0, 0.0);
-				double amplitude = abs((grid->valueAtIndex(i,j,k) - FirePresets::T_AIR)) * alpha;
+				double amplitude = (grid->valueAtIndex(i,j,k) - FirePresets::T_AIR) * alpha;
 
 				force *= amplitude;
 				beyonce->setValueAtIndex(force, i, j, k);
@@ -131,7 +131,7 @@ void Temperature::draw(){
         grid->indexToWorld(i, j, k, x, y, z);
         
 
-        glColor3d((grid->valueAtIndex(i, j, k) - FirePresets::T_AIR)/10.0, 0, 0);
+        glColor3d((grid->valueAtIndex(i, j, k) - FirePresets::T_AIR)/100.0, 0, 0);
 
 
         glVertex3f((float)x, (float)y, (float)z);
@@ -142,5 +142,5 @@ void Temperature::draw(){
     }
 	glEnd();
 
-	drawBuoyancyForce();
+	//drawBuoyancyForce();
 }

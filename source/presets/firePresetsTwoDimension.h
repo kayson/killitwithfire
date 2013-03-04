@@ -20,7 +20,7 @@ class FirePresetsTwoDimension : public FirePresets
 public:
 	FirePresetsTwoDimension()  
 	{
-		implicitFunction = implicitFunction::sphere;
+        implicitFunction = implicitFunction::sphere;
         
         //Rutiner
         advection = new AdvectLevelSetEuler();
