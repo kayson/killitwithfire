@@ -1,8 +1,8 @@
 #include "Temperature.h"
-#include "FirePresets.h"
+#include "firePresets.h"
 #include "MACAdvect.h"
 #include "fire.h"
-#ifdef __APPLE__
+#if defined __APPLE__ || defined __unix__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>

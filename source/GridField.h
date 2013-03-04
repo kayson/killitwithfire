@@ -13,6 +13,8 @@
 #include "GridMapping.h"
 #ifdef __APPLE__
 #include "glm.hpp"
+#elif defined __unix__
+#include "glm.hpp"
 #elif defined _WIN32 || defined _WIN64
 #include <glm/glm.hpp>
 #endif

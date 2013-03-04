@@ -2,12 +2,8 @@
 #define FIREPRESETS_H
 
 
-#ifdef __APPLE__
-//#include "Advect.h"
+
 #include "../advect/AdvectLevelSet.h"
-#elif defined _WIN32 || defined _WIN64
-#include "../advect/AdvectLevelSet.h"
-#endif
 
 #include "../CentralDiff.h"
 #include "../UpwindDiff.h"

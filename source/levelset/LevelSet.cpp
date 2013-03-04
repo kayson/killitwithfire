@@ -7,7 +7,7 @@
 #include <iostream>
 #include <cmath>
 
-#ifdef __APPLE__
+#if defined __unix__ || defined __APPLE__
 #include "firePresets.h"
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64

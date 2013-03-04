@@ -10,7 +10,7 @@
 #include "Projection2D.h"
 #include "../GridFieldFileManager.h"
 #include "glfw.h"
-#include "../Advect/MACAdvect.h"
+#include "MACAdvect.h"
 
 Water2D::Water2D(int size):u(size,size,1,18),cellTypes(size,size,1,18){
     

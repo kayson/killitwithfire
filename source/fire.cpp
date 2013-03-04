@@ -10,11 +10,14 @@
 #include "presets/firePresets.h"
 #include "MACAdvect.h"
 
-#ifdef __APPLE__
+#if defined __APPLE__
 #include "glfw.h"
 #include "pcg_solver.h"
 #include <Accelerate/Accelerate.h>
 #include "transform.hpp"
+#elif defined __unix__
+#include "GL/glfw.h"
+
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
 #endif

@@ -12,6 +12,10 @@
 #include "glfw.h"
 #include "MACAdvect.h"
 #include "transform.hpp"
+#elif defined __unix__
+#include "glfw.h"
+#include "MACAdvect.h"
+#include <glm/gtx/transform.hpp>
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h> // Takes care of everything GL-related
 #include <GL/freeglut.h> // Takes care of everything GL-related
@@ -20,6 +24,7 @@
 #include <glm/gtx/transform.hpp> 
 #define M_PI 3.14159265358979323846264338
 #endif
+
 #include <algorithm>
 
 /*

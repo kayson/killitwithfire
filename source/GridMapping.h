@@ -9,7 +9,7 @@
 #ifndef __FuidFire__GridMapping__
 #define __FuidFire__GridMapping__
 
-#ifdef __APPLE__
+#if defined __APPLE__ || __unix__
 #include "glm.hpp"
 #elif defined _WIN32 || defined _WIN64
 #include <glm/glm.hpp>
