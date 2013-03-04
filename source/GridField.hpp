@@ -106,6 +106,8 @@ void GridField<T>::setInterpolation(Interpolation<T> *i){
     _interpolation = i->clone();
 }
 
+
+
 template<class T>
 T GridField<T>::valueAtIndex(int i) const{
 	

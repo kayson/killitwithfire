@@ -165,7 +165,7 @@ void Fire::computeCellTypes()
 
 CellType Fire::getCellType(const int i, const int j, const int k) const
 {
-	if(false) //Check if is solid
+	if(i < 2 || i >= (phi.grid->xdim() - 2) || j< 2 || j >= (phi.grid->ydim() - 2) ) //Check if is solid
 		return SOLID;
 	else if(phi.grid->valueAtIndex(i,j,k) > 0.0)
 		return BLUECORE;
@@ -195,9 +195,6 @@ void Fire::runSimulation(){
 	{
 		double dt = computeDT(currentTime);
 
-		//Advektera hastighestsfältet
-		//advectLevelSet(preset->dt);
-
 		currentTime += dt;
 	}
 
@@ -212,11 +209,14 @@ void Fire::runSimulation(){
 		u.addValueAtFace(0.5,preset->GRID_DIM_X/2+i,0,0,DOWN);
 	}
 
+
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 
 
-	//preset->advectVelocities->advect(u, preset->dt);
+	//u.advect(preset->dt);
 	preset->advectVelocities->advect(u, phi, preset->dt);
+
+	//enforceBorderCondition();
 
     Vector3 force = Vector3(0.0, 0.05, 0.0);
     u.addForce(force, preset->dt);
@@ -226,19 +226,35 @@ void Fire::runSimulation(){
 
 	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
-    //Project
 	//projection.project(preset->dt, 0.1, 1);
 
 	//Advektera temperatur
 	advectTemperature(preset->dt);
 
+	//T->CalculateBuoyancyForceField();
+	//projection.project(preset->dt);
+
 	advectLevelSet(preset->dt);
-	
+
 
 	//Fixa signed distance field
 	phi.reinitialize();
 
 }
+
+/*
+void Fire::enforceBorderCondition(){
+    for (GridMappingIterator it = u.iterator(); !it.done(); it.next()) {
+        int i,j,k;
+        it.index(i, j, k);
+        if (i < 2 || i > u.xdim()-2 || j < 2 || j> u.ydim()-2) {
+            u.setValueAtFace(0, i, j, k, RIGHT);
+            u.setValueAtFace(0, i, j, k, LEFT);
+            u.setValueAtFace(0, i, j, k, UP);
+            u.setValueAtFace(0, i, j, k, DOWN);
+        }
+    }
+}*/
 
 void Fire::drawVorticities(){
 	glColor3d(1.0,1.0,1.0);

@@ -17,6 +17,7 @@ private:
     void resize();
     void fillA();
     void fillb();
+    double div(int i ,int j ,int k,DirectionEnums d, CellType centerCellType);
     double densityAt(int i,int j,int k,DirectionEnums direction);
     double getAlpha(const int i, const int j, const int k, DirectionEnums d);
     double getDensity(const int i, const int j, const int k, DirectionEnums d);
@@ -28,8 +29,6 @@ private:
     int _size;
     double _dx;
     double _dt;
-    double _rho_ignited;
-    double _rho_fuel;
     SparseMatrix<double> *A;
     std::vector<double> *b;
     std::vector<double> *x;
@@ -46,6 +45,6 @@ public:
         delete b;
         delete x;    
     };
-    void project(double dt,double rho_ignited,double rho_fuel);
+    void project(double dt);
 };
 #endif /* defined(__FuidFire__Projection2__) */

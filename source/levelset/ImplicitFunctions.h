@@ -21,6 +21,10 @@ namespace implicitFunction
 		z += zo;
 		return -sqrt(x * x + y * y + z * z) + sqrt(r * r);
 	}
+	double empty(int i, int j, int k)
+	{
+		return 0.;
+	}
 }
 
 #endif //IMPLICITFUNCTIONS_H

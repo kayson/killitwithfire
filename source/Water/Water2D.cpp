@@ -31,6 +31,7 @@ Water2D::Water2D(int size):u(size,size,1,18),cellTypes(size,size,1,18){
         }
     }
     
+    /*
     for (GridFieldIterator<int> iter = cellTypes.iterator(); !iter.done(); iter.next()) {
         int i,j,k;
         iter.index(i, j, k);
@@ -39,7 +40,7 @@ Water2D::Water2D(int size):u(size,size,1,18),cellTypes(size,size,1,18){
         if (l_x > 0.4 && l_x < 0.7 && l_y > 0.2 && l_y < 0.3 ) {
             cellTypes.setValueAtIndex(SOLID, iter.index());
         }
-    }
+    }*/
     
     //GridFieldFileManager::writeToFile(cellTypes, "circle");
 
@@ -61,8 +62,8 @@ void Water2D::addBlob(){
         iter.index(i, j, k);
         double l_x,l_y,l_z;
         cellTypes.indexToLocal(i, j, k, l_x, l_y, l_z);
-        double r = 0.25;
-        double c_x = 0.5;
+        double r = 0.3;
+        double c_x = 0.2;
         double c_y = 0.85;
         
         if (r*r > (l_x-c_x)*(l_x-c_x)+(l_y-c_y)*(l_y-c_y)+l_z*l_z && iter.value() != SOLID) {
@@ -133,7 +134,7 @@ void Water2D::runSimulation(double dt){
 void Water2D::draw(){
     
     drawCellTypes();
-    //drawMAC();
+    drawMAC();
     drawParticles();
     drawCenterVelocities();
     //drawFaceVelocities();
@@ -181,7 +182,7 @@ void Water2D::drawMAC(){
         iter.index(i, j, k);
         double x,y,z;
         u.indexToWorld(i, j, k, x, y, z);
-        glColor3f(0.0f, 0.0f, 0.0f);
+        glColor3f(0.3f, 0.3f, 0.3f);
         glBegin(GL_LINE_STRIP);
         glVertex3d(x-dx*0.5, y-dy*0.5, 0);
         glVertex3d(x+dx*0.5, y-dy*0.5, 0);
@@ -258,7 +259,13 @@ void Water2D::drawCellTypes(){
             glVertex3d(x+dx*0.5, y+dy*0.5, 0);
             glVertex3d(x-dx*0.5, y+dy*0.5, 0);
         }else if (val == IGNITED){
-            glColor3d(0.0, 0.0, 0.0);
+            glColor3d(1.0, 0.0, 0.0);
+            glVertex3d(x-dx*0.5, y-dy*0.5, 0);
+            glVertex3d(x+dx*0.5, y-dy*0.5, 0);
+            glVertex3d(x+dx*0.5, y+dy*0.5, 0);
+            glVertex3d(x-dx*0.5, y+dy*0.5, 0);
+        }else if (val == BLUECORE){
+            glColor3d(0.0, 1.0, 0.0);
             glVertex3d(x-dx*0.5, y-dy*0.5, 0);
             glVertex3d(x+dx*0.5, y-dy*0.5, 0);
             glVertex3d(x+dx*0.5, y+dy*0.5, 0);

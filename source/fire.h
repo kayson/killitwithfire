@@ -64,6 +64,8 @@ public:
     void drawParticles();
 	void drawVorticities();
 
+    void enforceBorderCondition(); //NO PANIC! JUST FOR TESTING.
+    
 	static CellType getCellType(double phi);
 private:
 

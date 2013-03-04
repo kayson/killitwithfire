@@ -17,8 +17,13 @@ Temperature::Temperature(GridField<double> *phi)
 
 	grid = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE);
 	gridCopy = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE);
+	beyonce = new GridField<Vector3>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE);
 
-	
+	/*double scale = (double)XDIM / (double)YDIM;
+	grid->multTransformation(glm::scale(scale, 1.0, 1.0));
+	gridCopy->multTransformation(glm::scale(scale, 1.0, 1.0));
+	beyonce->multTransformation(glm::scale(scale, 1.0, 1.0));
+	*/
 	for(int i = 0; i < XDIM; i++){
 		for(int j = 0; j < YDIM; j++){
 			for(int k = 0; k < ZDIM; k++){
@@ -49,7 +54,7 @@ void Temperature::InitCell(int i, int j, int k, CellType type)
 }
 
 double Temperature::calculateTemperatureLoss(int i, int j, int k){
-    double c_T = .7;
+    double c_T = .001;
 
     double T = grid->valueAtIndex(i, j, k);
 
@@ -68,6 +73,41 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
             }
 }
 
+void Temperature::CalculateBuoyancyForceField()
+{
+	double alpha = 1.0;
+
+	int xdim = FirePresets::GRID_DIM_X,
+		ydim = FirePresets::GRID_DIM_Y,
+		zdim = FirePresets::GRID_DIM_Z;
+
+	for(int i = 0; i < xdim; i++)
+		for(int j = 0; j < ydim; j++)
+			for(int k = 0; k < zdim; k++){
+				Vector3 force = Vector3(0.0, 1.0, 0.0);
+				double amplitude = abs((grid->valueAtIndex(i,j,k) - FirePresets::T_AIR)) * alpha;
+
+				force *= amplitude;
+				beyonce->setValueAtIndex(force, i, j, k);
+	}
+
+}
+
+void Temperature::drawBuoyancyForce(){
+    for (GridMappingIterator iter = grid->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        grid->indexToWorld(i, j, k, x, y, z);
+    
+		Vector3 v = beyonce->valueAtIndex(i,j,k)/100;
+        glColor3d(1.0,1.0,0.0);
+        glBegin(GL_LINE_STRIP);
+        glVertex3d(x, y, 0);
+        glVertex3d(x + v.x, y +v.y , 0);
+        glEnd();
+    }
+}
 
 void Temperature::SetToMax(int i, int j, int k){
 	grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
@@ -101,4 +141,6 @@ void Temperature::draw(){
         
     }
 	glEnd();
+
+	drawBuoyancyForce();
 }

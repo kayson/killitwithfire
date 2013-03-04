@@ -34,7 +34,7 @@ Water3D::Water3D(int dim):u(dim,dim,dim,2600),cellTypes(dim,dim,dim,2600){
     //Translate dude
     u.multTransformation(glm::translate(-1300.0, -600.0, -800.0));
     //cellTypes.multTransformation(glm::translate(-0.5, -0.2, -0.4));
-    cellTypes.setTransformation(u._trans);
+    cellTypes.setTransformation(u.getTrans());
 
     //Init environment
     //GridFieldFileManager::readFromFile<int>(cellTypes,"circle");

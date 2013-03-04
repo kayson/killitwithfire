@@ -167,6 +167,9 @@ void PCGProjection2D::fillb(){
                 }else{
                     (*b)[index] = 0;
                 }
+            
+            
+            
                 index++;
         }
     }
@@ -177,6 +180,7 @@ void PCGProjection2D::fillb(){
 void PCGProjection2D::applyPressure(){
     double scale = _dt/(_rho*_dx);
     int index = 0;
+    double max_pressure = 0;
     for (GridFieldIterator<int> it = _cellType->iterator(); !it.done(); it.next()) {
         
         int i,j,k;
@@ -207,9 +211,42 @@ void PCGProjection2D::applyPressure(){
                 glEnd();
                 */
             }
+            
+            
+            if (fabs((*b)[index]) > max_pressure) {
+                max_pressure  = fabs((*b)[index]);
+            }
+            
             index++;
         }
     }
+    
+    
+    index = 0;
+    for (GridFieldIterator<int> it = _cellType->iterator(); !it.done(); it.next()) {
+        
+        int i,j,k;
+        it.index(i, j, k);
+        
+        if (k == 0) {
+            //Draw pressure
+            double x,y,z;
+            _cellType->indexToWorld(i, j, k, x, y, z);
+            double p = (*b)[index]/max_pressure;
+            double dx = _cellType->dx();
+            glColor3d(p == 0 ? 0.0 : 0, p < 0 ? fabs(p) : 0, p > 0 ? p : 0);
+            glBegin(GL_QUADS);
+            glVertex3d(x-0.5*dx, y-0.5*dx, 0);
+            glVertex3d(x+0.5*dx, y-0.5*dx, 0);
+            glVertex3d(x+0.5*dx, y+0.5*dx, 0);
+            glVertex3d(x-0.5*dx, y+0.5*dx, 0);
+            glVertex3d(x-0.5*dx, y-0.5*dx, 0);
+            glEnd();
+            
+            index++;
+        }
+    }
+    
 }
 
 

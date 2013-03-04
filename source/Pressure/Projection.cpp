@@ -24,6 +24,7 @@ void Projection::resize(){
     if (b == nullptr){
         b = new std::vector<double>(_size);
     }
+    std::fill(b->begin(), b->end(), 0);
     
     if (x == nullptr){
         x = new std::vector<double>(_size);
@@ -80,6 +81,44 @@ void Projection::fillA(){
     }
 }
 
+
+double Projection::div(int i ,int j ,int k,DirectionEnums d, CellType centerCellType){
+    static double DV = (FirePresets::rhof/FirePresets::rhoh-1.0)*FirePresets::S;
+
+    double x,y,z;
+    _u->halfIndexToWorld(i, j, k, d, x, y, z);
+    if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == IGNITED && centerCellType == IGNITED) {
+        return _u->valueAtFace(i, j, k, d);
+    }else if(Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == BLUECORE && centerCellType == BLUECORE){
+        return _u->valueAtFace(i, j, k, d);
+    }else if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == IGNITED && centerCellType == BLUECORE){
+        //På flame front
+        Vector3 n = _phi->getNormal(x, y, z);
+        n.mult(DV);
+        
+        if (d == LEFT || d == RIGHT) {
+            return _u->valueAtFace(i, j, k, d)+n.x;
+        }else if (d == UP || d == DOWN){
+            return _u->valueAtFace(i, j, k, d)+n.y;
+        }else if(d == FORWARD || d == BACKWARD){
+            
+        }
+        
+    }else{// if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == IGNITED && centerCellType == BLUECORE){
+        //På flame front
+        Vector3 n = _phi->getNormal(x, y, z);
+        n.mult(DV);
+        
+        if (d == LEFT || d == RIGHT) {
+            return _u->valueAtFace(i, j, k, d)-n.x;
+        }else if (d == UP || d == DOWN){
+            return _u->valueAtFace(i, j, k, d)-n.y;
+        }else if(d == FORWARD || d == BACKWARD){
+            
+        }
+    }
+}
+
 void Projection::fillb(){
     assert(*_phi->grid == *_u);
 
@@ -93,15 +132,16 @@ void Projection::fillb(){
             
             if (Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BLUECORE
                 || Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == IGNITED) {
+                double d = 0;
                 double scale = _dt/_dx;
-                double div = 0;
+                CellType currType = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k));
                 
-                div -= _u->valueAtFace(i, j, k, RIGHT)*scale/getDensity(i, j, k, RIGHT);
-                div = _u->valueAtFace(i, j, k, LEFT)*scale/getDensity(i, j, k, LEFT);
-                div -= _u->valueAtFace(i, j, k, DOWN)*scale/getDensity(i, j, k, DOWN);
-                div = _u->valueAtFace(i, j, k, UP)*scale/getDensity(i, j, k, UP);
+                d -= div(i, j, k, RIGHT, currType)*scale/getDensity(i, j, k, RIGHT);
+                d += div(i, j, k, LEFT,currType)*scale/getDensity(i, j, k, LEFT);
+                d -= div(i, j, k, DOWN,currType)*scale/getDensity(i, j, k, DOWN);
+                d += div(i, j, k, UP,currType)*scale/getDensity(i, j, k, UP);
                 
-                (*b)[index] = div;
+                (*b)[index] = d;
             }else{
                 (*b)[index] = 0;
             }
@@ -114,9 +154,10 @@ void Projection::fillb(){
 
 void Projection::applyPressure(){
     
-    double scaleBluecore = _dt/(_rho_fuel*_dx);
-    double scaleIgnited = _dt/(_rho_ignited*_dx);
+    double scaleBluecore = _dt/(FirePresets::rhof*_dx);
+    double scaleIgnited = _dt/(FirePresets::rhoh*_dx);
     int index = 0;
+    double max_pressure = 0;
     for (GridFieldIterator<double> it = _phi->grid->iterator(); !it.done(); it.next()) {
         
         int i,j,k;
@@ -136,23 +177,54 @@ void Projection::applyPressure(){
                 _u->addValueAtFace(-scaleBluecore*(*x)[index], i, j, k, UP);
             }
             
+            if (fabs((*b)[index]) > max_pressure) {
+                max_pressure  = fabs((*b)[index]);
+            }
+            
+            
             index++;
         }
-    
     }
+    
+
+    index = 0;
+    for (GridFieldIterator<double> it = _phi->grid->iterator(); !it.done(); it.next()) {
+        
+        int i,j,k;
+        it.index(i, j, k);
+        
+        if (k == 0) {
+            //Draw pressure
+            double x,y,z;
+            _phi->grid->indexToWorld(i, j, k, x, y, z);
+            double p = (*b)[index]/max_pressure;
+            double dx = _phi->grid->dx();
+            glColor3d(p == 0 ? 0.0 : 0, p < 0 ? fabs(p) : 0, p > 0 ? p : 0);
+            glBegin(GL_QUADS);
+            glVertex3d(x-0.5*dx, y-0.5*dx, 0);
+            glVertex3d(x+0.5*dx, y-0.5*dx, 0);
+            glVertex3d(x+0.5*dx, y+0.5*dx, 0);
+            glVertex3d(x-0.5*dx, y+0.5*dx, 0);
+            glVertex3d(x-0.5*dx, y-0.5*dx, 0);
+            glEnd();
+
+            index++;
+        }
+    }
+    
+
+    
     
 }
 
 
-void Projection::project(double dt,double rho_ignited,double rho_fuel){
+void Projection::project(double dt){
     assert(*_phi->grid == *_u);
     
     //Compute size
     _size = _phi->grid->size();
     _dx = _u->dx();
     _dt = dt;
-    _rho_ignited = rho_ignited;
-    _rho_fuel = rho_fuel;
 
     resize(); //Sätt storlekar på arrayer/matriser
     fillA(); //Fyll A-matrisen

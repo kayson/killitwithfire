@@ -13,10 +13,10 @@
 #include "../Pressure/pcgsolver/pcg_solver.h"
 class PCGProjection2D {
 private:
-    void resize();
-    void fillA();
-    void fillb();
-    void applyPressure();
+    virtual void resize();
+    virtual void fillA();
+    virtual void fillb();
+    virtual void applyPressure();
 private:
     MACGrid *_u;
     GridField<int> *_cellType;
@@ -39,6 +39,6 @@ public:
         delete b;
         delete x;    
     };
-    void project(double dt,double rho);
+    virtual void project(double dt,double rho);
 };
 #endif /* defined(__FuidFire__Projection2__) */
