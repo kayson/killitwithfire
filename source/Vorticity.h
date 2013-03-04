@@ -67,11 +67,15 @@ namespace Vorticity{
 
 						ohmVecTemp = ohmVecGrid.valueAtIndex(i,j,k);
 
-						Vector3 crossprod(	N.z * ohmVecTemp.y - N.y * ohmVecTemp.z,
+						/*Vector3 crossprod(	N.z * ohmVecTemp.y - N.y * ohmVecTemp.z,
 											N.z * ohmVecTemp.x - N.x * ohmVecTemp.z,
+											N.x * ohmVecTemp.y - N.y * ohmVecTemp.x);*/
+
+						Vector3 crossprod(	N.y * ohmVecTemp.z - N.z * ohmVecTemp.y,
+											-(N.z * ohmVecTemp.x - N.x * ohmVecTemp.z),
 											N.x * ohmVecTemp.y - N.y * ohmVecTemp.x);
 
-						fconf = crossprod*dx*epsilon*-1;
+						fconf = crossprod*dx*epsilon;
 
 						forces.setValueAtIndex(fconf,i,j,k);
 					}
