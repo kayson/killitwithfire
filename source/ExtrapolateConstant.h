@@ -2,7 +2,7 @@
 // Denna class genomfor konstant extrapolering. Om en operator forsoker
 // hamta data fran utanfor griden extrapoleras vardet till den
 // narmaste grid-cellen.
-
+/*
 #ifndef EXTRAPOLATECONSTANT_H
 #define EXTRAPOLATECONSTANT_H
 
@@ -11,7 +11,7 @@
 #include "UpwindDiff.h"
 #include "firePresets.h"
 
-class ExtrapolateConstant : public Extrapolation<Discretization>{
+class ExtrapolateConstant : public Extrapolation {
 public:
 	double extrapolate(GridField<double>& g, const int i, const int j, const int k, Discretization &d)
 	{
@@ -25,7 +25,7 @@ public:
 				return 0;
 		}
 		if(typeid(d) == typeid(CentralDiff))
-		{
+		{*/
 			// Första-derivata
 			/*
 			if(i <= 0)
@@ -41,7 +41,7 @@ public:
 			if(k >= g.zdim()-1)
 				return (double)(g(i, j, k) - g(i, j, k-1))/(FirePresets::dx*2.0);
 			*/
-			if(i <= 0)
+			/*if(i <= 0)
 				return 1.0/1.0;
 			if(i >= g.xdim()-1)
 				return -1.0/1.0;
@@ -93,4 +93,4 @@ public:
 		return Vector3();
 	}
 };
-#endif
+#endif*/

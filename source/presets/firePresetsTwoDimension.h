@@ -24,7 +24,7 @@ public:
         
         //Rutiner
         advection = new AdvectLevelSetEuler();
-		advectVelocities = new MACAdvectRK2<double>();
+		advectVelocities = new MACAdvectEuler<double>();
 	}
 
 	~FirePresetsTwoDimension(){
@@ -54,7 +54,7 @@ const double FirePresets::dt = 1.0/10.0;
 const double FirePresets::dx = 1.0/8.0;
 const double FirePresets::CFL_NUMBER = .2;
 
-const double FirePresets::S = .5;
+const double FirePresets::S = .25;
 
 const double FirePresets::rhof = 1;
 const double FirePresets::rhoh = 0.1;

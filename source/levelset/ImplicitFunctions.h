@@ -3,6 +3,7 @@
 #include "../fire.h"
 #include "../presets/firePresets.h"
 #include <cmath>
+
 namespace implicitFunction
 {
 	double sphere(int i, int j, int k)

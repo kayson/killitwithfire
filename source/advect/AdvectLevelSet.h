@@ -7,6 +7,8 @@
 #include "../levelset/LevelSet.h"
 #include "../MACGrid.h"
 
+class LevelSet;
+
 class AdvectLevelSet {
 protected:
 	BorderCondition borderCondition;

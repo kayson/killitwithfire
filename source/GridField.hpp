@@ -12,6 +12,7 @@
 
 #include "GridMapping.h"
 
+#include <iostream>
 
 #ifdef __APPLE__
 #elif defined _WIN32 || defined _WIN64
@@ -107,12 +108,17 @@ void GridField<T>::setInterpolation(Interpolation<T> *i){
 
 template<class T>
 T GridField<T>::valueAtIndex(int i) const{
+	
+	//TODO EXTRAPOLERA 
+	if(i < 0 || i >= cellCount())
+		throw;
+
     return _data[i];
 }
 
 template<class T>
 T GridField<T>::valueAtIndex(int i,int j,int k) const{
-    
+	//TODO EXTRAPOLERA 
     if (!(i < xdim() && i >= 0 && j >= 0 && j < ydim() && k >= 0 && k < zdim())) {
 		//std::string s = "Index ("+ std::to_string(i) + "," + std::to_string(j) + ","+ std::to_string(k)+") out of bounds [0..";
         //s += std::to_string(xdim()) + "],[0.." + std::to_string(ydim()) + "],[0.." + std::to_string(zdim()) + "]";
@@ -124,6 +130,7 @@ T GridField<T>::valueAtIndex(int i,int j,int k) const{
         j = j >= ydim() ? ydim() : j;
         k = k < 0 ? 0 : k;
         k = k >= zdim() ? zdim() : k;
+
         return T(0);
 
     }

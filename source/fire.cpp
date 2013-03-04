@@ -201,23 +201,22 @@ void Fire::runSimulation(){
 		currentTime += dt;
 	}
 
-
-	static int counter = 0;
-    if (counter % 1 == 0) {
-		for(int i = -6; i < 6; i++)
-		{
-			phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
-			u.addValueAtFace(0.5,preset->GRID_DIM_X/2+i,0,0,DOWN);
-		}
-    }
-    counter++;
+	
+	
+	for(int i = -8; i < 8; i++)
+	{
+		phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
+	}
+	for(int i = -6; i < 6; i++)
+	{
+		u.addValueAtFace(0.5,preset->GRID_DIM_X/2+i,0,0,DOWN);
+	}
 
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 
 
-	//u.advect(preset->dt);
+	//preset->advectVelocities->advect(u, preset->dt);
 	preset->advectVelocities->advect(u, phi, preset->dt);
-
 
     Vector3 force = Vector3(0.0, 0.05, 0.0);
     u.addForce(force, preset->dt);
@@ -442,7 +441,7 @@ void Fire::draw()
 
 	//drawVorticities();
     //u.draw();
-	drawCenterVelocities();
+	//drawCenterVelocities();
     //drawCenterGradients(FirePresets::upwindDisc);
     //drawFaceVelocities();
     //drawMAC();

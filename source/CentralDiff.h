@@ -5,9 +5,6 @@
 
 class CentralDiff : public Discretization{
 public:
-	CentralDiff();
-	~CentralDiff();
-
 	double calcDxp(GridField<double> &g, const int i, const int j, const int k);
 	double calcDyp(GridField<double> &g, const int i, const int j, const int k);
 	double calcDzp(GridField<double> &g, const int i, const int j, const int k);
