@@ -1,4 +1,7 @@
 #include "Gradient.h"
+#include "Vector3.h"
+#include "GridField.hpp"
+#include "Discretization.h"
 
 Gradient::Gradient(){}
 

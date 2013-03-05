@@ -1,8 +1,9 @@
 #ifndef GRADIENT_H
 #define GRADIENT_H
-#include "Discretization.h"
 
-#include "Vector3.h"
+class Vector3;
+class Discretization;
+template<class T> class GridField;
 
 class Gradient
 {
