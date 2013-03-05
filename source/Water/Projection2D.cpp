@@ -10,7 +10,7 @@
 #include <iomanip>
 #include "glfw.h"
 #include "../Pressure/pcgsolver/pcg_solver.h"
-
+#include "GridField.h"
 #define nullptr NULL
 
 void PCGProjection2D::resize(){

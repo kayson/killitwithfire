@@ -1,11 +1,14 @@
 #ifndef TEMPERATURE_H
 #define TEMPERATURE_H
 
-#include "Vector3.h"
-#include "GridField.h"
 #include "helper.h"
-#include "MACGrid.h"
-#include "LevelSet.h"
+
+class Vector3;
+template<class T> class GridField;
+class MACGrid;
+class LevelSet;
+
+
 
 class Temperature{
 

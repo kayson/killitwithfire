@@ -1,7 +1,7 @@
 #ifndef DETONATION_SHOCK_DYNAMICS
 #define DETONATION_SHOCK_DYNAMICS
 
-template<class T> GridField;
+template<class T> class GridField;
 
 class DetonationShockDynamics{
 

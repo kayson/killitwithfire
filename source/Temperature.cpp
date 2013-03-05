@@ -1,7 +1,13 @@
 #include "Temperature.h"
 #include "firePresets.h"
 #include "MACAdvect.h"
+#include "Vector3.h"
+#include "GridField.h"
+#include "helper.h"
+#include "MACGrid.h"
+#include "LevelSet.h"
 #include "fire.h"
+
 #if defined __APPLE__ || defined __unix__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64

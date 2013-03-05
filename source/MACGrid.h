@@ -9,10 +9,14 @@
 #ifndef __FuidFire__MACGrid__
 #define __FuidFire__MACGrid__
 
+class Vector3;
+template<class T> class GridField;
+template<class T> class Interpolation;
 #include <iostream>
-#include "Vector3.h"
-#include "GridField.hpp"
+
+#include "GridMapping.h"
 #include "helper.h"
+
 
 template<class T>
 class MACAdvect;

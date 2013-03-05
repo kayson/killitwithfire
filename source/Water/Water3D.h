@@ -14,6 +14,7 @@
 #include "../MACGrid.h"
 #include "Particles.h"
 #include "Projection3D.h"
+#include "GridField.h"
 
 class Water3D {
     

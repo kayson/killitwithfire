@@ -24,7 +24,8 @@
 #include <glm/gtx/transform.hpp> 
 #define M_PI 3.14159265358979323846264338
 #endif
-
+#include "Vector3.h"
+#include "GridField.hpp"
 #include <algorithm>
 
 /*
