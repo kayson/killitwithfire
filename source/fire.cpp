@@ -216,16 +216,20 @@ void Fire::runSimulation(){
 
 	//u.advect(preset->dt);
 	preset->advectVelocities->advect(u, phi, preset->dt);
+	phi.updateNormals();
 
 	//enforceBorderCondition();
 
-    u.addForceGrid(*T->beyonce, preset->dt);
-
-    Vector3 gravity = Vector3(0.0, -0.005, 0.0);
+	Vector3 gravity = Vector3(0.0, 0.03, 0.0);
     u.addForce(gravity, preset->dt);
+
+    //u.addForceGrid(*T->beyonce, preset->dt);
+
+    //Vector3 gravity = Vector3(0.0, -0.005, 0.0);
+    //u.addForce(gravity, preset->dt);
 	
 	//Vorticity confinement forces
-	Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 
 	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
@@ -461,7 +465,7 @@ void Fire::draw()
 
 	//drawVorticities();
     //u.draw();
-	drawCenterVelocities();
+	//drawCenterVelocities();
     //drawCenterGradients(FirePresets::upwindDisc);
     //drawFaceVelocities();
     //drawMAC();

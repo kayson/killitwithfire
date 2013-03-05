@@ -74,39 +74,48 @@ double LevelSet::getCurvature(const int i, const int j, const int k)
 		(a*std::pow(dx*dx+dy*dy+dz*dz, 1.5));
 }
 
+void LevelSet::updateNormals(){
+	for(int i = 0; i < grid->xdim(); i++){
+		for(int j = 0; j < grid->ydim(); j++){
+			for(int k = 0; k < grid->zdim(); k++){
+				Vector3 g = Gradient::getGradient(*grid, i, j, k, *(FirePresets::centralDisc));
+				double l = g.norm();
+				if(l > 0.0)
+					g *= 1.0/l;
+				else
+					g = Vector3(0.0, 1.0, 0.0);
+
+                normals->setValueAtIndex(g, i, j, k);
+            }
+        }
+    }
+}
+
 Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 {
-
-	//Osäker om detta är korrekt implementation
-	Vector3 g = Gradient::getGradient(*grid, i, j, k, *(FirePresets::centralDisc));
-	
-	// l blir 0 ibland...
-	double l = g.norm();
-	if(l > 0.0)
-		g *= 1.0/l;
-	else
-		g = Vector3(0.0, 1.0, 0.0);
-
-	return g;
+	return normals->valueAtIndex(i,j,k);
 }
 
 Vector3 LevelSet::getNormal(const double w_x, const double w_y, const double w_z)
 {
-	int i, j, k;
-	grid->worldToIndex(i, j, k, w_x, w_y, w_z);
+	return normals->valueAtWorld(w_x, w_y, w_z);
+}
+void LevelSet::drawNormals() const{
 
-	// TODO FIXA!!!
-	//Ej korrekt implementation, då normalen måste interpoleras
-	Vector3 g = Gradient::getGradient(*grid, i, j, k, *(FirePresets::centralDisc));
+	glColor3d(1.0,1.0,1.0);
+	for( GridFieldIterator<Vector3> iter = normals->iterator(); !iter.done(); iter.next() ){
+		int i,j,k;
+		iter.index(i,j,k);
+		double x,y,z;
+		normals->indexToWorld(i,j,k,x,y,z);
+		Vector3 val = iter.value() / 5.0;
 
-	// l blir 0 ibland...
-	double l = g.norm();
-	if(l > 0.0)
-		g *= 1.0/l;
-	else
-		g = Vector3(0.0, 1.0, 0.0);
-
-	return g;
+		glBegin(GL_LINE_STRIP);
+		glVertex3d(x,y,0);
+		glVertex3d(x+val.x, y+val.y,0);
+		glEnd();
+	
+	}
 }
 
 void LevelSet::draw() const
@@ -136,8 +145,6 @@ void LevelSet::draw() const
         glEnd();
 
     }
-    
-
     
 	/*double dx = FirePresets::dx;
 

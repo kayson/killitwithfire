@@ -54,12 +54,10 @@ void Temperature::InitCell(int i, int j, int k, CellType type)
 }
 
 double Temperature::calculateTemperatureLoss(int i, int j, int k){
-    double c_T = .001;
 
     double T = grid->valueAtIndex(i, j, k);
 
-
-    return pow((T-FirePresets::T_AIR)/(FirePresets::T_MAX - FirePresets::T_AIR), 4.0) * c_T;
+	return pow((T-FirePresets::T_AIR)/(FirePresets::T_MAX - FirePresets::T_AIR), 4.0) * FirePresets::TEMPERATURE_LOSS_CONSTANT;
 }
 
 void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
@@ -75,8 +73,6 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
 
 void Temperature::CalculateBuoyancyForceField()
 {
-	double alpha = 0.0004;
-
 	int xdim = FirePresets::GRID_DIM_X,
 		ydim = FirePresets::GRID_DIM_Y,
 		zdim = FirePresets::GRID_DIM_Z;
@@ -85,7 +81,7 @@ void Temperature::CalculateBuoyancyForceField()
 		for(int j = 0; j < ydim; j++)
 			for(int k = 0; k < zdim; k++){
 				Vector3 force = Vector3(0.0, 1.0, 0.0);
-				double amplitude = (grid->valueAtIndex(i,j,k) - FirePresets::T_AIR) * alpha;
+				double amplitude = (grid->valueAtIndex(i,j,k) - FirePresets::T_AIR) * FirePresets::TEMPERATURE_BUOYANCY_ALPHA;
 
 				force *= amplitude;
 				beyonce->setValueAtIndex(force, i, j, k);
