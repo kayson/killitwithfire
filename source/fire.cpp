@@ -201,8 +201,6 @@ void Fire::runSimulation(){
 
 		currentTime += dt;
 	}
-
-	
 	
 	for(int i = -8; i < 8; i++)
 	{
@@ -239,6 +237,7 @@ void Fire::runSimulation(){
 
 	//T->CalculateBuoyancyForceField();
 	//projection.project(preset->dt);
+
 
 	advectLevelSet(preset->dt);
 
@@ -430,6 +429,7 @@ void Fire::drawCenterGradients(Discretization *disc)
 }
 
 void Fire::drawCenterVelocities(){
+    glBegin(GL_LINES);
     for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
         int i,j,k;
         iter.index(i, j, k);
@@ -438,11 +438,11 @@ void Fire::drawCenterVelocities(){
     
         Vector3 v = u.velocityAtWorld(Vector3(x,y,z));//*FirePresets::dx;
         glColor3d(1.0,1.0,0.0);
-        glBegin(GL_LINE_STRIP);
         glVertex3d(x, y, 0);
         glVertex3d(x + v.x, y +v.y , 0);
-        glEnd();
     }
+    glEnd();
+
 }
 
 void Fire::computeW()
