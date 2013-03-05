@@ -8,8 +8,10 @@
 
 #include "GridMapping.h"
 
-#ifdef __APPLE__
+#if defined __APPLE__
 #include "transform.hpp"
+#elif defined __unix__
+#include "glm/gtx/transform.hpp"
 #elif defined _WIN32 || defined _WIN64
 #include <glm/gtx/transform.hpp>
 #define round(x) floor((x) >= 0 ? (x) + 0.5 : (x) - 0.5)

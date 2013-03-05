@@ -46,9 +46,9 @@ void PCGProjection3D::fillA(){
         it.index(i, j, k);
 
         
-            if(_cellType->valueAtIndex(i, j, k) == IGNITED) {
+            if(_cellType->valueAtIndex(i, j, k) == BURNT) {
                 
-                if (_cellType->valueAtIndex(i+1,j,k) == IGNITED && _cellType->isValid(i+1, j, k)) {
+                if (_cellType->valueAtIndex(i+1,j,k) == BURNT && _cellType->isValid(i+1, j, k)) {
                     A->add_to_element(row, row, scale);
                     A->set_element(row,_cellType->indexAt(i+1, j, k),  -scale);
                 }else if (_cellType->valueAtIndex(i+1,j,k) == AIR && _cellType->isValid(i+1, j, k)){
@@ -56,35 +56,35 @@ void PCGProjection3D::fillA(){
                 }
                 
                 
-                if (_cellType->valueAtIndex(i-1,j,k) == IGNITED && _cellType->isValid(i-1, j, k)) {
+                if (_cellType->valueAtIndex(i-1,j,k) == BURNT && _cellType->isValid(i-1, j, k)) {
                     A->add_to_element(row, row, scale);
                     A->set_element( row,_cellType->indexAt(i-1, j, k), -scale);
                 }else if (_cellType->valueAtIndex(i-1,j,k) == AIR && _cellType->isValid(i-1, j, k)){
                     A->add_to_element(row, row, scale);
                 }
                 
-                if (_cellType->valueAtIndex(i,j+1,k) == IGNITED && _cellType->isValid(i, j+1, k)) {
+                if (_cellType->valueAtIndex(i,j+1,k) == BURNT && _cellType->isValid(i, j+1, k)) {
                     A->add_to_element(row, row, scale);
                     A->set_element( row,_cellType->indexAt(i, j+1, k), -scale);
                 }else if (_cellType->valueAtIndex(i,j+1,k) == AIR && _cellType->isValid(i, j+1, k)){
                     A->add_to_element(row, row, scale);
                 }
                 
-                if (_cellType->valueAtIndex(i,j-1,k) == IGNITED &&  _cellType->isValid(i, j-1, k)) {
+                if (_cellType->valueAtIndex(i,j-1,k) == BURNT &&  _cellType->isValid(i, j-1, k)) {
                     A->add_to_element(row, row, scale);
                     A->set_element( row,_cellType->indexAt(i, j-1, k), -scale);
                 }else if (_cellType->valueAtIndex(i,j-1,k) == AIR &&  _cellType->isValid(i, j-1, k)){
                     A->add_to_element(row, row, scale);
                 }
                 
-                if (_cellType->valueAtIndex(i,j,k-1) == IGNITED &&  _cellType->isValid(i, j, k-1)) {
+                if (_cellType->valueAtIndex(i,j,k-1) == BURNT &&  _cellType->isValid(i, j, k-1)) {
                     A->add_to_element(row, row, scale);
                     A->set_element( row,_cellType->indexAt(i, j, k-1), -scale);
                 }else if (_cellType->valueAtIndex(i,j,k-1) == AIR &&  _cellType->isValid(i, j, k-1)){
                     A->add_to_element(row, row, scale);
                 }
                 
-                if (_cellType->valueAtIndex(i,j,k+1) == IGNITED &&  _cellType->isValid(i, j, k+1)) {
+                if (_cellType->valueAtIndex(i,j,k+1) == BURNT &&  _cellType->isValid(i, j, k+1)) {
                     A->add_to_element(row, row, scale);
                     A->set_element( row,_cellType->indexAt(i, j, k+1), -scale);
                 }else if (_cellType->valueAtIndex(i,j,k+1) == AIR &&  _cellType->isValid(i, j, k+1)){
@@ -111,7 +111,7 @@ void PCGProjection3D::fillb(){
         int i,j,k;
         it.index(i, j, k);
 
-        if (_cellType->valueAtIndex(i, j, k) == IGNITED){
+        if (_cellType->valueAtIndex(i, j, k) == BURNT){
             double div = -scale*(_u->valueAtFace(i, j, k, RIGHT)-_u->valueAtFace(i, j, k, LEFT)
                                  +_u->valueAtFace(i, j, k, UP)-_u->valueAtFace(i, j, k, DOWN)
                                  +_u->valueAtFace(i, j, k, BACKWARD)-_u->valueAtFace(i, j, k, FORWARD));
@@ -131,7 +131,7 @@ void PCGProjection3D::applyPressure(){
         int i,j,k;
         it.index(i, j, k);
 
-        if (_cellType->valueAtIndex(i, j, k) == IGNITED) {
+        if (_cellType->valueAtIndex(i, j, k) == BURNT) {
                 _u->addValueAtFace(-scale*(*x)[index], i, j, k, LEFT);
                 _u->addValueAtFace(scale*(*x)[index], i, j, k, RIGHT);
                 _u->addValueAtFace(-scale*(*x)[index], i, j, k, DOWN);

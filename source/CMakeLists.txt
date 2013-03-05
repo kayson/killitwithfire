@@ -70,7 +70,7 @@ source_group("source\\Water" FILES ${killitwithfire_WATER_SRCS})
 list(APPEND killitwithfire_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/advect
-  ${CMAKE_CURRENT_SOURCE_DIR}/levelSet
+  ${CMAKE_CURRENT_SOURCE_DIR}/levelset
   ${CMAKE_CURRENT_SOURCE_DIR}/presets  
   ${CMAKE_CURRENT_SOURCE_DIR}/Water
   ${CMAKE_CURRENT_SOURCE_DIR}/Pressure
@@ -100,8 +100,12 @@ link_directories(
   ) 
 
 add_executable(killitwithfire ${killitwithfire_ALL_HEADERS} ${killitwithfire_ALL_SRCS})
-
-target_link_libraries(killitwithfire freeglut.lib GLFW.lib)
+if(WIN32)
+  target_link_libraries(killitwithfire freeglut.lib GLFW.lib)
+endif(WIN32)
+if(UNIX)
+  target_link_libraries(killitwithfire GL glut glfw GLU)
+endif(UNIX)
 
 
 

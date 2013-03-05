@@ -6,6 +6,9 @@
 #include "../MACGrid.h"
 #ifdef __APPLE__
 #include "transform.hpp"
+#elif defined __unix__
+#include "glm.hpp"
+#include "glm/gtx/transform.hpp"
 #elif defined _WIN32 || defined _WIN64
 #include "glm.hpp"
 #include "glm/gtx/transform.hpp"

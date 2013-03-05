@@ -149,23 +149,30 @@ public:
     virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k) = 0;
     virtual double advect(double dt,const MACGrid &g, const VelocityDirection dir, LevelSet& phi, int i,int j,int k) = 0;
 
-	Vector3 fireGhostFluid(LevelSet& phi, const Vector3 &startPos, const Vector3 &startVel,  const CellType startType)
+	Vector3 fireGhostFluid(LevelSet& phi, const Vector3 &endPos, const Vector3 &eVel, const CellType startType)
 	{
-		Vector3 N = phi.getNormal(startPos.x, startPos.y, startPos.z);
-		double Vs = Vector3::dot(startVel, N);
-			
-		double VeG = 0; //Ghost end Velocity, can be both Vf and Vh
-		if(startType == BLUECORE)
-			VeG = Vs + (FirePresets::rhof/FirePresets::rhoh - 1.0)*FirePresets::S;
-		else if(startType == IGNITED)
-			VeG = Vs + (FirePresets::rhoh/FirePresets::rhof - 1.0)*FirePresets::S;
-		else
+		/* //Bridsons metod, tror den ger samma resultat
+		Vector3 N = phi.getNormal(endPos.x, endPos.y, endPos.z);
+		Vector3 jump = N*(FirePresets::rhof/FirePresets::rhob - 1.0)*FirePresets::S;
+		if(startType == BURNT)
+			return eVel + jump;
+		else //(startType == FUEL)
+			return eVel - jump;
+		*/
+		
+		Vector3 N = phi.getNormal(endPos.x, endPos.y, endPos.z);
+		Vector3 Vs = Vector3::dot(eVel, N);
+		
+		if(startType == BURNT) 
 		{
-			std::cout << "Fel i MACAdvect" << std::endl;
-			throw;
+			Vector3 VeG = Vs + (FirePresets::rhof/FirePresets::rhob - 1.0)*FirePresets::S;
+			return VeG*N + eVel - Vs*N;
 		}
-
-		return VeG*N + startVel - Vs*N;
+		else //(startType == FUEL)
+		{
+			Vector3 VeG = Vs - (FirePresets::rhof/FirePresets::rhob - 1.0)*FirePresets::S;
+			return VeG*N + eVel - Vs*N;
+		}
 	}
 
 };
@@ -204,12 +211,13 @@ public:
 
         Vector3 ePos = sPos-sVel*dt;
 		CellType eType = Fire::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
+		 Vector3 eVel = g.velocityAtWorld(ePos);
 
 		if(sType == eType)
 			return field->valueAtWorld(ePos.x,ePos.y,ePos.z);
 		else
 		{
-			Vector3 uG = MACAdvect<T>::fireGhostFluid(phi, sPos, sVel, sType);
+			Vector3 uG = MACAdvect<T>::fireGhostFluid(phi, ePos, eVel, sType);
 
 			if(dir == UDIR)
 				return uG.x;
@@ -238,7 +246,10 @@ public:
     }
     
     virtual double advect(double dt,const MACGrid &g, const VelocityDirection dir, LevelSet& phi, int i,int j,int k){
-		GridField<T> *field;
+		//OBS FEL IMPLEMENTERAD
+		return 0.0;
+
+		/*GridField<T> *field;
 		if(dir == UDIR)
 			field = g._u;
 		else if(dir == VDIR)
@@ -302,7 +313,7 @@ public:
 				else //(dir == VelocityDirection::WDIR)
 					return uG.x;
 			}
-		}
+		}*/
     }
 
 };

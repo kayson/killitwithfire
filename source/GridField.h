@@ -13,14 +13,18 @@
 #include "GridMapping.h"
 #ifdef __APPLE__
 #include "glm.hpp"
+#elif defined __unix__
+#include "glm.hpp"
 #elif defined _WIN32 || defined _WIN64
 #include <glm/glm.hpp>
 #endif
+
 #ifndef FuidFire_GridField_h
 #define FuidFire_GridField_h
 
 template <class T> class GridFieldIterator;
 template<class T> class Interpolation;
+
 template <class T>
 class GridField : public GridMapping {
 public:

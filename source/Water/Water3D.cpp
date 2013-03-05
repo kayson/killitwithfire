@@ -109,14 +109,14 @@ void Water3D::recomputeCellTypes(){
         }
     }
     
-    //Set IGNITED if inhabited with marker partile
+    //Set BURNT if inhabited with marker partile
     #pragma omp parallel for
     for (int index = 0; index < particles.size(); index++) {
         int i,j,k;
         cellTypes.worldToIndex(i, j, k, particles[index].x, particles[index].y, particles[index].z);
         CellType type = static_cast<CellType>(cellTypes.valueAtIndex(i, j, k));
         if (type == AIR) {
-            cellTypes.setValueAtIndex(IGNITED, i, j, k);
+            cellTypes.setValueAtIndex(BURNT, i, j, k);
         }
     }
 }
@@ -339,7 +339,7 @@ void Water3D::drawCellTypes(){
         if (val == SOLID){
             glColor3d(1.0, 1.0, 1.0);
             drawVoxel(x, y, z, dx, dy, dz);
-        }/*else if (val == IGNITED){
+        }/*else if (val == BURNT){
             glColor3d(0.0, 0.0, 0.0);
             glVertex3d(x-dx*0.5, y-dy*0.5, z-dz*0.5);
             glVertex3d(x+dx*0.5, y-dy*0.5, z-dz*0.5);
@@ -364,7 +364,7 @@ void Water3D::drawCellTypes(){
         }else if (val == AIR){
             glColor3d(1.0, 0.0, 0.0);
             drawVoxel(x, y, z, dx, dy, dz);
-        }else if (val == IGNITED){
+        }else if (val == BURNT){
             glColor3d(1.0, 1.0, 0.0);
             drawVoxel(x, y, z, dx, dy, dz);
         }

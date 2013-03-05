@@ -1,8 +1,8 @@
 #include "Temperature.h"
-#include "FirePresets.h"
+#include "firePresets.h"
 #include "MACAdvect.h"
 #include "fire.h"
-#ifdef __APPLE__
+#if defined __APPLE__ || defined __unix__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
@@ -37,17 +37,17 @@ void Temperature::ResetCell(int i, int j, int k, CellType type)
 {
     double x, y, z;
     grid->indexToWorld(i, j, k, x, y, z);
-    if(type == BLUECORE){
+    if(type == FUEL){
         grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
     }
 }
 
 void Temperature::InitCell(int i, int j, int k, CellType type)
 {
-	if(type == BLUECORE){
+	if(type == FUEL){
         grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
 	}
-	else if(type == IGNITED){
+	else if(type == BURNT){
 		grid->setValueAtIndex(FirePresets::T_AIR, i, j, k);
 	}
     gridCopy->setValueAtIndex(grid->valueAtIndex(i, j, k), i, j, k);
@@ -75,7 +75,7 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
 
 void Temperature::CalculateBuoyancyForceField()
 {
-	double alpha = 1.0;
+	double alpha = 0.0004;
 
 	int xdim = FirePresets::GRID_DIM_X,
 		ydim = FirePresets::GRID_DIM_Y,
@@ -85,7 +85,7 @@ void Temperature::CalculateBuoyancyForceField()
 		for(int j = 0; j < ydim; j++)
 			for(int k = 0; k < zdim; k++){
 				Vector3 force = Vector3(0.0, 1.0, 0.0);
-				double amplitude = abs((grid->valueAtIndex(i,j,k) - FirePresets::T_AIR)) * alpha;
+				double amplitude = (grid->valueAtIndex(i,j,k) - FirePresets::T_AIR) * alpha;
 
 				force *= amplitude;
 				beyonce->setValueAtIndex(force, i, j, k);
@@ -131,7 +131,7 @@ void Temperature::draw(){
         grid->indexToWorld(i, j, k, x, y, z);
         
 
-        glColor3d((grid->valueAtIndex(i, j, k) - FirePresets::T_AIR)/10.0, 0, 0);
+        glColor3d((grid->valueAtIndex(i, j, k) - FirePresets::T_AIR)/100.0, 0, 0);
 
 
         glVertex3f((float)x, (float)y, (float)z);
@@ -142,5 +142,5 @@ void Temperature::draw(){
     }
 	glEnd();
 
-	drawBuoyancyForce();
+	//drawBuoyancyForce();
 }

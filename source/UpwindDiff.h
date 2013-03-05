@@ -7,9 +7,6 @@ protected:
 	GridField<Vector3> *_w;
 
 public:
-	UpwindDiff();
-	~UpwindDiff();
-
 	double calcDxp(GridField<double> &g, const int i, const int j, const int k);
 	double calcDyp(GridField<double> &g, const int i, const int j, const int k);
 	double calcDzp(GridField<double> &g, const int i, const int j, const int k);

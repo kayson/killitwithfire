@@ -10,11 +10,14 @@
 #include "presets/firePresets.h"
 #include "MACAdvect.h"
 
-#ifdef __APPLE__
+#if defined __APPLE__
 #include "glfw.h"
 #include "pcg_solver.h"
 #include <Accelerate/Accelerate.h>
 #include "transform.hpp"
+#elif defined __unix__
+#include "GL/glfw.h"
+
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h>
 #endif
@@ -83,6 +86,7 @@ void Fire::advectLevelSet(double duration)
 void Fire::advectTemperature(double dt)
 {
     T->AdvectTemperatureField(dt, u, phi);
+    T->CalculateBuoyancyForceField();
 }
 
 double Fire::getAlpha(const int i, const int j, const int k, DirectionEnums d)
@@ -134,14 +138,14 @@ double Fire::getDensity(const int i, const int j, const int k, DirectionEnums d)
 	if(d == FORWARD)
 		temp = getCellType(i,j,k+1);
 
-	if(getCellType(i,j,k) == BLUECORE && temp == BLUECORE)
+	if(getCellType(i,j,k) == FUEL && temp == FUEL)
 		return preset->rhof;
-	else if(getCellType(i,j,k) == BLUECORE && temp == IGNITED)
-		return alpha * preset->rhof + ( 1 - alpha ) * preset->rhoh;
-	else if(getCellType(i,j,k) == IGNITED && temp == BLUECORE)
-		return alpha * preset->rhoh + ( 1 - alpha ) * preset->rhof;
-	else if(getCellType(i,j,k) == IGNITED && temp == IGNITED)
-		return preset->rhoh;
+	else if(getCellType(i,j,k) == FUEL && temp == BURNT)
+		return alpha * preset->rhof + ( 1 - alpha ) * preset->rhob;
+	else if(getCellType(i,j,k) == BURNT && temp == FUEL)
+		return alpha * preset->rhob + ( 1 - alpha ) * preset->rhof;
+	else if(getCellType(i,j,k) == BURNT && temp == BURNT)
+		return preset->rhob;
 
 }
 
@@ -169,9 +173,9 @@ CellType Fire::getCellType(const int i, const int j, const int k) const
 	if(i < 2 || i >= (phi.grid->xdim() - 2) || j< 2 || j >= (phi.grid->ydim() - 2) ) //Check if is solid
 		return SOLID;
 	else if(phi.grid->valueAtIndex(i,j,k) > 0.0)
-		return BLUECORE;
+		return FUEL;
 	else 
-		return IGNITED;
+		return BURNT;
 }
 
 CellType Fire::getCellType(double w_x, double w_y,double w_z) const
@@ -184,49 +188,43 @@ CellType Fire::getCellType(double phi)
 	if(false) //Check if is solid
 		return SOLID;
 	else if(phi > 0.0)
-		return BLUECORE;
+		return FUEL;
 	else 
-		return IGNITED;
+		return BURNT;
 }
 
 void Fire::runSimulation(){
 
 	 //Advektera levelset
-    /*for(double currentTime = 0; currentTime < preset->dt;)
+    for(double currentTime = 0; currentTime < preset->dt;)
 	{
 		double dt = computeDT(currentTime);
 
-		//Advektera hastighestsfältet
-		advectLevelSet(dt);
-
 		currentTime += dt;
-	}*/
-
-    advectLevelSet(preset->dt);
+	}
 	
-	static int counter = 0;
-    if (counter % 1 == 0) {
-		for(int i = -7; i < 7; i++)
-		{
-			phi.grid->addValueAtIndex(0.01,preset->GRID_DIM_X/2+i,0,0);
-			u.addValueAtFace(3,preset->GRID_DIM_X/2+i,0,0, DOWN);
-		}
-    }
-    counter++;
+	for(int i = -8; i < 8; i++)
+	{
+		phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
+	}
+	for(int i = -6; i < 6; i++)
+	{
+		u.addValueAtFace(0.5,preset->GRID_DIM_X/2+i,0,0,DOWN);
+	}
 
 	//Beräkna om vad för typ voxlarna är
 	computeCellTypes(); 
 
-    //Sätt solider till 0...
-    enforceBorderCondition();
-    
 	//u.advect(preset->dt);
 	preset->advectVelocities->advect(u, phi, preset->dt);
 
-    Vector3 force = Vector3(0.0, 0.05, 0.0);
-    u.addForce(force, preset->dt);
+	//enforceBorderCondition();
+
+    u.addForceGrid(*T->beyonce, preset->dt);
+
+    Vector3 gravity = Vector3(0.0, -0.005, 0.0);
+    u.addForce(gravity, preset->dt);
 	
-    advectLevelSet(preset->dt);
 	//Vorticity confinement forces
 	Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 
@@ -237,14 +235,18 @@ void Fire::runSimulation(){
 	//Advektera temperatur
 	advectTemperature(preset->dt);
 
-	T->CalculateBuoyancyForceField();
-	projection.project(preset->dt);
+	//T->CalculateBuoyancyForceField();
+	//projection.project(preset->dt);
+
+	advectLevelSet(preset->dt);
+
 
 	//Fixa signed distance field
 	phi.reinitialize();
 
 }
 
+/*
 void Fire::enforceBorderCondition(){
     for (GridMappingIterator it = u.iterator(); !it.done(); it.next()) {
         int i,j,k;
@@ -256,7 +258,7 @@ void Fire::enforceBorderCondition(){
             u.setValueAtFace(0, i, j, k, DOWN);
         }
     }
-}
+}*/
 
 void Fire::drawVorticities(){
 	glColor3d(1.0,1.0,1.0);
@@ -312,7 +314,7 @@ void Fire::drawSolid(){
 			glVertex3d(x+dx*0.5, y-dy*0.5, 0);
 			glVertex3d(x+dx*0.5, y+dy*0.5, 0);
 			glVertex3d(x-dx*0.5, y+dy*0.5, 0);
-		}else if (val == BLUECORE){
+		}else if (val == FUEL){
 			glColor3f(0, 0, 1);
 			glVertex3d(x-dx*0.5, y-dy*0.5, 0);
 			glVertex3d(x+dx*0.5, y-dy*0.5, 0);
@@ -522,7 +524,7 @@ u._u->indexToWorld(i, j, k, x, y, z);
 double val;
 
 
-if (cellType.valueAtWorld(x, y, z) == BLUECORE) 
+if (cellType.valueAtWorld(x, y, z) == FUEL) 
 {
 val = preset->advectVelocities->advect(dt, u, *u._u, i, j, k);
 }
@@ -541,7 +543,7 @@ iter.index(i, j, k);
 double x,y,z;
 u._v->indexToWorld(i, j, k, x, y, z);
 double val;
-if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
+if (cellType.valueAtWorld(x, y, z) == FUEL) {
 val = preset->advectVelocities->advect(dt, u, *u._v, i, j, k);
 }else{
 val = 0;//_v->valueAtIndex(iter.index());
@@ -557,7 +559,7 @@ iter.index(i, j, k);
 double x,y,z;
 u._w->indexToWorld(i, j, k, x, y, z);
 double val;
-if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
+if (cellType.valueAtWorld(x, y, z) == FUEL) {
 val = preset->advectVelocities->advect(dt, u, *u._w, i, j, k);
 }else{
 val = 0;//_w->valueAtIndex(iter.index());
