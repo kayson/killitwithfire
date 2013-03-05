@@ -153,24 +153,24 @@ public:
 	{
 		/* //Bridsons metod, tror den ger samma resultat
 		Vector3 N = phi.getNormal(endPos.x, endPos.y, endPos.z);
-		Vector3 jump = N*(FirePresets::rhof/FirePresets::rhoh - 1.0)*FirePresets::S;
-		if(startType == IGNITED)
+		Vector3 jump = N*(FirePresets::rhof/FirePresets::rhob - 1.0)*FirePresets::S;
+		if(startType == BURNT)
 			return eVel + jump;
-		else //(startType == BLUECORE)
+		else //(startType == FUEL)
 			return eVel - jump;
 		*/
 		
 		Vector3 N = phi.getNormal(endPos.x, endPos.y, endPos.z);
 		Vector3 Vs = Vector3::dot(eVel, N);
 		
-		if(startType == IGNITED) 
+		if(startType == BURNT) 
 		{
-			Vector3 VeG = Vs + (FirePresets::rhof/FirePresets::rhoh - 1.0)*FirePresets::S;
+			Vector3 VeG = Vs + (FirePresets::rhof/FirePresets::rhob - 1.0)*FirePresets::S;
 			return VeG*N + eVel - Vs*N;
 		}
-		else //(startType == BLUECORE)
+		else //(startType == FUEL)
 		{
-			Vector3 VeG = Vs - (FirePresets::rhof/FirePresets::rhoh - 1.0)*FirePresets::S;
+			Vector3 VeG = Vs - (FirePresets::rhof/FirePresets::rhob - 1.0)*FirePresets::S;
 			return VeG*N + eVel - Vs*N;
 		}
 	}

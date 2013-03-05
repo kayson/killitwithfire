@@ -24,11 +24,12 @@
 #include "Vorticity.h"
 
 
-Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),projection(&u, &phi)
+Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
 {
 	//Presets
 	preset = pre;
 
+    phi.grid->setTransformation(u.getTrans());
 	phi.fillLevelSet(preset->implicitFunction);
 	//2D grid
 	u = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
@@ -39,7 +40,6 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	pVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
 	rhsVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
 
-	const int matDim = phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim()*phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim();
 
 	//A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
 	pcgSolver = new PCGSolver<double>();
@@ -53,6 +53,20 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	T = new Temperature(phi.grid);
 
 	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
+    
+    
+    GridField<int> *cellTypes = new GridField<int>(u);
+    u.setTransformation(u.getTrans());
+    cellTypes->setAll(FUEL);
+    for (GridFieldIterator<int> it = celltype.iterator(); !it.done(); it.next()) {
+        int i,j,k;
+        it.index(i,j, k);
+        if (i == 0 || j == 0 || i == cellTypes->xdim()-1 || j == cellTypes->ydim()-1) {
+            cellTypes->setValueAtIndex(SOLID, i, j, k);
+        }
+    }
+    
+    projection = PCGProjection2D(&u,cellTypes);
 }
 
 double Fire::computeDT(double currentTime){
@@ -137,14 +151,14 @@ double Fire::getDensity(const int i, const int j, const int k, DirectionEnums d)
 	if(d == FORWARD)
 		temp = getCellType(i,j,k+1);
 
-	if(getCellType(i,j,k) == BLUECORE && temp == BLUECORE)
+	if(getCellType(i,j,k) == FUEL && temp == FUEL)
 		return preset->rhof;
-	else if(getCellType(i,j,k) == BLUECORE && temp == IGNITED)
-		return alpha * preset->rhof + ( 1 - alpha ) * preset->rhoh;
-	else if(getCellType(i,j,k) == IGNITED && temp == BLUECORE)
-		return alpha * preset->rhoh + ( 1 - alpha ) * preset->rhof;
-	else if(getCellType(i,j,k) == IGNITED && temp == IGNITED)
-		return preset->rhoh;
+	else if(getCellType(i,j,k) == FUEL && temp == BURNT)
+		return alpha * preset->rhof + ( 1 - alpha ) * preset->rhob;
+	else if(getCellType(i,j,k) == BURNT && temp == FUEL)
+		return alpha * preset->rhob + ( 1 - alpha ) * preset->rhof;
+	else if(getCellType(i,j,k) == BURNT && temp == BURNT)
+		return preset->rhob;
 
 }
 
@@ -172,9 +186,9 @@ CellType Fire::getCellType(const int i, const int j, const int k) const
 	if(i < 2 || i >= (phi.grid->xdim() - 2) || j< 2 || j >= (phi.grid->ydim() - 2) ) //Check if is solid
 		return SOLID;
 	else if(phi.grid->valueAtIndex(i,j,k) > 0.0)
-		return BLUECORE;
+		return FUEL;
 	else 
-		return IGNITED;
+		return BURNT;
 }
 
 CellType Fire::getCellType(double w_x, double w_y,double w_z) const
@@ -187,21 +201,21 @@ CellType Fire::getCellType(double phi)
 	if(false) //Check if is solid
 		return SOLID;
 	else if(phi > 0.0)
-		return BLUECORE;
+		return FUEL;
 	else 
-		return IGNITED;
+		return BURNT;
 }
 
 void Fire::runSimulation(){
 
 	 //Advektera levelset
-    for(double currentTime = 0; currentTime < preset->dt;)
+    /*for(double currentTime = 0; currentTime < preset->dt;)
 	{
 		double dt = computeDT(currentTime);
 
 		currentTime += dt;
 	}
-	
+	*/
 	for(int i = -8; i < 8; i++)
 	{
 		phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
@@ -239,7 +253,7 @@ void Fire::runSimulation(){
 	advectTemperature(preset->dt);
 
 	//T->CalculateBuoyancyForceField();
-	//projection.project(preset->dt);
+	projection.project(preset->dt, preset->rhof);
 
 	advectLevelSet(preset->dt);
 
@@ -317,7 +331,7 @@ void Fire::drawSolid(){
 			glVertex3d(x+dx*0.5, y-dy*0.5, 0);
 			glVertex3d(x+dx*0.5, y+dy*0.5, 0);
 			glVertex3d(x-dx*0.5, y+dy*0.5, 0);
-		}else if (val == BLUECORE){
+		}else if (val == FUEL){
 			glColor3f(0, 0, 1);
 			glVertex3d(x-dx*0.5, y-dy*0.5, 0);
 			glVertex3d(x+dx*0.5, y-dy*0.5, 0);
@@ -527,7 +541,7 @@ u._u->indexToWorld(i, j, k, x, y, z);
 double val;
 
 
-if (cellType.valueAtWorld(x, y, z) == BLUECORE) 
+if (cellType.valueAtWorld(x, y, z) == FUEL) 
 {
 val = preset->advectVelocities->advect(dt, u, *u._u, i, j, k);
 }
@@ -546,7 +560,7 @@ iter.index(i, j, k);
 double x,y,z;
 u._v->indexToWorld(i, j, k, x, y, z);
 double val;
-if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
+if (cellType.valueAtWorld(x, y, z) == FUEL) {
 val = preset->advectVelocities->advect(dt, u, *u._v, i, j, k);
 }else{
 val = 0;//_v->valueAtIndex(iter.index());
@@ -562,7 +576,7 @@ iter.index(i, j, k);
 double x,y,z;
 u._w->indexToWorld(i, j, k, x, y, z);
 double val;
-if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
+if (cellType.valueAtWorld(x, y, z) == FUEL) {
 val = preset->advectVelocities->advect(dt, u, *u._w, i, j, k);
 }else{
 val = 0;//_w->valueAtIndex(iter.index());

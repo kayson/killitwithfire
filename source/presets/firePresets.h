@@ -38,7 +38,7 @@ public:
 	static const double S;
 
 	static const double rhof; // Fuel density (kg/m^3)
-	static const double rhoh; // Hot gaseous products density (kg/m^3)
+	static const double rhob; // Hot gaseous products density (kg/m^3)
 
     //Rutiner
 	AdvectLevelSet *advection;

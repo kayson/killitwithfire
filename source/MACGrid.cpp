@@ -351,7 +351,7 @@ void MACGrid::advect(double dt, GridField<int > &cellType){
         double x,y,z;
         _u->indexToWorld(i, j, k, x, y, z);
         double val;
-        if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
+        if (cellType.valueAtWorld(x, y, z) == FUEL) {
             val = _advect->advect(dt, *this, *_u, i, j, k);
         }else{
             val = 0;// _u->valueAtIndex(iter.index());
@@ -367,7 +367,7 @@ void MACGrid::advect(double dt, GridField<int > &cellType){
         double x,y,z;
         _v->indexToWorld(i, j, k, x, y, z);
         double val;
-        if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
+        if (cellType.valueAtWorld(x, y, z) == FUEL) {
             val = _advect->advect(dt, *this, *_v, i, j, k);
         }else{
             val = 0;//_v->valueAtIndex(iter.index());
@@ -383,7 +383,7 @@ void MACGrid::advect(double dt, GridField<int > &cellType){
         double x,y,z;
         _w->indexToWorld(i, j, k, x, y, z);
         double val;
-        if (cellType.valueAtWorld(x, y, z) == BLUECORE) {
+        if (cellType.valueAtWorld(x, y, z) == FUEL) {
             val = _advect->advect(dt, *this, *_w, i, j, k);
         }else{
             val = 0;//_w->valueAtIndex(iter.index());
@@ -518,7 +518,7 @@ void MACGrid::extrapolate(double dt, GridField<int > &cellType){
         it.index(i, j, k);
         
         if (k == 0) {
-            if (cellType.valueAtIndex(i, j, k) == IGNITED){
+            if (cellType.valueAtIndex(i, j, k) == BURNT){
                 
                 if (cellType.valueAtIndex(i-1,j,k) == AIR) {
                     setValueAtFace(valueAtFace(i, j, k, LEFT), i-1, j, k, LEFT);
@@ -595,7 +595,7 @@ void MACGrid::extrapolate3D(double dt, GridField<int > &cellType){
         int i,j,k;
         it.index(i, j, k);
 
-            if (cellType.valueAtIndex(i, j, k) == IGNITED){
+            if (cellType.valueAtIndex(i, j, k) == BURNT){
                 
                 if (cellType.valueAtIndex(i-1,j,k) == AIR) {
                     setValueAtFace(valueAtFace(i, j, k, LEFT), i-1, j, k, LEFT);

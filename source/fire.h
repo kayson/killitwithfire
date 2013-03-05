@@ -16,6 +16,7 @@
 #include "Discretization.h"
 #include "BorderCondition.h"
 #include "Projection.h"
+#include "Projection2D.h"
 
 #ifdef __APPLE__
 #include "sparse_matrix.h"
@@ -94,7 +95,7 @@ private:
 	// Levelset Velocities u + S*N
 	GridField<Vector3> w;
     //Projektion
-    Projection projection;
+    PCGProjection2D projection;
     Particles particles;
 	GridField<int> celltype;
     //GridField<double> scalar;
