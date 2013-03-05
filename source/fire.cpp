@@ -24,7 +24,7 @@
 #include "Vorticity.h"
 
 
-Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),projection(&u, &phi)
+Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),celltype(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
 {
 	//Presets
 	preset = pre;
@@ -40,7 +40,6 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	pVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
 	rhsVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
 
-	const int matDim = phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim()*phi.grid->xdim()*phi.grid->ydim()*phi.grid->zdim();
 
 	//A = new SparseMatrix<double>(matDim, 7); // Total matrix, antal icke-zeros per rad
 	pcgSolver = new PCGSolver<double>();
@@ -54,6 +53,20 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	T = new Temperature(phi.grid);
 
 	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
+    
+    
+    GridField<int> *cellTypes = new GridField<int>(u);
+    u.setTransformation(u.getTrans());
+    cellTypes->setAll(FUEL);
+    for (GridFieldIterator<int> it = celltype.iterator(); !it.done(); it.next()) {
+        int i,j,k;
+        it.index(i,j, k);
+        if (i == 0 || j == 0 || i == cellTypes->xdim()-1 || j == cellTypes->ydim()-1) {
+            cellTypes->setValueAtIndex(SOLID, i, j, k);
+        }
+    }
+    
+    projection = PCGProjection2D(&u,cellTypes);
 }
 
 double Fire::computeDT(double currentTime){
@@ -196,13 +209,13 @@ CellType Fire::getCellType(double phi)
 void Fire::runSimulation(){
 
 	 //Advektera levelset
-    for(double currentTime = 0; currentTime < preset->dt;)
+    /*for(double currentTime = 0; currentTime < preset->dt;)
 	{
 		double dt = computeDT(currentTime);
 
 		currentTime += dt;
 	}
-	
+	*/
 	for(int i = -8; i < 8; i++)
 	{
 		phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
@@ -236,7 +249,7 @@ void Fire::runSimulation(){
 	advectTemperature(preset->dt);
 
 	//T->CalculateBuoyancyForceField();
-	//projection.project(preset->dt);
+	projection.project(preset->dt, preset->rhof);
 
 	advectLevelSet(preset->dt);
 
@@ -462,7 +475,7 @@ void Fire::draw()
 
 	//drawVorticities();
     //u.draw();
-	//drawCenterVelocities();
+	drawCenterVelocities();
     //drawCenterGradients(FirePresets::upwindDisc);
     //drawFaceVelocities();
     //drawMAC();
