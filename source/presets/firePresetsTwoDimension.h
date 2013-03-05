@@ -1,11 +1,11 @@
 #ifndef FIREPRESETSTWODIM_H
 #define FIREPRESETSTWODIM_H
 #include "firePresets.h"
-#include"../levelset/ImplicitFunctions.h"
-#include "../advect/AdvectLevelSetEuler.h"
-#include "../UpwindDiff.h"
-#include "../CentralDiff.h"
-#include "../advect/MACAdvect.h"
+#include"ImplicitFunctions.h"
+#include "AdvectLevelSetEuler.h"
+#include "UpwindDiff.h"
+#include "CentralDiff.h"
+#include "advect/MACAdvect.h"
 
 #ifdef __APPLE__
 #include "AdvectRK2.h"

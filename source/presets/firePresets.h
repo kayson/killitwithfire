@@ -6,8 +6,8 @@ class CentralDiff;
 class UpwindDiff;
 class AdvectLevelSet;
 
-#include "../CentralDiff.h"
-#include "../UpwindDiff.h"
+#include "CentralDiff.h"
+#include "UpwindDiff.h"
 
 template<class T> class MACAdvect;
 class FirePresets

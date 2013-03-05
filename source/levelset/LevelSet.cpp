@@ -30,9 +30,7 @@ LevelSet::LevelSet(int xDim, int yDim, int zDim, double size)
         
     grid->multTransformation(glm::scale(1.0, 1.0, 1.0));
     gridCopy->multTransformation(glm::scale(1.0, 1.0, 1.0));
-    normals->multTransformation(glm::scale(1.0, 1.0, 1.0));
-
-        
+    normals->multTransformation(glm::scale(1.0, 1.0, 1.0));      
 }
 
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
