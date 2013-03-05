@@ -6,6 +6,7 @@
 
 class LevelSet;
 class BorderCondition;
+class Vector3;
 template<class T> class GridField;
 
 class AdvectLevelSet {

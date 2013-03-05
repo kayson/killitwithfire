@@ -20,7 +20,7 @@ public:
 	static void GLFWCALL reshape( int width, int height );
 	void translateForCamera();
 	double getCameraSpeed(){ return cameraSpeed_; };
-	void moveCamera(Vector3 dP);
+	void moveCamera(Vector3 &dP);
 	
 private:
 	Vector3 position_;

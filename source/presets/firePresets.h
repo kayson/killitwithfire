@@ -1,9 +1,10 @@
 #ifndef FIREPRESETS_H
 #define FIREPRESETS_H
 
-
-
-#include "../advect/AdvectLevelSet.h"
+template<class T> class MACAdvect;
+class CentralDiff;
+class UpwindDiff;
+class AdvectLevelSet;
 
 #include "../CentralDiff.h"
 #include "../UpwindDiff.h"

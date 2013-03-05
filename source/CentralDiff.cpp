@@ -1,6 +1,7 @@
 #include "CentralDiff.h"
-#include "fire.h"
-#include "ExtrapolateConstant.h"
+#include "presets\firePresets.h"
+#include "Vector3.h"
+#include "GridField.hpp"
 /*
 	Johan Noren
 	Beräknar andra ordningens approx. av första-derivatan resp.

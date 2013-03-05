@@ -6,11 +6,9 @@
 
 #ifndef DISCRETIZATION_H
 #define DISCRETIZATION_H
-#include <iostream>
-#include "GridField.hpp"
-#include "MACGrid.h"
-#include "Vector3.h"
-#include "Extrapolation.h"
+
+class Vector3;
+template<class T> class GridField;
 
 class Discretization{
 public:

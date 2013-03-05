@@ -15,6 +15,25 @@
 #include <GL/glfw.h>
 #endif
 
+LevelSet::LevelSet()
+{
+	grid  = new GridField<double>(1000,1000,1000);
+	gridCopy = new GridField<double>(1000, 1000, 1000,10);
+	normals = new GridField<Vector3>(1000, 1000, 1000, 10);
+}
+
+LevelSet::LevelSet(int xDim, int yDim, int zDim, double size)
+{
+	grid  = new GridField<double>(xDim,yDim,zDim,size);
+	gridCopy = new GridField<double>(xDim,yDim,zDim,size);
+	normals = new GridField<Vector3>(xDim,yDim,zDim,size);
+        
+    grid->multTransformation(glm::scale(1.0, 1.0, 1.0));
+    gridCopy->multTransformation(glm::scale(1.0, 1.0, 1.0));
+    normals->multTransformation(glm::scale(1.0, 1.0, 1.0));
+
+        
+}
 
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 {

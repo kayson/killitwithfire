@@ -4,6 +4,9 @@
 
 #include "BorderCondition.h"
 #include "Vector3.h"
+#include "GridField.hpp"
+#include "MACGrid.h"
+
 // Returnerar true om ingen boundary-åtgärd behövs
 bool BorderCondition::checkBorder(GridField<double> &g, const int i, const int j, const int k) const{
 	return !(i == 0  || j == 0 || i == g.xdim()-1 || j == g.ydim()-1 || k == 0 || k == g.zdim()-1);
