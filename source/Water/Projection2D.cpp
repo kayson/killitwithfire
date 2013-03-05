@@ -54,9 +54,9 @@ void PCGProjection2D::fillA(){
         it.index(i, j, k);
         if (k == 0){
             
-            if(_cellType->valueAtIndex(i, j, k) == BURNT) {
+            if(_cellType->valueAtIndex(i, j, k) == FUEL) {
                 
-                if (_cellType->valueAtIndex(i+1,j,k) == BURNT && _cellType->isValid(i+1, j, k)) {
+                if (_cellType->valueAtIndex(i+1,j,k) == FUEL && _cellType->isValid(i+1, j, k)) {
                     A->add_to_element(row, row, scale);
                     A->set_element(row,_cellType->indexAt(i+1, j, k),  -scale);
                 }else if (_cellType->valueAtIndex(i+1,j,k) == AIR){
@@ -64,21 +64,21 @@ void PCGProjection2D::fillA(){
                 }
                 
                 
-                if (_cellType->valueAtIndex(i-1,j,k) == BURNT && _cellType->isValid(i-1, j, k)) {
+                if (_cellType->valueAtIndex(i-1,j,k) == FUEL && _cellType->isValid(i-1, j, k)) {
                     A->add_to_element(row, row, scale);
                     A->set_element( row,_cellType->indexAt(i-1, j, k), -scale);
                 }else if (_cellType->valueAtIndex(i-1,j,k) == AIR){
                     A->add_to_element(row, row, scale);
                 }
                 
-                if (_cellType->valueAtIndex(i,j+1,k) == BURNT && _cellType->isValid(i, j+1, k)) {
+                if (_cellType->valueAtIndex(i,j+1,k) == FUEL && _cellType->isValid(i, j+1, k)) {
                     A->add_to_element(row, row, scale);
                     A->set_element( row,_cellType->indexAt(i, j+1, k), -scale);
                 }else if (_cellType->valueAtIndex(i,j+1,k) == AIR){
                     A->add_to_element(row, row, scale);
                 }
                 
-                if (_cellType->valueAtIndex(i,j-1,k) == BURNT &&  _cellType->isValid(i, j-1, k)) {
+                if (_cellType->valueAtIndex(i,j-1,k) == FUEL &&  _cellType->isValid(i, j-1, k)) {
                     A->add_to_element(row, row, scale);
                     A->set_element( row,_cellType->indexAt(i, j-1, k), -scale);
                 }else if (_cellType->valueAtIndex(i,j-1,k) == AIR){
@@ -94,7 +94,7 @@ void PCGProjection2D::fillA(){
                     std::cout << "    ~    " << std::endl;
                 }else if (up == SOLID){
                     std::cout << "    #    " << std::endl;
-                }else if (up == BURNT){
+                }else if (up == FUEL){
                     std::cout << "    @    " << std::endl;
                 }
                 
@@ -102,7 +102,7 @@ void PCGProjection2D::fillA(){
                     std::cout << "~   ";
                 }else if (left == SOLID){
                     std::cout << "#   ";
-                }else if (left == BURNT){
+                }else if (left == FUEL){
                     std::cout << "@   ";
                 }
                 
@@ -110,7 +110,7 @@ void PCGProjection2D::fillA(){
                     std::cout << "~";
                 }else if (center == SOLID){
                     std::cout << "#";
-                }else if (center == BURNT){
+                }else if (center == FUEL){
                     std::cout << "@";
                 }
                 
@@ -118,7 +118,7 @@ void PCGProjection2D::fillA(){
                     std::cout << "   ~";
                 }else if (right == SOLID){
                     std::cout << "   #";
-                }else if (right == BURNT){
+                }else if (right == FUEL){
                     std::cout << "   @";
                 }
                 
@@ -126,7 +126,7 @@ void PCGProjection2D::fillA(){
                     std::cout << std::endl << "    ~    ";
                 }else if (down == SOLID){
                     std::cout << std::endl << "    #    ";
-                }else if (down == BURNT){
+                }else if (down == FUEL){
                     std::cout << std::endl << "    @    ";
                 }
                 std::cout << std::endl;
@@ -160,7 +160,7 @@ void PCGProjection2D::fillb(){
         int i,j,k;
         it.index(i, j, k);
         if (k == 0){
-            if (_cellType->valueAtIndex(i, j, k) == BURNT){
+            if (_cellType->valueAtIndex(i, j, k) == FUEL){
                     double div = -scale*(_u->valueAtFace(i, j, k, RIGHT)-_u->valueAtFace(i, j, k, LEFT)+_u->valueAtFace(i, j, k, UP)-_u->valueAtFace(i, j, k, DOWN));
                     (*b)[index] = div;
                     mean += div;
@@ -186,7 +186,7 @@ void PCGProjection2D::applyPressure(){
         int i,j,k;
         it.index(i, j, k);
         if (k == 0){
-            if (_cellType->valueAtIndex(i, j, k) == BURNT) {
+            if (_cellType->valueAtIndex(i, j, k) == FUEL) {
                 _u->addValueAtFace(-scale*(*x)[index], i, j, k, LEFT);
                 _u->addValueAtFace(scale*(*x)[index], i, j, k, RIGHT);
                 _u->addValueAtFace(-scale*(*x)[index], i, j, k, DOWN);
@@ -220,6 +220,18 @@ void PCGProjection2D::applyPressure(){
             index++;
         }
     }
+    
+    for (GridFieldIterator<int> it = _cellType->iterator(); !it.done(); it.next()) {
+        int i,j,k;
+        it.index(i, j, k);
+        if (_cellType->valueAtIndex(i, j, k) == SOLID) {
+            _u->setValueAtFace(0, i, j, k, LEFT);
+            _u->setValueAtFace(0, i, j, k, RIGHT);
+            _u->setValueAtFace(0, i, j, k, UP);
+            _u->setValueAtFace(0, i, j, k, DOWN);
+        }
+    }
+    
     
     
     /*index = 0;
