@@ -9,6 +9,10 @@ IF (WIN32)
   ENDIF(MSVC)
 ENDIF (WIN32)
 
+IF(LINUX)
+  SET(CMAKE_CXX_FLAGS "-std=c++0x")
+ENDIF(LINUX)
+
 ## Fixa alla headers ##################################################
 
 FILE(GLOB killitwithfire_HEADERS  ./*.h*)
