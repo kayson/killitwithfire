@@ -1,6 +1,7 @@
 #include "UpwindDiff.h"
-#include "fire.h"
-#include "ExtrapolateConstant.h"
+#include "presets\firePresets.h"
+#include "Vector3.h"
+#include "GridField.hpp"
 /*
 	Beräknar andra ordningens approximation av första-upwind differentiation.
 	Index är eg. halva index för staggered MAC-grid.

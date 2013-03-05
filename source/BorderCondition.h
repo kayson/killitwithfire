@@ -1,8 +1,9 @@
 // Johan Noren
 #ifndef BORDERCONDITION_H
 #define BORDERCONDITION_H
-#include "GridField.hpp"
-#include "MACGrid.h"
+
+class MACGrid;
+template<class T> class GridField;
 
 class BorderCondition{
 public:
