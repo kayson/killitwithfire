@@ -16,7 +16,6 @@ Temperature::Temperature(GridField<double> *phi)
 		ZDIM = FirePresets::GRID_DIM_Z;
 
 	grid = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE);
-	gridCopy = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE);
 	beyonce = new GridField<Vector3>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE);
 
 	/*double scale = (double)XDIM / (double)YDIM;
@@ -50,7 +49,6 @@ void Temperature::InitCell(int i, int j, int k, CellType type)
 	else if(type == BURNT){
 		grid->setValueAtIndex(FirePresets::T_AIR, i, j, k);
 	}
-    gridCopy->setValueAtIndex(grid->valueAtIndex(i, j, k), i, j, k);
 }
 
 double Temperature::calculateTemperatureLoss(int i, int j, int k){
@@ -103,15 +101,6 @@ void Temperature::drawBuoyancyForce(){
         glVertex3d(x + v.x, y +v.y , 0);
         glEnd();
     }
-}
-
-void Temperature::SetToMax(int i, int j, int k){
-	grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
-}
-
-void Temperature::SetToIgnite(int i, int j, int k)
-{
-	grid->setValueAtIndex(FirePresets::T_IGNITION, i, j, k);
 }
 
 GridField<double> Temperature::GetTemperatureGrid(){

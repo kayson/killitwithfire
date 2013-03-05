@@ -13,6 +13,8 @@
 #include "pcgsolver/pcg_solver.h"
 #include "fire.h"
 #include "../presets/firePresets.h"
+#include <cmath>
+
 void Projection::resize(){
     
     if(A == nullptr ){
@@ -273,9 +275,7 @@ double Projection::getAlpha(int i, int j, int k, DirectionEnums d) const{
 		return 1;
 	}else if(Fire::getCellType(thisCell) == FUEL && Fire::getCellType(otherCell) == BURNT){
         double val = (thisCell /(thisCell - otherCell));
-        if (std::isnan(val)) {
-            throw;
-        }
+
 		return val;
     }else if(Fire::getCellType(thisCell) == BURNT && Fire::getCellType(otherCell) == FUEL){
 		double val =  1.0 - (thisCell /(thisCell - otherCell));
