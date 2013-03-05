@@ -1,4 +1,6 @@
 #include "Divergence.h"
+#include "GridField.hpp"
+#include "Discretization.h"
 
 Divergence::Divergence(){}
 
