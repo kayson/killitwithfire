@@ -133,10 +133,10 @@ void Water2D::runSimulation(double dt){
 
 void Water2D::draw(){
     
-    drawCellTypes();
+    //drawCellTypes();
     drawMAC();
     drawParticles();
-    drawCenterVelocities();
+    //drawCenterVelocities();
     //drawFaceVelocities();
 
 }

@@ -29,6 +29,13 @@ private:
     std::vector<double> *b;
     std::vector<double> *x;
 public:
+    PCGProjection2D(){
+        A = nullptr;
+        b = nullptr;
+        x = nullptr;
+        _u = nullptr;
+        _cellType = nullptr;
+    }
     PCGProjection2D(MACGrid *u, GridField<int> *cellType):_u(u),_cellType(cellType){
         A = nullptr;
         b = nullptr;
