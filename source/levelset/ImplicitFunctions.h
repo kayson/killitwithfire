@@ -1,7 +1,7 @@
 #ifndef IMPLICITFUNCTIONS_H
 #define IMPLICITFUNCTIONS_H
 
-class FirePresets;
+#include "firePresets.h"
 
 #include <cmath>
 
