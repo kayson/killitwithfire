@@ -75,7 +75,7 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
 
 void Temperature::CalculateBuoyancyForceField()
 {
-	double alpha = 0.007;
+	double alpha = 0.0004;
 
 	int xdim = FirePresets::GRID_DIM_X,
 		ydim = FirePresets::GRID_DIM_Y,
