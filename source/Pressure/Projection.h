@@ -19,8 +19,8 @@ private:
     void fillb();
     double div(int i ,int j ,int k,DirectionEnums d, CellType centerCellType);
     double densityAt(int i,int j,int k,DirectionEnums direction);
-    double getAlpha(const int i, const int j, const int k, DirectionEnums d);
-    double getDensity(const int i, const int j, const int k, DirectionEnums d);
+    double getAlpha( int i,  int j,  int k, DirectionEnums d) const;
+    double getDensity( int i,  int j,  int k, DirectionEnums d) const;
     void applyPressure();
 private:
     MACGrid *_u;

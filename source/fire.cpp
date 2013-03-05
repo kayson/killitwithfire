@@ -26,6 +26,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	//Presets
 	preset = pre;
 
+    phi.grid->setTransformation(u.getTrans());
 	phi.fillLevelSet(preset->implicitFunction);
 	//2D grid
 	u = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
@@ -459,7 +460,7 @@ void Fire::draw()
 
 	//drawVorticities();
     //u.draw();
-	drawCenterVelocities();
+	//drawCenterVelocities();
     //drawCenterGradients(FirePresets::upwindDisc);
     //drawFaceVelocities();
     //drawMAC();
