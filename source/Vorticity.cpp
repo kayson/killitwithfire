@@ -2,7 +2,9 @@
 
 #include "Vorticity.h"
 #include "MACGrid.h"
-#include "GridField.h"
+
+#include "GridField.hpp"
+
 #include "Gradient.h"
 #include "Divergence.h"
 #include "CentralDiff.h"

@@ -1,11 +1,11 @@
 #include "LevelSet.h"
 
-#include "../Discretization.h"
-#include "../CentralDiff.h"
-#include "../Gradient.h"
-#include "../Reinitialize.h"
+#include "Gradient.h"
+#include "Reinitialize.h"
 #include <iostream>
 #include <cmath>
+
+#include "GridField.hpp"
 
 #if defined __unix__ || defined __APPLE__
 #include "firePresets.h"

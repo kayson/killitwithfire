@@ -6,11 +6,14 @@
 //  Copyright (c) 2013 Johannes Deligiannis. All rights reserved.
 //
 
+#ifndef FuidFire_GridField_h
+#define FuidFire_GridField_h
 
+class Vector3;
 
-
-#include "Vector3.h"
 #include "GridMapping.h"
+
+
 #ifdef __APPLE__
 #include "glm.hpp"
 #elif defined __unix__
@@ -19,8 +22,7 @@
 #include <glm/glm.hpp>
 #endif
 
-#ifndef FuidFire_GridField_h
-#define FuidFire_GridField_h
+
 
 template <class T> class GridFieldIterator;
 template<class T> class Interpolation;
