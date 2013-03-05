@@ -1,14 +1,8 @@
 #ifndef INTEGRATE_H
 #define INTEGRATE_H
-#include "GridField.h"
-#include "MACGrid.h"
 
-#ifdef __APPLE__
-#include "firePresets.h"
-#elif defined _WIN32 || defined _WIN64
-#include "presets\firePresets.h"
-#endif
-
+template<class T> class GridField;
+class MACGrid;
 
 class IntegrateMethod
 {
