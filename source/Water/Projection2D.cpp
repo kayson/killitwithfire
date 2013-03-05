@@ -222,7 +222,7 @@ void PCGProjection2D::applyPressure(){
     }
     
     
-    index = 0;
+    /*index = 0;
     for (GridFieldIterator<int> it = _cellType->iterator(); !it.done(); it.next()) {
         
         int i,j,k;
@@ -245,7 +245,7 @@ void PCGProjection2D::applyPressure(){
             
             index++;
         }
-    }
+    }*/
     
 }
 

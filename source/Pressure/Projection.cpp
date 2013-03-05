@@ -50,6 +50,9 @@ void Projection::fillA(){
                     double scale = _dt/(getDensity(i, j, k, RIGHT)*_dx*_dx);
                     A->set_element(row, _phi->grid->indexAt(i+1, j, k), -scale);
                     A->add_to_element(row, row, scale);
+                }else{
+                    double scale = _dt/(FirePresets::rhof*_dx*_dx);
+                    A->add_to_element(row, row, scale);
                 }
                 
                 if ((Fire::getCellType(_phi->grid->valueAtIndex(i-1, j, k)) == IGNITED
@@ -251,9 +254,9 @@ double Projection::getAlpha(const int i, const int j, const int k, DirectionEnum
 	if(d == DOWN)
 		temp = _phi->grid->valueAtIndex(i,j-1,k);
 	if(d == FORWARD)
-		temp = _phi->grid->valueAtIndex(i,j,k+1);
-	if(d == BACKWARD)
 		temp = _phi->grid->valueAtIndex(i,j,k-1);
+	if(d == BACKWARD)
+		temp = _phi->grid->valueAtIndex(i,j,k+1);
     
 	if(_phi->grid->valueAtIndex(i,j,k) <= 0 && temp <= 0)
 		return 1;
@@ -284,9 +287,9 @@ double Projection::getDensity(const int i, const int j, const int k, DirectionEn
 	if(d == UP)
 		temp = Fire::getCellType(_phi->grid->valueAtIndex(i, j+1, k));
 	if(d == BACKWARD)
-		temp = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k-1));
-	if(d == FORWARD)
 		temp = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k+1));
+	if(d == FORWARD)
+		temp = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k-1));
 
     
 	if(Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BLUECORE && temp == BLUECORE)
