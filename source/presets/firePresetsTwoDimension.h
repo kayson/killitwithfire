@@ -57,6 +57,6 @@ const double FirePresets::CFL_NUMBER = .2;
 const double FirePresets::S = .25;
 
 const double FirePresets::rhof = 1;
-const double FirePresets::rhoh = 0.1;
+const double FirePresets::rhob = 0.1;
 
 #endif //FIREPRESETSTWODIM_H

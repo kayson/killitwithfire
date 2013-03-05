@@ -37,17 +37,17 @@ void Temperature::ResetCell(int i, int j, int k, CellType type)
 {
     double x, y, z;
     grid->indexToWorld(i, j, k, x, y, z);
-    if(type == BLUECORE){
+    if(type == FUEL){
         grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
     }
 }
 
 void Temperature::InitCell(int i, int j, int k, CellType type)
 {
-	if(type == BLUECORE){
+	if(type == FUEL){
         grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
 	}
-	else if(type == IGNITED){
+	else if(type == BURNT){
 		grid->setValueAtIndex(FirePresets::T_AIR, i, j, k);
 	}
     gridCopy->setValueAtIndex(grid->valueAtIndex(i, j, k), i, j, k);

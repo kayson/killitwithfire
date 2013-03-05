@@ -41,11 +41,11 @@ void Projection::fillA(){
             it.index(i, j, k);
         if (k == 0) {
 
-            if (Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == IGNITED
-                || Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BLUECORE) {
+            if (Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BURNT
+                || Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == FUEL) {
                 
-                if ((Fire::getCellType(_phi->grid->valueAtIndex(i+1, j, k)) == IGNITED
-                    || Fire::getCellType(_phi->grid->valueAtIndex(i+1, j, k)) == BLUECORE)
+                if ((Fire::getCellType(_phi->grid->valueAtIndex(i+1, j, k)) == BURNT
+                    || Fire::getCellType(_phi->grid->valueAtIndex(i+1, j, k)) == FUEL)
                     && _phi->grid->isValid(i+1, j, k)) {
                     double scale = _dt/(getDensity(i, j, k, RIGHT)*_dx*_dx);
                     A->set_element(row, _phi->grid->indexAt(i+1, j, k), -scale);
@@ -55,24 +55,24 @@ void Projection::fillA(){
                     A->add_to_element(row, row, scale);
                 }
                 
-                if ((Fire::getCellType(_phi->grid->valueAtIndex(i-1, j, k)) == IGNITED
-                    || Fire::getCellType(_phi->grid->valueAtIndex(i-1, j, k)) == BLUECORE)
+                if ((Fire::getCellType(_phi->grid->valueAtIndex(i-1, j, k)) == BURNT
+                    || Fire::getCellType(_phi->grid->valueAtIndex(i-1, j, k)) == FUEL)
                     && _phi->grid->isValid(i-1, j, k)) {
                     double scale = _dt/(getDensity(i, j, k, LEFT)*_dx*_dx);
                     A->set_element(row, _phi->grid->indexAt(i-1, j, k), -scale);
                     A->add_to_element(row, row, scale);
                 }
                 
-                if ((Fire::getCellType(_phi->grid->valueAtIndex(i, j+1, k)) == IGNITED
-                    || Fire::getCellType(_phi->grid->valueAtIndex(i, j+1, k)) == BLUECORE)
+                if ((Fire::getCellType(_phi->grid->valueAtIndex(i, j+1, k)) == BURNT
+                    || Fire::getCellType(_phi->grid->valueAtIndex(i, j+1, k)) == FUEL)
                     && _phi->grid->isValid(i, j+1, k)) {
                     double scale = _dt/(getDensity(i, j, k, DOWN)*_dx*_dx);
                     A->set_element(row, _phi->grid->indexAt(i, j+1, k), -scale);
                     A->add_to_element(row, row, scale);
                 }
                 
-                if ((Fire::getCellType(_phi->grid->valueAtIndex(i, j-1, k)) == IGNITED
-                    || Fire::getCellType(_phi->grid->valueAtIndex(i, j-1, k)) == BLUECORE)
+                if ((Fire::getCellType(_phi->grid->valueAtIndex(i, j-1, k)) == BURNT
+                    || Fire::getCellType(_phi->grid->valueAtIndex(i, j-1, k)) == FUEL)
                     && _phi->grid->isValid(i, j-1, k)) {
                     double scale = _dt/(getDensity(i, j, k, UP)*_dx*_dx);
                     A->set_element(row, _phi->grid->indexAt(i, j-1, k), -scale);
@@ -86,15 +86,15 @@ void Projection::fillA(){
 
 
 double Projection::div(int i ,int j ,int k,DirectionEnums d, CellType centerCellType){
-    static double DV = (FirePresets::rhof/FirePresets::rhoh-1.0)*FirePresets::S;
+    static double DV = (FirePresets::rhof/FirePresets::rhob-1.0)*FirePresets::S;
 
     double x,y,z;
     _u->halfIndexToWorld(i, j, k, d, x, y, z);
-    if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == IGNITED && centerCellType == IGNITED) {
+    if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == BURNT && centerCellType == BURNT) {
         return _u->valueAtFace(i, j, k, d);
-    }else if(Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == BLUECORE && centerCellType == BLUECORE){
+    }else if(Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == FUEL && centerCellType == FUEL){
         return _u->valueAtFace(i, j, k, d);
-    }else if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == IGNITED && centerCellType == BLUECORE){
+    }else if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == BURNT && centerCellType == FUEL){
         //På flame front
         Vector3 n = _phi->getNormal(x, y, z);
         n.mult(DV);
@@ -107,7 +107,7 @@ double Projection::div(int i ,int j ,int k,DirectionEnums d, CellType centerCell
             
         }
         
-    }else{// if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == IGNITED && centerCellType == BLUECORE){
+    }else{// if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == BURNT && centerCellType == FUEL){
         //På flame front
         Vector3 n = _phi->getNormal(x, y, z);
         n.mult(DV);
@@ -133,8 +133,8 @@ void Projection::fillb(){
 
         if (k == 0) {
             
-            if (Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BLUECORE
-                || Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == IGNITED) {
+            if (Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == FUEL
+                || Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BURNT) {
                 double d = 0;
                 double scale = _dt/_dx;
                 CellType currType = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k));
@@ -157,8 +157,8 @@ void Projection::fillb(){
 
 void Projection::applyPressure(){
     
-    double scaleBluecore = _dt/(FirePresets::rhof*_dx);
-    double scaleIgnited = _dt/(FirePresets::rhoh*_dx);
+    double scaleFUEL = _dt/(FirePresets::rhof*_dx);
+    double scaleBURNT = _dt/(FirePresets::rhob*_dx);
     int index = 0;
     double max_pressure = 0;
     for (GridFieldIterator<double> it = _phi->grid->iterator(); !it.done(); it.next()) {
@@ -168,16 +168,16 @@ void Projection::applyPressure(){
 
         if (k == 0) {
 
-            if( Fire::getCellType(_phi->grid->valueAtIndex(i, j, k))  == IGNITED) {
-                _u->addValueAtFace(scaleIgnited*(*x)[index], i, j, k, LEFT);
-                _u->addValueAtFace(-scaleIgnited*(*x)[index], i, j, k, RIGHT);
-                _u->addValueAtFace(scaleIgnited*(*x)[index], i, j, k, DOWN);
-                _u->addValueAtFace(-scaleIgnited*(*x)[index], i, j, k, UP);
-            }else if ( Fire::getCellType(_phi->grid->valueAtIndex(i, j, k))  == BLUECORE){
-                _u->addValueAtFace(scaleBluecore*(*x)[index], i, j, k, LEFT);
-                _u->addValueAtFace(-scaleBluecore*(*x)[index], i, j, k, RIGHT);
-                _u->addValueAtFace(scaleBluecore*(*x)[index], i, j, k, DOWN);
-                _u->addValueAtFace(-scaleBluecore*(*x)[index], i, j, k, UP);
+            if( Fire::getCellType(_phi->grid->valueAtIndex(i, j, k))  == BURNT) {
+                _u->addValueAtFace(scaleBURNT*(*x)[index], i, j, k, LEFT);
+                _u->addValueAtFace(-scaleBURNT*(*x)[index], i, j, k, RIGHT);
+                _u->addValueAtFace(scaleBURNT*(*x)[index], i, j, k, DOWN);
+                _u->addValueAtFace(-scaleBURNT*(*x)[index], i, j, k, UP);
+            }else if ( Fire::getCellType(_phi->grid->valueAtIndex(i, j, k))  == FUEL){
+                _u->addValueAtFace(scaleFUEL*(*x)[index], i, j, k, LEFT);
+                _u->addValueAtFace(-scaleFUEL*(*x)[index], i, j, k, RIGHT);
+                _u->addValueAtFace(scaleFUEL*(*x)[index], i, j, k, DOWN);
+                _u->addValueAtFace(-scaleFUEL*(*x)[index], i, j, k, UP);
             }
             
             if (fabs((*b)[index]) > max_pressure) {
@@ -292,14 +292,14 @@ double Projection::getDensity(const int i, const int j, const int k, DirectionEn
 		temp = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k-1));
 
     
-	if(Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BLUECORE && temp == BLUECORE)
+	if(Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == FUEL && temp == FUEL)
 		return FirePresets::rhof;
-	else if(Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BLUECORE && temp == IGNITED)
-		return alpha * FirePresets::rhof + ( 1 - alpha ) * FirePresets::rhoh;
-	else if(Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == IGNITED && temp == BLUECORE)
-		return alpha * FirePresets::rhoh + ( 1 - alpha ) * FirePresets::rhof;
-	else{// if(getCellType(i,j,k) == IGNITED && temp == IGNITED)
-		return FirePresets::rhoh;
+	else if(Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == FUEL && temp == BURNT)
+		return alpha * FirePresets::rhof + ( 1 - alpha ) * FirePresets::rhob;
+	else if(Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BURNT && temp == FUEL)
+		return alpha * FirePresets::rhob + ( 1 - alpha ) * FirePresets::rhof;
+	else{// if(getCellType(i,j,k) == BURNT && temp == BURNT)
+		return FirePresets::rhob;
     }
 }
 
