@@ -461,7 +461,7 @@ void Fire::draw()
 
 	//drawVorticities();
     //u.draw();
-	//drawCenterVelocities();
+	drawCenterVelocities();
     //drawCenterGradients(FirePresets::upwindDisc);
     //drawFaceVelocities();
     //drawMAC();
