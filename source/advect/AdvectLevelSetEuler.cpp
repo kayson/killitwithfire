@@ -1,7 +1,7 @@
 #include "AdvectLevelSetEuler.h"
 #include "GridField.hpp"
-#include "levelset\LevelSet.h"
-#include "presets\firePresets.h"
+#include "LevelSet.h"
+#include "firePresets.h"
 #include "Gradient.h"
 
 void AdvectLevelSetEuler::advect(GridField<Vector3> &w, LevelSet &phi, double dt){

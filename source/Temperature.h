@@ -17,9 +17,6 @@ public:
 	Temperature(GridField<double> *phi);
 	~Temperature(){};
 
-	void SetToMax(int i, int j, int k);
-	void SetToAir(int i, int j, int k);
-	void SetToIgnite(int i, int j, int k);
 	GridField<double> GetTemperatureGrid();
 
     void AdvectTemperatureField(double dt, MACGrid m, LevelSet ls);

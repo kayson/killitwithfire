@@ -1,5 +1,5 @@
 #include "CentralDiff.h"
-#include "presets\firePresets.h"
+#include "firePresets.h"
 #include "Vector3.h"
 #include "GridField.hpp"
 /*

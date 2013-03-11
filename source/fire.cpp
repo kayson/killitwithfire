@@ -216,34 +216,34 @@ void Fire::runSimulation(){
 		currentTime += dt;
 	}
 	*/
-	for(int i = -8; i < 8; i++)
-	{
-		phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
-	}
-	for(int i = -6; i < 6; i++)
-	{
-		u.addValueAtFace(0.5,preset->GRID_DIM_X/2+i,0,0,DOWN);
-	}
-
-	//Beräkna om vad för typ voxlarna är
-	computeCellTypes(); 
-
-	//u.advect(preset->dt);
-	preset->advectVelocities->advect(u, phi, preset->dt);
-	phi.updateNormals();
-
-	//enforceBorderCondition();
-
-	Vector3 gravity = Vector3(0.0, 0.03, 0.0);
-    u.addForce(gravity, preset->dt);
-
-    //u.addForceGrid(*T->beyonce, preset->dt);
-
-    //Vector3 gravity = Vector3(0.0, -0.005, 0.0);
+    for(int i = -8; i < 8; i++)
+    {
+        phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
+    }
+    for(int i = -6; i < 6; i++)
+    {
+        u.addValueAtFace(0.5,preset->GRID_DIM_X/2+i,0,0,DOWN);
+    }
+    
+    //Beräkna om vad för typ voxlarna är
+    computeCellTypes(); 
+    
+    //u.advect(preset->dt);
+    preset->advectVelocities->advect(u, phi, preset->dt);
+    phi.updateNormals();
+    
+    //enforceBorderCondition();
+    
+    //	Vector3 gravity = Vector3(0.0, 0.03, 0.0);
     //u.addForce(gravity, preset->dt);
-	
-	//Vorticity confinement forces
-	Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+    
+    u.addForceGrid(*T->beyonce, preset->dt);
+    
+    Vector3 gravity = Vector3(0.0, -0.005, 0.0);
+    u.addForce(gravity, preset->dt);
+    
+    //Vorticity confinement forces
+    Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 
 	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 

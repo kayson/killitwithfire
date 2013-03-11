@@ -1,5 +1,5 @@
 #include "DetonationShockDynamics.h"
-#include "FirePresets.h"
+#include "firePresets.h"
 #include "GridField.h"
 
 DetonationShockDynamics::DetonationShockDynamics(){
