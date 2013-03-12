@@ -160,7 +160,7 @@ public:
 			return eVel - jump;
 		*/
 		
-		Vector3 N = phi.getNormal(endPos.x, endPos.y, endPos.z);
+		Vector3 N =	phi.getNormal(endPos.x, endPos.y, endPos.z);
 		Vector3 Vs = Vector3::dot(eVel, N);
 		
 		if(startType == BURNT) 

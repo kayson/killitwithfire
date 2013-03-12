@@ -7,6 +7,7 @@
 #include "LevelSet.h"
 #include "fire.h"
 #include "Vector3.h"
+#include "BlackBodyRadiation.h"
 
 #if defined __APPLE__ || defined __unix__
 #include "glfw.h"
@@ -129,10 +130,11 @@ void Temperature::draw(){
         grid->indexToWorld(i, j, k, x, y, z);
         
         
-        glColor3d((grid->valueAtIndex(i, j, k) - FirePresets::T_AIR)/100.0,
-                  0,
-                  0);
-        
+		glColor3d(BlackBodyRadiation::red(grid->valueAtIndex(i,j,k)),
+                  BlackBodyRadiation::green(grid->valueAtIndex(i,j,k)),
+                  BlackBodyRadiation::blue(grid->valueAtIndex(i,j,k)));
+
+		
         
         glVertex3f((float)x, (float)y, (float)z);
         glVertex3f(((float)x+1.f), (float)y, (float)z);
@@ -141,6 +143,6 @@ void Temperature::draw(){
         
     }
     glEnd();
-    
+
     //drawBuoyancyForce();
 }

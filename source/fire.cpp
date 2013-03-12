@@ -216,15 +216,13 @@ void Fire::runSimulation(){
 		currentTime += dt;
 	}
 	*/
-    for(int i = -8; i < 8; i++)
-    {
-        phi.grid->addValueAtIndex(1,preset->GRID_DIM_X/2+i,0,0);
-    }
-    for(int i = -6; i < 6; i++)
-    {
-        u.addValueAtFace(0.5,preset->GRID_DIM_X/2+i,0,0,DOWN);
-    }
-    
+
+	for(int i = preset->GRID_DIM_X*0.45; i < preset->GRID_DIM_X*0.55; i++)
+	{
+		phi.grid->setValueAtIndex(1,i,4,0);
+	}
+
+
     //Beräkna om vad för typ voxlarna är
     computeCellTypes(); 
     
@@ -234,29 +232,21 @@ void Fire::runSimulation(){
     
     //enforceBorderCondition();
     
-    //	Vector3 gravity = Vector3(0.0, 0.03, 0.0);
-    //u.addForce(gravity, preset->dt);
-    
     u.addForceGrid(*T->beyonce, preset->dt);
     
-    Vector3 gravity = Vector3(0.0, -0.005, 0.0);
-    u.addForce(gravity, preset->dt);
+    Vector3 gravity = Vector3(0.0, -0.1, 0.0);
+    //u.addForce(gravity, preset->dt);
     
     //Vorticity confinement forces
     Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
-
-	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
-
-	//projection.project(preset->dt, 0.1, 1);
+	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
 	//Advektera temperatur
 	advectTemperature(preset->dt);
 
-	//T->CalculateBuoyancyForceField();
 	//projection.project(preset->dt, preset->rhof);
 
 	advectLevelSet(preset->dt);
-
 
 	//Fixa signed distance field
 	phi.reinitialize();
@@ -474,11 +464,10 @@ void Fire::computeW()
 
 void Fire::draw()
 {
-  phi.draw();
-  //T->draw();
+  //phi.draw();
+  T->draw();
 
 	//drawVorticities();
-    //u.draw();
 	//drawCenterVelocities();
     //drawCenterGradients(FirePresets::upwindDisc);
     //drawFaceVelocities();
