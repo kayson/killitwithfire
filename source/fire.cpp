@@ -33,6 +33,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	phi.fillLevelSet(preset->implicitFunction);
 	//2D grid
 	u = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
+
 	//Advect
 
 	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
@@ -239,7 +240,7 @@ void Fire::runSimulation(){
     
     //Vorticity confinement forces
     Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
-	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
+	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
 	//Advektera temperatur
 	advectTemperature(preset->dt);
@@ -464,11 +465,11 @@ void Fire::computeW()
 
 void Fire::draw()
 {
-  //phi.draw();
-  T->draw();
+  phi.draw();
+  //T->draw();
 
 	//drawVorticities();
-	//drawCenterVelocities();
+	drawCenterVelocities();
     //drawCenterGradients(FirePresets::upwindDisc);
     //drawFaceVelocities();
     //drawMAC();

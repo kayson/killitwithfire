@@ -94,6 +94,7 @@ private:
     MACGrid u;
 	// Levelset Velocities u + S*N
 	GridField<Vector3> w;
+	
     //Projektion
     PCGProjection2D projection;
     Particles particles;

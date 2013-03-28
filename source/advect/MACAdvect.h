@@ -224,7 +224,7 @@ public:
 			else if(dir == VDIR)
 				return uG.y;
 			else //(dir == VelocityDirection::WDIR)
-				return uG.x;
+				return uG.z;
 		}
     }
 };
@@ -287,7 +287,7 @@ public:
 				else if(dir == VDIR)
 					return uG.y;
 				else //(dir == VelocityDirection::WDIR)
-					return uG.x;
+					return uG.z;
 			}
 			
 		}

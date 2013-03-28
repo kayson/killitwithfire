@@ -15,7 +15,7 @@ double BlackBodyRadiation::radiance(double lambda, double T)
 
 float BlackBodyRadiation::red(double T)
 {
-	double radiance_tot;
+	double radiance_tot=0.;
 	#pragma omp parallel for
 	for(float i = 0.43; i < 0.7; i+=0.01) 
 		radiance_tot += radiance(i,T)/0.00001;
@@ -26,7 +26,7 @@ float BlackBodyRadiation::red(double T)
 
 float BlackBodyRadiation::green(double T)
 {
-	double radiance_tot;
+	double radiance_tot=0.;
 	#pragma omp parallel for
 	for(float i = 0.4; i < 0.65; i+=0.01) 
 		radiance_tot += radiance(i,T)/0.00001;
@@ -36,7 +36,7 @@ float BlackBodyRadiation::green(double T)
 
 float BlackBodyRadiation::blue(double T)
 {
-	double radiance_tot;
+	double radiance_tot=0.;
 	#pragma omp parallel for
 	for(float i = 0.4; i < 0.5; i+=0.01) 
 		radiance_tot += radiance(i,T)/0.00001;
