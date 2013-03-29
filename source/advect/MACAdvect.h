@@ -211,10 +211,22 @@ public:
 
         Vector3 ePos = sPos-sVel*dt;
 		CellType eType = Fire::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
-		 Vector3 eVel = g.velocityAtWorld(ePos);
+		Vector3 eVel = g.velocityAtWorld(ePos);
 
-		if(sType == eType)
+		// Ha typ 2st MACGrids som lagrar alla ghost-värden för fuel resp.gas.
+		// Sen beroende på en neighbor-check beslutas var/när ghost-värden ska
+		// användas.
+
+		if(sType == eType){
+			if(sType == BURNT){
+				//Lagra ghost för fuel här	
+			}
+			else if(sType == FUEL){
+				//Lagra ghost för burnt här
+			}
+
 			return field->valueAtWorld(ePos.x,ePos.y,ePos.z);
+		}
 		else
 		{
 			Vector3 uG = MACAdvect<T>::fireGhostFluid(phi, ePos, eVel, sType);

@@ -245,7 +245,12 @@ void Fire::runSimulation(){
 	//Advektera temperatur
 	advectTemperature(preset->dt);
 
-	//projection.project(preset->dt, preset->rhof);
+	try{
+		projection.project(preset->dt, preset->rhof);
+	}
+	catch(std::exception &e){
+		std::cout << e.what() << std::endl;
+	}
 
 	advectLevelSet(preset->dt);
 

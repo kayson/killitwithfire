@@ -24,20 +24,23 @@ void PCGProjection2D::resize(){
         }
     }
     
-    if(A == nullptr ){
+    /*if(A == NULL){
+		std::cout << "A = NULL!!" << std::endl;
         A = new SparseMatrix<double>(size,5);
-    }
+    }*/
     A = new SparseMatrix<double>(size,5);
     
-    if (b == nullptr){
+    /*if (b == NULL){
         b = new std::vector<double>(size);
-    }
+    }*/
     b = new std::vector<double>(size);
     
     
-    if (x == nullptr){
+    /*if (x == nullptr){
         x = new std::vector<double>(size);
-    }
+    }*/
+	x = new std::vector<double>(size);
+
     _size = size;
     A->resize(size);
     b->resize(size);
@@ -266,6 +269,8 @@ void PCGProjection2D::project(double dt,double rho){
     _dx = _u->dx();
     _dt = dt;
     _rho = rho;
+
+	bool fail = true;
     
     resize(); //Sätt storlekar på arrayer/matriser
     fillA(); //Fyll A-matrisen
@@ -274,7 +279,19 @@ void PCGProjection2D::project(double dt,double rho){
     double residual;
     int iterations;
     PCGSolver<double> solver;
+
+	fail = solver.solve(*A, *b, *x, residual, iterations);
+	//solver.solve(*A, *b, *x, residual, iterations);
+
     //solver.set_solver_parameters(1e-5, 100);
-    solver.solve(*A, *b, *x, residual, iterations); //Gör magi...
+    if(!fail){ //Gör magi...
+		std::cout << "PCG solver failed!\n";
+		throw std::bad_exception("PCG solver failed!");
+	}
+
     applyPressure();
+
+	delete A;
+	delete b;
+	delete x;
 }
