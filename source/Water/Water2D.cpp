@@ -15,8 +15,8 @@
 Water2D::Water2D(int size):u(size,size,1,18),cellTypes(size,size,1,18){
     
     //Default variables
-    g = Vector3(0.0,-0.35,0.0);
-    rho = 0.1;
+    g = Vector3(0.0,-0.55,0.0);
+    rho = 1.0;
 
     //Init environment
     //GridFieldFileManager::readFromFile<int>(cellTypes,"circle");
@@ -63,7 +63,7 @@ void Water2D::addBlob(){
         double l_x,l_y,l_z;
         cellTypes.indexToLocal(i, j, k, l_x, l_y, l_z);
         double r = 0.3;
-        double c_x = 0.2;
+        double c_x = 0.5;
         double c_y = 0.85;
         
         if (r*r > (l_x-c_x)*(l_x-c_x)+(l_y-c_y)*(l_y-c_y)+l_z*l_z && iter.value() != SOLID) {
@@ -89,13 +89,13 @@ void Water2D::recomputeCellTypes(){
         }
     }
     
-    //Set BURNT if inhabited with marker partile
+    //Set FUEL if inhabited with marker partile
     for (int index = 0; index < particles.size(); index++) {
         int i,j,k;
         cellTypes.worldToIndex(i, j, k, particles[index].x, particles[index].y, 0);
         CellType type = static_cast<CellType>(cellTypes.valueAtIndex(i, j, k));
         if (type == AIR) {
-            cellTypes.setValueAtIndex(BURNT, i, j, k);
+            cellTypes.setValueAtIndex(FUEL, i, j, k);
         }
     }
 }
@@ -258,7 +258,7 @@ void Water2D::drawCellTypes(){
             glVertex3d(x+dx*0.5, y-dy*0.5, 0);
             glVertex3d(x+dx*0.5, y+dy*0.5, 0);
             glVertex3d(x-dx*0.5, y+dy*0.5, 0);
-        }else if (val == BURNT){
+        }else if (val == FUEL){
             glColor3d(1.0, 0.0, 0.0);
             glVertex3d(x-dx*0.5, y-dy*0.5, 0);
             glVertex3d(x+dx*0.5, y-dy*0.5, 0);

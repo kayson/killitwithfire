@@ -28,6 +28,7 @@
 #include "GridField.hpp"
 #include <algorithm>
 
+#include <stdexcept>
 
 /*
 MACGrid::MACGrid():MACGrid(10,10,10,50){
@@ -40,7 +41,7 @@ MACGrid::MACGrid():MACGrid(10,10,10,50){
 MACGrid MACGrid::createRandom2D(int xdim,int ydim, double size){
     
     MACGrid m = MACGrid(xdim,ydim,1,size);
-    double randMax = -0.0;
+    double randMax = 0.5;
     //Fill U
     for (GridFieldIterator<double> iterator = m._u->iterator(); !iterator.done(); iterator.next()) {
         int i,j,k;
@@ -71,7 +72,7 @@ MACGrid MACGrid::createRandom2D(int xdim,int ydim, double size){
         int i,j,k;
         //double x,y,z;
         iterator.index(i, j, k);
-        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
+        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
         double vel = v1;
         m._w->setValueAtIndex(vel, iterator.index());
         m.buffer()->_w->setValueAtIndex(vel, iterator.index());
@@ -117,6 +118,7 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     //_u->setValueAtIndex(0.1, 4, 4, 4);
     //_center->setValueAtIndex(-100.0, 4, 4, 4);
 }
+
 
 MACGrid::MACGrid(const MACGrid &m):GridMapping(m){
     
@@ -212,23 +214,23 @@ MACGrid * MACGrid::buffer(){
 
 void MACGrid::swapBuffer(){
 
-    GridField<double> *_u_buffer = &(*buffer()->_u);
-    GridField<double> *_v_buffer = &(*buffer()->_v);
-    GridField<double> *_w_buffer = &(*buffer()->_w);
-    GridField<bool> *_hasCache_buffer = &(*buffer()->_hasCache);
-    GridField<Vector3> *_cache_buffer = &(*buffer()->_cache);
+    GridField<double> *_u_buffer = buffer()->_u;
+    GridField<double> *_v_buffer = buffer()->_v;
+    GridField<double> *_w_buffer = buffer()->_w;
+    GridField<bool> *_hasCache_buffer = buffer()->_hasCache;
+    GridField<Vector3> *_cache_buffer = buffer()->_cache;
 
-    buffer()->_u = &(*_u);
-    buffer()->_v = &(*_v);
-    buffer()->_w = &(*_w);
-    buffer()->_hasCache = &(*_hasCache);
-    buffer()->_cache = &(*_cache);
+    buffer()->_u = _u;
+    buffer()->_v = _v;
+    buffer()->_w = _w;
+    buffer()->_hasCache = _hasCache;
+    buffer()->_cache = _cache;
 
-    _u = &(*_u_buffer);
-    _v = &(*_v_buffer);
-    _w = &(*_w_buffer);
-    _hasCache = &(*_hasCache_buffer);
-    _cache = &(*_cache_buffer);
+    _u = _u_buffer;
+    _v = _v_buffer;
+    _w = _w_buffer;
+    _hasCache = _hasCache_buffer;
+    _cache = _cache_buffer;
     
     
     /*std::iter_swap(buffer()->_u, _u);
@@ -238,8 +240,25 @@ void MACGrid::swapBuffer(){
 }
 
 //Index to...
-void MACGrid::halfIndexToWorld(int i,int j,int k, DirectionEnums d, double &x,double &y, double &z){
+void MACGrid::halfIndexToWorld(int i,int j,int k, DirectionEnums d, double &w_x,double &w_y, double &w_z) const{
+
+    indexToWorld(i, j, k, w_x, w_y, w_z);
     
+    if (d == LEFT) {
+        w_x = -GridMapping::dx()*0.5;
+    }else if (d == RIGHT){
+        w_x = GridMapping::dx()*0.5;
+    }else if (d == UP){
+        w_y = GridMapping::dy()*0.5;
+    }else if (d == DOWN){
+        w_y = -GridMapping::dy()*0.5;
+    }else if (d == FORWARD){
+        throw std::runtime_error("halfIndexToWorld not implemented!");
+    }else{// if (d == BACKWARD){
+        throw std::runtime_error("halfIndexToWorld not implemented!");
+    }
+    
+
 }
 
 double MACGrid::getMax() const{
@@ -520,7 +539,7 @@ void MACGrid::extrapolate(double dt, GridField<int > &cellType){
         it.index(i, j, k);
         
         if (k == 0) {
-            if (cellType.valueAtIndex(i, j, k) == BURNT){
+            if (cellType.valueAtIndex(i, j, k) == FUEL){
                 
                 if (cellType.valueAtIndex(i-1,j,k) == AIR) {
                     setValueAtFace(valueAtFace(i, j, k, LEFT), i-1, j, k, LEFT);

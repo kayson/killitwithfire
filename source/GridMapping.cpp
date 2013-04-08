@@ -173,6 +173,18 @@ void GridMapping::indexToWorld(int i,int j,int k, double &w_x, double &w_y,doubl
     double l_x,l_y,l_z;
     indexToLocal(i, j, k, l_x, l_y, l_z);
     localToWorld(l_x, l_y, l_z, w_x, w_y, w_z);
+    
+    /*
+     l_x = ((double)i)/((double)xdim());
+     l_y = ((double)j)/((double)ydim());
+     l_z = ((double)k)/((double)zdim());
+     
+     w_x = l_x*_trans[0][0]+l_y*_trans[1][0]+l_z*_trans[2][0]+_trans[3][0];
+     w_y = l_x*_trans[0][1]+l_y*_trans[1][1]+l_z*_trans[2][1]+_trans[3][1];
+     w_z = l_x*_trans[0][2]+l_y*_trans[1][2]+l_z*_trans[2][2]+_trans[3][2];
+     
+    */
+    
 }
 void GridMapping::indexToLocal(int i,int j,int k, double &l_x, double &l_y,double &l_z) const{
     l_x = ((double)i)/((double)xdim());

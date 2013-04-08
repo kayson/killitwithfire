@@ -17,6 +17,7 @@
 #include "BorderCondition.h"
 #include "Projection.h"
 #include "Projection2D.h"
+#include "GhostMAC.h"
 
 #ifdef __APPLE__
 #include "sparse_matrix.h"
@@ -25,6 +26,7 @@
 #include "Pressure\pcgsolver\sparse_matrix.h"
 #include "Pressure\pcgsolver\pcg_solver.h"
 #endif
+#include "GhostMAC.h"
 
 #include "Temperature.h"
 
@@ -43,7 +45,7 @@ protected:
 	double getDensity(const int i, const int j, const int k, DirectionEnums d);
 
 	void computeW();
-	void computeCellTypes();
+	void computeCellTypes(bool flagx);
 	CellType getCellType(const int i, const int j, const int k) const;
 	CellType getCellType(double w_x, double w_y,double w_z) const;
 	//void 
@@ -92,11 +94,12 @@ private:
 
     //Grid
     MACGrid u;
+    GhostMAC ghost;
 	// Levelset Velocities u + S*N
 	GridField<Vector3> w;
 	
     //Projektion
-    PCGProjection2D projection;
+    Projection projection;
     Particles particles;
 	GridField<int> celltype;
     //GridField<double> scalar;

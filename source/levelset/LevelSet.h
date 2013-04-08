@@ -30,10 +30,11 @@ public:
 	void drawNormals() const;
 	void draw() const;
 	void printDistanceField();
+	double getCurvature(const int i, const int j, const int k) const;
+	Vector3 getNormal(const int i, const int j, const int k) const;
+	Vector3 getNormal(const double w_x, const double w_y, const double w_z) const;
 	double getCurvature(const int i, const int j, const int k);
 	void updateNormals();
-	Vector3 getNormal(const int i, const int j, const int k);
-	Vector3 getNormal(const double w_x, const double w_y, const double w_z);
 
 	CellType getCellType(const int i, const int j, const int k) const;
 	CellType getCellType(const double w_x, const double w_y, const double w_z) const;

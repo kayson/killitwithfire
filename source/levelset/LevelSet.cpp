@@ -93,6 +93,7 @@ CellType LevelSet::getCellType(const double phi){
 }
 
 double LevelSet::getCurvature(const int i, const int j, const int k)
+
 {
 	
 	double 
@@ -130,12 +131,12 @@ void LevelSet::updateNormals(){
     }
 }
 
-Vector3 LevelSet::getNormal(const int i, const int j, const int k)
+Vector3 LevelSet::getNormal(const int i, const int j, const int k) const
 {
 	return normals->valueAtIndex(i,j,k);
 }
 
-Vector3 LevelSet::getNormal(const double w_x, const double w_y, const double w_z)
+Vector3 LevelSet::getNormal(const double w_x, const double w_y, const double w_z) const
 {
 	return normals->valueAtWorld(w_x, w_y, w_z);
 }
@@ -161,6 +162,8 @@ void LevelSet::draw() const
 {
 	glBegin(GL_QUADS);
 
+    float dx = (float)grid->dx();
+    float dy = (float)grid->dy();
     for (GridFieldIterator<double> iter = grid->iterator(); !iter.done(); iter.next()) {
         int i,j,k;
         iter.index(i, j, k);
@@ -178,14 +181,15 @@ void LevelSet::draw() const
             glColor3d(-grid->valueAtIndex(i, j, k)*0.1,-grid->valueAtIndex(i, j, k)*0.1,0);
             
         }
-       
 
+        
         glVertex3f((float)x, (float)y, (float)z);
         glVertex3f(((float)x+1.f), (float)y, (float)z);
         glVertex3f(((float)x+1.f), ((float)y+1.f), (float)z);
         glVertex3f((float)x, ((float)y+1.f), (float)z);
         
 
+        
     }
 
     glEnd();

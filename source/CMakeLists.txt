@@ -36,6 +36,8 @@ FILE(GLOB killitwithfire_PRESSURE_PCGSOLVER_HEADERS   ./Pressure/pcgsolver/*.h*)
 
 FILE(GLOB killitwithfire_WATER_HEADERS   ./Water/*.h*)
 
+FILE(GLOB killitwithfire_GHOSTMAC_HEADERS   ./GhostMAC/*.h*)
+
 
 
 list(APPEND killitwithfire_ALL_HEADERS 
@@ -58,6 +60,8 @@ list(APPEND killitwithfire_ALL_HEADERS
 
   ${killitwithfire_WATER_HEADERS}
 
+  ${killitwithfire_GHOSTMAC_HEADERS}
+
   )
 
 
@@ -79,6 +83,7 @@ source_group("include\\Pressure" FILES ${killitwithfire_PRESSURE_HEADERS})
 source_group("include\\Pressure\\pcgsolver" FILES ${killitwithfire_PRESSURE_PCGSOLVER_HEADERS})
 
 source_group("include\\Water" FILES ${killitwithfire_WATER_HEADERS})
+source_group("include\\GhostMAC" FILES ${killitwithfire_GHOSTMAC_HEADERS})
 
 
 
@@ -104,6 +109,8 @@ FILE(GLOB killitwithfire_PRESSURE_PCGSOLVER_SRCS   ./Pressure/pcgsolver/*.cpp)
 
 FILE(GLOB killitwithfire_WATER_SRCS   ./Water/*.cpp)
 
+FILE(GLOB killitwithfire_GHOSTMAC_SRCS   ./GhostMAC/*.cpp)
+
 
 
 list(APPEND killitwithfire_ALL_SRCS 
@@ -126,6 +133,8 @@ list(APPEND killitwithfire_ALL_SRCS
 
   ${killitwithfire_WATER_SRCS}
 
+  ${killitwithfire_GHOSTMAC_SRCS}
+
   )
 
 
@@ -139,6 +148,7 @@ source_group("source\\Presets" FILES ${killitwithfire_PRESETS_SRCS})
 source_group("source\\Pressure" FILES ${killitwithfire_PRESSURE_SRCS})
 source_group("source\\Pressure\\pcgsolver" FILES ${killitwithfire_PRESSURE_PCGSOLVER_SRCS})
 source_group("source\\Water" FILES ${killitwithfire_WATER_SRCS})
+source_group("source\\GhostMAC" FILES ${killitwithfire_GHOSTMAC_SRCS})
 
 ## Include dirs for att slippa lankar mellan mappar ###################
 
@@ -152,6 +162,7 @@ list(APPEND killitwithfire_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}/Water
   ${CMAKE_CURRENT_SOURCE_DIR}/Pressure
   ${CMAKE_CURRENT_SOURCE_DIR}/Pressure/pcgsolver
+  ${CMAKE_CURRENT_SOURCE_DIR}/GhostMAC
   )
 
 

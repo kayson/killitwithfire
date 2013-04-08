@@ -5,11 +5,12 @@
 #include "AdvectLevelSetEuler.h"
 #include "UpwindDiff.h"
 #include "CentralDiff.h"
-#include "advect/MACAdvect.h"
 
 #ifdef __APPLE__
+#include "MACAdvect.h"
 #include "AdvectRK2.h"
 #elif defined _WIN32 || defined _WIN64
+#include "advect/MACAdvect.h"
 
 #endif
 
@@ -41,8 +42,8 @@ CentralDiff *FirePresets::centralDisc = new CentralDiff();
 
 MACAdvect<double> *FirePresets::tempAdvect = new MACAdvectRK2<double>();
 
-const int FirePresets::GRID_DIM_X = 64;
-const int FirePresets::GRID_DIM_Y = 64;
+const int FirePresets::GRID_DIM_X = 50;
+const int FirePresets::GRID_DIM_Y = 50;
 const int FirePresets::GRID_DIM_Z = 1;
 
 const double FirePresets::T_IGNITION = 537.0 + 273.15; //  Methane ignition temp (537 °C).
@@ -61,7 +62,7 @@ const double FirePresets::VORTICITY_EPSILON = 2.5;
 const double FirePresets::TEMPERATURE_BUOYANCY_ALPHA = 0.004;
 const double FirePresets::TEMPERATURE_LOSS_CONSTANT = 300;
 
-const double FirePresets::rhof = 1;
-const double FirePresets::rhob = 0.1;
+const double FirePresets::rhof = 1.0;
+const double FirePresets::rhob = 0.2;
 
 #endif //FIREPRESETSTWODIM_H

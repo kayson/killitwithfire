@@ -29,8 +29,8 @@ public:
     MACGrid *_buffer;
 
     MACAdvect<double> *_advect;
-private:
-    void initialize(int xdim,int ydim,int zdim, double size);
+protected:
+    virtual void initialize(int xdim,int ydim,int zdim, double size);
 public:
     
     //Factory-methodshtg
@@ -61,7 +61,7 @@ public:
     void resetCache();
 
     //Index to...
-    void halfIndexToWorld(int i,int j,int k, DirectionEnums d, double &x,double &y, double &z);
+    void halfIndexToWorld(int i,int j,int k, DirectionEnums d, double &x,double &y, double &z) const;
     
     //Värden
     double getMax() const;

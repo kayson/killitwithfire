@@ -15,36 +15,8 @@
 
 void PCGProjection2D::resize(){
     //Compute size
-    int size = 0;
-    for (GridFieldIterator<int> it = _cellType->iterator(); !it.done(); it.next()) {
-        int i,j,k;
-        it.index(i, j, k);
-        if (k == 0) {
-            size++;
-        }
-    }
-    
-    /*if(A == NULL){
-		std::cout << "A = NULL!!" << std::endl;
-        A = new SparseMatrix<double>(size,5);
-    }*/
-    A = new SparseMatrix<double>(size,5);
-    
-    /*if (b == NULL){
-        b = new std::vector<double>(size);
-    }*/
-    b = new std::vector<double>(size);
     
     
-    /*if (x == nullptr){
-        x = new std::vector<double>(size);
-    }*/
-	x = new std::vector<double>(size);
-
-    _size = size;
-    A->resize(size);
-    b->resize(size);
-    x->resize(size);
 }
 
 void PCGProjection2D::fillA(){
@@ -181,7 +153,7 @@ void PCGProjection2D::fillb(){
     
 }
 void PCGProjection2D::applyPressure(){
-    double scale = _dt/(_rho*_dx);
+    double scale = 1.0/(_dx);
     int index = 0;
     double max_pressure = 0;
     for (GridFieldIterator<int> it = _cellType->iterator(); !it.done(); it.next()) {
@@ -284,10 +256,12 @@ void PCGProjection2D::project(double dt,double rho){
 	//solver.solve(*A, *b, *x, residual, iterations);
 
     //solver.set_solver_parameters(1e-5, 100);
+
     if(!fail){ //Gör magi...
 		std::cout << "PCG solver failed!\n";
-		throw std::bad_exception("PCG solver failed!");
+		throw std::runtime_error("PCG solver failed!");
 	}
+
 
     applyPressure();
 

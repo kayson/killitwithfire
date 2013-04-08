@@ -9,6 +9,12 @@
 #include <GL/freeglut.h> // Takes care of everything GL-related
 #endif
 
+
+GLdouble Input::worldX = 0;
+GLdouble Input::worldY = 0;
+GLdouble Input::worldZ = 0;
+
+
 void GLFWCALL keyButtonListener( int key, int action );
 void GLFWCALL mouseButtonListener(int button, int action);
 
@@ -118,7 +124,33 @@ void Input::keyInput(double dt)
 
 void GLFWCALL mouseButtonListener(int button, int action)
 {
+    
 
+    int x, y;
+    glfwGetMousePos(&x, &y);
+    
+    if ((GLFW_MOUSE_BUTTON_1 == button)) {
+        
+            GLint viewport[4]; //var to hold the viewport info
+            GLdouble modelview[16]; //var to hold the modelview info
+            GLdouble projection[16]; //var to hold the projection matrix info
+            GLfloat winX, winY, winZ; //variables to hold screen x,y,z coordinates
+
+            glGetDoublev( GL_MODELVIEW_MATRIX, modelview ); //get the modelview info
+            glGetDoublev( GL_PROJECTION_MATRIX, projection ); //get the projection matrix info
+            glGetIntegerv( GL_VIEWPORT, viewport ); //get the viewport info
+            
+            winX = (float)x;
+            winY = (float)viewport[3] - (float)y;
+            winZ = 0;
+            
+            //get the world coordinates from the screen coordinates
+        gluUnProject( winX, winY, winZ, modelview, projection, viewport, &Input::worldX, &Input::worldY, &Input::worldZ);
+
+    
+    }
+    
+    
 }
 
 void GLFWCALL keyButtonListener( int key, int action )
