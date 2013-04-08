@@ -54,7 +54,7 @@ const double FirePresets::dt = 1.0/10.0;
 const double FirePresets::dx = 1.0/8.0;
 const double FirePresets::CFL_NUMBER = .2;
 
-const double FirePresets::S = 0.3;
+const double FirePresets::S = 0.5;
 
 const double FirePresets::VORTICITY_EPSILON = 2.5;
 

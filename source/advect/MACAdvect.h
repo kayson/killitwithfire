@@ -229,6 +229,7 @@ public:
 		}
 		else
 		{
+			//std::cout << "Using ghost fluid!\n";
 			Vector3 uG = MACAdvect<T>::fireGhostFluid(phi, ePos, eVel, sType);
 
 			if(dir == UDIR)
