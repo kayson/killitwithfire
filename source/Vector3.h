@@ -1,6 +1,10 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
 #include <iostream>
+
+
+
+
 class Vector3{
 public:
 	// Constructors

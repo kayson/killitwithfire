@@ -45,9 +45,9 @@ public:
     void setInterpolation(Interpolation<T> *i);
     
     //Hämta värden
-    T valueAtIndex(int i) const;
-    T valueAtIndex(int i,int j,int k) const;
-    T valueAtWorld(double w_x, double w_y,double w_z) const;
+    virtual T valueAtIndex(int i) const;
+    virtual T valueAtIndex(int i,int j,int k) const;
+    virtual T valueAtWorld(double w_x, double w_y,double w_z) const;
     int cellCount() const;
 	T getMax() const;
 
@@ -59,7 +59,7 @@ public:
     void addValueAtIndex(T val,int i,int j,int k);
 
     //Operatorer
-    T operator()(int i, int j, int k) const;
+    virtual T operator()(int i, int j, int k) const;
 
     //Iterator
     const GridFieldIterator<T> iterator() const;

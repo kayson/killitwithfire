@@ -15,188 +15,235 @@
 #include "../presets/firePresets.h"
 void Projection::resize(){
     
-    if(A == nullptr ){
-        A = new SparseMatrix<double>(_size,5);
+    if(A != nullptr ){
+        delete A;
     }
+    A = new SparseMatrix<double>(_size,5);
     
-    A->zero();
     
-    if (b == nullptr){
-        b = new std::vector<double>(_size);
+    if (b != nullptr){
+        delete b;
     }
+    b = new std::vector<double>(_size);
     std::fill(b->begin(), b->end(), 0);
     
-    if (x == nullptr){
-        x = new std::vector<double>(_size);
+    if (x != nullptr){
+        delete x;
     }
-    
+    x = new std::vector<double>(_size);
+    std::fill(x->begin(), x->end(), 0);
 }
 
 void Projection::fillA(){
     assert(*_phi->grid == *_u);
     int row = 0;
+    //Iterera över all celler
+    for (GridFieldIterator<double> it = _phi->grid->iterator(); !it.done(); it.next()) {
+        int i,j,k;
+        it.index(i, j, k);
+        
+        if (k == 0) {
+            
+            CellType center = Fire::getCellType(_phi->grid->valueAtIndex(it.index()));
+            bool solid = isSolid(i, j, k);
+            if (center == FUEL && !solid) {
+                
+                double scale = _dt/(_dx*_dx);
+                if (center == FUEL) {
+                    scale /= FirePresets::rhof;
+                }else if (center == BURNT){
+                    scale /= FirePresets::rhob;
+                }else{
+                    //Do nothing
+                }
+                
+                if(_phi->grid->isValid(i-1, j, k)){
+                    CellType left = Fire::getCellType(_phi->grid->valueAtIndex(i-1, j, k));
+                    if ((left == BURNT || left == FUEL)) {
+                        A->set_element(row, _phi->grid->indexAt(i-1, j, k), -scale);
+                        A->add_to_element(row, row, scale);
+                    }//Solid
+                }
+                
+                if(_phi->grid->isValid(i+1, j, k)){
+                    CellType right = Fire::getCellType(_phi->grid->valueAtIndex(i+1, j, k));
+                    if (right == BURNT || right == FUEL) {
+                        A->set_element(row, _phi->grid->indexAt(i+1, j, k), -scale);
+                        A->add_to_element(row, row, scale);
+                    }
+                }
+                
+                if(_phi->grid->isValid(i, j-1, k)){
+                    CellType down = Fire::getCellType(_phi->grid->valueAtIndex(i, j-1, k));
+                    if (down == BURNT || down == FUEL) {
+                        A->set_element(row, _phi->grid->indexAt(i, j-1, k), -scale);
+                        A->add_to_element(row, row, scale);
+                    }
+                }
+                if (j == 0) {
+                    A->add_to_element(row, row, scale);
+                }else if(_phi->grid->isValid(i, j+1, k)){
+                    CellType up = Fire::getCellType(_phi->grid->valueAtIndex(i, j+1, k));
+                    if (up == BURNT || up == FUEL) {
+                        A->set_element(row, _phi->grid->indexAt(i, j+1, k), -scale);
+                        A->add_to_element(row, row, scale);
+                    }
+                }
+                
+            }
+            
+            row++;
+        }
+    }
+    
+    
+    /*
+    int row = -1;
     
     for (GridMappingIterator it = _u->iterator(); !it.done(); it.next()) {
         int i,j,k;
         it.index(i, j, k);
         if (k == 0) {
-            
-            if ((Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BURNT
-                 || Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == FUEL)
-                && !(i == 0 || j == 0 || i == (_phi->grid->xdim()-1) || j == (_phi->grid->ydim()-1))) {
+            row++;
+            if (!(i == 0 || i == (_phi->grid->xdim()-1) || j == (_phi->grid->ydim()-1))
+                && Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == FUEL) {
                 //A.k.a Solid...
-                if (i+1 == 0 || j == 0 || i+1 == (_phi->grid->xdim()-1) || j == (_phi->grid->ydim()-1)) {
+                if (i+1 == (_phi->grid->xdim()-1)) {
                     
                 }else if (_phi->grid->isValid(i+1, j, k)) {
                     double scale = _dt/(_dx*_dx);
-                    A->set_element(row, _phi->grid->indexAt(i+1, j, k), -scale/getDensity(i, j, k, RIGHT));
+                    int col = _phi->grid->indexAt(i+1, j, k);
+                    A->set_element(row, col, -scale/getDensity(i, j, k, RIGHT));
                     
                     
-                    if (Fire::getCellType(_phi->grid->valueAtIndex(i+1, j, k)) == BURNT) {
+                    if (Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BURNT) {
                         A->add_to_element(row, row, scale/FirePresets::rhof);
                     }else{
-                        A->add_to_element(row, row, scale/FirePresets::rhob);
+                        A->add_to_element(row, row, scale/FirePresets::rhof);
                     }
                     
                 }
                 
-                if (i-1 == 0 || j == 0 || i-1 == (_phi->grid->xdim()-1) || j == (_phi->grid->ydim()-1)) {
+                if (i-1 == 0) {
                     //A.k.a Solid...
                 }else if (_phi->grid->isValid(i-1, j, k)) {
                     double scale = _dt/(_dx*_dx);
                     A->set_element(row, _phi->grid->indexAt(i-1, j, k), -scale/getDensity(i, j, k, LEFT));
                     
-                    if (Fire::getCellType(_phi->grid->valueAtIndex(i-1, j, k)) == BURNT) {
+                    if (Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BURNT) {
                         A->add_to_element(row, row, scale/FirePresets::rhof);
                     }else{
-                        A->add_to_element(row, row, scale/FirePresets::rhob);
+                        A->add_to_element(row, row, scale/FirePresets::rhof);
                     }
                     
                 }
                 
-                if (i == 0 || j+1 == 0 || i == (_phi->grid->xdim()-1) || j+1 == (_phi->grid->ydim()-1)) {
+                if (j+1 == (_phi->grid->ydim()-1)) {
                     //A.k.a Solid...
                 }else if(_phi->grid->isValid(i, j+1, k)){
                     double scale = _dt/(_dx*_dx);
                     A->set_element(row, _phi->grid->indexAt(i, j+1, k), -scale/getDensity(i, j, k, UP));
                     
-                    if (Fire::getCellType(_phi->grid->valueAtIndex(i, j+1, k)) == BURNT) {
+                    if (Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BURNT) {
                         A->add_to_element(row, row, scale/FirePresets::rhof);
                     }else{
-                        A->add_to_element(row, row, scale/FirePresets::rhob);
+                        A->add_to_element(row, row, scale/FirePresets::rhof);
                     }
                 }
                 
-                if (i == 0 || j-1 == 0 || i == (_phi->grid->xdim()-1) || j-1 == (_phi->grid->ydim()-1)) {
+                if (j-1 == 0) {
                     //A.k.a Solid...
                 }else if(_phi->grid->isValid(i, j-1, k)) {
                     double scale = _dt/(_dx*_dx);
                     A->set_element(row, _phi->grid->indexAt(i, j-1, k), -scale/getDensity(i, j, k, DOWN));
                     
-                    if (Fire::getCellType(_phi->grid->valueAtIndex(i, j-1, k)) == BURNT) {
-                        A->add_to_element(row, row, scale/getDensity(i, j, k, DOWN));
+                    if (Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BURNT) {
+                A->add_to_element(row, row, scale/FirePresets::rhof);
                     }else{
-                        A->add_to_element(row, row, scale/FirePresets::rhob);
+                        A->add_to_element(row, row, scale/FirePresets::rhof);
                     }
                     
                 }
             }
-            row++;
         }
     }
+     */
 }
 
 
-double Projection::div(int i ,int j ,int k,DirectionEnums d, CellType centerCellType){
-    static double DV = (FirePresets::rhof/FirePresets::rhob-1.0)*FirePresets::S;
-    
-    double x,y,z;
-    _u->halfIndexToWorld(i, j, k, d, x, y, z);
-    if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == BURNT && centerCellType == BURNT) {
-        return _u->valueAtFace(i, j, k, d);
-    }else if(Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == FUEL && centerCellType == FUEL){
-        return _u->valueAtFace(i, j, k, d);
-    }else if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == BURNT && centerCellType == FUEL){
-        //På flame front
-        Vector3 n = _phi->getNormal(x, y, z);
-        n.mult(DV);
-        
-        if (d == LEFT || d == RIGHT) {
-            return _u->valueAtFace(i, j, k, d)+n.x;
-        }else if (d == UP || d == DOWN){
-            return _u->valueAtFace(i, j, k, d)+n.y;
-        }else if(d == FORWARD || d == BACKWARD){
-            
-        }
-        
-    }else{// if (Fire::getCellType(_phi->grid->valueAtWorld(x,y,z)) == BURNT && centerCellType == FUEL){
-        //På flame front
-        Vector3 n = _phi->getNormal(x, y, z);
-        n.mult(DV);
-        
-        if (d == LEFT || d == RIGHT) {
-            return _u->valueAtFace(i, j, k, d)-n.x;
-        }else if (d == UP || d == DOWN){
-            return _u->valueAtFace(i, j, k, d)-n.y;
-        }else if(d == FORWARD || d == BACKWARD){
-            
-        }
-    }
+bool Projection::isSolid(int i,int j ,int k) const{
+    return (i == 0 || i == (_phi->grid->xdim()-1)
+         || j == 0 );
 }
+
 
 void Projection::fillb(){
     assert(*_phi->grid == *_u);
-    
+    double mean = 0;
     //Fill b
-    int index = 0;
     for (GridFieldIterator<double> it = _phi->grid->iterator(); !it.done(); it.next()) {
         int i,j,k;
         it.index(i, j, k);
-        
+        int index = it.index();
+
         if (k == 0) {
+            CellType cellType =  Fire::getCellType(_phi->grid->valueAtIndex(i, j, k));
             
-            if (Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == FUEL
-                || Fire::getCellType(_phi->grid->valueAtIndex(i, j, k)) == BURNT) {
-                double d = 0;
-                double scale = _dt/_dx;
-                CellType currType = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k));
+            if (cellType == FUEL && !isSolid(i,j,k)) {
+                double scale = 1.0/_dx;
+                double right = !isSolid(i+1,j,k) ? _w->valueAtFace(i, j, k, RIGHT,cellType)*scale : 0.0;
+                double left = !isSolid(i-1,j,k) ?_w->valueAtFace(i, j, k, LEFT,cellType)*scale : 0.0;
+                double down = !isSolid(i,j+1,k) ? _w->valueAtFace(i, j, k, DOWN,cellType)*scale : 0.0;
+                double up = !isSolid(i,j-1,k) ?_w->valueAtFace(i, j, k, UP,cellType)*scale : 0.0;
                 
-                
-                d -= _u->valueAtFace(i, j, k, RIGHT)*scale/getDensity(i, j, k, RIGHT);
-                d += _u->valueAtFace(i, j, k, LEFT)*scale/getDensity(i, j, k, LEFT);
-                d -= _u->valueAtFace(i, j, k, DOWN)*scale/getDensity(i, j, k, DOWN);
-                d += _u->valueAtFace(i, j, k, UP)*scale/getDensity(i, j, k, UP);
-                
-                (*b)[index] = d;
+                double div = -scale*((right-left)+(up-down));
+                mean += div;
+                (*b)[index] = div;
             }else{
                 (*b)[index] = 0;
             }
-            
-            index++;
+
         }
-        
     }
+    mean /= static_cast<double>((*b).size());
+    //SUbstract mean...
+    for (int i = 0;  i < (*b).size(); i++) {
+        (*b)[i] -= mean;
+    }
+    
 }
 
 void Projection::applyPressure(){
     
-    int index = 0;
+
+    
     for (GridFieldIterator<double> it = _phi->grid->iterator(); !it.done(); it.next()) {
         
         int i,j,k;
         it.index(i, j, k);
+        int index = it.index();
         
-        if (k == 0) {
-            _u->addValueAtFace(getDensity(i, j, k, LEFT)*(*x)[index], i, j, k, LEFT);
-            _u->addValueAtFace(-getDensity(i, j, k, RIGHT)*(*x)[index], i, j, k, RIGHT);
-            _u->addValueAtFace(getDensity(i, j, k, DOWN)*(*x)[index], i, j, k, DOWN);
-            _u->addValueAtFace(-getDensity(i, j, k, UP)*(*x)[index], i, j, k, UP);
-            index++;
+        if (k == 0 && !isSolid(i,j,k)) {
+            CellType cellType = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k));
+            if (cellType == FUEL) {
+                double scale;
+                if (cellType == BURNT) {
+                    scale = _dt/(_dx*FirePresets::rhob);
+                }else{// if (cellType == FUEL){
+                    scale = _dt/(_dx*FirePresets::rhof);
+                }
+                
+                _u->addValueAtFace(-scale*(*x)[index], i, j, k, LEFT);
+                _u->addValueAtFace(scale*(*x)[index], i, j, k, RIGHT);
+                _u->addValueAtFace(-scale*(*x)[index], i, j, k, DOWN);
+                _u->addValueAtFace(scale*(*x)[index], i, j, k, UP);
+            }
         }
     }
     
     
-    /*index = 0;
+    /*
+     index = 0;
      for (GridFieldIterator<double> it = _phi->grid->iterator(); !it.done(); it.next()) {
      
      int i,j,k;
@@ -219,7 +266,8 @@ void Projection::applyPressure(){
      
      index++;
      }
-     }*/
+     }
+     */
     
     
     
@@ -234,26 +282,79 @@ void Projection::project(double dt){
     _size = _phi->grid->size();
     _dx = _u->dx();
     _dt = dt;
-    
+    std::cout << _size << std::endl;
     resize(); //Sätt storlekar på arrayer/matriser
     fillA(); //Fyll A-matrisen
-    fillb(); //Fyll b-matrisen
+    fillb(); //Fyll b-vektorn
+
+    //Divergence
+    fillb(); //Fyll b-vektorn
+    double sum = 0;
+    for (int i = 0; i< b->size(); i++) {
+        sum += b->at(i);
+    }
+    
+    std::cout << "divergence before projection: " << sum << std::endl;
     
     double residual;
     int iterations;
     PCGSolver<double> solver;
+    
     if(solver.solve(*A, *b, *x, residual, iterations)){
+    
+        /*A->write_matlab(std::cout, "A1");
+        std::cout << "b = [";
+        for (int i = 0; i < b->size(); i++) {
+            std::cout << " " << b->at(i);
+        }
+        std::cout << "]';";
+        */
+        std::cout << "YAY!" << std::endl;
+
+    }else{
+        /*
+        A->write_matlab(std::cout, "A2");
+        std::cout << "b = [";
+        for (int i = 0; i < b->size(); i++) {
+            std::cout << " " << b->at(i);
+        }
+        std::cout << "]';";
+        */
+        //throw;
+        std::cout << "FAIL!" << std::endl;
         
-        
-        applyPressure();
     }
+    applyPressure();
+    
+
+    
+    
+    for (GridFieldIterator<double> it = _phi->grid->iterator(); !it.done(); it.next()) {
+        int i,j,k;
+        it.index(i, j, k);
+        if (isSolid(i, j, k)) {
+            _u->setValueAtFace(0, i, j, k, LEFT);
+            _u->setValueAtFace(0, i, j, k, RIGHT);
+            _u->setValueAtFace(0, i, j, k, UP);
+            _u->setValueAtFace(0, i, j, k, DOWN);
+        }
+    }
+    
+    //Divergence
+    fillb(); //Fyll b-vektorn
+     sum = 0;
+    for (int i = 0; i< b->size(); i++) {
+        sum += b->at(i);
+    }
+    
+    std::cout << "divergence after projection: " << sum << std::endl;
     
     
 }
 
 double Projection::getAlpha(int i, int j, int k, DirectionEnums d) const{
 	// sid. 104 (Bridson)
-	double otherCell = 0;
+    double otherCell = 0;
     double thisCell = _phi->grid->valueAtIndex(i,j,k);
     
 	if(d == RIGHT)
@@ -287,6 +388,7 @@ double Projection::getAlpha(int i, int j, int k, DirectionEnums d) const{
 }
 
 double Projection::getDensity(int i, int j, int k, DirectionEnums d) const{
+    return FirePresets::rhof;
 	// sid. 104 (Bridson)
     double alfa = getAlpha(i, j,k, d);
     return FirePresets::rhof*alfa+(1.0-alfa)*FirePresets::rhob;

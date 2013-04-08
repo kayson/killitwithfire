@@ -22,6 +22,9 @@ public:
 	
 	void initListeners();
 	int xpos,ypos;
+    static GLdouble worldX, worldY, worldZ ; //variables to hold world x,y,z coordinates
+
+
 private:
 	Camera *camera;
 };

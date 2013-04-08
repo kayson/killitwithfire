@@ -1,5 +1,6 @@
 #ifdef __APPLE__
 #include "glfw.h"
+#include <GLUT/GLUT.h>
 #elif defined _WIN32 || defined _WIN64
 #include <time.h>
 #include <GL/glfw.h> // Takes care of everything GL-related
@@ -20,9 +21,12 @@
 #include "imageExporter.h"
 
 #include "integrateEuler.h"
+
+
 #define FIRE 0
 #define WATER2D 1
 #define WATER3D 2
+
 
 #define SIMULAITON FIRE
 //#define SIMULATION WATER2D
@@ -50,6 +54,8 @@ Water3D *water3d;
 
 Input controller;
 static Camera camera;
+
+
 
 int main(int argc, char *argv[]) 
 {
@@ -111,7 +117,9 @@ bool init()
 		glfwTerminate(); // glfwOpenWindow failed, quit the program.
 		return false;
 	}
-
+    
+    
+ 
 	//Fixar keylistener
 	controller.initListeners();
 	glfwSetWindowSizeCallback( camera.reshape );
@@ -163,16 +171,41 @@ void update()
 #elif SIMULATION == WATER2D
     water->runSimulation(0.03);
 #elif SIMULATION == WATER3D
-	water3d->runSimulation(0.03);
+	water3d->runSimulation(0.03); 
 #endif
 
 }
+
+
 
 //renderar objekt
 void render(void)
 {
 
 	camera.translateForCamera();
+    
+    
+    
+    int x, y;
+    glfwGetMousePos(&x, &y);
+    GLint viewport[4]; //var to hold the viewport info
+    GLdouble modelview[16]; //var to hold the modelview info
+    GLdouble projection[16]; //var to hold the projection matrix info
+    GLfloat winX, winY, winZ; //variables to hold screen x,y,z coordinates
+    
+    glGetDoublev( GL_MODELVIEW_MATRIX, modelview ); //get the modelview info
+    glGetDoublev( GL_PROJECTION_MATRIX, projection ); //get the projection matrix info
+    glGetIntegerv( GL_VIEWPORT, viewport ); //get the viewport info
+    
+    winX = (float)x;
+    winY = (float)viewport[3] - (float)y;
+    winZ = 0;
+    
+    //get the world coordinates from the screen coordinates
+    gluUnProject( winX, winY, winZ, modelview, projection, viewport, &Input::worldX, &Input::worldY, &Input::worldZ);
+    
+    
+    
   
 #if SIMULATION == FIRE
 	fire->draw();
@@ -181,6 +214,12 @@ void render(void)
 #elif SIMULATION == WATER3D
 	water3d->draw();
 #endif
+    
+    
+
+    
+
+    
     
 }
 

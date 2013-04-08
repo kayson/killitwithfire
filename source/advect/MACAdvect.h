@@ -22,7 +22,9 @@ class MACAdvect {
 public:
 	MACAdvect(){}
     virtual ~MACAdvect(){}
-	
+    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k) = 0;
+    virtual double advect(double dt,const MACGrid &g, const VelocityDirection dir, LevelSet& phi, int i,int j,int k) = 0;
+
     void advect(MACGrid &u, double dt){
         double x,y,z;
 
@@ -146,20 +148,18 @@ public:
         u.swapBuffer();
     }
     
-    virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k) = 0;
-    virtual double advect(double dt,const MACGrid &g, const VelocityDirection dir, LevelSet& phi, int i,int j,int k) = 0;
 
 	Vector3 fireGhostFluid(LevelSet& phi, const Vector3 &endPos, const Vector3 &eVel, const CellType startType)
 	{
-		/* //Bridsons metod, tror den ger samma resultat
-		Vector3 N = phi.getNormal(endPos.x, endPos.y, endPos.z);
+		//Bridsons metod, tror den ger samma resultat
+		Vector3 N = phi.getNormal(endPos.x, endPos.y, endPos.z)*-1;
 		Vector3 jump = N*(FirePresets::rhof/FirePresets::rhob - 1.0)*FirePresets::S;
 		if(startType == BURNT)
 			return eVel + jump;
 		else //(startType == FUEL)
 			return eVel - jump;
-		*/
 		
+		/*
 		Vector3 N = phi.getNormal(endPos.x, endPos.y, endPos.z);
 		Vector3 Vs = Vector3::dot(eVel, N);
 		
@@ -172,7 +172,7 @@ public:
 		{
 			Vector3 VeG = Vs - (FirePresets::rhof/FirePresets::rhob - 1.0)*FirePresets::S;
 			return VeG*N + eVel - Vs*N;
-		}
+		}*/
 	}
 
 };
@@ -247,6 +247,7 @@ public:
     
     virtual double advect(double dt,const MACGrid &g, const VelocityDirection dir, LevelSet& phi, int i,int j,int k){
 		//OBS FEL IMPLEMENTERAD
+        assert(false);
 		return 0.0;
 
 		/*GridField<T> *field;

@@ -53,7 +53,7 @@ void LevelSet::printDistanceField()
 	}
 }
 
-double LevelSet::getCurvature(const int i, const int j, const int k)
+double LevelSet::getCurvature(const int i, const int j, const int k) const
 {
 	
 	double 
@@ -74,7 +74,7 @@ double LevelSet::getCurvature(const int i, const int j, const int k)
 		(a*std::pow(dx*dx+dy*dy+dz*dz, 1.5));
 }
 
-Vector3 LevelSet::getNormal(const int i, const int j, const int k)
+Vector3 LevelSet::getNormal(const int i, const int j, const int k) const
 {
 
 	//Osäker om detta är korrekt implementation
@@ -90,7 +90,7 @@ Vector3 LevelSet::getNormal(const int i, const int j, const int k)
 	return g;
 }
 
-Vector3 LevelSet::getNormal(const double w_x, const double w_y, const double w_z)
+Vector3 LevelSet::getNormal(const double w_x, const double w_y, const double w_z) const
 {
 	int i, j, k;
 	grid->worldToIndex(i, j, k, w_x, w_y, w_z);
@@ -112,6 +112,8 @@ Vector3 LevelSet::getNormal(const double w_x, const double w_y, const double w_z
 void LevelSet::draw() const
 {
 
+    float dx = (float)grid->dx();
+    float dy = (float)grid->dy();
     for (GridFieldIterator<double> iter = grid->iterator(); !iter.done(); iter.next()) {
         int i,j,k;
         iter.index(i, j, k);
@@ -128,11 +130,10 @@ void LevelSet::draw() const
             
         }
         glBegin(GL_QUADS);
-
-        glVertex3f((float)x, (float)y, (float)z);
-        glVertex3f(((float)x+1.f), (float)y, (float)z);
-        glVertex3f(((float)x+1.f), ((float)y+1.f), (float)z);
-        glVertex3f((float)x, ((float)y+1.f), (float)z);
+        glVertex3f((float)x-0.5f*dx, (float)y-0.5f*dy, (float)z);
+        glVertex3f(((float)x+0.5f*dx), (float)y-0.5f*dy, (float)z);
+        glVertex3f(((float)x+0.5f*dx), ((float)y+0.5f*dy), (float)z);
+        glVertex3f((float)x-0.5f*dx, ((float)y+0.5f*dy), (float)z);
         glEnd();
 
     }
