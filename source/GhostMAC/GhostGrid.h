@@ -22,6 +22,7 @@ public:
     //Hämta värden
     virtual T valueAtWorld(double w_x, double w_y,double w_z) const;
     virtual T operator()(int i,int j,int k, CellType cell) const;
+	virtual T operator()(int i, int j, int k) const { return GridField<T>::operator()(i,j,k); };
 
 private:
     //Helper

@@ -2,6 +2,7 @@
 #ifndef CENTRALDIFF_H
 #define CENTRALDIFF_H
 #include "Discretization.h"
+#include "GhostGrid.h"
 
 class CentralDiff : public Discretization{
 public:
@@ -24,6 +25,19 @@ public:
 	double calcDyz(GridField<double> &g, const int i, const int j, const int k);
 	double calcDxz(GridField<double> &g, const int i, const int j, const int k);
 	double calcDxy(GridField<double> &g, const int i, const int j, const int k);
+
+	double calcDx(GhostGridField<double> &g, const int i, const int j, const int k);
+	double calcDy(GhostGridField<double> &g, const int i, const int j, const int k);
+	double calcDz(GhostGridField<double> &g, const int i, const int j, const int k);
+
+	double calcD2x(GhostGridField<double> &g, const int i, const int j, const int k);
+	double calcD2y(GhostGridField<double> &g, const int i, const int j, const int k);
+	double calcD2z(GhostGridField<double> &g, const int i, const int j, const int k);
+
+	double calcDyz(GhostGridField<double> &g, const int i, const int j, const int k);
+	double calcDxz(GhostGridField<double> &g, const int i, const int j, const int k);
+	double calcDxy(GhostGridField<double> &g, const int i, const int j, const int k);
+
 
 	Vector3 calcDx(GridField<Vector3> &g, const int i, const int j, const int k);
 	Vector3 calcDy(GridField<Vector3> &g, const int i, const int j, const int k);
