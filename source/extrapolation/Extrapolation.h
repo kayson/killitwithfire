@@ -4,8 +4,8 @@
 #ifndef EXTRAPOLATION_H
 #define EXTRAPOLATION_H
 
-#include "GridField.h"
-#include "Vector3.h"
+template<class T> class GridField;
+class Vector3;
 
 //template<class T> kanske är trevligt... men då funkar inte sqrt osv?
 class Extrapolation{

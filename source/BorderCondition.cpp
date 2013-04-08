@@ -3,6 +3,9 @@
 // ej har hastighetsvektorer som pekar ut ur grid:en.
 
 #include "BorderCondition.h"
+#include "Vector3.h"
+#include "GridField.hpp"
+#include "MACGrid.h"
 
 // Returnerar true om ingen boundary-åtgärd behövs
 bool BorderCondition::checkBorder(GridField<double> &g, const int i, const int j, const int k) const{

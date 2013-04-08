@@ -1,7 +1,8 @@
 #ifndef IMPLICITFUNCTIONS_H
 #define IMPLICITFUNCTIONS_H
-#include "../fire.h"
-#include "../presets/firePresets.h"
+
+#include "firePresets.h"
+
 #include <cmath>
 
 namespace implicitFunction

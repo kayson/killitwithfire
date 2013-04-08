@@ -160,7 +160,7 @@ public:
 			return eVel - jump;
 		
 		/*
-		Vector3 N = phi.getNormal(endPos.x, endPos.y, endPos.z);
+		Vector3 N =	phi.getNormal(endPos.x, endPos.y, endPos.z);
 		Vector3 Vs = Vector3::dot(eVel, N);
 		
 		if(startType == BURNT) 
@@ -211,12 +211,25 @@ public:
 
         Vector3 ePos = sPos-sVel*dt;
 		CellType eType = Fire::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
-		 Vector3 eVel = g.velocityAtWorld(ePos);
+		Vector3 eVel = g.velocityAtWorld(ePos);
 
-		if(sType == eType)
+		// Ha typ 2st MACGrids som lagrar alla ghost-värden för fuel resp.gas.
+		// Sen beroende på en neighbor-check beslutas var/när ghost-värden ska
+		// användas.
+
+		if(sType == eType){
+			if(sType == BURNT){
+				//Lagra ghost för fuel här	
+			}
+			else if(sType == FUEL){
+				//Lagra ghost för burnt här
+			}
+
 			return field->valueAtWorld(ePos.x,ePos.y,ePos.z);
+		}
 		else
 		{
+			//std::cout << "Using ghost fluid!\n";
 			Vector3 uG = MACAdvect<T>::fireGhostFluid(phi, ePos, eVel, sType);
 
 			if(dir == UDIR)
@@ -224,7 +237,7 @@ public:
 			else if(dir == VDIR)
 				return uG.y;
 			else //(dir == VelocityDirection::WDIR)
-				return uG.x;
+				return uG.z;
 		}
     }
 };
@@ -288,7 +301,7 @@ public:
 				else if(dir == VDIR)
 					return uG.y;
 				else //(dir == VelocityDirection::WDIR)
-					return uG.x;
+					return uG.z;
 			}
 			
 		}

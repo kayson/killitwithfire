@@ -1,11 +1,11 @@
 #include "LevelSet.h"
 
-#include "../Discretization.h"
-#include "../CentralDiff.h"
-#include "../Gradient.h"
-#include "../Reinitialize.h"
+#include "Gradient.h"
+#include "Reinitialize.h"
 #include <iostream>
 #include <cmath>
+
+#include "GridField.hpp"
 
 #if defined __unix__ || defined __APPLE__
 #include "firePresets.h"
@@ -15,6 +15,23 @@
 #include <GL/glfw.h>
 #endif
 
+LevelSet::LevelSet()
+{
+	grid  = new GridField<double>(1000,1000,1000);
+	gridCopy = new GridField<double>(1000, 1000, 1000,10);
+	normals = new GridField<Vector3>(1000, 1000, 1000, 10);
+}
+
+LevelSet::LevelSet(int xDim, int yDim, int zDim, double size)
+{
+	grid  = new GridField<double>(xDim,yDim,zDim,size);
+	gridCopy = new GridField<double>(xDim,yDim,zDim,size);
+	normals = new GridField<Vector3>(xDim,yDim,zDim,size);
+        
+    grid->multTransformation(glm::scale(1.0, 1.0, 1.0));
+    gridCopy->multTransformation(glm::scale(1.0, 1.0, 1.0));
+    normals->multTransformation(glm::scale(1.0, 1.0, 1.0));      
+}
 
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 {
@@ -74,43 +91,53 @@ double LevelSet::getCurvature(const int i, const int j, const int k) const
 		(a*std::pow(dx*dx+dy*dy+dz*dz, 1.5));
 }
 
+void LevelSet::updateNormals(){
+	for(int i = 0; i < grid->xdim(); i++){
+		for(int j = 0; j < grid->ydim(); j++){
+			for(int k = 0; k < grid->zdim(); k++){
+				Vector3 g = Gradient::getGradient(*grid, i, j, k, *(FirePresets::centralDisc));
+				double l = g.norm();
+				if(l > 0.0)
+					g *= 1.0/l;
+				else
+					g = Vector3(0.0, 1.0, 0.0);
+
+                normals->setValueAtIndex(g, i, j, k);
+            }
+        }
+    }
+}
+
 Vector3 LevelSet::getNormal(const int i, const int j, const int k) const
 {
-
-	//Osäker om detta är korrekt implementation
-	Vector3 g = Gradient::getGradient(*grid, i, j, k, *(FirePresets::centralDisc));
-	
-	// l blir 0 ibland...
-	double l = g.norm();
-	if(l > 0.0)
-		g *= 1.0/l;
-	else
-		g = Vector3(0.0, 1.0, 0.0);
-
-	return g;
+	return normals->valueAtIndex(i,j,k);
 }
 
 Vector3 LevelSet::getNormal(const double w_x, const double w_y, const double w_z) const
 {
-	int i, j, k;
-	grid->worldToIndex(i, j, k, w_x, w_y, w_z);
+	return normals->valueAtWorld(w_x, w_y, w_z);
+}
+void LevelSet::drawNormals() const{
 
-	// TODO FIXA!!!
-	//Ej korrekt implementation, då normalen måste interpoleras
-	Vector3 g = Gradient::getGradient(*grid, i, j, k, *(FirePresets::centralDisc));
+	glColor3d(1.0,1.0,1.0);
+	for( GridFieldIterator<Vector3> iter = normals->iterator(); !iter.done(); iter.next() ){
+		int i,j,k;
+		iter.index(i,j,k);
+		double x,y,z;
+		normals->indexToWorld(i,j,k,x,y,z);
+		Vector3 val = iter.value() / 5.0;
 
-	// l blir 0 ibland...
-	double l = g.norm();
-	if(l > 0.0)
-		g *= 1.0/l;
-	else
-		g = Vector3(0.0, 1.0, 0.0);
-
-	return g;
+		glBegin(GL_LINE_STRIP);
+		glVertex3d(x,y,0);
+		glVertex3d(x+val.x, y+val.y,0);
+		glEnd();
+	
+	}
 }
 
 void LevelSet::draw() const
 {
+	glBegin(GL_QUADS);
 
     float dx = (float)grid->dx();
     float dy = (float)grid->dy();
@@ -123,54 +150,24 @@ void LevelSet::draw() const
         
         if(grid->valueAtIndex(i,j,k) > 0)
         {
-			glColor3d(0,0,grid->valueAtIndex(i, j, k)*3);
-            
-        }else{
-            glColor3d(-grid->valueAtIndex(i, j, k),0,0);
+			glColor3d(0,0,grid->valueAtIndex(i, j, k));
             
         }
-        glBegin(GL_QUADS);
-        glVertex3f((float)x-0.5f*dx, (float)y-0.5f*dy, (float)z);
-        glVertex3f(((float)x+0.5f*dx), (float)y-0.5f*dy, (float)z);
-        glVertex3f(((float)x+0.5f*dx), ((float)y+0.5f*dy), (float)z);
-        glVertex3f((float)x-0.5f*dx, ((float)y+0.5f*dy), (float)z);
-        glEnd();
-
-    }
-    
-
-    
-	/*double dx = FirePresets::dx;
-
-	glBegin(GL_QUADS);
-
-	for(int x = 0; x < phi->xdim()-1; x++)
-	{
-		for(int y = 0; y < phi->ydim()-1; y++)
+		else
 		{
-			for(int z = 0; z < phi->zdim(); z++)
-			{
-                
-                
-                
-				if(phi->valueAtIndex(x,y,z) <= 0)
-				{
-                    glColor3f(0,0,-phi->valueAtIndex(x, y, z)/3.0);
-                    //glColor3f(0,0,1);
-                                    
-				}else{
-					glColor3f(phi->valueAtIndex(x, y, z)/50.0,0,0);
-                    //glColor3f(1,0,0);
-                
-                }
-                
-                glVertex3f(dx*(float)x, dx*(float)y, dx*(float)z);
-                glVertex3f(dx*((float)x+1.f), dx*(float)y, dx*(float)z);
-                glVertex3f(dx*((float)x+1.f), dx*((float)y+1.f), dx*(float)z);
-                glVertex3f(dx*(float)x, dx*((float)y+1.f), dx*(float)z);
-			}
-		}
-	}
-	glEnd();
-     */
+            glColor3d(-grid->valueAtIndex(i, j, k)*0.1,-grid->valueAtIndex(i, j, k)*0.1,0);
+            
+        }
+
+        
+        glVertex3f((float)x, (float)y, (float)z);
+        glVertex3f(((float)x+1.f), (float)y, (float)z);
+        glVertex3f(((float)x+1.f), ((float)y+1.f), (float)z);
+        glVertex3f((float)x, ((float)y+1.f), (float)z);
+        
+
+        
+    }
+
+    glEnd();
 }

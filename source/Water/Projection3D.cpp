@@ -10,6 +10,7 @@
 #include <iomanip>
 #include "glfw.h"
 #include "../Pressure/pcgsolver/pcg_solver.h"
+#include "GridField.h"
 
 void PCGProjection3D::resize(){
     //Compute size

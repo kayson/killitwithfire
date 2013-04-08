@@ -97,6 +97,7 @@ private:
     GhostMAC ghost;
 	// Levelset Velocities u + S*N
 	GridField<Vector3> w;
+	
     //Projektion
     Projection projection;
     Particles particles;

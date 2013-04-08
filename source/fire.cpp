@@ -34,6 +34,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	phi.fillLevelSet(preset->implicitFunction);
 	//2D grid
 	u = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
+
 	//Advect
 
 	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
@@ -268,10 +269,38 @@ void Fire::runSimulation(){
 
 	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
-	//projection.project(preset->dt, 0.1, 1);
+	for(int i = preset->GRID_DIM_X*0.45; i < preset->GRID_DIM_X*0.55; i++)
+	{
+		phi.grid->setValueAtIndex(1,i,4,0);
+	}
 
-	//Advektera temperatur
-	//advectTemperature(preset->dt);
+
+    //Beräkna om vad för typ voxlarna är
+    computeCellTypes(false);
+    
+    //u.advect(preset->dt);
+    preset->advectVelocities->advect(u, phi, preset->dt);
+    phi.updateNormals();
+    
+    //enforceBorderCondition();
+    
+    u.addForceGrid(*T->beyonce, preset->dt);
+    
+    Vector3 gravity = Vector3(0.0, -0.1, 0.0);
+    //u.addForce(gravity, preset->dt);
+    
+    //Vorticity confinement forces
+    Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
+
+	advectTemperature(preset->dt);
+
+	try{
+		projection.project(preset->dt);
+	}
+	catch(std::exception &e){
+		std::cout << e.what() << std::endl;
+	}
 
     enforceBorderCondition();
     computeCellTypes(false);
@@ -279,6 +308,7 @@ void Fire::runSimulation(){
     
     
 	advectLevelSet(preset->dt);
+
 	//Fixa signed distance field
 	phi.reinitialize();
 
@@ -490,22 +520,22 @@ void Fire::drawCenterVelocities(){
 
 void Fire::computeW()
 {
-	for(GridFieldIterator<Vector3> it = w.iterator(); !it.done(); it.next())
-	{
-		int i, j, k;
-		it.index(i,j,k);
-		Vector3 v = ghost.velocityAtCenter(i, j, k);
-		w.setValueAtIndex(v, it.index());
-	}
+  for(GridFieldIterator<Vector3> it = w.iterator(); !it.done(); it.next())
+  {
+    int i, j, k;
+    it.index(i,j,k);
+    Vector3 v = u.velocityAtCenter(i, j, k) + phi.getNormal(i, j, k)*FirePresets::S;
+    w.setValueAtIndex(v, it.index());
+  }
+
 }
 
 void Fire::draw()
 {
-	phi.draw();
-    //T->draw();
+  //phi.draw();
+  T->draw();
 
 	//drawVorticities();
-    //u.draw();
 	drawCenterVelocities();
     //drawCenterGradients(FirePresets::centralDisc);
     //drawFaceVelocities();
@@ -546,95 +576,3 @@ Fire::~Fire(){
 	delete p;
 	delete _borderCondition;
 }
-/*
-void Fire::advect(double dt){
-
-for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
-int i,j,k;
-iter.index(i, j, k);
-double x,y,z;
-u._u->indexToWorld(i, j, k, x, y, z);
-double val = preset->advectVelocities->advect(dt, u, *u._u, i, j, k);
-u.buffer()->_u->setValueAtIndex(val, i, j, k);
-
-}
-
-for (GridFieldIterator<double> iter = u._v->iterator(); !iter.done(); iter.next()) {
-int i,j,k;
-iter.index(i, j, k);
-double x,y,z;
-u._v->indexToWorld(i, j, k, x, y, z);
-double val = preset->advectVelocities->advect(dt, u, *u._v, i, j, k);
-u.buffer()->_v->setValueAtIndex(val, i, j, k);
-
-}
-
-for (GridFieldIterator<double> iter = u._w->iterator(); !iter.done(); iter.next()) {
-int i,j,k;
-iter.index(i, j, k);
-double x,y,z;
-u._w->indexToWorld(i, j, k, x, y, z);
-double val = preset->advectVelocities->advect(dt, u, *u._w, i, j, k);
-u.buffer()->_w->setValueAtIndex(val, i, j, k);
-}
-
-u.swapBuffer();
-}
-
-void Fire::advect(double dt, GridField<int > &cellType){
-
-for (GridFieldIterator<double> iter = u._u->iterator(); !iter.done(); iter.next()) {
-int i,j,k;
-iter.index(i, j, k);
-double x,y,z;
-u._u->indexToWorld(i, j, k, x, y, z);
-double val;
-
-
-if (cellType.valueAtWorld(x, y, z) == FUEL) 
-{
-val = preset->advectVelocities->advect(dt, u, *u._u, i, j, k);
-}
-else
-{
-val = 0;// _u->valueAtIndex(iter.index());
-}
-
-u.buffer()->_u->setValueAtIndex(val, i, j, k);
-
-}
-
-for (GridFieldIterator<double> iter = u._v->iterator(); !iter.done(); iter.next()) {
-int i,j,k;
-iter.index(i, j, k);
-double x,y,z;
-u._v->indexToWorld(i, j, k, x, y, z);
-double val;
-if (cellType.valueAtWorld(x, y, z) == FUEL) {
-val = preset->advectVelocities->advect(dt, u, *u._v, i, j, k);
-}else{
-val = 0;//_v->valueAtIndex(iter.index());
-}
-
-u.buffer()->_v->setValueAtIndex(val, i, j, k);
-
-}
-
-for (GridFieldIterator<double> iter = u._w->iterator(); !iter.done(); iter.next()) {
-int i,j,k;
-iter.index(i, j, k);
-double x,y,z;
-u._w->indexToWorld(i, j, k, x, y, z);
-double val;
-if (cellType.valueAtWorld(x, y, z) == FUEL) {
-val = preset->advectVelocities->advect(dt, u, *u._w, i, j, k);
-}else{
-val = 0;//_w->valueAtIndex(iter.index());
-}
-
-u.buffer()->_w->setValueAtIndex(val, i, j, k);
-
-}
-
-u.swapBuffer();
-}*/

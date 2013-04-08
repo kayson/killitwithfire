@@ -9,6 +9,7 @@
 
 #include <stdlib.h>
 #include <iostream>
+#include <string>
 
 #include "Input.h"
 #include "Camera.h"
@@ -65,7 +66,7 @@ int main(int argc, char *argv[])
 	}
 
 	//ImageExporter::saveImage("hej", WIDTH, HEIGHT);
-
+	int frames = 0;
     unsigned int t = (unsigned int)time(NULL);
     srand(t);
 #if SIMULATION == FIRE
@@ -91,6 +92,8 @@ int main(int argc, char *argv[])
 
         glfwSwapBuffers();
 
+		/*ImageExporter::saveImage((char*)frames, WIDTH, HEIGHT);
+		++frames;*/
 
 		// Check if the ESC key was pressed or the window was closed.
 		if(glfwGetKey(GLFW_KEY_ESC) || !glfwGetWindowParam(GLFW_OPENED))

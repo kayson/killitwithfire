@@ -10,37 +10,13 @@
 #include <iomanip>
 #include "glfw.h"
 #include "../Pressure/pcgsolver/pcg_solver.h"
-
+#include "GridField.h"
 #define nullptr NULL
 
 void PCGProjection2D::resize(){
     //Compute size
-    int size = 0;
-    for (GridFieldIterator<int> it = _cellType->iterator(); !it.done(); it.next()) {
-        int i,j,k;
-        it.index(i, j, k);
-        if (k == 0) {
-            size++;
-        }
-    }
-    _size = size;
-
-    if(A == nullptr ){
-        A = new SparseMatrix<double>(size,5);
-    }
-    A->zero();
-    
-    if (b == nullptr){
-        b = new std::vector<double>(size);
-    }
-    std::fill(b->begin(), b->end(), 0);
     
     
-    if (x == nullptr){
-        x = new std::vector<double>(size);
-    }
-    std::fill(x->begin(), x->end(), 0);
-
 }
 
 void PCGProjection2D::fillA(){
@@ -265,6 +241,8 @@ void PCGProjection2D::project(double dt,double rho){
     _dx = _u->dx();
     _dt = dt;
     _rho = rho;
+
+	bool fail = true;
     
     resize(); //Sätt storlekar på arrayer/matriser
     fillA(); //Fyll A-matrisen
@@ -273,11 +251,21 @@ void PCGProjection2D::project(double dt,double rho){
     double residual;
     int iterations;
     PCGSolver<double> solver;
+
+	fail = solver.solve(*A, *b, *x, residual, iterations);
+	//solver.solve(*A, *b, *x, residual, iterations);
+
     //solver.set_solver_parameters(1e-5, 100);
-    if(!solver.solve(*A, *b, *x, residual, iterations)){//Gör magi...
-        std::cout << "fail!" << std::endl;
-    }else{
-        std::cout << "no fail!" << std::endl;
-    }
+
+    if(!fail){ //Gör magi...
+		std::cout << "PCG solver failed!\n";
+		throw std::runtime_error("PCG solver failed!");
+	}
+
+
     applyPressure();
+
+	delete A;
+	delete b;
+	delete x;
 }

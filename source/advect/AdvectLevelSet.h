@@ -2,12 +2,12 @@
 #ifndef __FuidFire__Advect__
 #define __FuidFire__Advect__
 
-#include "../Discretization.h"
 #include "../BorderCondition.h"
-#include "../levelset/LevelSet.h"
-#include "../MACGrid.h"
 
 class LevelSet;
+class BorderCondition;
+class Vector3;
+template<class T> class GridField;
 
 class AdvectLevelSet {
 protected:

@@ -12,7 +12,7 @@ void Camera::translateForCamera()
 	glTranslated(-position_.x, -position_.y, -position_.z);
 }
 
-void Camera::moveCamera(Vector3 dP)
+void Camera::moveCamera(Vector3 &dP)
 {
 	position_ += dP;
 }

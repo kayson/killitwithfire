@@ -6,11 +6,13 @@
 //  Copyright (c) 2013 Johannes Deligiannis. All rights reserved.
 //
 
+#ifndef FuidFire_GridField_hpp
+#define FuidFire_GridField_hpp
+
 #include "GridField.h"
 #include "Interpolation.h"
 #include <exception>
-
-#include "GridMapping.h"
+#include "Vector3.h"
 
 #include <iostream>
 
@@ -20,8 +22,7 @@
 #endif
 #define nullptr NULL
 
-#ifndef FuidFire_GridField_hpp
-#define FuidFire_GridField_hpp
+
 
 template<class T>
 GridField<T>::GridField(const GridMapping &m):GridMapping(m){

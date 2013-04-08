@@ -1,9 +1,10 @@
 #ifndef LEVELSET_H
 #define LEVELSET_H
 
-#include "../Vector3.h"
-#include "../GridField.hpp"
-#include "../MACGrid.h"
+class Vector3;
+template<class T> class GridField;
+class MACGrid;
+
 #ifdef __APPLE__
 #include "transform.hpp"
 #elif defined __unix__
@@ -17,34 +18,27 @@
 class LevelSet
 {
 public:
-	LevelSet(){
-		grid  = new GridField<double>(1000,1000,1000);
-		gridCopy = new GridField<double>(1000, 1000, 1000,10);
-    };
-	LevelSet(int xDim, int yDim, int zDim, double size){
-		grid  = new GridField<double>(xDim,yDim,zDim,size);
-		gridCopy = new GridField<double>(xDim,yDim,zDim,size);
-        
-        
-        grid->multTransformation(glm::scale(1.0, 1.0, 1.0));
-        gridCopy->multTransformation(glm::scale(1.0, 1.0, 1.0));
+	LevelSet();
+	LevelSet(int xDim, int yDim, int zDim, double size);
+	~LevelSet(){}
 
-        
-	};
-	~LevelSet(){};
 	void fillLevelSet(double (*implicitFunction)(int x, int y, int z));
 	void specifyRenderFunction(void (*renderFunction)());
 
+	void drawNormals() const;
 	void draw() const;
 	void printDistanceField();
 	double getCurvature(const int i, const int j, const int k) const;
 	Vector3 getNormal(const int i, const int j, const int k) const;
 	Vector3 getNormal(const double w_x, const double w_y, const double w_z) const;
+	double getCurvature(const int i, const int j, const int k);
+	void updateNormals();
 
 	void reinitialize();
 
 	GridField<double> *grid; //Signed distance field
 	GridField<double> *gridCopy;
+	GridField<Vector3> *normals;
 
     
     Vector3 getVelocity(MACGrid &g, int i, const int j, const int k);

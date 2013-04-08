@@ -9,6 +9,8 @@
 #ifndef __FuidFire__water2D__
 #define __FuidFire__water2D__
 
+#include "GridField.h"
+
 #include <iostream>
 #include "../MACGrid.h"
 #include "Particles.h"

@@ -1,12 +1,13 @@
 #ifndef FIREPRESETS_H
 #define FIREPRESETS_H
 
+template<class T> class MACAdvect;
+class CentralDiff;
+class UpwindDiff;
+class AdvectLevelSet;
 
-
-#include "../advect/AdvectLevelSet.h"
-
-#include "../CentralDiff.h"
-#include "../UpwindDiff.h"
+#include "CentralDiff.h"
+#include "UpwindDiff.h"
 
 template<class T> class MACAdvect;
 class FirePresets
@@ -30,6 +31,10 @@ public:
 	static const double T_MAX;
 	static const double T_AIR;
 
+	static const double VORTICITY_EPSILON;
+
+	static const double TEMPERATURE_BUOYANCY_ALPHA;
+	static const double TEMPERATURE_LOSS_CONSTANT;
 
 	static const double S;
 
