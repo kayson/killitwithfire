@@ -140,25 +140,25 @@ double Fire::getDensity(const int i, const int j, const int k, DirectionEnums d)
 	CellType temp;
 
 	if(d == LEFT)
-		temp = getCellType(i-1,j,k);
+		temp = phi.getCellType(i-1,j,k);
 	if(d == RIGHT)
-		temp = getCellType(i+1,j,k);
+		temp = phi.getCellType(i+1,j,k);
 	if(d == DOWN)
-		temp = getCellType(i,j-1,k);
+		temp = phi.getCellType(i,j-1,k);
 	if(d == UP)
-		temp = getCellType(i,j+1,k);
+		temp = phi.getCellType(i,j+1,k);
 	if(d == BACKWARD)
-		temp = getCellType(i,j,k-1);
+		temp = phi.getCellType(i,j,k-1);
 	if(d == FORWARD)
-		temp = getCellType(i,j,k+1);
+		temp = phi.getCellType(i,j,k+1);
 
-	if(getCellType(i,j,k) == FUEL && temp == FUEL)
+	if(phi.getCellType(i,j,k) == FUEL && temp == FUEL)
 		return preset->rhof;
-	else if(getCellType(i,j,k) == FUEL && temp == BURNT)
+	else if(phi.getCellType(i,j,k) == FUEL && temp == BURNT)
 		return alpha * preset->rhof + ( 1 - alpha ) * preset->rhob;
-	else if(getCellType(i,j,k) == BURNT && temp == FUEL)
+	else if(phi.getCellType(i,j,k) == BURNT && temp == FUEL)
 		return alpha * preset->rhob + ( 1 - alpha ) * preset->rhof;
-	else if(getCellType(i,j,k) == BURNT && temp == BURNT)
+	else if(phi.getCellType(i,j,k) == BURNT && temp == BURNT)
 		return preset->rhob;
 
 }
@@ -172,12 +172,12 @@ void Fire::computeCellTypes()
 		it.index(i, j, k);
 
 
-		celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
+		celltype.setValueAtIndex(phi.getCellType(i,j,k), i, j, k);
 
         if (i == 0 || i == celltype.xdim() || j == 0 || j == celltype.ydim()) {
             celltype.setValueAtIndex(SOLID, it.index());
         }else{
-            celltype.setValueAtIndex(getCellType(i,j,k), i, j, k);
+            celltype.setValueAtIndex(phi.getCellType(i,j,k), i, j, k);
         }
 	}
 }	
@@ -474,7 +474,7 @@ void Fire::draw()
   T->draw();
 
 	//drawVorticities();
-	drawCenterVelocities();
+	//drawCenterVelocities();
     //drawCenterGradients(FirePresets::upwindDisc);
     //drawFaceVelocities();
     //drawMAC();

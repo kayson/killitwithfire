@@ -70,6 +70,28 @@ void LevelSet::printDistanceField()
 	}
 }
 
+CellType LevelSet::getCellType(const int i, const int j, const int k) const {
+	if(i < 2 || i >= (this->grid->xdim() - 2) || j< 2 || j >= (this->grid->ydim() - 2) ) //Check if is solid
+		return SOLID;
+	else if(this->grid->valueAtIndex(i,j,k) > 0.0)
+		return FUEL;
+	else 
+		return BURNT;
+}
+
+CellType LevelSet::getCellType(const double w_x, const double w_y, const double w_z) const {
+	return getCellType(this->grid->valueAtWorld(w_x, w_y, w_z));
+}
+
+CellType LevelSet::getCellType(const double phi){
+	if(false) // Check if solid
+		return SOLID;
+	else if(phi > 0.0)
+		return FUEL;
+	else
+		return BURNT;
+}
+
 double LevelSet::getCurvature(const int i, const int j, const int k)
 {
 	

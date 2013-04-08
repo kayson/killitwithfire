@@ -206,11 +206,13 @@ public:
         field->indexToWorld(i,j,k,x,y,z);
         
 		Vector3 sPos = Vector3(x,y,z);
-		CellType sType = Fire::getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
+		//CellType sType = Fire::getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
+		CellType sType = phi.getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
         Vector3 sVel = g.velocityAtWorld(sPos);
 
         Vector3 ePos = sPos-sVel*dt;
-		CellType eType = Fire::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
+		//CellType eType = Fire::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
+		CellType eType = phi.getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
 		Vector3 eVel = g.velocityAtWorld(ePos);
 
 		// Ha typ 2st MACGrids som lagrar alla ghost-värden för fuel resp.gas.

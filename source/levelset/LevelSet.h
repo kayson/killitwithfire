@@ -5,6 +5,8 @@ class Vector3;
 template<class T> class GridField;
 class MACGrid;
 
+#include "helper.h";
+
 #ifdef __APPLE__
 #include "transform.hpp"
 #elif defined __unix__
@@ -32,6 +34,11 @@ public:
 	void updateNormals();
 	Vector3 getNormal(const int i, const int j, const int k);
 	Vector3 getNormal(const double w_x, const double w_y, const double w_z);
+
+	CellType getCellType(const int i, const int j, const int k) const;
+	CellType getCellType(const double w_x, const double w_y, const double w_z) const;
+
+	static CellType getCellType(const double phi);
 
 	void reinitialize();
 
