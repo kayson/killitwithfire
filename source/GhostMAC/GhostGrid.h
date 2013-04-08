@@ -21,9 +21,12 @@ public:
     
     //Hämta värden
     virtual T valueAtWorld(double w_x, double w_y,double w_z) const;
+    virtual T operator()(int i,int j,int k, CellType cell) const;
 
 private:
     //Helper
+    
+    bool isSame(CellType thisDomain,CellType otherDomain) const; /*Finns endast för att thisDomain == otherDomain INTE fungera!*/
     double jump(CellType thisDomain,CellType otherDomain, int i,int j,int k) const;
     double DVn(double w_x,double w_y , double w_z) const;
     double DV() const;

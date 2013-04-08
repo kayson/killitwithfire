@@ -84,8 +84,18 @@ T GhostGridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
     
     return t7;
 }
+template<class T>
+T GhostGridField<T>::operator()(int i,int j,int k, CellType cellType) const{
+    CellType thisCell = _levelset->getCellType(i, j, k);
+    return GridField<T>::operator()(i,j,k)*jump(thisCell,cellType,i,j,k);
+}
 
 //Helper
+template<class T>
+bool GhostGridField<T>::isSame(CellType thisDomain,CellType otherDomain) const{
+    return ((thisDomain == FUEL && otherDomain == FUEL) || (thisDomain == BURNT && otherDomain == BURNT) );
+}
+
 template<class T>
 double GhostGridField<T>::DVn(double x,double y,double z) const{
     Vector3 normal = _levelset->getNormal(x, y, z);
@@ -113,7 +123,7 @@ double GhostGridField<T>::DV() const{
 template<class T>
 double GhostGridField<T>::mult(CellType thisDomain,CellType otherDomain) const{
     
-    if ((thisDomain == FUEL && otherDomain == FUEL) || (thisDomain == BURNT && otherDomain == BURNT) ) {
+    if (isSame(thisDomain, otherDomain)) {
         return 0.0;
     }else if (thisDomain == FUEL && otherDomain == BURNT){
         return -1.0;

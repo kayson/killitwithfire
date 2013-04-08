@@ -5,7 +5,7 @@ class Vector3;
 template<class T> class GridField;
 class MACGrid;
 
-#include "helper.h";
+#include "helper.h"
 
 #ifdef __APPLE__
 #include "transform.hpp"
