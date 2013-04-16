@@ -2,6 +2,7 @@
 #include "firePresets.h"
 #include "Vector3.h"
 #include "GridField.hpp"
+#include "fire.h"
 
 /*
 	Beräknar andra ordningens approximation av första-upwind differentiation.
@@ -38,6 +39,7 @@ double UpwindDiff::calcDzp(GridField<double> &g, const int i, const int j, const
 	return (double)(g(i, j, k + 1) - g(i, j, k))/(FirePresets::dx);
 }
 
+
 double UpwindDiff::calcDx(GridField<double> &g, const int i, const int j, const int k)
 {
 	if((*_w)(i, j, k).x > 0.0){ // if(BURNT)
@@ -64,26 +66,30 @@ double UpwindDiff::calcDz(GridField<double> &g, const int i, const int j, const 
 
 double UpwindDiff::calcDx(GhostGridField<double> &g, const int i, const int j, const int k)
 {
-	if((*_w)(i, j, k).x > 0.0){ // if(BURNT)
-		return ( g(i,j,k,BURNT) - g(i-1,j,k,BURNT)/FirePresets::dx );
+	CellType c_t = Fire::getCellType(g(i,j,k));
+	if((*_w)(i, j, k).x > 0.0){ // denna är bara boundary kontroll, ej cell type
+		return ( g(i,j,k,c_t) - g(i-1,j,k,c_t)/FirePresets::dx );
 	}
-	else {// FUEL
-		return ( g(i+1,j,k,FUEL) - g(i,j,k,FUEL)/FirePresets::dx );
+	else {
+		return ( g(i+1,j,k,c_t) - g(i,j,k,c_t)/FirePresets::dx );
 	}
 }
 double UpwindDiff::calcDy(GhostGridField<double> &g, const int i, const int j, const int k)
 {
-	if((*_w)(i, j, k).y > 0.0)
-		return ( g(i,j,k,BURNT) - g(i,j-1,k,BURNT)/FirePresets::dx );
+	CellType c_t = Fire::getCellType(g(i,j,k));
+	if((*_w)(i, j, k).y > 0.0){
+		return ( g(i,j,k,c_t) - g(i,j-1,k,c_t)/FirePresets::dx );
+	}
 	else
-		return ( g(i,j+1,k, FUEL) - g(i,j,k,FUEL)/FirePresets::dx );
+		return ( g(i,j+1,k, c_t) - g(i,j,k,c_t)/FirePresets::dx );
 }
 double UpwindDiff::calcDz(GhostGridField<double> &g, const int i, const int j, const int k)
 {
+	CellType c_t = Fire::getCellType(g(i,j,k));
 	if((*_w)(i, j, k).z > 0.0)
-		return ( g(i,j,k,BURNT) - g(i,j,k-1,BURNT)/FirePresets::dx );
+		return ( g(i,j,k,c_t) - g(i,j,k-1,c_t)/FirePresets::dx );
 	else
-		return ( g(i,j,k+1,FUEL) - g(i,j,k,FUEL)/FirePresets::dx );
+		return ( g(i,j,k+1,c_t) - g(i,j,k,c_t)/FirePresets::dx );
 }
 
 double UpwindDiff::calcD2x(GridField<double> &g, const int i, const int j, const int k)
@@ -119,6 +125,18 @@ double UpwindDiff::calcDxy(GridField<double> &g, const int i, const int j, const
 }
 
 // Funktions överlagring med Vector3 istället för double
+
+// GhostGridField<Vector3>-metoder
+
+/*Vector3 UpwindDiff::calcDx(GhostGridField<Vector3> &g, const int i, const int j, const int k){
+	//CellType c_t = Fire::getCellType(g(i,j,k));
+	if((*_w)(i, j, k).x > 0.0)
+		return (g(i, j, k) - g(i-1, j, k))/FirePresets::dx;
+	else
+		return (g(i+1, j, k) - g(i, j, k))/FirePresets::dx;
+}
+Vector3 UpwindDiff::calcDy(GhostGridField<Vector3> &g, const int i, const int j, const int k);
+Vector3 UpwindDiff::calcDz(GhostGridField<Vector3> &g, const int i, const int j, const int k);*/
 
 Vector3 UpwindDiff::calcDx(GridField<Vector3> &g, const int i, const int j, const int k)
 {

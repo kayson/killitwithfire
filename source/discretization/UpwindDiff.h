@@ -16,6 +16,14 @@ public:
 	double calcDym(GridField<double> &g, const int i, const int j, const int k);
 	double calcDzm(GridField<double> &g, const int i, const int j, const int k);
 
+	double calcDxp(GhostGridField<double> &g, const int i, const int j, const int k);
+	double calcDyp(GhostGridField<double> &g, const int i, const int j, const int k);
+	double calcDzp(GhostGridField<double> &g, const int i, const int j, const int k);
+
+	double calcDxm(GhostGridField<double> &g, const int i, const int j, const int k);
+	double calcDym(GhostGridField<double> &g, const int i, const int j, const int k);
+	double calcDzm(GhostGridField<double> &g, const int i, const int j, const int k);
+
 	double calcDx(GridField<double> &g, const int i, const int j, const int k);
 	double calcDy(GridField<double> &g, const int i, const int j, const int k);
 	double calcDz(GridField<double> &g, const int i, const int j, const int k);
@@ -31,6 +39,11 @@ public:
 	double calcDyz(GridField<double> &g, const int i, const int j, const int k);
 	double calcDxz(GridField<double> &g, const int i, const int j, const int k);
 	double calcDxy(GridField<double> &g, const int i, const int j, const int k);
+
+	Vector3 calcDx(GhostGridField<Vector3> &g, const int i, const int j, const int k);
+	Vector3 calcDy(GhostGridField<Vector3> &g, const int i, const int j, const int k);
+	Vector3 calcDz(GhostGridField<Vector3> &g, const int i, const int j, const int k);
+
 
 	Vector3 calcDx(GridField<Vector3> &g, const int i, const int j, const int k);
 	Vector3 calcDy(GridField<Vector3> &g, const int i, const int j, const int k);
