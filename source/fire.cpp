@@ -249,7 +249,7 @@ void Fire::runSimulation(){
  //           */
  //       }
  //   }
-	
+
 	//Beräkna om vad för typ voxlarna är
 
 	//u.advect(preset->dt);
@@ -270,7 +270,7 @@ void Fire::runSimulation(){
 	/*
 	for(int i = preset->GRID_DIM_X*0.45; i < preset->GRID_DIM_X*0.55; i++)
 	{
-		phi.grid->setValueAtIndex(1,i,4,0);
+		//phi.grid->setValueAtIndex(1,i,4,0);
 	}
 	*/
 
