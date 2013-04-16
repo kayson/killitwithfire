@@ -68,6 +68,7 @@ double Temperature::calculateTemperatureLoss(int i, int j, int k){
 }
 
 void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
+	GridField<double> copy = GridField<double>(grid->xdim(), grid->ydim(), grid->zdim()); 
     for(int i = 0; i < grid->xdim(); i++)
         for(int j = 0; j < grid->ydim(); j++)
             for(int k = 0; k < grid->zdim(); k++){
@@ -76,8 +77,10 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
                 double c = calculateTemperatureLoss(i, j, k);
                 double v = FirePresets::tempAdvect->advect(dt, m,
                                                            *grid, i, j, k);
-                grid->setValueAtIndex(v - c, i, j, k);
+
+				copy.setValueAtIndex( (-(grid->valueAtIndex(i,j,k) - v * dt) - c), i, j, k);
             }
+	*grid = copy;
 }
 
 void Temperature::CalculateBuoyancyForceField()
