@@ -228,27 +228,27 @@ void Fire::runSimulation(){
 
 		currentTime += dt;
 	}*/
-	static int counter = 0;
-    if (++counter < 1) {
-    	for(int i = -8; i < 8; i++){
-            phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,5,0);
-            phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,6,0);
-            phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,7,0);
-            phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,8,0);
-        }
-        
-        for(int i = -6; i < 6; i++){
-            /*u.setValueAtFace(2,preset->GRID_DIM_X/2+i,5,0,DOWN);
-            u.setValueAtFace(2,preset->GRID_DIM_X/2+i,6,0,DOWN);
-            u.setValueAtFace(2,preset->GRID_DIM_X/2+i,5,0,RIGHT);
-            u.setValueAtFace(2,preset->GRID_DIM_X/2+i,6,0,RIGHT);
-            u.setValueAtFace(3,preset->GRID_DIM_X/2+i,5,0,DOWN);
-            u.setValueAtFace(3,preset->GRID_DIM_X/2+i,6,0,DOWN);
-            u.setValueAtFace(3,preset->GRID_DIM_X/2+i,5,0,RIGHT);
-            u.setValueAtFace(3,preset->GRID_DIM_X/2+i,6,0,RIGHT);
-            */
-        }
-    }
+	//static int counter = 0;
+ //   if (++counter < 1) {
+ //   	for(int i = -8; i < 8; i++){
+ //           phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,5,0);
+ //           phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,6,0);
+ //           phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,7,0);
+ //           phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,8,0);
+ //       }
+ //       
+ //       for(int i = -6; i < 6; i++){
+ //           /*u.setValueAtFace(2,preset->GRID_DIM_X/2+i,5,0,DOWN);
+ //           u.setValueAtFace(2,preset->GRID_DIM_X/2+i,6,0,DOWN);
+ //           u.setValueAtFace(2,preset->GRID_DIM_X/2+i,5,0,RIGHT);
+ //           u.setValueAtFace(2,preset->GRID_DIM_X/2+i,6,0,RIGHT);
+ //           u.setValueAtFace(3,preset->GRID_DIM_X/2+i,5,0,DOWN);
+ //           u.setValueAtFace(3,preset->GRID_DIM_X/2+i,6,0,DOWN);
+ //           u.setValueAtFace(3,preset->GRID_DIM_X/2+i,5,0,RIGHT);
+ //           u.setValueAtFace(3,preset->GRID_DIM_X/2+i,6,0,RIGHT);
+ //           */
+ //       }
+ //   }
 
 
 	//Beräkna om vad för typ voxlarna är
@@ -271,7 +271,7 @@ void Fire::runSimulation(){
 
 	for(int i = preset->GRID_DIM_X*0.45; i < preset->GRID_DIM_X*0.55; i++)
 	{
-		phi.grid->setValueAtIndex(1,i,4,0);
+		//phi.grid->setValueAtIndex(1,i,4,0);
 	}
 
 
@@ -532,11 +532,11 @@ void Fire::computeW()
 
 void Fire::draw()
 {
-  //phi.draw();
-  T->draw();
+  phi.draw();
+  //T->draw();
 
 	//drawVorticities();
-	drawCenterVelocities();
+	//drawCenterVelocities();
     //drawCenterGradients(FirePresets::centralDisc);
     //drawFaceVelocities();
     //drawMAC();

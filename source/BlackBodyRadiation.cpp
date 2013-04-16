@@ -19,7 +19,6 @@ float BlackBodyRadiation::red(double T)
 	#pragma omp parallel for
 	for(float i = 0.43; i < 0.7; i+=0.01) 
 		radiance_tot += radiance(i,T)/0.00001;
-
 	
 	return 1 - exp(-(float)radiance_tot * scale);
 }
