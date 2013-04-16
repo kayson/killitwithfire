@@ -55,11 +55,11 @@ const double FirePresets::dt = 1.0/50.0;
 const double FirePresets::dx = 1.0/8.0;
 const double FirePresets::CFL_NUMBER = 2;
 
-const double FirePresets::S = 0.1;
+const double FirePresets::S = 0.7;
 
-const double FirePresets::VORTICITY_EPSILON = 90.;
+const double FirePresets::VORTICITY_EPSILON = 10.;
 
-const double FirePresets::TEMPERATURE_BUOYANCY_ALPHA = 0.15;
+const double FirePresets::TEMPERATURE_BUOYANCY_ALPHA = 0.2;
 const double FirePresets::TEMPERATURE_LOSS_CONSTANT = 3000;
 
 const double FirePresets::rhof = 1.0;

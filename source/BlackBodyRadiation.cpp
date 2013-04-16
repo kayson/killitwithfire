@@ -4,7 +4,7 @@
 
 double C_1 = 3.7418 * pow(10.0, -16);
 double C_2 = 1.4388 * pow(10.0 , -2);
-double scale = 5000;
+double scale = 50;
 
 double BlackBodyRadiation::radiance(double lambda, double T)
 {
