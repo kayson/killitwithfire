@@ -258,19 +258,15 @@ void Fire::runSimulation(){
 
 	//enforceBorderCondition();
 
-    //u.addForceGrid(*T->beyonce, preset->dt);
-
     //Vector3 gravity = Vector3(0.0, 0.03, 0.0);
     //u.addForce(gravity, preset->dt);
 	
 	//Vorticity confinement forces
-	//Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
-
-	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 	/*
 	for(int i = preset->GRID_DIM_X*0.45; i < preset->GRID_DIM_X*0.55; i++)
 	{
-		//phi.grid->setValueAtIndex(1,i,4,0);
+		phi.grid->setValueAtIndex(1,i,4,0);
+		//T->SetTemperatureAt(1, i, 1, FirePresets::T_IGNITION);
 	}
 	*/
 
@@ -282,29 +278,28 @@ void Fire::runSimulation(){
     phi.updateNormals();
     
     //enforceBorderCondition();
-    
+    computeCellTypes(false);
     u.addForceGrid(*T->beyonce, preset->dt);
     
     Vector3 gravity = Vector3(0.0, -0.1, 0.0);
-    //u.addForce(gravity, preset->dt);
+    u.addForce(gravity, preset->dt);
     
     //Vorticity confinement forces
-    //Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
-	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
+    Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
+	
 	computeCellTypes(false);
 	advectTemperature(preset->dt);
 
-	/*try{
-		projection.project(preset->dt);
-	}
-	catch(std::exception &e){
-		std::cout << e.what() << std::endl;
-	}*/
+	//try{
+	//	projection.project(preset->dt);
+	//}
+	//catch(std::exception &e){
+	//	std::cout << e.what() << std::endl;
+	//}
 
     enforceBorderCondition();
-    //computeCellTypes(false);
-	//projection.project(preset->dt);
-    
+    //computeCellTypes(false);    
     
 	advectLevelSet(preset->dt);
 
