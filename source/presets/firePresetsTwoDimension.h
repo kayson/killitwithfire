@@ -11,7 +11,9 @@
 #include "AdvectRK2.h"
 #elif defined _WIN32 || defined _WIN64
 #include "advect/MACAdvect.h"
-
+#else
+#include "MACAdvect.h"
+#include "AdvectRK2.h"
 #endif
 
 
@@ -21,11 +23,11 @@ class FirePresetsTwoDimension : public FirePresets
 public:
 	FirePresetsTwoDimension()  
 	{
-        implicitFunction = implicitFunction::sphere;
+            implicitFunction = implicitFunction::sphere;
         
-        //Rutiner
-        advection = new AdvectLevelSetEuler();
-		advectVelocities = new MACAdvectRK2<double>();
+            //Rutiner
+            advection = new AdvectLevelSetEuler();
+            advectVelocities = new MACAdvectRK2<double>();
 	}
 
 	~FirePresetsTwoDimension(){
