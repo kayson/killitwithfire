@@ -133,13 +133,15 @@ void Temperature::draw(){
         double x,y,z;
         grid->indexToWorld(i, j, k, x, y, z);
         
-		double totRad = BlackBodyRadiation::red(grid->valueAtIndex(i,j,k)) + BlackBodyRadiation::green(grid->valueAtIndex(i,j,k)) + BlackBodyRadiation::blue(grid->valueAtIndex(i,j,k));
-        
-		glColor3d(BlackBodyRadiation::red(grid->valueAtIndex(i,j,k))/totRad,
-                  BlackBodyRadiation::green(grid->valueAtIndex(i,j,k))/totRad,
-                  BlackBodyRadiation::blue(grid->valueAtIndex(i,j,k))/totRad);
+		Vector3 xyz = BlackBodyRadiation::blackbodyToXYZ(grid->valueAtIndex(i,j,k));
+		Vector3 rgb = BlackBodyRadiation::XYZtoRGB(xyz);
+		//if(grid->valueAtIndex(i,j,k)>500)
+		//	std::cout <<  xyz.x << " " << xyz.y << " " << xyz.z  << " :::: " << rgb.x << " " << rgb.y << " " << rgb.z << std::endl;
+		if(grid->valueAtIndex(i,j,k) > 300)
+			glColor3d(rgb.x, rgb.y, rgb.z);
+		else
+			glColor3d(rgb.x*0.3, rgb.y*0.3, rgb.z*0.3);
 
-		
         
         glVertex3f((float)x, (float)y, (float)z);
         glVertex3f(((float)x+1.f), (float)y, (float)z);
