@@ -59,22 +59,25 @@ double GhostMAC::valueAtFace(int i,int j,int k,DirectionEnums d, CellType cell) 
     GhostGridField<double> *v = static_cast< GhostGridField<double>* >(_v);
     GhostGridField<double> *w = static_cast< GhostGridField<double>* >(_w);
 
+	double returnval = 0;
+
     if (d == RIGHT){
-        return _u->valueAtIndex(i+1, j, k)+u->jump(thisCellType,cell,i+1,j,k);
+        returnval =  _u->valueAtIndex(i+1, j, k)+u->jump(thisCellType,cell,i+1,j,k);
     }else if (d == LEFT){
-        return _u->valueAtIndex(i, j, k)+u->jump(thisCellType,cell,i,j,k);
+        returnval =  _u->valueAtIndex(i, j, k)+u->jump(thisCellType,cell,i,j,k);
     }else if (d == DOWN) {
-        return _v->valueAtIndex(i, j, k)+v->jump(thisCellType,cell,i,j,k);
+        returnval =  _v->valueAtIndex(i, j, k)+v->jump(thisCellType,cell,i,j,k);
     }else if (d == UP){
-        return _v->valueAtIndex(i, j+1, k)+v->jump(thisCellType,cell,i,j+1,k);
+        returnval =  _v->valueAtIndex(i, j+1, k)+v->jump(thisCellType,cell,i,j+1,k);
     }else  if (d == FORWARD){
-        return _w->valueAtIndex(i, j, k)+w->jump(thisCellType,cell,i,j,k);
+        returnval =  _w->valueAtIndex(i, j, k)+w->jump(thisCellType,cell,i,j,k);
     }else if(d == BACKWARD){
-        return _w->valueAtIndex(i, j, k+1)+w->jump(thisCellType,cell,i,j,k+1);
+        returnval =  _w->valueAtIndex(i, j, k+1)+w->jump(thisCellType,cell,i,j,k+1);
     }else{
         //Center?
     }
-    assert(false);
+	return returnval;
+    //assert(false);
 }
 
 void GhostMAC::initialize(int xdim,int ydim,int zdim, double size){

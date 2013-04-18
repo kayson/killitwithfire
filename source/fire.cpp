@@ -228,6 +228,7 @@ void Fire::runSimulation(){
 
 		currentTime += dt;
 	}*/
+#if 0
 	static int counter = 0;
     if (++counter < 1) {
     	for(int i = -8; i < 8; i++){
@@ -249,7 +250,7 @@ void Fire::runSimulation(){
             */
         }
     }
-
+#endif
 
 	//Beräkna om vad för typ voxlarna är
 
@@ -536,7 +537,7 @@ void Fire::draw()
 	//T->draw();
 
 	//drawVorticities();
-	drawCenterVelocities();
+	//drawCenterVelocities();
     //drawCenterGradients(FirePresets::centralDisc);
     //drawFaceVelocities();
     //drawMAC();
@@ -548,7 +549,7 @@ void Fire::draw()
     Vector3 vector = ghost.velocityAtWorld(Vector3(Input::worldX, Input::worldY, Input::worldZ), FUEL);
     std::cout << vector << std::endl << std::endl;
     */
-
+	/*
     Vector3 vector = ghost.velocityAtWorld(Vector3(Input::worldX, Input::worldY, Input::worldZ));// phi.getNormal();
     //Vector3 vector =  u.velocityAtWorld(Vector3(Input::worldX,Input::worldY,0.0f));
 
@@ -563,7 +564,7 @@ void Fire::draw()
     glBegin(GL_LINES);
     glVertex3d(Input::worldX,Input::worldY,0.0f);
     glVertex3d(Input::worldX+vector.x,Input::worldY+vector.y,0.0f);
-    glEnd();
+    glEnd();*/
 
 }
 

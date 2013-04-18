@@ -81,6 +81,9 @@ T GhostGridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
      
      T t7 = (*this)(z,t5,t6);
      */
+
+	if(t7 != 0.)
+		return t7;
     
     return t7;
 }
@@ -111,8 +114,10 @@ double GhostGridField<T>::DVn(double x,double y,double z) const{
     }else{
         assert(false);
     }
+
+	double returnval = val*DV();
     
-    return val*DV();
+	return returnval;
 }
 
 template<class T>
@@ -126,7 +131,7 @@ double GhostGridField<T>::mult(CellType thisDomain,CellType otherDomain) const{
     if (isSame(thisDomain, otherDomain)) {
         return 0.0;
     }else if (thisDomain == FUEL && otherDomain == BURNT){
-        return -1.0;
+        return 1.0;
     }else if (thisDomain == BURNT && otherDomain == FUEL){
         return -1.0;
     }else{
@@ -143,6 +148,7 @@ double GhostGridField<T>::jump(CellType from,CellType to, int i,int j,int k) con
     if (m == 0) return 0;
     double x,y,z;
     GridField<T>::indexToWorld(i,j,k,x,y,z);
-    return DVn(x, y, z)*m;
+	double returnval = DVn(x,y,z)*m;
+	return returnval;
 }
 
