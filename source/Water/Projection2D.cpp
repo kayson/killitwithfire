@@ -8,6 +8,9 @@
 
 #include "Projection2D.h"
 #include <iomanip>
+#if __linux
+#include <stdexcept>
+#endif
 #include "glfw.h"
 #include "../Pressure/pcgsolver/pcg_solver.h"
 #include "GridField.h"
