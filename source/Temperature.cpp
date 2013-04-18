@@ -44,14 +44,14 @@ void Temperature::ResetCell(int i, int j, int k, CellType type)
     double x, y, z;
     grid->indexToWorld(i, j, k, x, y, z);
     if(type == FUEL){
-        grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
+        grid->setValueAtIndex(FirePresets::T_IGNITION, i, j, k);
     }
 }
 
 void Temperature::InitCell(int i, int j, int k, CellType type)
 {
 	if(type == FUEL){
-          grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
+          grid->setValueAtIndex(FirePresets::T_IGNITION, i, j, k);
 	}
 	else if(type == BURNT){
 		grid->setValueAtIndex(FirePresets::T_AIR, i, j, k);
@@ -78,7 +78,7 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
                 double v = FirePresets::tempAdvect->advect(dt, m,
                                                            *grid, i, j, k);
 
-				copy.setValueAtIndex( (-(grid->valueAtIndex(i,j,k) - v * dt) - c), i, j, k);
+				copy.setValueAtIndex( ((grid->valueAtIndex(i,j,k) + v * dt) - c), i, j, k);
             }
 	*grid = copy;
 }
@@ -132,10 +132,11 @@ void Temperature::draw(){
         double x,y,z;
         grid->indexToWorld(i, j, k, x, y, z);
         
+		double totRad = BlackBodyRadiation::red(grid->valueAtIndex(i,j,k)) + BlackBodyRadiation::green(grid->valueAtIndex(i,j,k)) + BlackBodyRadiation::blue(grid->valueAtIndex(i,j,k));
         
-		glColor3d(BlackBodyRadiation::red(grid->valueAtIndex(i,j,k)),
-                  BlackBodyRadiation::green(grid->valueAtIndex(i,j,k)),
-                  BlackBodyRadiation::blue(grid->valueAtIndex(i,j,k)));
+		glColor3d(BlackBodyRadiation::red(grid->valueAtIndex(i,j,k))/totRad,
+                  BlackBodyRadiation::green(grid->valueAtIndex(i,j,k))/totRad,
+                  BlackBodyRadiation::blue(grid->valueAtIndex(i,j,k))/totRad);
 
 		
         
