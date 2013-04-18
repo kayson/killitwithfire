@@ -51,18 +51,19 @@ const double FirePresets::T_MAX = 1600 + 273.15;	// Bunsen burner (Methane) flam
 const double FirePresets::T_AIR = 20.0 + 273.15;
 
 const double FirePresets::GRID_SIZE = 18;
-const double FirePresets::dt = 1.0/50.0;
+const double FirePresets::dt = 1.0/80.0;
 const double FirePresets::dx = 1.0/8.0;
 const double FirePresets::CFL_NUMBER = 2;
 
-const double FirePresets::S = 0.5;
+const double FirePresets::S = 1.0;
 
-const double FirePresets::VORTICITY_EPSILON = 30.;
+const double FirePresets::VORTICITY_EPSILON = 1.1;
 
-const double FirePresets::TEMPERATURE_BUOYANCY_ALPHA = 0.15;
+
+const double FirePresets::TEMPERATURE_BUOYANCY_ALPHA = 0.004;
 const double FirePresets::TEMPERATURE_LOSS_CONSTANT = 3000;
 
 const double FirePresets::rhof = 1.0;
-const double FirePresets::rhob = 0.01;
+const double FirePresets::rhob = 0.2;
 
 #endif //FIREPRESETSTWODIM_H

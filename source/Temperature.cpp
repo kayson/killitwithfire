@@ -77,8 +77,9 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
                 double c = calculateTemperatureLoss(i, j, k);
                 double v = FirePresets::tempAdvect->advect(dt, m,
                                                            *grid, i, j, k);
+				double newValue = (grid->valueAtIndex(i,j,k) - v * dt) - c * dt;
 
-				copy.setValueAtIndex( ((grid->valueAtIndex(i,j,k) + v * dt) - c), i, j, k);
+				copy.setValueAtIndex(newValue, i, j, k);
             }
 	*grid = copy;
 }

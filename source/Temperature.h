@@ -27,7 +27,6 @@ public:
 
 	GridField<Vector3> *beyonce;
 
-
 private:
 	GridField<double> *grid; 
     double calculateTemperatureLoss(int i, int j, int k);
