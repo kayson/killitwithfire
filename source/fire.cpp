@@ -273,11 +273,11 @@ void Fire::runSimulation(){
  //   
  //   //u.advect(preset->dt);
  //   //preset->advectVelocities->advect(u, phi, preset->dt);
- //   phi.updateNormals();
+   phi.updateNormals();
  //   
  //   //enforceBorderCondition();
  //   computeCellTypes(false);
- //   u.addForceGrid(*T->beyonce, preset->dt);
+    u.addForceGrid(*T->beyonce, preset->dt);
  //   
  //   Vector3 gravity = Vector3(0.0, -0.1, 0.0);
  //   u.addForce(gravity, preset->dt);
@@ -286,8 +286,8 @@ void Fire::runSimulation(){
  //   Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 	//
-	//computeCellTypes(false);
-	//advectTemperature(preset->dt);
+	computeCellTypes(false);
+	advectTemperature(preset->dt);
 
 	////try{
 	////	projection.project(preset->dt);
@@ -299,7 +299,7 @@ void Fire::runSimulation(){
  //   enforceBorderCondition();
  //   //computeCellTypes(false);    
  //   
-	//advectLevelSet(preset->dt);
+	advectLevelSet(preset->dt);
 
 	//Fixa signed distance field
 	phi.reinitialize();
@@ -524,8 +524,8 @@ void Fire::computeW()
 
 void Fire::draw()
 {
-  phi.draw();
-  //T->draw();
+  //phi.draw();
+  T->draw();
 
 	//drawVorticities();
 	//drawCenterVelocities();
