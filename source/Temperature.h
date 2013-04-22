@@ -22,7 +22,7 @@ public:
     void AdvectTemperatureField(double dt, MACGrid m, LevelSet ls);
 
 	void CalculateBuoyancyForceField();
-
+	double maxTemp();
 	void draw();
 
 	GridField<Vector3> *beyonce;

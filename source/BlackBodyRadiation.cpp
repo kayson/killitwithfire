@@ -95,14 +95,38 @@ Vector3 BlackBodyRadiation::blackbodyToXYZ(double T)
 	return xyz;
 }
 
+Vector3 BlackBodyRadiation::XYZtoLMS(Vector3 xyz)
+{
+	Vector3 lms(0.0, 0.0, 0.0);
+
+	// D65
+	lms.x = xyz.x * 0.400	+ xyz.y * 0.708		+ xyz.z * -0.081;
+	lms.y = xyz.x * -0.226	+ xyz.y * 1.165		+ xyz.z * 0.046;
+	lms.z = xyz.x * 0		+ xyz.y * 0			+ xyz.z * 0.918;
+
+	return lms;
+}
+
+Vector3 BlackBodyRadiation::LMStoXYZ(Vector3 lms)
+{
+	Vector3 xyz(0.0, 0.0, 0.0);
+
+	// D65
+	xyz.x = lms.x * 1.861	+ lms.y * -1.131	+ lms.z * 2.209;
+	xyz.y = lms.x * 0.361	+ lms.y * 0.639		+ lms.z * -0.002;
+	xyz.z = lms.x * 0		+ lms.y * 0			+ lms.z * 10.89;
+	
+	return xyz;
+}
+
 Vector3 BlackBodyRadiation::XYZtoRGB(Vector3 xyz)
 {
 	Vector3 rgb(0.0, 0.0, 0.0);
 
 	// sRGB
-	rgb.x = xyz.x * 3.2404542 + xyz.y * -1.5371385 + xyz.z * -0.4985314;
-	rgb.y = xyz.x * -0.9692660 + xyz.y * 1.8760108 + xyz.z * 0.0415560;
-	rgb.z = xyz.x * 0.0556434 + xyz.y * -0.2040259 + xyz.z * 1.0572252;
+	rgb.x = xyz.x * 3.2410	+ xyz.y * -1.5374	+ xyz.z * -0.4986;
+	rgb.y = xyz.x * -0.9692	+ xyz.y * 1.8760	+ xyz.z * 0.0416;
+	rgb.z = xyz.x * 0.0556	+ xyz.y * -0.2040	+ xyz.z * 1.0570;
 
 	double maxRGB = std::max(rgb.x, std::max(rgb.y, rgb.z));
 
@@ -113,10 +137,9 @@ Vector3 BlackBodyRadiation::XYZtoRGB(Vector3 xyz)
 		rgb.z /= maxRGB;
 	}
 
-	// Gamma Correction
-	rgb.x = pow(rgb.x, 1/2.2);
-	rgb.y = pow(rgb.y, 1/2.2);
-	rgb.z = pow(rgb.z, 1/2.2);
+	//rgb.x = powf(rgb.x, 1.0 / 2.4);
+	//rgb.y = powf(rgb.y, 1.0 / 2.4);
+	//rgb.z = powf(rgb.z, 1.0 / 2.4);
 
 	return rgb;
 }

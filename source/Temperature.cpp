@@ -124,7 +124,30 @@ GridField<double> Temperature::GetTemperatureGrid(){
     return *grid;
 }
 
-void Temperature::draw(){
+double Temperature::maxTemp()
+{
+	int xdim = FirePresets::GRID_DIM_X,
+		ydim = FirePresets::GRID_DIM_Y,
+		zdim = FirePresets::GRID_DIM_Z;
+  
+	double max = 0;
+
+	for(int i = 0; i < xdim; i++)
+		for(int j = 0; j < ydim; j++)
+			for(int k = 0; k < zdim; k++){
+				if(grid->valueAtIndex(i,j,k) > max)
+					max = grid->valueAtIndex(i,j,k);
+			}
+
+	return max;
+}
+
+void Temperature::draw()
+{
+	double maxT = maxTemp();
+	Vector3 LMSw = BlackBodyRadiation::XYZtoLMS(BlackBodyRadiation::blackbodyToXYZ(maxT));
+	std::cout << maxT << " Kelvin \t::\t" << LMSw.x << " " << LMSw.y << " " << LMSw.z << std::endl;
+
     glBegin(GL_QUADS);
     for (GridFieldIterator<double> iter = grid->iterator();
          !iter.done(); iter.next()) {
@@ -134,10 +157,14 @@ void Temperature::draw(){
         grid->indexToWorld(i, j, k, x, y, z);
         
 		Vector3 xyz = BlackBodyRadiation::blackbodyToXYZ(grid->valueAtIndex(i,j,k));
+		Vector3 lms = BlackBodyRadiation::XYZtoLMS(xyz);
+		lms.x /= LMSw.x;
+		lms.y /= LMSw.y;
+		lms.z /= LMSw.z;
+		xyz = BlackBodyRadiation::LMStoXYZ(lms);
 		Vector3 rgb = BlackBodyRadiation::XYZtoRGB(xyz);
-		//if(grid->valueAtIndex(i,j,k)>500)
-		//	std::cout <<  xyz.x << " " << xyz.y << " " << xyz.z  << " :::: " << rgb.x << " " << rgb.y << " " << rgb.z << std::endl;
-		if(grid->valueAtIndex(i,j,k) > 300)
+
+		if(grid->valueAtIndex(i,j,k) >= maxT*0.5)
 			glColor3d(rgb.x, rgb.y, rgb.z);
 		else
 			glColor3d(rgb.x*0.3, rgb.y*0.3, rgb.z*0.3);
