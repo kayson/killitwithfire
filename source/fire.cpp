@@ -273,7 +273,9 @@ void Fire::runSimulation(){
  //   
  //   //u.advect(preset->dt);
  //   //preset->advectVelocities->advect(u, phi, preset->dt);
-   phi.updateNormals();
+
+    phi.updateNormals();
+
  //   
  //   //enforceBorderCondition();
  //   computeCellTypes(false);

@@ -38,7 +38,7 @@ void DetonationShockDynamics::Update_D_With_DSD(double dt, LevelSet *ls, MACGrid
 	for(int i = 0; i < FirePresets::GRID_DIM_X; i++){
 		for(int j = 0; j < FirePresets::GRID_DIM_Y; j++){
 			for(int k = 0; k < FirePresets::GRID_DIM_Y; k++){
-				//curvDeriv = (
+				//double curvDeriv = ( - curvature->valueAtIndex(i, j, k)
 			}
 		}
 	}
