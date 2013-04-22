@@ -19,6 +19,8 @@
 #include "Projection2D.h"
 #include "GhostMAC.h"
 
+#include "DetonationShockDynamics.h"
+
 #ifdef __APPLE__
 #include "sparse_matrix.h"
 #include "pcg_solver.h"
@@ -71,6 +73,8 @@ public:
     
 	static CellType getCellType(double phi);
 private:
+
+	DetonationShockDynamics *dsd;
 
     FirePresets *preset;
     LevelSet phi;

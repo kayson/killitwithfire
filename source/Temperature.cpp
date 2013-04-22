@@ -69,11 +69,14 @@ double Temperature::calculateTemperatureLoss(int i, int j, int k){
 
 void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
 	GridField<double> copy = GridField<double>(grid->xdim(), grid->ydim(), grid->zdim()); 
+	for(int i = 0; i < grid->xdim(); i++)
+        for(int j = 0; j < grid->ydim(); j++)
+            for(int k = 0; k < grid->zdim(); k++)
+                ResetCell(i, j, k, Fire::getCellType(ls.grid->valueAtIndex(i, j, k)));
     for(int i = 0; i < grid->xdim(); i++)
         for(int j = 0; j < grid->ydim(); j++)
             for(int k = 0; k < grid->zdim(); k++){
-                ResetCell(i, j, k,
-                          Fire::getCellType(ls.grid->valueAtIndex(i, j, k)));
+
                 double c = calculateTemperatureLoss(i, j, k);
                 double v = FirePresets::tempAdvect->advect(dt, m,
                                                            *grid, i, j, k);
@@ -146,7 +149,6 @@ void Temperature::draw()
 {
 	double maxT = maxTemp();
 	Vector3 LMSw = BlackBodyRadiation::XYZtoLMS(BlackBodyRadiation::blackbodyToXYZ(maxT));
-	std::cout << maxT << " Kelvin \t::\t" << LMSw.x << " " << LMSw.y << " " << LMSw.z << std::endl;
 
     glBegin(GL_QUADS);
     for (GridFieldIterator<double> iter = grid->iterator();
@@ -156,6 +158,8 @@ void Temperature::draw()
         double x,y,z;
         grid->indexToWorld(i, j, k, x, y, z);
         
+
+		// Eq. 23, Nguyen'02
 		Vector3 xyz = BlackBodyRadiation::blackbodyToXYZ(grid->valueAtIndex(i,j,k));
 		Vector3 lms = BlackBodyRadiation::XYZtoLMS(xyz);
 		lms.x /= LMSw.x;
@@ -164,7 +168,7 @@ void Temperature::draw()
 		xyz = BlackBodyRadiation::LMStoXYZ(lms);
 		Vector3 rgb = BlackBodyRadiation::XYZtoRGB(xyz);
 
-		if(grid->valueAtIndex(i,j,k) >= maxT*0.5)
+		if(grid->valueAtIndex(i,j,k) >= maxT*0.6)
 			glColor3d(rgb.x, rgb.y, rgb.z);
 		else
 			glColor3d(rgb.x*0.3, rgb.y*0.3, rgb.z*0.3);

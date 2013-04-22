@@ -137,6 +137,7 @@ Vector3 BlackBodyRadiation::XYZtoRGB(Vector3 xyz)
 		rgb.z /= maxRGB;
 	}
 
+	// Gamma Correction
 	//rgb.x = powf(rgb.x, 1.0 / 2.4);
 	//rgb.y = powf(rgb.y, 1.0 / 2.4);
 	//rgb.z = powf(rgb.z, 1.0 / 2.4);

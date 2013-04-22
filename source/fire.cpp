@@ -11,6 +11,7 @@
 #include "MACAdvect.h"
 #include "Input.h"
 
+
 #if defined __APPLE__
 #include "glfw.h"
 #include "pcg_solver.h"
@@ -56,6 +57,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
 	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
     
+	dsd = new DetonationShockDynamics();
     
     GridField<int> *cellTypes = new GridField<int>(u);
     u.setTransformation(u.getTrans());
@@ -221,6 +223,7 @@ CellType Fire::getCellType(double phi)
 
 void Fire::runSimulation(){
 
+
 	 //Advektera levelset
     /*for(double currentTime = 0; currentTime < preset->dt;)
 	{
@@ -258,49 +261,44 @@ void Fire::runSimulation(){
 
 	//enforceBorderCondition();
 
-    //Vector3 gravity = Vector3(0.0, 0.03, 0.0);
-    //u.addForce(gravity, preset->dt);
-	
-	//Vorticity confinement forces
-	/*
-	for(int i = preset->GRID_DIM_X*0.45; i < preset->GRID_DIM_X*0.55; i++)
-	{
-		phi.grid->setValueAtIndex(1,i,4,0);
-		//T->SetTemperatureAt(1, i, 1, FirePresets::T_IGNITION);
-	}
-	*/
+	//for(int i = preset->GRID_DIM_X*0.45; i < preset->GRID_DIM_X*0.55; i++)
+	//{
+	//	phi.grid->setValueAtIndex(1,i,4,0);
+	//	//T->SetTemperatureAt(1, i, 1, FirePresets::T_IGNITION);
+	//}
+	//
 
-    //Beräkna om vad för typ voxlarna är
-    
-    
-    //u.advect(preset->dt);
-    //preset->advectVelocities->advect(u, phi, preset->dt);
+ //   //Beräkna om vad för typ voxlarna är
+ //   
+ //   
+ //   //u.advect(preset->dt);
+ //   //preset->advectVelocities->advect(u, phi, preset->dt);
     phi.updateNormals();
-    
-    //enforceBorderCondition();
-    computeCellTypes(false);
+ //   
+ //   //enforceBorderCondition();
+ //   computeCellTypes(false);
     u.addForceGrid(*T->beyonce, preset->dt);
-    
-    Vector3 gravity = Vector3(0.0, -0.1, 0.0);
-    u.addForce(gravity, preset->dt);
-    
-    //Vorticity confinement forces
-    Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
-	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
-	
+ //   
+ //   Vector3 gravity = Vector3(0.0, -0.1, 0.0);
+ //   u.addForce(gravity, preset->dt);
+ //   
+ //   //Vorticity confinement forces
+ //   Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
+	//
 	computeCellTypes(false);
 	advectTemperature(preset->dt);
 
-	//try{
-	//	projection.project(preset->dt);
-	//}
-	//catch(std::exception &e){
-	//	std::cout << e.what() << std::endl;
-	//}
+	////try{
+	////	projection.project(preset->dt);
+	////}
+	////catch(std::exception &e){
+	////	std::cout << e.what() << std::endl;
+	////}
 
-    enforceBorderCondition();
-    //computeCellTypes(false);    
-    
+ //   enforceBorderCondition();
+ //   //computeCellTypes(false);    
+ //   
 	advectLevelSet(preset->dt);
 
 	//Fixa signed distance field
