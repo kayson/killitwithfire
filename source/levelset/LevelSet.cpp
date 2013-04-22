@@ -93,9 +93,7 @@ CellType LevelSet::getCellType(const double phi){
 }
 
 double LevelSet::getCurvature(const int i, const int j, const int k)
-
 {
-	
 	double 
 		dx = FirePresets::centralDisc->calcDx(*grid, i, j, k),
 		dy = FirePresets::centralDisc->calcDy(*grid, i, j, k),
