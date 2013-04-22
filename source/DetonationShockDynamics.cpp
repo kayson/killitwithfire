@@ -30,7 +30,7 @@ void DetonationShockDynamics::Update_D(LevelSet *ls){
 }
 
 double DetonationShockDynamics::getFlameSpeed(int i, int j, int k, MACGrid *velocity) const{
-	return velocity->velocityAtCenter(i, j, k) - flameFrontVelocity->valueAtIndex(i, j, k);
+	return (velocity->velocityAtCenter(i, j, k) - flameFrontVelocity->valueAtIndex(i, j, k)).norm();
 	//velocity->
 }
 
