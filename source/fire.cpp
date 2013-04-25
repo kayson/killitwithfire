@@ -57,8 +57,6 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
 	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
     
-	dsd = new DetonationShockDynamics();
-    
     GridField<int> *cellTypes = new GridField<int>(u);
     u.setTransformation(u.getTrans());
     cellTypes->setAll(FUEL);
@@ -222,7 +220,8 @@ CellType Fire::getCellType(double phi)
 }
 
 void Fire::runSimulation(){
-
+	phi.updateNormals();
+	phi.updateDSD(preset->dt, &u);
 
 	 //Advektera levelset
     /*for(double currentTime = 0; currentTime < preset->dt;)
@@ -257,7 +256,7 @@ void Fire::runSimulation(){
 
 	//u.advect(preset->dt);
 	//preset->advectVelocities->advect(ghost, phi, preset->dt);
-    preset->advectVelocities->advect(ghost, preset->dt);
+    //preset->advectVelocities->advect(ghost, preset->dt);
 
 	//enforceBorderCondition();
 
@@ -274,22 +273,22 @@ void Fire::runSimulation(){
  //   //u.advect(preset->dt);
  //   //preset->advectVelocities->advect(u, phi, preset->dt);
 
-    phi.updateNormals();
+    
 
  //   
  //   //enforceBorderCondition();
  //   computeCellTypes(false);
-    u.addForceGrid(*T->beyonce, preset->dt);
+  //  u.addForceGrid(*T->beyonce, preset->dt);
  //   
- //   Vector3 gravity = Vector3(0.0, -0.1, 0.0);
- //   u.addForce(gravity, preset->dt);
+   // Vector3 gravity = Vector3(0.0, -0.1, 0.0);
+   // u.addForce(gravity, preset->dt);
  //   
  //   //Vorticity confinement forces
  //   Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 	//
-	computeCellTypes(false);
-	advectTemperature(preset->dt);
+//	computeCellTypes(false);
+//	advectTemperature(preset->dt);
 
 	////try{
 	////	projection.project(preset->dt);
@@ -518,16 +517,17 @@ void Fire::computeW()
   {
     int i, j, k;
     it.index(i,j,k);
-    Vector3 v = u.velocityAtCenter(i, j, k) + phi.getNormal(i, j, k)*FirePresets::S;
-    w.setValueAtIndex(v, it.index());
+    //Vector3 v = u.velocityAtCenter(i, j, k) + phi.getNormal(i, j, k)*FirePresets::S;
+	Vector3 v = phi.getFlameSpeed(i, j, k, &u);
+	w.setValueAtIndex(v, it.index());
   }
 
 }
 
 void Fire::draw()
 {
-  //phi.draw();
-  T->draw();
+  phi.draw();
+  //T->draw();
 
 	//drawVorticities();
 	//drawCenterVelocities();

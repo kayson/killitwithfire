@@ -151,6 +151,7 @@ public:
 
 	Vector3 fireGhostFluid(LevelSet& phi, const Vector3 &endPos, const Vector3 &eVel, const CellType startType)
 	{
+		throw("HE");
 		//Bridsons metod, tror den ger samma resultat
 		Vector3 N = phi.getNormal(endPos.x, endPos.y, endPos.z)*-1;
 		Vector3 jump = N*(FirePresets::rhof/FirePresets::rhob - 1.0)*FirePresets::S;
