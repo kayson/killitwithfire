@@ -661,7 +661,7 @@ void Fire::computeW(){
 }
 
 void Fire::draw(){
-    //phi.draw();
+    phi.draw();
     //T->draw();
 
 	//drawVorticities();
