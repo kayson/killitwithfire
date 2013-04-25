@@ -61,6 +61,27 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
 	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
     
+
+    //Init marker-particles
+    /*for (GridFieldIterator<int> iter = cellTypes.iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double l_x,l_y,l_z;
+        cellTypes.indexToLocal(i, j, k, l_x, l_y, l_z);
+        double r = 0.3;
+        double c_x = 0.5;
+        double c_y = 0.85;
+        
+        if (r*r > (l_x-c_x)*(l_x-c_x)+(l_y-c_y)*(l_y-c_y)+l_z*l_z && iter.value() != SOLID) {
+            double x,y,z;
+            cellTypes.indexToWorld(i, j, k, x, y, z);
+            double interval = 0.125;
+            particles.push_back(Vector3(x-cellTypes.dx()*0.25+random(interval),y-cellTypes.dy()*0.25+random(interval),z));
+            particles.push_back(Vector3(x-cellTypes.dx()*0.25+random(interval),y+cellTypes.dy()*0.25+random(interval),z));
+            particles.push_back(Vector3(x+cellTypes.dx()*0.25+random(interval),y-cellTypes.dy()*0.25+random(interval),z));
+            particles.push_back(Vector3(x+cellTypes.dx()*0.25+random(interval),y+cellTypes.dy()*0.25+random(interval),z));
+        }
+    }*/
     
     ghost.makeRandom();
 }
@@ -323,8 +344,8 @@ void Fire::runSimulation(){
 		phi.grid->setValueAtIndex(1,i,4,0);
 	}*/
 
-    u_burnt.addForceGrid(*T->beyonce, preset->dt);
-    u_fuel.addForceGrid(*T->beyonce, preset->dt);
+    //u_burnt.addForceGrid(*T->beyonce, preset->dt);
+    //u_fuel.addForceGrid(*T->beyonce, preset->dt);
 
     //Vector3 gravity = Vector3(0.0, -0.1, 0.0);
     //u.addForce(gravity, preset->dt);
@@ -644,13 +665,13 @@ void Fire::computeW(){
 }
 
 void Fire::draw(){
-    phi.draw();
+    //phi.draw();
     T->draw();
 
 	//drawVorticities();
 	//drawCenterVelocities();
     drawMAC(u_burnt, BURNT, 1,0,0);
-    //drawMAC(u_fuel, FUEL, 0,1,1);
+    drawMAC(u_fuel, FUEL, 0,1,1);
     //drawMAC(u_burnt, BURNT, 0,1,1);
 
     //drawMAC(u_burnt, FUEL, 1,0,0);
@@ -689,7 +710,6 @@ void Fire::draw(){
 Fire::~Fire(){
 
     delete preset;
-	//delete pcgSolver;
 	delete A;
 	delete rhs;
 	delete p;

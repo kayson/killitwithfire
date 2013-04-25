@@ -42,8 +42,8 @@ CentralDiff *FirePresets::centralDisc = new CentralDiff();
 
 MACAdvect<double> *FirePresets::tempAdvect = new MACAdvectRK2<double>();
 
-const int FirePresets::GRID_DIM_X = 50;
-const int FirePresets::GRID_DIM_Y = 50;
+const int FirePresets::GRID_DIM_X = 90;
+const int FirePresets::GRID_DIM_Y = 90;
 const int FirePresets::GRID_DIM_Z = 1;
 
 const double FirePresets::T_IGNITION = 537.0 + 273.15; //  Methane ignition temp (537 °C).

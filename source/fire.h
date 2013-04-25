@@ -10,6 +10,7 @@
 #include "GridField.h"
 #include "GridMapping.h"
 #include "helper.h"
+#include "Particles.h"
 
 //#include "Pressure\pcgsolver\blas_win.h"
 #include "Water/Particles.h"
@@ -75,7 +76,7 @@ public:
     
 	static CellType getCellType(double phi);
 private:
-
+    Particles particles;
     FirePresets *preset;
     LevelSet phi;
 
@@ -107,7 +108,7 @@ private:
 	
     //Projektion
     Projection projection;
-    Particles particles;
+
     //GridField<double> scalar;
 
 	//Vorticity confinement forces
