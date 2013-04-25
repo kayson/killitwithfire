@@ -14,7 +14,8 @@
 #include <iostream>
 #include <vector>
 #include "glfw.h"
-#include <OpenGL/OpenGL.h>
+#include "GL/freeglut.h"
+
 
 class Particles : public std::vector<Vector3> {
 public:

@@ -69,10 +69,10 @@ void Vorticity::addVorticity(const MACGrid &u, GridField<Vector3> &forces, const
 
 					/*Vector3 crossprod(	N.z * ohmVecTemp.y - N.y * ohmVecTemp.z,
 										N.z * ohmVecTemp.x - N.x * ohmVecTemp.z,
-										N.x * ohmVecTemp.y - N.y * ohmVecTemp.x);*/
+										N.x * ohmVecTemp.y - N.y * ohmVecTemp.x);**/
 
 					Vector3 crossprod(	N.y * ohmVecTemp.z - N.z * ohmVecTemp.y,
-										-(N.z * ohmVecTemp.x - N.x * ohmVecTemp.z),
+										-(N.x * ohmVecTemp.z - N.z * ohmVecTemp.x),
 										N.x * ohmVecTemp.y - N.y * ohmVecTemp.x);
 
 					fconf = crossprod*dx*epsilon;

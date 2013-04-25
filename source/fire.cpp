@@ -328,20 +328,20 @@ void Fire::runSimulation(){
     enforceBorderCondition();
 
     //Vorticity
-	/*Vorticity::addVorticity(u_burnt, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	Vorticity::addVorticity(u_burnt, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
     u_burnt.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 	Vorticity::addVorticity(u_fuel, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
     u_fuel.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
     computeGhostValues();
-    */
+    
     
     //Add fuel
 	/*for(int i = preset->GRID_DIM_X*0.45; i < preset->GRID_DIM_X*0.55; i++){
 		phi.grid->setValueAtIndex(1,i,4,0);
 	}*/
 
-    //u_burnt.addForceGrid(*T->beyonce, preset->dt);
-    //u_fuel.addForceGrid(*T->beyonce, preset->dt);
+    u_burnt.addForceGrid(*T->beyonce, preset->dt);
+    u_fuel.addForceGrid(*T->beyonce, preset->dt);
 
     //Vector3 gravity = Vector3(0.0, -0.1, 0.0);
     //u.addForce(gravity, preset->dt);
