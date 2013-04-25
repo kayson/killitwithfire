@@ -13,8 +13,11 @@
 #include "pcgsolver/pcg_solver.h"
 #include "LevelSet.h"
 #include "GhostMAC.h"
+#include "GridField.hpp"
 
 class Projection {
+private:
+    void print_vector(std::vector<double> &v) const;
 private:
     void resize();
     void fillA();
@@ -28,7 +31,8 @@ private:
 private:
     MACGrid *_u;
     LevelSet *_phi;
-    GhostMAC *_w;
+    const GridField<bool> *_solids;
+    CellType _cellType;
     int _size;
     double _dx;
     double _dt;
@@ -38,7 +42,6 @@ private:
     GridField<double> *p;
 public:
     Projection(MACGrid *u, LevelSet *phi):_u(u),_phi(phi){
-        _w = static_cast<GhostMAC*>(u);
         A = nullptr;
         b = nullptr;
         x = nullptr;
@@ -49,6 +52,6 @@ public:
         delete b;
         delete x;    
     };
-    void project(double dt);
+    void project(MACGrid *u,const GridField<bool> *solids,CellType cellType, double dt);
 };
 #endif /* defined(__FuidFire__Projection2__) */

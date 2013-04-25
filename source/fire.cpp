@@ -10,6 +10,7 @@
 #include "presets/firePresets.h"
 #include "MACAdvect.h"
 #include "Input.h"
+#include "JumpCondition.h"
 
 #if defined __APPLE__
 #include "glfw.h"
@@ -25,7 +26,7 @@
 #include "Vorticity.h"
 
 
-Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE), ghost(&phi, FirePresets::GRID_SIZE,true),projection(&ghost,&phi),celltype(ghost)
+Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE), ghost(&phi, FirePresets::GRID_SIZE,true),projection(&ghost,&phi), u_fuel(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),u_burnt(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),solids(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
 {
 	//Presets
 	preset = pre;
@@ -34,7 +35,11 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	phi.fillLevelSet(preset->implicitFunction);
 	//2D grid
 	u = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
+    u_burnt = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
+	u_fuel = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
 
+    //Solids
+    setSolids();
 	//Advect
 
 	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
@@ -57,18 +62,70 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
     
     
-    GridField<int> *cellTypes = new GridField<int>(u);
-    u.setTransformation(u.getTrans());
-    cellTypes->setAll(FUEL);
-    for (GridFieldIterator<int> it = celltype.iterator(); !it.done(); it.next()) {
+    ghost.makeRandom();
+}
+
+void Fire::setSolids(){
+    
+    for (GridFieldIterator<bool> it = solids.iterator(); !it.done(); it.next()) {
         int i,j,k;
-        it.index(i,j, k);
-        if (i == 0 || j == 0 || i == cellTypes->xdim()-1 || j == cellTypes->ydim()-1) {
-            cellTypes->setValueAtIndex(SOLID, i, j, k);
+        it.index(i, j, k);
+        if (i == 0 || i == (solids.xdim()-1) || j == 0) {
+            solids.setValueAtIndex(true, it.index());
+        }else{
+            solids.setValueAtIndex(false, it.index());
         }
     }
     
-    ghost.makeRandom();
+    
+
+}
+
+void Fire::computeGhostValues(){
+    assert(u_fuel == u_burnt);
+    for (int field = 0 ; field < 3; field++) {
+        GridField<double> *burnt,*fuel;
+        VelocityDirection dir;
+        if (field == 0) {
+            dir = UDIR;
+            burnt = u_burnt._u;
+            fuel = u_fuel._u;
+        }else if (field == 1){
+            dir = VDIR;
+            burnt = u_burnt._v;
+            fuel = u_fuel._v;
+        }else { //Field == 2
+            burnt = u_burnt._w;
+            fuel = u_fuel._w;
+            dir = WDIR;
+        }
+        
+        //U,V or W
+        for (GridFieldIterator<double> it = burnt->iterator(); !it.done(); it.next()) {
+            
+            int i,j,k;
+            it.index(i, j, k);
+            double x,y,z; //World coord for face
+            burnt->indexToWorld(i, j, k, x, y, z);
+            
+            CellType cellType = getCellType(phi.grid->valueAtWorld(x, y, z));
+            if (cellType == FUEL) {
+                
+                double DVn = JumpCondition::DVn(&phi, dir, x, y, z, cellType,BURNT);
+                double fuelVal = fuel->valueAtIndex(it.index());
+                burnt->setValueAtIndex(fuelVal+DVn,it.index());
+                
+            }else if (cellType == BURNT){
+                
+                double DVn = JumpCondition::DVn(&phi,dir, x, y, z, cellType,FUEL);
+                double gasVal = burnt->valueAtIndex(it.index());
+                fuel->setValueAtIndex(gasVal+ DVn,it.index());
+                
+            }
+            
+        }
+    }
+    
 }
 
 double Fire::computeDT(double currentTime){
@@ -98,9 +155,8 @@ void Fire::advectLevelSet(double duration)
 	preset->advection->advect(w, phi, duration);
 }
 
-void Fire::advectTemperature(double dt)
-{
-    T->AdvectTemperatureField(dt, u, phi);
+void Fire::advectTemperature(double dt){
+    T->AdvectTemperatureField(dt, u_burnt, phi);
     T->CalculateBuoyancyForceField();
 }
 
@@ -164,39 +220,9 @@ double Fire::getDensity(const int i, const int j, const int k, DirectionEnums d)
 
 }
 
-
-void Fire::computeCellTypes(bool flag)
-{
-	for(GridFieldIterator<int> it = celltype.iterator(); !it.done(); it.next())
-	{
-		int i, j, k;
-		it.index(i, j, k);
-
-
-		celltype.setValueAtIndex(phi.getCellType(i,j,k), i, j, k);
-
-        if (i == 0 || i == celltype.xdim()-1 || j == 0 || j == celltype.ydim()-1) {
-            celltype.setValueAtIndex(SOLID, it.index());
-        }else{
-            CellType a = FUEL;
-            CellType b = AIR;
-            if (flag == true) {
-                a = AIR;
-                b = FUEL;
-            }
-            
-            if (getCellType(i,j,k) == FUEL) {
-                celltype.setValueAtIndex(a, i, j, k);
-            }else{
-                celltype.setValueAtIndex(b, i, j, k);
-            }
-        }
-	}
-}	
-
 CellType Fire::getCellType(const int i, const int j, const int k) const
 {
-	if(i < 2 || i >= (phi.grid->xdim() - 2) || j< 2 || j >= (phi.grid->ydim() - 2) ) //Check if is solid
+	if(solids.valueAtIndex(i, j, k)) //Check if is solid
 		return SOLID;
 	else if(phi.grid->valueAtIndex(i,j,k) > 0.0)
 		return FUEL;
@@ -209,8 +235,8 @@ CellType Fire::getCellType(double w_x, double w_y,double w_z) const
 	return getCellType(phi.grid->valueAtWorld(w_x, w_y, w_z));
 }
 
-CellType Fire::getCellType(double phi)
-{
+CellType Fire::getCellType(double phi){
+
 	if(false) //Check if is solid
 		return SOLID;
 	else if(phi > 0.0)
@@ -220,7 +246,9 @@ CellType Fire::getCellType(double phi)
 }
 
 void Fire::runSimulation(){
-
+    //static int once = 0;
+    //if(once == 0) once++;
+    //else return;
 	 //Advektera levelset
     /*for(double currentTime = 0; currentTime < preset->dt;)
 	{
@@ -231,14 +259,16 @@ void Fire::runSimulation(){
 	static int counter = 0;
     if (++counter < 1) {
     	for(int i = -8; i < 8; i++){
-            phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,5,0);
+            /*phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,5,0);
             phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,6,0);
             phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,7,0);
             phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,8,0);
+            */
         }
         
         for(int i = -6; i < 6; i++){
-            /*u.setValueAtFace(2,preset->GRID_DIM_X/2+i,5,0,DOWN);
+            /*
+            u.setValueAtFace(2,preset->GRID_DIM_X/2+i,5,0,DOWN);
             u.setValueAtFace(2,preset->GRID_DIM_X/2+i,6,0,DOWN);
             u.setValueAtFace(2,preset->GRID_DIM_X/2+i,5,0,RIGHT);
             u.setValueAtFace(2,preset->GRID_DIM_X/2+i,6,0,RIGHT);
@@ -246,7 +276,17 @@ void Fire::runSimulation(){
             u.setValueAtFace(3,preset->GRID_DIM_X/2+i,6,0,DOWN);
             u.setValueAtFace(3,preset->GRID_DIM_X/2+i,5,0,RIGHT);
             u.setValueAtFace(3,preset->GRID_DIM_X/2+i,6,0,RIGHT);
-            */
+             */
+            /*
+            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 5, 0, DOWN);
+            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 6, 0, DOWN);
+            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 5, 0, RIGHT);
+            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 6, 0, RIGHT);
+            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 5, 0, DOWN);
+            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 6, 0, DOWN);
+            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 5, 0, RIGHT);
+            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 6, 0, RIGHT);
+             */
         }
     }
 
@@ -255,77 +295,90 @@ void Fire::runSimulation(){
 
 	//u.advect(preset->dt);
 	//preset->advectVelocities->advect(ghost, phi, preset->dt);
-    preset->advectVelocities->advect(ghost, preset->dt);
-
-	//enforceBorderCondition();
-
-    //u.addForceGrid(*T->beyonce, preset->dt);
-
-    //Vector3 gravity = Vector3(0.0, 0.03, 0.0);
-    //u.addForce(gravity, preset->dt);
-	
-	//Vorticity confinement forces
-	//Vorticity::addVorticity(u, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
-
-	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
-
-	for(int i = preset->GRID_DIM_X*0.45; i < preset->GRID_DIM_X*0.55; i++)
-	{
-		phi.grid->setValueAtIndex(1,i,4,0);
-	}
-
-
-    //Beräkna om vad för typ voxlarna är
-    computeCellTypes(false);
-    
-    //u.advect(preset->dt);
-    preset->advectVelocities->advect(u, phi, preset->dt);
+    enforceBorderCondition();
     phi.updateNormals();
+    int j = 10;
+    int i = 20;
+    for (int n = 0;  n < 10; n++) {
+        //phi.grid->setValueAtIndex(0.050, i+n, j, 0);
+    }
+
+    computeGhostValues();
+    preset->advectVelocities->advect(u_burnt, preset->dt);
+    preset->advectVelocities->advect(u_fuel, preset->dt);
+    computeGhostValues();
+
+    enforceBorderCondition();
+
+    //Vorticity
+	/*Vorticity::addVorticity(u_burnt, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+    u_burnt.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
+	Vorticity::addVorticity(u_fuel, *vorticityForces, 2.5, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+    u_fuel.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
+    computeGhostValues();
+    */
     
-    //enforceBorderCondition();
-    
-    u.addForceGrid(*T->beyonce, preset->dt);
-    
-    Vector3 gravity = Vector3(0.0, -0.1, 0.0);
+    //Add fuel
+	/*for(int i = preset->GRID_DIM_X*0.45; i < preset->GRID_DIM_X*0.55; i++){
+		phi.grid->setValueAtIndex(1,i,4,0);
+	}*/
+
+    u_burnt.addForceGrid(*T->beyonce, preset->dt);
+    u_fuel.addForceGrid(*T->beyonce, preset->dt);
+
+    //Vector3 gravity = Vector3(0.0, -0.1, 0.0);
     //u.addForce(gravity, preset->dt);
     
     //Vorticity confinement forces
-    Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
-	u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
+    //Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
 
 	advectTemperature(preset->dt);
-
+    
+    
 	try{
-		projection.project(preset->dt);
+		projection.project(&u_burnt,&solids, BURNT, preset->dt);
+        projection.project(&u_fuel,&solids, FUEL, preset->dt);
 	}
 	catch(std::exception &e){
 		std::cout << e.what() << std::endl;
 	}
+    computeGhostValues();
 
     enforceBorderCondition();
-    computeCellTypes(false);
-	//projection.project(preset->dt);
-    
-    
-	advectLevelSet(preset->dt);
+
+    advectLevelSet(preset->dt);
 
 	//Fixa signed distance field
-	phi.reinitialize();
-
+    phi.reinitialize();
+    
+    phi.updateNormals();
+    
 }
 
 
 void Fire::enforceBorderCondition(){
-    for (GridMappingIterator it = ghost.iterator(); !it.done(); it.next()) {
+    
+    
+    
+    
+    for (GridMappingIterator it = u_fuel.iterator(); !it.done(); it.next()) {
         int i,j,k;
         it.index(i, j, k);
-        if (i < 1 || i >= ghost.xdim()-1 || j < 1 || j >= ghost.ydim()-1) {
-            ghost.setValueAtFace(0, i, j, k, RIGHT);
-            ghost.setValueAtFace(0, i, j, k, LEFT);
-            ghost.setValueAtFace(0, i, j, k, UP);
-            ghost.setValueAtFace(0, i, j, k, DOWN);
+        if (solids.valueAtIndex(i, j, k)) {
+            u_fuel.setValueAtFace(0, i, j, k, RIGHT);
+            u_fuel.setValueAtFace(0, i, j, k, LEFT);
+            u_fuel.setValueAtFace(0, i, j, k, UP);
+            u_fuel.setValueAtFace(0, i, j, k, DOWN);
+            
+            u_burnt.setValueAtFace(0, i, j, k, RIGHT);
+            u_burnt.setValueAtFace(0, i, j, k, LEFT);
+            u_burnt.setValueAtFace(0, i, j, k, UP);
+            u_burnt.setValueAtFace(0, i, j, k, DOWN);
         }
     }
+    
+    
 }
 
 void Fire::drawVorticities(){
@@ -346,53 +399,63 @@ void Fire::drawVorticities(){
 	}
 }
 
-void Fire::drawMAC(){
+void Fire::drawMAC(MACGrid &grid){
 
 	glColor3f(1,1,0);
-	glBegin(GL_POINTS);
-	for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
+	for (GridMappingIterator iter = grid.iterator(); !iter.done(); iter.next()) {
 		int i,j,k;
 		iter.index(i, j, k);
 		double x,y,z;
-		u.indexToWorld(i, j, k, x, y, z);
+		grid.indexToWorld(i, j, k, x, y, z);
+        Vector3 vel = grid.velocityAtWorld(Vector3(x,y,z));
+        glBegin(GL_LINE_STRIP);
+		glVertex3d(x,y,0);
+		glVertex3d(x+vel.x, y+vel.y,0);
+        glEnd();
+    }
+}
 
-		glVertex3d(x, y, 0);
+void Fire::drawMAC(MACGrid &grid,CellType cellType, double r,double g,double b){
+    
+	glColor3f(r,g,b);
+    
+	for (GridMappingIterator iter = grid.iterator(); !iter.done(); iter.next()) {
+		int i,j,k;
+		iter.index(i, j, k);
+        if (getCellType(i, j, k) == cellType  && !solids.valueAtIndex(i, j, k)) {
+            double x,y,z;
+            grid.indexToWorld(i, j, k, x, y, z);
+            Vector3 vel = grid.velocityAtWorld(Vector3(x,y,z));
+            glBegin(GL_LINE_STRIP);
+            glVertex3d(x,y,0);
+            glVertex3d(x+vel.x, y+vel.y,0);
+            glEnd();
+        }
 	}
-	glEnd();
-
+    
 }
 
 void Fire::drawSolid(){
 
-	double dx = celltype.dx();
-	double dy = celltype.dy();
+	double dx = solids.dx();
+	double dy = solids.dy();
 	//double dz = celltype.mapping.dx();
 	glBegin(GL_QUADS);
-	for (GridFieldIterator<int> iter = celltype.iterator(); !iter.done(); iter.next()) {
+	for (GridFieldIterator<bool> iter = solids.iterator(); !iter.done(); iter.next()) {
 		double x,y,z;
 		int i,j,k;
 		iter.index(i, j, k);
 
-		celltype.indexToWorld(i, j, k, x, y, z);
+		solids.indexToWorld(i, j, k, x, y, z);
 		int val = iter.value();
 
-		if (val == SOLID){
-			glColor3d(0.1, 0.1, 0.1);
+		if (val){
+			glColor3d(1.0, 1.0, 1.0);
 			glVertex3d(x-dx*0.5, y-dy*0.5, 0);
 			glVertex3d(x+dx*0.5, y-dy*0.5, 0);
 			glVertex3d(x+dx*0.5, y+dy*0.5, 0);
 			glVertex3d(x-dx*0.5, y+dy*0.5, 0);
-		}else if (val == FUEL){
-			glColor3f(0, 0, 1);
-			glVertex3d(x-dx*0.5, y-dy*0.5, 0);
-			glVertex3d(x+dx*0.5, y-dy*0.5, 0);
-			glVertex3d(x+dx*0.5, y+dy*0.5, 0);
-			glVertex3d(x-dx*0.5, y+dy*0.5, 0);
-		}else if (val == AIR){
-			//None dude
 		}
-
-
 	}
 
 	glEnd();
@@ -425,7 +488,35 @@ void Fire::drawFaceVelocities(){
 		glVertex3d(x, y+val, 0);
 		glEnd();
 	}
+}
 
+void Fire::drawFaceVelocities(MACGrid &grid) const{
+    glColor3f(0,1,0);
+	for (GridFieldIterator<double> iter = grid._u->iterator(); !iter.done(); iter.next()) {
+		int i,j,k;
+		iter.index(i, j, k);
+		double x,y,z;
+		grid._u->indexToWorld(i, j, k, x, y, z);
+		double val = iter.value();
+        
+		glBegin(GL_LINE_STRIP);
+		glVertex3d(x, y, 0);
+		glVertex3d(x+val, y, 0);
+		glEnd();
+	}
+    
+	glColor3f(1,0,0);
+	for (GridFieldIterator<double> iter = grid._v->iterator(); !iter.done(); iter.next()) {
+		int i,j,k;
+		iter.index(i, j, k);
+		double x,y,z;
+		grid._v->indexToWorld(i, j, k, x, y, z);
+		double val = iter.value();
+		glBegin(GL_LINE_STRIP);
+		glVertex3d(x, y, 0);
+		glVertex3d(x, y+val, 0);
+		glEnd();
+	}
 }
 
 void Fire::drawCenterGradients(Discretization *disc)
@@ -504,13 +595,13 @@ void Fire::drawCenterGradients(Discretization *disc)
 
 void Fire::drawCenterVelocities(){
     glBegin(GL_LINES);
-    for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
+    for (GridMappingIterator iter = w.iterator(); !iter.done(); iter.next()) {
         int i,j,k;
         iter.index(i, j, k);
         double x,y,z;
-        u.indexToWorld(i, j, k, x, y, z);
+        w.indexToWorld(i, j, k, x, y, z);
         
-        Vector3 v = ghost.velocityAtWorld(Vector3(x,y,z));//*FirePresets::dx;
+        Vector3 v = w.valueAtWorld(x,y,z);//*FirePresets::dx;
         glColor3d(1.0,1.0,0.0);
         glVertex3d(x, y, z);
         glVertex3d(x + v.x, y +v.y , z+v.z);
@@ -518,30 +609,58 @@ void Fire::drawCenterVelocities(){
     glEnd();
 }
 
-void Fire::computeW()
-{
-  for(GridFieldIterator<Vector3> it = w.iterator(); !it.done(); it.next())
-  {
-    int i, j, k;
-    it.index(i,j,k);
-    Vector3 v = u.velocityAtCenter(i, j, k) + phi.getNormal(i, j, k)*FirePresets::S;
-    w.setValueAtIndex(v, it.index());
-  }
-
+void Fire::drawNormals() const{
+    glBegin(GL_LINES);
+    for (GridMappingIterator iter = phi.normals->iterator(); !iter.done(); iter.next()) {
+        int i,j,k;
+        iter.index(i, j, k);
+        double x,y,z;
+        phi.normals->indexToWorld(i, j, k, x, y, z);
+        
+        Vector3 v = phi.normals->valueAtIndex(iter.index());
+        glColor3d(1.0,1.0,0.0);
+        glVertex3d(x, y, z);
+        glVertex3d(x + v.x, y +v.y , z+v.z);
+    }
+    glEnd();
 }
 
-void Fire::draw()
-{
-  //phi.draw();
-  T->draw();
+
+void Fire::computeW(){
+  for(GridFieldIterator<Vector3> it = w.iterator(); !it.done(); it.next()){
+      int i, j, k;
+      it.index(i,j,k);
+      double x,y,z;
+      w.indexToWorld(i, j, k, x, y, z);
+      Vector3 v;
+      //if (getCellType(i, j, k) == FUEL) {
+          v = u_fuel.velocityAtWorld(Vector3(x,y,z));
+      /*}else if (getCellType(i, j, k) == BURNT){
+          v = u_burnt.velocityAtWorld(Vector3(x,y,z));
+      }*/
+      
+      w.setValueAtIndex(v, it.index());
+  }
+}
+
+void Fire::draw(){
+    phi.draw();
+    T->draw();
 
 	//drawVorticities();
-	drawCenterVelocities();
+	//drawCenterVelocities();
+    drawMAC(u_burnt, BURNT, 1,0,0);
+    //drawMAC(u_fuel, FUEL, 0,1,1);
+    //drawMAC(u_burnt, BURNT, 0,1,1);
+
+    //drawMAC(u_burnt, FUEL, 1,0,0);
+    //drawMAC(u_burnt, BURNT, 0,1,1);
+
     //drawCenterGradients(FirePresets::centralDisc);
-    //drawFaceVelocities();
+    //drawFaceVelocities(u_burnt);
     //drawMAC();
     //drawSolid();
-    
+    //drawNormals();
     /*GhostMAC ghost(phi, u);
     Vector3 vector1 = u.velocityAtWorld(Vector3(Input::worldX, Input::worldY, Input::worldZ));
     std::cout << vector1 << std::endl;
@@ -549,14 +668,14 @@ void Fire::draw()
     std::cout << vector << std::endl << std::endl;
     */
 
-    Vector3 vector = ghost.velocityAtWorld(Vector3(Input::worldX, Input::worldY, Input::worldZ));// phi.getNormal();
+    Vector3 vector = phi.normals->valueAtWorld(Input::worldX, Input::worldY, 0.0f);// phi.getNormal();
     //Vector3 vector =  u.velocityAtWorld(Vector3(Input::worldX,Input::worldY,0.0f));
 
     
     glEnable(GL_POINT_SMOOTH);
     glPointSize(3.0f);
     glColor3d(0.6, 0.6, 1.0);
-    glBegin(GL_POINTS);
+    glBegin(GL_LINE_STRIP);
     glVertex3d(Input::worldX,Input::worldY,0.0f);
     glEnd();
     

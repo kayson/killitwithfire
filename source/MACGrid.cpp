@@ -72,7 +72,7 @@ MACGrid MACGrid::createRandom2D(int xdim,int ydim, double size){
         int i,j,k;
         //double x,y,z;
         iterator.index(i, j, k);
-        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
+        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
         double vel = v1;
         m._w->setValueAtIndex(vel, iterator.index());
         m.buffer()->_w->setValueAtIndex(vel, iterator.index());
@@ -357,8 +357,7 @@ void MACGrid::addValueAtFace(double val,const int i, const int j, const int k, D
         _v->addValueAtIndex(val, i, j+1, k);
     }else  if (d == FORWARD){
         _w->addValueAtIndex(val, i, j, k);
-    }else{
-        //Backward
+    }else if(d == BACKWARD){
         _w->addValueAtIndex(val, i, j, k+1);
     }
 }

@@ -35,6 +35,8 @@ template<class T> class GridField;
 class GridMapping;
 class Fire{
 protected:
+    void setSolids();
+    void computeGhostValues();
     double computeDT(double currentTime);
 	void advectLevelSet(double duration);
 	void advectTemperature(double duration);
@@ -45,7 +47,6 @@ protected:
 	double getDensity(const int i, const int j, const int k, DirectionEnums d);
 
 	void computeW();
-	void computeCellTypes(bool flagx);
 	CellType getCellType(const int i, const int j, const int k) const;
 	CellType getCellType(double w_x, double w_y,double w_z) const;
 	//void 
@@ -57,9 +58,12 @@ public:
 
 	void drawCenterGradients(Discretization *disc);
     void drawFaceVelocities();
+    void drawFaceVelocities(MACGrid &grid) const;
 	void drawCenterVelocities();
+    void drawNormals() const;
 	void draw();
-    void drawMAC();
+    void drawMAC(MACGrid &grid);
+    void drawMAC(MACGrid &grid, CellType cellType, double r,double g,double b);
     void drawSolid();
     void drawCellTypes();
     void drawDivergence();
@@ -94,6 +98,9 @@ private:
 
     //Grid
     MACGrid u;
+    MACGrid u_fuel, u_burnt;
+    GridField<bool> solids;
+    
     GhostMAC ghost;
 	// Levelset Velocities u + S*N
 	GridField<Vector3> w;
@@ -101,7 +108,6 @@ private:
     //Projektion
     Projection projection;
     Particles particles;
-	GridField<int> celltype;
     //GridField<double> scalar;
 
 	//Vorticity confinement forces

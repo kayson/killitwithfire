@@ -33,7 +33,7 @@ protected:
     virtual void initialize(int xdim,int ydim,int zdim, double size);
 public:
     
-    //Factory-methodshtg
+    //Factory-methods
     static MACGrid createRandom2D(int xdim,int ydim, double size);
     
     //Konstruktorer

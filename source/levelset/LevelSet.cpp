@@ -17,9 +17,9 @@
 
 LevelSet::LevelSet()
 {
-	grid  = new GridField<double>(1000,1000,1000);
-	gridCopy = new GridField<double>(1000, 1000, 1000,10);
-	normals = new GridField<Vector3>(1000, 1000, 1000, 10);
+	grid  = new GridField<double>(10,10,10);
+	gridCopy = new GridField<double>(10, 10, 10,10);
+	normals = new GridField<Vector3>(10, 10, 10, 10);
 }
 
 LevelSet::LevelSet(int xDim, int yDim, int zDim, double size)

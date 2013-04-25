@@ -24,7 +24,7 @@ public:
     virtual ~MACAdvect(){}
     virtual double advect(double dt,const MACGrid &g, GridField<T> &field, int i,int j,int k) = 0;
     virtual double advect(double dt,const MACGrid &g, const VelocityDirection dir, LevelSet& phi, int i,int j,int k) = 0;
-
+    
     void advect(MACGrid &u, double dt){
         double x,y,z;
 
@@ -56,7 +56,7 @@ public:
             }
         }
         
-#pragma omp parallel for
+    #pragma omp parallel for
         for (int i = 0; i < u._w->xdim(); i++) {
             for (int j = 0; j < u._w->ydim(); j++) {
                 for (int k = 0; k < u._w->zdim(); k++) {
@@ -70,7 +70,7 @@ public:
         u.swapBuffer();
     }
     
-    void advect(MACGrid &u, GridField<double> &grid, double dt){
+    void advect(MACGrid &u, GridField<T> &grid, double dt){
         double x,y,z;
 
 #pragma omp parallel for

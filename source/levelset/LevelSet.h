@@ -6,7 +6,6 @@ template<class T> class GridField;
 class MACGrid;
 
 #include "helper.h"
-
 #ifdef __APPLE__
 #include "transform.hpp"
 #elif defined __unix__
@@ -49,6 +48,7 @@ public:
 
     
     Vector3 getVelocity(MACGrid &g, int i, const int j, const int k);
+    
 private:
 	
 	void (*render)();
