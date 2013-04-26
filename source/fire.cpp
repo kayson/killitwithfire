@@ -125,18 +125,41 @@ void Fire::computeGhostValues(){
             double x,y,z; //World coord for face
             burnt->indexToWorld(i, j, k, x, y, z);
             
+			//Beräkningar enl. ekv (13) Fedkiw 2002
             CellType cellType = getCellType(phi.grid->valueAtWorld(x, y, z));
             if (cellType == FUEL) {
-                
+
+				Vector3 centerVel = u_fuel.velocityAtWorld(Vector3(x,y,z));
+				double prod = centerVel.dot(phi.getNormal(x,y,z));
+				Vector3 normalProd = prod * phi.getNormal(x,y,z);
+
                 double DVn = JumpCondition::DVn(&phi, dir, x, y, z, cellType,BURNT);
                 double fuelVal = fuel->valueAtIndex(it.index());
-                burnt->setValueAtIndex(fuelVal+DVn,it.index());
+
+				if(dir == UDIR)
+					burnt->setValueAtIndex(fuelVal + DVn - normalProd.x,it.index());
+				else if (dir == VDIR)
+					burnt->setValueAtIndex(fuelVal+DVn-normalProd.y,it.index());
+				else //if (dir == WDIR)
+					burnt->setValueAtIndex(fuelVal+DVn-normalProd.y,it.index());
+				//burnt->setValueAtIndex(fuelVal+DVn,it.index());
                 
             }else if (cellType == BURNT){
-                
+
+				Vector3 centerVel = u_burnt.velocityAtWorld(Vector3(x,y,z));
+				double prod = centerVel.dot(phi.getNormal(x,y,z));
+				Vector3 normalProd = prod * phi.getNormal(x,y,z);
+
                 double DVn = JumpCondition::DVn(&phi,dir, x, y, z, cellType,FUEL);
                 double gasVal = burnt->valueAtIndex(it.index());
-                fuel->setValueAtIndex(gasVal+ DVn,it.index());
+
+				if(dir == UDIR)
+					fuel->setValueAtIndex(gasVal + DVn - normalProd.x,it.index());
+				else if (dir == VDIR)
+					fuel->setValueAtIndex(gasVal + DVn - normalProd.y,it.index());
+				else //if (dir == WDIR)
+					fuel->setValueAtIndex(gasVal + DVn - normalProd.z,it.index());
+                //fuel->setValueAtIndex(gasVal+ DVn,it.index());
                 
             }
             
@@ -276,11 +299,11 @@ void Fire::runSimulation(){
 	static int counter = 0;
     if (++counter < 1) {
     	for(int i = -8; i < 8; i++){
-            /*phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,5,0);
-            phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,6,0);
-            phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,7,0);
-            phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,8,0);
-            */
+            /*phi.grid->setValueAtIndex(300,preset->GRID_DIM_X/2+i,5,0);
+            phi.grid->setValueAtIndex(300,preset->GRID_DIM_X/2+i,6,0);
+            phi.grid->setValueAtIndex(300,preset->GRID_DIM_X/2+i,7,0);
+            phi.grid->setValueAtIndex(300,preset->GRID_DIM_X/2+i,8,0);*/
+            
         }
         
         for(int i = -6; i < 6; i++){
@@ -321,8 +344,17 @@ void Fire::runSimulation(){
     }
 
     computeGhostValues();
-    preset->advectVelocities->advect(u_burnt, preset->dt);
-    preset->advectVelocities->advect(u_fuel, preset->dt);
+#pragma omp parallel sections
+	{
+	#pragma omp section
+	{
+		preset->advectVelocities->advect(u_burnt, preset->dt);
+	}
+	#pragma omp section
+	{
+		preset->advectVelocities->advect(u_fuel, preset->dt);
+	}
+	}
     computeGhostValues();
 
     enforceBorderCondition();
@@ -343,8 +375,8 @@ void Fire::runSimulation(){
     u_burnt.addForceGrid(*T->beyonce, preset->dt);
     u_fuel.addForceGrid(*T->beyonce, preset->dt);
 
-    //Vector3 gravity = Vector3(0.0, -0.1, 0.0);
-    //u.addForce(gravity, preset->dt);
+    Vector3 gravity = Vector3(0.0, -0.1, 0.0);
+    u.addForce(gravity, preset->dt);
     
     //Vorticity confinement forces
     //Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
@@ -354,8 +386,17 @@ void Fire::runSimulation(){
     
     
 	try{
-		projection.project(&u_burnt,&solids, BURNT, preset->dt);
-        projection.project(&u_fuel,&solids, FUEL, preset->dt);
+#pragma omp parallel sections
+	{
+		#pragma omp section
+		{
+			projection.project(&u_burnt,&solids, BURNT, preset->dt);
+		}
+		#pragma omp section
+		{
+			projection.project(&u_fuel,&solids, FUEL, preset->dt);
+		}
+	}
 	}
 	catch(std::exception &e){
 		std::cout << e.what() << std::endl;
@@ -661,15 +702,15 @@ void Fire::computeW(){
 }
 
 void Fire::draw(){
-    //phi.draw();
+    phi.draw();
     //T->draw();
 
 	//drawVorticities();
 	//drawCenterVelocities();
-    drawMAC(u_burnt, BURNT, 1,0,0);
-    drawMAC(u_fuel, FUEL, 0,1,1);
+    //drawMAC(u_burnt, BURNT, 1,0,0);
+    //drawMAC(u_fuel, FUEL, 0,1,1);
     //drawMAC(u_burnt, BURNT, 0,1,1);
-    particles.draw();
+    //particles.draw();
     //drawMAC(u_burnt, FUEL, 1,0,0);
     //drawMAC(u_burnt, BURNT, 0,1,1);
 
