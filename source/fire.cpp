@@ -25,8 +25,10 @@
 #endif
 #include "Vorticity.h"
 
+#include "ClosestValueExtrapolation.h"
+#include "ConstantValueExtrapolation.h"
 
-Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE), ghost(&phi, FirePresets::GRID_SIZE,true),projection(&ghost,&phi), u_fuel(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),u_burnt(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),solids(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE)
+Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE, new ClosestValueExtrapolation<Vector3>()),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE), ghost(&phi, FirePresets::GRID_SIZE,true),projection(&ghost,&phi), u_fuel(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),u_burnt(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),solids(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE, new ClosestValueExtrapolation<bool>())
 {
 	//Presets
 	preset = pre;
@@ -42,8 +44,8 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
     setSolids();
 	//Advect
 
-	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
-	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim(), new ConstantValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
+	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim(), new ConstantValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
 	pVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
 	rhsVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
 
@@ -59,7 +61,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 
 	T = new Temperature(phi.grid);
 
-	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z);
+	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
     
 
     //Init marker-particles
@@ -707,8 +709,8 @@ void Fire::draw(){
 
 	//drawVorticities();
 	//drawCenterVelocities();
-    //drawMAC(u_burnt, BURNT, 1,0,0);
-    //drawMAC(u_fuel, FUEL, 0,1,1);
+    drawMAC(u_burnt, BURNT, 1,0,0);
+    drawMAC(u_fuel, FUEL, 0,1,1);
     //drawMAC(u_burnt, BURNT, 0,1,1);
     //particles.draw();
     //drawMAC(u_burnt, FUEL, 1,0,0);

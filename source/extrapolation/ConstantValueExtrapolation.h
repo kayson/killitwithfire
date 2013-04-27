@@ -1,3 +1,35 @@
+//Axel väldigt simpel approximering av ett levelset utanför griden
+
+#ifndef CONSTANTVALUEEXTRAPOLATION_H
+#define CONSTANTVALUEEXTRAPOLATION_H
+
+#include "Extrapolation.h"
+#include "GridField.h"
+
+template<class T>
+class ConstantValueExtrapolation  : public Extrapolation<T>
+{
+private:
+	T _value;
+public:
+	ConstantValueExtrapolation(const T &value = T()) : _value(value) {}
+
+    virtual ~ConstantValueExtrapolation(){}
+
+	virtual Extrapolation<T>* clone() const
+	{
+		return new ConstantValueExtrapolation<T>();
+	}
+
+	virtual T extrapolate(const GridField<T>& g, const int i, const int j, const int k) const
+	{
+		return _value;
+	}
+};
+
+#endif
+
+
 // Johan Noren
 // Denna class genomfor konstant extrapolering. Om en operator forsoker
 // hamta data fran utanfor griden extrapoleras vardet till den

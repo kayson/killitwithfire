@@ -11,8 +11,10 @@
 #include "../GridFieldFileManager.h"
 #include "glfw.h"
 #include "MACAdvect.h"
+#include "ClosestValueExtrapolation.h"
 
-Water2D::Water2D(int size):u(size,size,1,18),cellTypes(size,size,1,18){
+
+Water2D::Water2D(int size):u(size,size,1,18),cellTypes(size,size,1,18, new ClosestValueExtrapolation<int>()){ //TODO KORREKT EXTRAPOLERING?
     
     //Default variables
     g = Vector3(0.0,-0.55,0.0);

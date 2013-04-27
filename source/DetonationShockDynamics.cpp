@@ -1,9 +1,10 @@
 #include "DetonationShockDynamics.h"
 #include "firePresets.h"
 #include "GridField.h"
+#include "ConstantValueExtrapolation.h"
 
 DetonationShockDynamics::DetonationShockDynamics(){
-  flameFrontVelocity = new GridField<double>(1.0, 1.0, 1.0);
+  flameFrontVelocity = new GridField<double>(1.0, 1.0, 1.0, new ConstantValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
 }
 void DetonationShockDynamics::Update_D_With_DSD(){
   

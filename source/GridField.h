@@ -26,19 +26,21 @@ class Vector3;
 
 template <class T> class GridFieldIterator;
 template<class T> class Interpolation;
+template<class T> class Extrapolation;
 
 template <class T>
 class GridField : public GridMapping {
 public:
     T *_data;
     Interpolation<T> *_interpolation;
+	Extrapolation<T> *_extrapolation;
 private:
     GridField();
 public:
     //Konstruktor/Destruktor
-    GridField(const GridMapping &m);
-    GridField(int xdim,int ydim, int zdim);
-    GridField(int xdim,int ydim, int zdim, double size);
+    GridField(const GridMapping &m, Extrapolation<T> *extrapolation);
+    GridField(int xdim,int ydim, int zdim, Extrapolation<T> *extrapolation);
+    GridField(int xdim,int ydim, int zdim, double size, Extrapolation<T> *extrapolation);
     GridField(const GridField<T> &g);
     GridField<T>& operator=(const GridField<T> &g);
     ~GridField();

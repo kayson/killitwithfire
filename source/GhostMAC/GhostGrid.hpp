@@ -15,7 +15,7 @@
 
 
 template<class T>
-GhostGridField<T>::GhostGridField(int xdim,int ydim,int zdim,LevelSet *p, VelocityDirection direction):GridField<T>(xdim,ydim,zdim),_levelset(p){
+GhostGridField<T>::GhostGridField(int xdim,int ydim,int zdim,LevelSet *p, VelocityDirection direction):GridField<T>(xdim,ydim,zdim, new ConstantValueExtrapolation<T>()),_levelset(p){ //TODO KORREKT EXTRAPOLERING?
     _direction = direction;
 }
 

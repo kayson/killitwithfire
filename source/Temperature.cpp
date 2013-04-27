@@ -8,6 +8,7 @@
 #include "fire.h"
 #include "Vector3.h"
 #include "BlackBodyRadiation.h"
+#include "ClosestValueExtrapolation.h"
 
 #if defined __APPLE__ || defined __unix__
 #include "glfw.h"
@@ -22,8 +23,8 @@ Temperature::Temperature(GridField<double> *phi)
 		YDIM = FirePresets::GRID_DIM_Y,
 		ZDIM = FirePresets::GRID_DIM_Z;
 
-	grid = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE);
-	beyonce = new GridField<Vector3>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE);
+	grid = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
+	beyonce = new GridField<Vector3>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
 
 	/*double scale = (double)XDIM / (double)YDIM;
 	grid->multTransformation(glm::scale(scale, 1.0, 1.0));

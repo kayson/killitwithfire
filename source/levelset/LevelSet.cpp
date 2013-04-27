@@ -6,6 +6,9 @@
 #include <cmath>
 
 #include "GridField.hpp"
+#include "ClosestValueExtrapolation.h"
+#include "ConstantValueExtrapolation.h"
+#include "SimpleLevelSetExtrapolation.h"
 
 #if defined __unix__ || defined __APPLE__
 #include "firePresets.h"
@@ -17,16 +20,16 @@
 
 LevelSet::LevelSet()
 {
-	grid  = new GridField<double>(10,10,10);
-	gridCopy = new GridField<double>(10, 10, 10,10);
-	normals = new GridField<Vector3>(10, 10, 10, 10);
+	grid  = new GridField<double>(10,10,10, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
+	gridCopy = new GridField<double>(10, 10, 10,10, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
+	normals = new GridField<Vector3>(10, 10, 10, 10, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
 }
 
 LevelSet::LevelSet(int xDim, int yDim, int zDim, double size)
 {
-	grid  = new GridField<double>(xDim,yDim,zDim,size);
-	gridCopy = new GridField<double>(xDim,yDim,zDim,size);
-	normals = new GridField<Vector3>(xDim,yDim,zDim,size);
+	grid  = new GridField<double>(xDim,yDim,zDim,size, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING? bör fixa så det blir signed distance på dessa
+	gridCopy = new GridField<double>(xDim,yDim,zDim,size, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
+	normals = new GridField<Vector3>(xDim,yDim,zDim,size, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
         
     grid->multTransformation(glm::scale(1.0, 1.0, 1.0));
     gridCopy->multTransformation(glm::scale(1.0, 1.0, 1.0));
