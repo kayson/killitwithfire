@@ -14,6 +14,7 @@
 #include "../Interpolation.h"
 #include "../advect/MACAdvect.h"
 
+#include "ClosestValueExtrapolation.h"
 
 #ifdef __APPLE__
 #include "transform.hpp"
@@ -22,7 +23,7 @@
 #define round(x) floor((x) >= 0 ? (x) + 0.5 : (x) - 0.5)
 #endif
 
-Water3D::Water3D(int dim):u(dim,dim,dim,2600),cellTypes(dim,dim,dim,2600){
+Water3D::Water3D(int dim):u(dim,dim,dim,2600),cellTypes(dim,dim,dim,2600, new ClosestValueExtrapolation<int>()){ //TODO KORREKT EXTRAPOLERING?
     
     //Default variables
     g = Vector3(0.0,-3.0,0.0);

@@ -5,14 +5,13 @@
 #define EXTRAPOLATION_H
 
 template<class T> class GridField;
-class Vector3;
 
-//template<class T> kanske är trevligt... men då funkar inte sqrt osv?
+template<class T>
 class Extrapolation{
 public:
-    virtual ~Extrapolation(){};
-	virtual double extrapolate(GridField<double>& g, const int i, const int j, const int k)=0;
-	virtual Vector3 extrapolate(GridField<Vector3>& g, const int i, const int j, const int k)=0;
+    virtual ~Extrapolation(){}
+	virtual Extrapolation<T>* clone() const = 0;
+	virtual T extrapolate(const GridField<T>& g, const int i, const int j, const int k) const = 0;
 };
 
 #endif

@@ -27,6 +27,7 @@
 #include "Vector3.h"
 #include "GridField.hpp"
 #include <algorithm>
+#include <ClosestValueExtrapolation.h>
 
 #include <stdexcept>
 
@@ -48,7 +49,7 @@ MACGrid MACGrid::createRandom2D(int xdim,int ydim, double size){
         double x,y,z;
         iterator.index(i, j, k);
         m._u->indexToWorld(i, j, k, x, y, z);
-        double v1 = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
+        double v1 = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax - ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
         double vel = v1;
         m._u->setValueAtIndex(vel, iterator.index());
         m.buffer()->_u->setValueAtIndex(vel, iterator.index());
@@ -60,7 +61,7 @@ MACGrid MACGrid::createRandom2D(int xdim,int ydim, double size){
         //double x,y,z;
         iterator.index(i, j, k);
         //_v->indexToWorld(i, j, k, x, y, z);
-        double v1 =  ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
+        double v1 =  ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax - ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
         double vel = v1;
         m._v->setValueAtIndex(vel, iterator.index());
         m.buffer()->_v->setValueAtIndex(vel, iterator.index());
@@ -72,7 +73,7 @@ MACGrid MACGrid::createRandom2D(int xdim,int ydim, double size){
         int i,j,k;
         //double x,y,z;
         iterator.index(i, j, k);
-        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax-randMax*0.5;
+        double v1  = ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax - ((double)(rand() % RAND_MAX))/((double)RAND_MAX)*randMax;//-randMax*0.5;
         double vel = v1;
         m._w->setValueAtIndex(vel, iterator.index());
         m.buffer()->_w->setValueAtIndex(vel, iterator.index());
@@ -101,13 +102,13 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     //Initiera variabler
     _buffer = NULL;
     
-    _u = new GridField<double>(xdim+1,ydim,zdim);
-    _v = new GridField<double>(xdim,ydim+1,zdim);
-    _w = new GridField<double>(xdim,ydim,zdim+1);
+    _u = new GridField<double>(xdim+1,ydim,zdim, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
+    _v = new GridField<double>(xdim,ydim+1,zdim, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
+    _w = new GridField<double>(xdim,ydim,zdim+1, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
     
-    _cache = new GridField<Vector3>(xdim,ydim,zdim );
+    _cache = new GridField<Vector3>(xdim,ydim,zdim, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
     _cache->setTransformation(glm::dmat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
-    _hasCache = new GridField<bool>(xdim,ydim,zdim);
+    _hasCache = new GridField<bool>(xdim,ydim,zdim, new ConstantValueExtrapolation<bool>()); //TODO KORREKT EXTRAPOLERING?
     _hasCache->setTransformation(glm::dmat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
     _hasCache->setAll(false);
 
@@ -357,8 +358,7 @@ void MACGrid::addValueAtFace(double val,const int i, const int j, const int k, D
         _v->addValueAtIndex(val, i, j+1, k);
     }else  if (d == FORWARD){
         _w->addValueAtIndex(val, i, j, k);
-    }else{
-        //Backward
+    }else if(d == BACKWARD){
         _w->addValueAtIndex(val, i, j, k+1);
     }
 }

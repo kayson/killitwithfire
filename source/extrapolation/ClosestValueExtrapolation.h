@@ -4,39 +4,20 @@
 #define CLOSESTVALUEEXTRAPOLATION_H
 
 #include "Extrapolation.h"
-#include "firePresetsTwoDimension.h"
+#include "GridField.h"
 
-class ClosestValueExtrapolation 
+template<class T>
+class ClosestValueExtrapolation  : public Extrapolation<T>
 {
 public:
     virtual ~ClosestValueExtrapolation(){}
 
-	virtual double extrapolate(GridField<double>& g, const int i, const int j, const int k) 
+	virtual Extrapolation<T>* clone() const
 	{
-		int a = i;
-		int b = j;
-		int c = k;
-
-		//Hitta närmaste punkt via cityblock
-		if(a < 0)
-			a = 0;
-		else if(a >= g.xdim())
-			a = g.xdim()-1;
-
-		if(b < 0)
-			b = 0;
-		else if(b >= g.ydim())
-			b = g.ydim()-1;
-
-		if(c < 0)
-			c = 0;
-		else if(c >= g.zdim())
-			c = g.zdim()-1;
-
-		return g.valueAtIndex(a, b, c);
+		return new ClosestValueExtrapolation<T>();
 	}
 
-	virtual Vector3 extrapolate(GridField<Vector3>& g, const int i, const int j, const int k)
+	virtual T extrapolate(const GridField<T>& g, const int i, const int j, const int k) const
 	{
 		int a = i;
 		int b = j;

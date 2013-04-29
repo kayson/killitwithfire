@@ -6,13 +6,22 @@
 //  Copyright (c) 2013 Johannes Deligiannis. All rights reserved.
 //
 
+
+
 #ifndef FuidFire_GridField_hpp
 #define FuidFire_GridField_hpp
+#include "Vector3.h"
+#ifndef ISNAN_H_
+#define ISNAN_H_
+//bool _isnan(Vector3 v){ return true; };
+#endif  //ISNAN_H_
 
 #include "GridField.h"
 #include "Interpolation.h"
 #include <exception>
+
 #include "Vector3.h"
+#include "ConstantValueExtrapolation.h"
 
 #include <iostream>
 
@@ -22,10 +31,11 @@
 #endif
 #define nullptr NULL
 
-
+#include "Extrapolation.h"
+#include "ConstantValueExtrapolation.h"
 
 template<class T>
-GridField<T>::GridField(const GridMapping &m):GridMapping(m){
+GridField<T>::GridField(const GridMapping &m, Extrapolation<T> *extrapolation) :GridMapping(m){
     
     //Allokera data-array
     _data = new T[cellCount()];
@@ -33,26 +43,29 @@ GridField<T>::GridField(const GridMapping &m):GridMapping(m){
     
     //Interpolation
     _interpolation = Interpolation<T>::defaultInterpolation();
+	_extrapolation = extrapolation;
 }
 
 
 template<class T>
-GridField<T>::GridField():GridField(10,10,10){
+GridField<T>::GridField():GridField(10,10,10, new ConstantValueExtrapolation<T>()){ //TODO KORREKT EXTRAPOLERING?
     
 }
 
 template<class T>
-GridField<T>::GridField(int xdim,int ydim, int zdim):GridMapping(xdim,ydim,zdim){    
+GridField<T>::GridField(int xdim,int ydim, int zdim, Extrapolation<T> *extrapolation):GridMapping(xdim,ydim,zdim){    
     //Allokera data-array
     _data = new T[cellCount()];
     for (int i = 0; i < cellCount(); i++) _data[i] = T();
     
     //Interpolation
     _interpolation = Interpolation<T>::defaultInterpolation();
+
+	_extrapolation = extrapolation;
 }
 
 template<class T>
-GridField<T>::GridField(int xdim,int ydim, int zdim, double size):GridMapping(xdim,ydim,zdim,size){
+GridField<T>::GridField(int xdim,int ydim, int zdim, double size, Extrapolation<T> *extrapolation):GridMapping(xdim,ydim,zdim,size){
     
     //Allokera data-array
     _data = new T[cellCount()];
@@ -60,6 +73,8 @@ GridField<T>::GridField(int xdim,int ydim, int zdim, double size):GridMapping(xd
 
     //Interpolation
     _interpolation = Interpolation<T>::defaultInterpolation();
+
+	_extrapolation = extrapolation;
 }
 
 template<class T>
@@ -74,6 +89,8 @@ GridField<T>::GridField(const GridField<T> &g):GridMapping(g){
     
     //Interpolation
     _interpolation = Interpolation<T>::defaultInterpolation();
+
+	_extrapolation = g._extrapolation->clone(); //TODO KORREKT?
 }
 
 template<class T>
@@ -84,8 +101,12 @@ GridField<T>& GridField<T>::operator=(const GridField<T> &g){
         _data = new T[g.cellCount()];
         for (int i = 0; i < g.cellCount(); i++) _data[i] = g._data[i];
 
-        //Interpolation
+        // delete old pointers
+		if(_interpolation != nullptr) delete _interpolation;
+		if(_extrapolation != nullptr) delete _extrapolation;
+		// get new pointers
         _interpolation = g._interpolation->clone();
+		_extrapolation = g._extrapolation->clone();
     }
     
     return *this;
@@ -96,6 +117,7 @@ template<class T>
 GridField<T>::~GridField(){
     delete [] _data;
     if(_interpolation != nullptr) delete _interpolation;
+	if(_extrapolation != nullptr) delete _extrapolation;
 }
 
 template<class T>
@@ -115,7 +137,7 @@ T GridField<T>::valueAtIndex(int i) const{
 	//TODO EXTRAPOLERA 
 	if(i < 0 || i >= cellCount())
 		throw;
-
+	T v = _data[i];
     return _data[i];
 }
 
@@ -126,17 +148,30 @@ T GridField<T>::valueAtIndex(int i,int j,int k) const{
 		//std::string s = "Index ("+ std::to_string(i) + "," + std::to_string(j) + ","+ std::to_string(k)+") out of bounds [0..";
         //s += std::to_string(xdim()) + "],[0.." + std::to_string(ydim()) + "],[0.." + std::to_string(zdim()) + "]";
         std::string s = "Out of bounds";
+		double axd = xdim();
+		double ayd = ydim();
+		double azd = zdim();
 		//throw std::runtime_error(s);
-        i = i < 0 ? 0 : i;
+       /* i = i < 0 ? 0 : i;
         i = i >= xdim() ? xdim() : i;
         j = j < 0 ? 0 : j;
         j = j >= ydim() ? ydim() : j;
         k = k < 0 ? 0 : k;
         k = k >= zdim() ? zdim() : k;
 
-        return T(0);
+        return T(0);*/
 
+		return _extrapolation->extrapolate(*this, i, j, k);
     }
+	int ival = indexAt(i, j, k);
+	int cc = cellCount();
+	T asd = valueAtIndex(ival);
+	T *v = &asd;
+	if(sizeof(T) == sizeof(double)){
+			if( _isnan(*reinterpret_cast<double*>(v)) )
+				std::cout << "hej" ;
+	}
+
     return valueAtIndex(indexAt(i, j, k));
 }
 
@@ -230,9 +265,6 @@ void GridField<T>::setValueAtIndex(T val,int i,int j,int k){
 template<class T>
 void GridField<T>::addValueAtIndex(T val,int i,int j,int k){
     int index = indexAt(i, j, k);
-    /*if (typeid(T) == typeid(bool) && i == 2 && j == 44 && k == 0) {
-     std::cout << cellCount() << std::endl;
-     }*/
     _data[index] += val;
 }
 

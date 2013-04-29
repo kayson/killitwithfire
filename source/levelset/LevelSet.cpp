@@ -1,11 +1,14 @@
 #include "LevelSet.h"
-
+#include "DetonationShockDynamics.h"
 #include "Gradient.h"
 #include "Reinitialize.h"
 #include <iostream>
 #include <cmath>
 
 #include "GridField.hpp"
+#include "ClosestValueExtrapolation.h"
+#include "ConstantValueExtrapolation.h"
+#include "SimpleLevelSetExtrapolation.h"
 
 #if defined __unix__ || defined __APPLE__
 #include "firePresets.h"
@@ -17,20 +20,27 @@
 
 LevelSet::LevelSet()
 {
-	grid  = new GridField<double>(1000,1000,1000);
-	gridCopy = new GridField<double>(1000, 1000, 1000,10);
-	normals = new GridField<Vector3>(1000, 1000, 1000, 10);
+
+	grid  = new GridField<double>(10,10,10, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
+	gridCopy = new GridField<double>(10, 10, 10,10, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
+	normals = new GridField<Vector3>(10, 10, 10, 10, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
+
+//	grid  = new GridField<double>(1000,1000,1000);
+//	gridCopy = new GridField<double>(1000, 1000, 1000,10);
+	normals = new GridField<Vector3>(1000, 1000, 1000,10,new ConstantValueExtrapolation<Vector3>());
+	dsd = new DetonationShockDynamics();
 }
 
 LevelSet::LevelSet(int xDim, int yDim, int zDim, double size)
 {
-	grid  = new GridField<double>(xDim,yDim,zDim,size);
-	gridCopy = new GridField<double>(xDim,yDim,zDim,size);
-	normals = new GridField<Vector3>(xDim,yDim,zDim,size);
+	grid  = new GridField<double>(xDim,yDim,zDim,size, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING? bör fixa så det blir signed distance på dessa
+	gridCopy = new GridField<double>(xDim,yDim,zDim,size, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
+	normals = new GridField<Vector3>(xDim,yDim,zDim,size, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
         
     grid->multTransformation(glm::scale(1.0, 1.0, 1.0));
     gridCopy->multTransformation(glm::scale(1.0, 1.0, 1.0));
     normals->multTransformation(glm::scale(1.0, 1.0, 1.0));      
+	dsd = new DetonationShockDynamics();
 }
 
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
@@ -47,7 +57,8 @@ void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 }
 
 Vector3 LevelSet::getVelocity(MACGrid &g, int i, const int j, const int k){
-    return Vector3(0,0,0);
+    assert(false);
+	return Vector3(0,0,0);
 }
 
 void LevelSet::reinitialize()
@@ -91,27 +102,43 @@ CellType LevelSet::getCellType(const double phi){
 	else
 		return BURNT;
 }
-
-double LevelSet::getCurvature(const int i, const int j, const int k)
-
-{
-	
+Vector3 LevelSet::getFlameSpeed(const int i, const int j, const int k, MACGrid *vel) const{
+	if(getCellType(i, j, k) == CellType::FUEL){
+		return dsd->getFlameSpeed(i, j, k, vel, getNormal(i, j, k));
+	}
+	else
+		return Vector3(0, 0, 0);
+}
+void LevelSet::updateDSD(double dt, MACGrid *u){
+	dsd->Update_D(dt, u, grid);
+}
+double LevelSet::getCurvature(const int i, const int j, const int k, GridField<double> *gridfield){
 	double 
-		dx = FirePresets::centralDisc->calcDx(*grid, i, j, k),
-		dy = FirePresets::centralDisc->calcDy(*grid, i, j, k),
-		dz = FirePresets::centralDisc->calcDz(*grid, i, j, k),
-		d2x = FirePresets::centralDisc->calcD2x(*grid, i, j, k),
-		d2y = FirePresets::centralDisc->calcD2y(*grid, i, j, k),
-		d2z = FirePresets::centralDisc->calcD2z(*grid, i, j, k),
-		dxy = FirePresets::centralDisc->calcDxy(*grid, i, j, k),
-		dxz = FirePresets::centralDisc->calcDxz(*grid, i, j, k),
-		dyz = FirePresets::centralDisc->calcDyz(*grid, i, j, k);
+		dx = FirePresets::centralDisc->calcDx(*gridfield, i, j, k),
+		dy = FirePresets::centralDisc->calcDy(*gridfield, i, j, k),
+		dz = FirePresets::centralDisc->calcDz(*gridfield, i, j, k),
+		d2x = FirePresets::centralDisc->calcD2x(*gridfield, i, j, k),
+		d2y = FirePresets::centralDisc->calcD2y(*gridfield, i, j, k),
+		d2z = FirePresets::centralDisc->calcD2z(*gridfield, i, j, k),
+		dxy = FirePresets::centralDisc->calcDxy(*gridfield, i, j, k),
+		dxz = FirePresets::centralDisc->calcDxz(*gridfield, i, j, k),
+		dyz = FirePresets::centralDisc->calcDyz(*gridfield, i, j, k);
 	double a = 2.0000000000;
-    
+	double val1 = dx*dx*(d2y + d2z) - a*dy*dz*dyz + 
+		dy*dy*(d2x*d2z) - a*dx*dz*dxz + 
+		dz*dz*(d2x + d2y) - a*dx*dy*dxy;
+	double val = dx*dx+dy*dy+dz*dz;
+	if(val == 0) return 0;
+	if(_isnan(val1))		
+		std::cout << "hej";
 	return (dx*dx*(d2y + d2z) - a*dy*dz*dyz + 
 		dy*dy*(d2x*d2z) - a*dx*dz*dxz + 
 		dz*dz*(d2x + d2y) - a*dx*dy*dxy) /
 		(a*std::pow(dx*dx+dy*dy+dz*dz, 1.5));
+}
+double LevelSet::getCurvature(const int i, const int j, const int k)
+{
+	return LevelSet::getCurvature(i, j, k, grid);
 }
 
 void LevelSet::updateNormals(){
@@ -133,7 +160,14 @@ void LevelSet::updateNormals(){
 
 Vector3 LevelSet::getNormal(const int i, const int j, const int k) const
 {
-	return normals->valueAtIndex(i,j,k);
+	Vector3 N = normals->valueAtIndex(i,j,k);
+	double l = N.norm();
+	if(l > 0.0)
+		N *= 1.0/l;
+	else
+		N = Vector3(0.0, 1.0, 0.0);
+
+	return N;
 }
 
 Vector3 LevelSet::getNormal(const double w_x, const double w_y, const double w_z) const
