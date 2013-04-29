@@ -6,13 +6,19 @@
 //  Copyright (c) 2013 Johannes Deligiannis. All rights reserved.
 //
 
+
+
 #ifndef FuidFire_GridField_hpp
 #define FuidFire_GridField_hpp
+#include "Vector3.h"
+#ifndef ISNAN_H_
+#define ISNAN_H_
+//bool _isnan(Vector3 v){ return true; };
+#endif  //ISNAN_H_
 
 #include "GridField.h"
 #include "Interpolation.h"
 #include <exception>
-#include "Vector3.h"
 
 #include <iostream>
 
@@ -21,7 +27,6 @@
 #define round(x) floor((x) >= 0 ? (x) + 0.5 : (x) - 0.5)
 #endif
 #define nullptr NULL
-
 
 
 template<class T>
@@ -115,7 +120,7 @@ T GridField<T>::valueAtIndex(int i) const{
 	//TODO EXTRAPOLERA 
 	if(i < 0 || i >= cellCount())
 		throw;
-
+	T v = _data[i];
     return _data[i];
 }
 
@@ -126,6 +131,9 @@ T GridField<T>::valueAtIndex(int i,int j,int k) const{
 		//std::string s = "Index ("+ std::to_string(i) + "," + std::to_string(j) + ","+ std::to_string(k)+") out of bounds [0..";
         //s += std::to_string(xdim()) + "],[0.." + std::to_string(ydim()) + "],[0.." + std::to_string(zdim()) + "]";
         std::string s = "Out of bounds";
+		double axd = xdim();
+		double ayd = ydim();
+		double azd = zdim();
 		//throw std::runtime_error(s);
         i = i < 0 ? 0 : i;
         i = i >= xdim() ? xdim() : i;
@@ -137,6 +145,15 @@ T GridField<T>::valueAtIndex(int i,int j,int k) const{
         return T(0);
 
     }
+	int ival = indexAt(i, j, k);
+	int cc = cellCount();
+	T asd = valueAtIndex(ival);
+	T *v = &asd;
+	if(sizeof(T) == sizeof(double)){
+			if( _isnan(*reinterpret_cast<double*>(v)) )
+				std::cout << "hej" ;
+	}
+
     return valueAtIndex(indexAt(i, j, k));
 }
 

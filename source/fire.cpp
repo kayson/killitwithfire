@@ -441,7 +441,7 @@ void Fire::drawCenterGradients(Discretization *disc)
 		glBegin(GL_POINTS);
 		glVertex3f(x + v.x, y + v.y, z + v.z);
 		glEnd();
-		*/
+*/		
 
 		//x = i; y = j; z = k;
 
@@ -458,12 +458,12 @@ void Fire::drawCenterGradients(Discretization *disc)
 		glVertex3d(x + v.x, y+v.y , 0);
 		glEnd();
 
-		/*
+		
 		glColor3f(1,0,0);
 		glBegin(GL_POINTS);
 		glVertex3f(x, y, 0);
 		glEnd();
-		*/
+		
 
 	}
 	/*
@@ -526,8 +526,8 @@ void Fire::computeW()
 
 void Fire::draw()
 {
-  phi.draw();
-  //T->draw();
+	phi.draw();
+	//T->draw();
 
 	//drawVorticities();
 	//drawCenterVelocities();

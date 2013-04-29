@@ -117,7 +117,6 @@ double GhostGridField<T>::DVn(double x,double y,double z) const{
 
 template<class T>
 double GhostGridField<T>::DV() const{
-	throw("S anvands inte!");
     return (FirePresets::rhof/FirePresets::rhob-1.0)*FirePresets::S;
 }
 

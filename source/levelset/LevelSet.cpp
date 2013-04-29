@@ -49,7 +49,7 @@ void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 }
 
 Vector3 LevelSet::getVelocity(MACGrid &g, int i, const int j, const int k){
-    assert(false, "Using unimplemented function in LevelSet.cpp");
+    assert(false);
 	return Vector3(0,0,0);
 }
 
@@ -116,7 +116,13 @@ double LevelSet::getCurvature(const int i, const int j, const int k, GridField<d
 		dxz = FirePresets::centralDisc->calcDxz(*gridfield, i, j, k),
 		dyz = FirePresets::centralDisc->calcDyz(*gridfield, i, j, k);
 	double a = 2.0000000000;
-    
+	double val1 = dx*dx*(d2y + d2z) - a*dy*dz*dyz + 
+		dy*dy*(d2x*d2z) - a*dx*dz*dxz + 
+		dz*dz*(d2x + d2y) - a*dx*dy*dxy;
+	double val = dx*dx+dy*dy+dz*dz;
+	if(val == 0) return 0;
+	if(_isnan(val1))		
+		std::cout << "hej";
 	return (dx*dx*(d2y + d2z) - a*dy*dz*dyz + 
 		dy*dy*(d2x*d2z) - a*dx*dz*dxz + 
 		dz*dz*(d2x + d2y) - a*dx*dy*dxy) /

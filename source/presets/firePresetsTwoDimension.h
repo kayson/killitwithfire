@@ -54,9 +54,9 @@ const double FirePresets::T_AIR = 20.0 + 273.15;
 
 const double FirePresets::GRID_SIZE = 18;
 
-const double FirePresets::dt = 1.0/100.0;
+const double FirePresets::dt = 1.0/300.0;
 
-const double FirePresets::dx = 1.0/8.0;
+const double FirePresets::dx = 1.0/20.0;
 const double FirePresets::CFL_NUMBER = 2;
 
 const double FirePresets::S = 1.0;
