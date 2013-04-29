@@ -41,33 +41,49 @@ double UpwindDiff::calcDzp(GridField<double> &g, const int i, const int j, const
 double UpwindDiff::calcDx(GridField<double> &g, const int i, const int j, const int k)
 {
 	if((*_w)(i, j, k).x > 0.0){ // if(BURNT)
-		// Kolla celltype för g(i,j,k) här, skicka in som argument till GhostGrid::g(i,j,k, cellType)
-		// return ( g(i,j,k,BURNT) - g(i-1,j,k,BURNT)/FirePresets::dx );
 		return (g(i, j, k) - g(i-1, j, k))/FirePresets::dx;
 	}
 	else {// FUEL
-		//return ( g(i+1,j,k,FUEL) - g(i,j,k,FUEL)/FirePresets::dx );
 		return (g(i+1, j, k) - g(i, j, k))/FirePresets::dx;
 	}
 }
 double UpwindDiff::calcDy(GridField<double> &g, const int i, const int j, const int k)
 {
-	// Se calcDx för kommentarer
 	if((*_w)(i, j, k).y > 0.0)
-		//return ( g(i,j,k,BURNT) - g(i,j-1,k,BURNT)/FirePresets::dx );
 		return (g(i, j, k) - g(i, j-1, k))/FirePresets::dx;
 	else
-		// return ( g(i,j+1,k, FUEL) - g(i,j,k,FUEL)/FirePresets::dx );
 		return (g(i, j+1, k) - g(i, j, k))/FirePresets::dx;
 }
 double UpwindDiff::calcDz(GridField<double> &g, const int i, const int j, const int k)
 {
 	if((*_w)(i, j, k).z > 0.0)
-		// return ( g(i,j,k,BURNT) - g(i,j,k-1,BURNT)/FirePresets::dx );
 		return (g(i, j, k) - g(i, j, k-1))/FirePresets::dx;
 	else
-		// return ( g(i,j,k+1,FUEL) - g(i,j,k,FUEL)/FirePresets::dx );
 		return (g(i, j, k+1) - g(i, j, k))/FirePresets::dx;
+}
+
+double UpwindDiff::calcDx(GhostGridField<double> &g, const int i, const int j, const int k)
+{
+	if((*_w)(i, j, k).x > 0.0){ // if(BURNT)
+		return ( g(i,j,k,BURNT) - g(i-1,j,k,BURNT)/FirePresets::dx );
+	}
+	else {// FUEL
+		return ( g(i+1,j,k,FUEL) - g(i,j,k,FUEL)/FirePresets::dx );
+	}
+}
+double UpwindDiff::calcDy(GhostGridField<double> &g, const int i, const int j, const int k)
+{
+	if((*_w)(i, j, k).y > 0.0)
+		return ( g(i,j,k,BURNT) - g(i,j-1,k,BURNT)/FirePresets::dx );
+	else
+		return ( g(i,j+1,k, FUEL) - g(i,j,k,FUEL)/FirePresets::dx );
+}
+double UpwindDiff::calcDz(GhostGridField<double> &g, const int i, const int j, const int k)
+{
+	if((*_w)(i, j, k).z > 0.0)
+		return ( g(i,j,k,BURNT) - g(i,j,k-1,BURNT)/FirePresets::dx );
+	else
+		return ( g(i,j,k+1,FUEL) - g(i,j,k,FUEL)/FirePresets::dx );
 }
 
 double UpwindDiff::calcD2x(GridField<double> &g, const int i, const int j, const int k)

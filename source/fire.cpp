@@ -12,6 +12,7 @@
 #include "Input.h"
 #include "JumpCondition.h"
 
+
 #if defined __APPLE__
 #include "glfw.h"
 #include "pcg_solver.h"
@@ -64,8 +65,15 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
     
 
+
     //Init marker-particles
     for (GridFieldIterator<bool> iter = solids.iterator(); !iter.done(); iter.next()) {
+/*=======
+    GridField<int> *cellTypes = new GridField<int>(u);
+    u.setTransformation(u.getTrans());
+    cellTypes->setAll(FUEL);
+    for (GridFieldIterator<int> it = celltype.iterator(); !it.done(); it.next()) {
+>>>>>>> d8aef0f94a6ad6f794898cd5aab402d8ae20c69a*/
         int i,j,k;
         iter.index(i, j, k);
         double l_x,l_y,l_z;
@@ -291,6 +299,10 @@ void Fire::runSimulation(){
     //static int once = 0;
     //if(once == 0) once++;
     //else return;
+
+	phi.updateNormals();
+	phi.updateDSD(preset->dt, &u);
+
 	 //Advektera levelset
     /*for(double currentTime = 0; currentTime < preset->dt;)
 	{
@@ -298,45 +310,35 @@ void Fire::runSimulation(){
 
 		currentTime += dt;
 	}*/
-	static int counter = 0;
-    if (++counter < 1) {
-    	for(int i = -8; i < 8; i++){
-            /*phi.grid->setValueAtIndex(300,preset->GRID_DIM_X/2+i,5,0);
-            phi.grid->setValueAtIndex(300,preset->GRID_DIM_X/2+i,6,0);
-            phi.grid->setValueAtIndex(300,preset->GRID_DIM_X/2+i,7,0);
-            phi.grid->setValueAtIndex(300,preset->GRID_DIM_X/2+i,8,0);*/
-            
-        }
-        
-        for(int i = -6; i < 6; i++){
-            /*
-            u.setValueAtFace(2,preset->GRID_DIM_X/2+i,5,0,DOWN);
-            u.setValueAtFace(2,preset->GRID_DIM_X/2+i,6,0,DOWN);
-            u.setValueAtFace(2,preset->GRID_DIM_X/2+i,5,0,RIGHT);
-            u.setValueAtFace(2,preset->GRID_DIM_X/2+i,6,0,RIGHT);
-            u.setValueAtFace(3,preset->GRID_DIM_X/2+i,5,0,DOWN);
-            u.setValueAtFace(3,preset->GRID_DIM_X/2+i,6,0,DOWN);
-            u.setValueAtFace(3,preset->GRID_DIM_X/2+i,5,0,RIGHT);
-            u.setValueAtFace(3,preset->GRID_DIM_X/2+i,6,0,RIGHT);
-             */
-            /*
-            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 5, 0, DOWN);
-            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 6, 0, DOWN);
-            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 5, 0, RIGHT);
-            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 6, 0, RIGHT);
-            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 5, 0, DOWN);
-            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 6, 0, DOWN);
-            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 5, 0, RIGHT);
-            u_fuel.setValueAtFace(3, preset->GRID_DIM_X/2+i, 6, 0, RIGHT);
-             */
-        }
-    }
+
+	//static int counter = 0;
+ //   if (++counter < 1) {
+ //   	for(int i = -8; i < 8; i++){
+ //           phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,5,0);
+ //           phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,6,0);
+ //           phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,7,0);
+ //           phi.grid->setValueAtIndex(0.3,preset->GRID_DIM_X/2+i,8,0);
+ //       }
+ //       
+ //       for(int i = -6; i < 6; i++){
+ //           /*u.setValueAtFace(2,preset->GRID_DIM_X/2+i,5,0,DOWN);
+ //           u.setValueAtFace(2,preset->GRID_DIM_X/2+i,6,0,DOWN);
+ //           u.setValueAtFace(2,preset->GRID_DIM_X/2+i,5,0,RIGHT);
+ //           u.setValueAtFace(2,preset->GRID_DIM_X/2+i,6,0,RIGHT);
+ //           u.setValueAtFace(3,preset->GRID_DIM_X/2+i,5,0,DOWN);
+ //           u.setValueAtFace(3,preset->GRID_DIM_X/2+i,6,0,DOWN);
+ //           u.setValueAtFace(3,preset->GRID_DIM_X/2+i,5,0,RIGHT);
+ //           u.setValueAtFace(3,preset->GRID_DIM_X/2+i,6,0,RIGHT);
+ //           */
+ //       }
+ //   }
 
 
 	//Beräkna om vad för typ voxlarna är
 
 	//u.advect(preset->dt);
 	//preset->advectVelocities->advect(ghost, phi, preset->dt);
+
     enforceBorderCondition();
     phi.updateNormals();
     int j = 10;
@@ -599,7 +601,7 @@ void Fire::drawCenterGradients(Discretization *disc)
 		glBegin(GL_POINTS);
 		glVertex3f(x + v.x, y + v.y, z + v.z);
 		glEnd();
-		*/
+*/		
 
 		//x = i; y = j; z = k;
 
@@ -616,12 +618,12 @@ void Fire::drawCenterGradients(Discretization *disc)
 		glVertex3d(x + v.x, y+v.y , 0);
 		glEnd();
 
-		/*
+		
 		glColor3f(1,0,0);
 		glBegin(GL_POINTS);
 		glVertex3f(x, y, 0);
 		glEnd();
-		*/
+		
 
 	}
 	/*
@@ -669,6 +671,7 @@ void Fire::drawCenterVelocities(){
     glEnd();
 }
 
+
 void Fire::drawNormals() const{
     glBegin(GL_LINES);
     for (GridMappingIterator iter = phi.normals->iterator(); !iter.done(); iter.next()) {
@@ -684,6 +687,18 @@ void Fire::drawNormals() const{
     }
     glEnd();
 }
+
+/*void Fire::computeW()
+{
+  for(GridFieldIterator<Vector3> it = w.iterator(); !it.done(); it.next())
+  {
+    int i, j, k;
+    it.index(i,j,k);
+    //Vector3 v = u.velocityAtCenter(i, j, k) + phi.getNormal(i, j, k)*FirePresets::S;
+	Vector3 v = phi.getFlameSpeed(i, j, k, &u);
+	w.setValueAtIndex(v, it.index());
+  }*/
+
 
 
 void Fire::computeW(){
@@ -703,21 +718,23 @@ void Fire::computeW(){
   }
 }
 
+
 void Fire::draw(){
     phi.draw();
     //T->draw();
 
 	//drawVorticities();
 	//drawCenterVelocities();
-    //drawMAC(u_burnt, BURNT, 1,0,0);
-    //drawMAC(u_fuel, FUEL, 0,1,1);
+    drawMAC(u_burnt, BURNT, 1,0,0);
+    drawMAC(u_fuel, FUEL, 0,1,1);
     //drawMAC(u_burnt, BURNT, 0,1,1);
     //particles.draw();
     //drawMAC(u_burnt, FUEL, 1,0,0);
     //drawMAC(u_burnt, BURNT, 0,1,1);
 
-    drawCenterGradients(FirePresets::centralDisc);
+    //drawCenterGradients(FirePresets::centralDisc);
     //drawFaceVelocities(u_burnt);
+
     //drawMAC();
     //drawSolid();
     //drawNormals();

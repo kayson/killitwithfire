@@ -45,14 +45,14 @@ void Temperature::ResetCell(int i, int j, int k, CellType type)
     double x, y, z;
     grid->indexToWorld(i, j, k, x, y, z);
     if(type == FUEL){
-        grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
+        grid->setValueAtIndex(FirePresets::T_IGNITION, i, j, k);
     }
 }
 
 void Temperature::InitCell(int i, int j, int k, CellType type)
 {
 	if(type == FUEL){
-          grid->setValueAtIndex(FirePresets::T_MAX, i, j, k);
+          grid->setValueAtIndex(FirePresets::T_IGNITION, i, j, k);
 	}
 	else if(type == BURNT){
 		grid->setValueAtIndex(FirePresets::T_AIR, i, j, k);
@@ -69,16 +69,24 @@ double Temperature::calculateTemperatureLoss(int i, int j, int k){
 }
 
 void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
+	GridField<double> copy = GridField<double>(grid->xdim(), grid->ydim(), grid->zdim(),new ConstantValueExtrapolation<double>()); 
+	for(int i = 0; i < grid->xdim(); i++)
+        for(int j = 0; j < grid->ydim(); j++)
+            for(int k = 0; k < grid->zdim(); k++)
+                ResetCell(i, j, k, Fire::getCellType(ls.grid->valueAtIndex(i, j, k)));
     for(int i = 0; i < grid->xdim(); i++)
         for(int j = 0; j < grid->ydim(); j++)
             for(int k = 0; k < grid->zdim(); k++){
-                ResetCell(i, j, k,
-                          Fire::getCellType(ls.grid->valueAtIndex(i, j, k)));
+
                 double c = calculateTemperatureLoss(i, j, k);
                 double v = FirePresets::tempAdvect->advect(dt, m,
                                                            *grid, i, j, k);
-                grid->setValueAtIndex(v - c, i, j, k);
+				double newValue = (grid->valueAtIndex(i,j,k) - v * dt) - c * dt;
+				if(newValue < FirePresets::T_AIR)
+					newValue = FirePresets::T_AIR;
+				copy.setValueAtIndex(newValue, i, j, k);
             }
+	*grid = copy;
 }
 
 void Temperature::CalculateBuoyancyForceField()
@@ -121,7 +129,29 @@ GridField<double> Temperature::GetTemperatureGrid(){
     return *grid;
 }
 
-void Temperature::draw(){
+double Temperature::maxTemp()
+{
+	int xdim = FirePresets::GRID_DIM_X,
+		ydim = FirePresets::GRID_DIM_Y,
+		zdim = FirePresets::GRID_DIM_Z;
+  
+	double max = 0;
+
+	for(int i = 0; i < xdim; i++)
+		for(int j = 0; j < ydim; j++)
+			for(int k = 0; k < zdim; k++){
+				if(grid->valueAtIndex(i,j,k) > max)
+					max = grid->valueAtIndex(i,j,k);
+			}
+
+	return max;
+}
+
+void Temperature::draw()
+{
+	double maxT = maxTemp();
+	Vector3 LMSw = BlackBodyRadiation::XYZtoLMS(BlackBodyRadiation::blackbodyToXYZ(maxT));
+
     glBegin(GL_QUADS);
     for (GridFieldIterator<double> iter = grid->iterator();
          !iter.done(); iter.next()) {
@@ -130,12 +160,21 @@ void Temperature::draw(){
         double x,y,z;
         grid->indexToWorld(i, j, k, x, y, z);
         
-        
-		glColor3d(BlackBodyRadiation::red(grid->valueAtIndex(i,j,k)),
-                  BlackBodyRadiation::green(grid->valueAtIndex(i,j,k)),
-                  BlackBodyRadiation::blue(grid->valueAtIndex(i,j,k)));
 
-		
+		// Eq. 23, Nguyen'02
+		Vector3 xyz = BlackBodyRadiation::blackbodyToXYZ(grid->valueAtIndex(i,j,k));
+		Vector3 lms = BlackBodyRadiation::XYZtoLMS(xyz);
+		lms.x /= LMSw.x;
+		lms.y /= LMSw.y;
+		lms.z /= LMSw.z;
+		xyz = BlackBodyRadiation::LMStoXYZ(lms);
+		Vector3 rgb = BlackBodyRadiation::XYZtoRGB(xyz);
+
+		if(grid->valueAtIndex(i,j,k) >= maxT*0.6)
+			glColor3d(rgb.x, rgb.y, rgb.z);
+		else
+			glColor3d(rgb.x*0.3, rgb.y*0.3, rgb.z*0.3);
+
         
         glVertex3f((float)x, (float)y, (float)z);
         glVertex3f(((float)x+1.f), (float)y, (float)z);

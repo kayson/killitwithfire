@@ -1,6 +1,7 @@
 #ifndef UPWINDDIFF_H
 #define UPWINDDIFF_H
 #include "Discretization.h"
+#include "GhostGrid.h"
 
 class UpwindDiff : public Discretization{
 protected:
@@ -18,7 +19,11 @@ public:
 	double calcDx(GridField<double> &g, const int i, const int j, const int k);
 	double calcDy(GridField<double> &g, const int i, const int j, const int k);
 	double calcDz(GridField<double> &g, const int i, const int j, const int k);
-					   
+			
+	double calcDx(GhostGridField<double> &g, const int i, const int j, const int k);
+	double calcDy(GhostGridField<double> &g, const int i, const int j, const int k);
+	double calcDz(GhostGridField<double> &g, const int i, const int j, const int k);
+
 	double calcD2x(GridField<double> &g, const int i, const int j, const int k);
 	double calcD2y(GridField<double> &g, const int i, const int j, const int k);
 	double calcD2z(GridField<double> &g, const int i, const int j, const int k);

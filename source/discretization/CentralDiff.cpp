@@ -108,7 +108,52 @@ double CentralDiff::calcDxy(GridField<double> &g, const int i, const int j, cons
 {
 	/*CellType c_t = Fire::getCellType(g(i,j,k));
 	return ( g(i+1,j+1,k,c_t) - g(i+1,j-1,k,c_t) + g(i-1,j-1,k,c_t) - g(i-1,j+1,k,c_t) ) / (4.0*FirePresets::dx*FirePresets::dx);*/
+	double asd4 = g(i-1,j+1,k);
+	double asd3 = g(i-1,j-1,k);
+	double asd2 = g(i+1,j-1,k);
+	double asd1 = g(i+1,j+1,k);
+
+	if(_isnan(g(i+1,j+1,k)) || _isnan(g(i+1,j-1,k)) ||  _isnan(g(i-1,j-1,k)) - _isnan(g(i-1,j+1,k)))
+		std::cout << "hej";
 	return ( g(i+1,j+1,k) - g(i+1,j-1,k) + g(i-1,j-1,k) - g(i-1,j+1,k) ) / (4.0*FirePresets::dx*FirePresets::dx);
+}
+
+// GhostGridField
+double calcDx(GhostGridField<double> &g, const int i, const int j, const int k){
+	CellType c_t = Fire::getCellType(g(i,j,k));
+	return (double)(g(i+1, j, k, c_t) - g(i-1, j, k, c_t))/(FirePresets::dx*2.0);
+}
+double calcDy(GhostGridField<double> &g, const int i, const int j, const int k){
+	CellType c_t = Fire::getCellType(g(i,j,k));
+	return (double)(g(i, j+1, k, c_t) - g(i, j-1, k, c_t))/(FirePresets::dx*2.0);
+}
+double calcDz(GhostGridField<double> &g, const int i, const int j, const int k){
+	CellType c_t = Fire::getCellType(g(i,j,k));
+	return (double)(g(i, j, k+1, c_t) - g(i, j, k-1, c_t))/(FirePresets::dx*2.0);
+}
+double calcD2x(GhostGridField<double> &g, const int i, const int j, const int k){
+	CellType c_t = Fire::getCellType(g(i,j,k));
+	return ( g(i+1,j,k,c_t) - 2.0*g(i,j,k,c_t) + g(i-1,j,k,c_t))/( FirePresets::dx*FirePresets::dx );
+}
+double calcD2y(GhostGridField<double> &g, const int i, const int j, const int k){
+	CellType c_t = Fire::getCellType(g(i,j,k));
+	return ( g(i,j+1,k,c_t) - 2.0*g(i,j,k,c_t) + g(i,j-1,k,c_t))/( FirePresets::dx*FirePresets::dx );
+}
+double calcD2z(GhostGridField<double> &g, const int i, const int j, const int k){
+	CellType c_t = Fire::getCellType(g(i,j,k));
+	return ( g(i,j,k+1,c_t) - 2.0*g(i,j,k,c_t) + g(i,j,k-1,c_t))/( FirePresets::dx*FirePresets::dx );
+}
+double calcDyz(GhostGridField<double> &g, const int i, const int j, const int k){
+	CellType c_t = Fire::getCellType(g(i,j,k));
+	return ( g(i,j+1,k+1,c_t) - g(i,j+1,k-1,c_t) + g(i,j-1,k-1,c_t) - g(i,j-1,k+1,c_t) ) / (4.0*FirePresets::dx*FirePresets::dx);
+}
+double calcDxz(GhostGridField<double> &g, const int i, const int j, const int k){
+	CellType c_t = Fire::getCellType(g(i,j,k));
+	return ( g(i+1,j,k+1,c_t) - g(i+1,j,k-1,c_t) + g(i-1,j,k-1,c_t) - g(i-1,j,k+1,c_t) ) / (4.0*FirePresets::dx*FirePresets::dx);
+}
+double calcDxy(GhostGridField<double> &g, const int i, const int j, const int k){
+	CellType c_t = Fire::getCellType(g(i,j,k));
+	return ( g(i+1,j+1,k,c_t) - g(i+1,j-1,k,c_t) + g(i-1,j-1,k,c_t) - g(i-1,j+1,k,c_t) ) / (4.0*FirePresets::dx*FirePresets::dx);
 }
 
 // Samma funktioner men med Vector3
