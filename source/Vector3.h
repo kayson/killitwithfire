@@ -18,7 +18,7 @@ public:
     void rotate(Vector3 *axisRotate, double *angle ,double a, double b, double c);
     
     void normalize();
-    double dot(Vector3 &vTemp);
+    double dot(const Vector3 &vTemp);
 	static double dot(const Vector3 &v1, const Vector3 &v2);
 
 	double norm() const;

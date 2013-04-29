@@ -17,37 +17,33 @@ public:
 		return new SimpleLevelSetExtrapolation();
 	}
 
-	virtual double extrapolate(const GridField<double>& g, const int i, const int j, const int k) const
+	virtual double doExtrapolation(const GridField<double>& g, int i, int j, int k) const
 	{
-		double x1 = double(i);
-		double y1 = double(j);
-		double z1 = double(k);
-
-		int a = i;
-		int b = j;
-		int c = k;
+		double x1 = i;
+		double y1 = j;
+		//double z1 = double(k);
 
 		//Hitta närmaste punkt via cityblock
-		if(a < 0)
-			a = 0;
-		else if(a >= g.xdim())
-			a = g.xdim()-1;
+		if(i < 0)
+			i = 0;
+		else if(i >= g.xdim())
+			i = g.xdim()-1;
 
-		if(b < 0)
-			b = 0;
-		else if(b >= g.ydim())
-			b = g.ydim()-1;
+		if(j < 0)
+			j = 0;
+		else if(j >= g.ydim())
+			j = g.ydim()-1;
 
-		if(c < 0)
-			c = 0;
-		else if(c >= g.zdim())
-			c = g.zdim()-1;
+		if(k < 0)
+			k = 0;
+		else if(k >= g.zdim())
+			k = g.zdim()-1;
 
-		double x0 = double(a);
-		double y0 = double(b);
-		double z0 = double(c);
+		double x0 = i;
+		double y0 = j;
+		//double z0 = double(c);
 
-		return g.valueAtIndex(a, b, c) - FirePresets::dx*std::sqrt(std::pow(x1-x0, 2.0) + std::pow(y1-y0, 2.0) + std::pow(y1-y0, 2.0));
+		return g.valueAtIndex(i, j, k) - FirePresets::dx*std::sqrt(std::pow(x1-x0, 2.0) + std::pow(y1-y0, 2.0) + std::pow(y1-y0, 2.0));
 	}
 };
 

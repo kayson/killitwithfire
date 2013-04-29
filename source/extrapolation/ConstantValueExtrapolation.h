@@ -21,7 +21,7 @@ public:
 		return new ConstantValueExtrapolation<T>();
 	}
 
-	virtual T extrapolate(const GridField<T>& g, const int i, const int j, const int k) const
+	virtual T doExtrapolation(const GridField<T>& g, int i, int j, int k) const
 	{
 		return _value;
 	}

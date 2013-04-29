@@ -14,8 +14,11 @@
 #include <iostream>
 #include <vector>
 #include "glfw.h"
-#include "GL/freeglut.h"
 
+#ifdef __APPLE__
+#elif defined _WIN32 || defined _WIN64
+#include "GL/freeglut.h"
+#endif
 
 class Particles : public std::vector<Vector3> {
 public:

@@ -110,7 +110,7 @@ void reinitialize::reinitializeGrid(GridField<double> **g, GridField<double> **g
 		elapsed += dt;
 
 		//Integrate
-		double mean = CalcMeanGradient(**g);
+		//double mean = CalcMeanGradient(**g);
 
 		IntegrateEuler *e = new IntegrateEuler();
 		e->calculateIntegral(g, gridCopy, dt, Evaluate);		

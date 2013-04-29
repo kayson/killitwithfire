@@ -27,7 +27,7 @@
 #include "Vector3.h"
 #include "GridField.hpp"
 #include <algorithm>
-#include <ClosestValueExtrapolation.h>
+#include "ClosestValueExtrapolation.h"
 
 #include <stdexcept>
 

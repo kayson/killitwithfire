@@ -12,7 +12,6 @@
 #include "Input.h"
 #include "JumpCondition.h"
 
-
 #if defined __APPLE__
 #include "glfw.h"
 #include "pcg_solver.h"
@@ -267,7 +266,6 @@ double Fire::getDensity(const int i, const int j, const int k, DirectionEnums d)
 		return alpha * preset->rhob + ( 1 - alpha ) * preset->rhof;
 	else if(phi.getCellType(i,j,k) == BURNT && temp == BURNT)
 		return preset->rhob;
-
 }
 
 CellType Fire::getCellType(const int i, const int j, const int k) const
@@ -365,8 +363,8 @@ void Fire::runSimulation(){
 
     enforceBorderCondition();
     phi.updateNormals();
-    int j = 10;
-    int i = 20;
+    //int j = 10;
+    //int i = 20;
     for (int n = 0;  n < 10; n++) {
         //phi.grid->setValueAtIndex(0.050, i+n, j, 0);
     }

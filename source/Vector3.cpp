@@ -25,7 +25,7 @@ Vector3::~Vector3(){
 }
 
 // Dot product between two vectors, returns float
-double Vector3::dot(Vector3 &vTemp)
+double Vector3::dot(const Vector3 &vTemp)
 {
 	double dotProduct = x*vTemp.x + y*vTemp.y + z*vTemp.z;
 	return dotProduct;

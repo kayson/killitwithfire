@@ -16,7 +16,7 @@ template<class T>
 class Interpolation {
 public:
     virtual ~Interpolation(){};
-    virtual Interpolation* clone() = 0;
+    virtual Interpolation* clone() const = 0;
     virtual T interpolate(const GridField<T> &g,int i,int j,int k,double x,double y,double z)const = 0;
     static Interpolation* defaultInterpolation(){ return new LinearInterpolation<T>(); };
 };
@@ -34,7 +34,7 @@ public:
      t = 1.3, =  f(0) = 1, f(1) = 4
      => f(t) = f(1.3) =
      */
-    virtual Interpolation<T>* clone(){ return new LinearInterpolation<T>();}
+    virtual Interpolation<T>* clone() const{ return new LinearInterpolation<T>();}
     
     virtual ~LinearInterpolation(){}
     
@@ -77,7 +77,7 @@ public:
      => f(t) = f(1.3) = 3.222
     */
     
-    virtual Interpolation<T>* clone(){ return new LinearInterpolation<T>();}
+    virtual Interpolation<T>* clone() const{ return new LinearInterpolation<T>();}
     
     virtual ~CatmullRomInterpolation(){}
 

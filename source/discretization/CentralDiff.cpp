@@ -13,6 +13,10 @@
 	//Egentligen en Colocated
 */
 
+#ifdef __APPLE__
+#define _isnan(x) isnan(x)
+#endif
+
 double CentralDiff::calcDxm(GridField<double> &g, const int i, const int j, const int k)
 {
 	throw;
@@ -92,11 +96,11 @@ double CentralDiff::calcDxy(GridField<double> &g, const int i, const int j, cons
 {
 	/*CellType c_t = Fire::getCellType(g(i,j,k));
 	return ( g(i+1,j+1,k,c_t) - g(i+1,j-1,k,c_t) + g(i-1,j-1,k,c_t) - g(i-1,j+1,k,c_t) ) / (4.0*FirePresets::dx*FirePresets::dx);*/
-	double asd4 = g(i-1,j+1,k);
+	/*double asd4 = g(i-1,j+1,k);
 	double asd3 = g(i-1,j-1,k);
 	double asd2 = g(i+1,j-1,k);
 	double asd1 = g(i+1,j+1,k);
-
+     */
 	if(_isnan(g(i+1,j+1,k)) || _isnan(g(i+1,j-1,k)) ||  _isnan(g(i-1,j-1,k)) - _isnan(g(i-1,j+1,k)))
 		std::cout << "hej";
 	return ( g(i+1,j+1,k) - g(i+1,j-1,k) + g(i-1,j-1,k) - g(i-1,j+1,k) ) / (4.0*FirePresets::dx*FirePresets::dx);

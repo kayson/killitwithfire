@@ -10,6 +10,10 @@
 #include "helper.h"
 #include <cmath>
 
+#ifdef __APPLE__
+#define _isnan(x) isnan(x)
+#endif
+
 DetonationShockDynamics::DetonationShockDynamics(){
 	flameFrontVelocity = new GridField<double>(FirePresets::GRID_DIM_X, FirePresets::GRID_DIM_Y, FirePresets::GRID_DIM_Z, new ConstantValueExtrapolation<double>());
 	dDeriv = new GridField<double>(FirePresets::GRID_DIM_X, FirePresets::GRID_DIM_Y, FirePresets::GRID_DIM_Z,new ConstantValueExtrapolation<double>());

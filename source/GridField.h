@@ -32,9 +32,14 @@ template <class T>
 class GridField : public GridMapping {
 public:
     T *_data;
-    Interpolation<T> *_interpolation;
-	Extrapolation<T> *_extrapolation;
+    Interpolation<T> *_interpolation{nullptr};
+	Extrapolation<T> *_extrapolation{nullptr};
 private:
+    //Helper
+    bool isUndefined(int i) const;
+    bool isUndefined(int i,int j,int k) const;
+    
+    //Deleted
     GridField();
 public:
     //Konstruktor/Destruktor
@@ -45,8 +50,9 @@ public:
     GridField<T>& operator=(const GridField<T> &g);
     ~GridField();
     
-    //
-    void setInterpolation(Interpolation<T> *i);
+    //Inter/Extra-polering
+    void setInterpolation(const Interpolation<T> *i);
+    void setExtrapolation(const Extrapolation<T> *e);
     
     //Hämta värden
     virtual T valueAtIndex(int i) const;

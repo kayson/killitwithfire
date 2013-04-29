@@ -18,6 +18,10 @@
 #include <GL/glfw.h>
 #endif
 
+#ifdef __APPLE__
+#define _isnan(x) isnan(x)
+#endif
+
 LevelSet::LevelSet()
 {
 
@@ -104,7 +108,8 @@ CellType LevelSet::getCellType(const double phi){
 }
 Vector3 LevelSet::getFlameSpeed(const int i, const int j, const int k, MACGrid *vel) const{
 	if(getCellType(i, j, k) == CellType::FUEL){
-		return dsd->getFlameSpeed(i, j, k, vel, getNormal(i, j, k));
+        Vector3 v = getNormal(i, j, k);
+		return dsd->getFlameSpeed(i, j, k, vel, v);
 	}
 	else
 		return Vector3(0, 0, 0);
