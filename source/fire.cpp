@@ -709,14 +709,14 @@ void Fire::draw(){
 
 	//drawVorticities();
 	//drawCenterVelocities();
-    drawMAC(u_burnt, BURNT, 1,0,0);
-    drawMAC(u_fuel, FUEL, 0,1,1);
+    //drawMAC(u_burnt, BURNT, 1,0,0);
+    //drawMAC(u_fuel, FUEL, 0,1,1);
     //drawMAC(u_burnt, BURNT, 0,1,1);
     //particles.draw();
     //drawMAC(u_burnt, FUEL, 1,0,0);
     //drawMAC(u_burnt, BURNT, 0,1,1);
 
-    //drawCenterGradients(FirePresets::centralDisc);
+    drawCenterGradients(FirePresets::centralDisc);
     //drawFaceVelocities(u_burnt);
     //drawMAC();
     //drawSolid();
