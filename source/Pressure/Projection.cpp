@@ -293,7 +293,7 @@ void Projection::project(MACGrid *u,const GridField<bool> *solids,CellType cellT
     for (GridFieldIterator<bool> it = solids->iterator(); !it.done(); it.next()) {
         int i,j,k;
         it.index(i, j, k);
-        if (i == 0 || i == (solids->xdim()-1) || j == 0 || j == (solids->ydim()-1)) {
+		if (it.value()){//(i == 0 || i == (solids->xdim()-1) || j == 0 || j == (solids->ydim()-1)) {
 
             //if (it.value()) {
             
