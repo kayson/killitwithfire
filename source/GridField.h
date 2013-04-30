@@ -12,7 +12,7 @@
 class Vector3;
 
 #include "GridMapping.h"
-
+#include "ClosestValueExtrapolation.h"
 
 #ifdef __APPLE__
 #include "glm.hpp"
@@ -25,20 +25,20 @@ class Vector3;
 
 
 template <class T> class GridFieldIterator;
-template<class T> class Interpolation;
-template<class T> class Extrapolation;
+template <class T> class Interpolation;
+template <class T> class Extrapolation;
 
 template <class T>
 class GridField : public GridMapping {
 public:
     T *_data;
-    Interpolation<T> *_interpolation{nullptr};
-	Extrapolation<T> *_extrapolation{nullptr};
+    Interpolation<T> *_interpolation;
+	Extrapolation<T> *_extrapolation;
 private:
     //Helper
     bool isUndefined(int i) const;
     bool isUndefined(int i,int j,int k) const;
-    
+    bool _extrapolate;
     //Deleted
     GridField();
 public:
@@ -53,6 +53,8 @@ public:
     //Inter/Extra-polering
     void setInterpolation(const Interpolation<T> *i);
     void setExtrapolation(const Extrapolation<T> *e);
+    void disableExtrapolation();
+    void enableExtrapolation();
     
     //Hämta värden
     virtual T valueAtIndex(int i) const;

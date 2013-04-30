@@ -32,7 +32,7 @@
 #include "ConstantValueExtrapolation.h"
 
 template<class T>
-GridField<T>::GridField(const GridMapping &m, Extrapolation<T> *extrapolation) :GridMapping(m){
+GridField<T>::GridField(const GridMapping &m, Extrapolation<T> *extrapolation):GridMapping(m),_extrapolation(nullptr),_interpolation(nullptr),_extrapolate(true){
     
     //Allokera data-array
     _data = new T[cellCount()];
@@ -45,12 +45,12 @@ GridField<T>::GridField(const GridMapping &m, Extrapolation<T> *extrapolation) :
 
 
 template<class T>
-GridField<T>::GridField():GridField(10,10,10, new ConstantValueExtrapolation<T>()){ //TODO KORREKT EXTRAPOLERING?
+GridField<T>::GridField():GridField(10,10,10, new ConstantValueExtrapolation<T>()),_extrapolate(true){ //TODO KORREKT EXTRAPOLERING?
     
 }
 
 template<class T>
-GridField<T>::GridField(int xdim,int ydim, int zdim, Extrapolation<T> *extrapolation):GridMapping(xdim,ydim,zdim){    
+GridField<T>::GridField(int xdim,int ydim, int zdim, Extrapolation<T> *extrapolation):GridMapping(xdim,ydim,zdim),_extrapolation(nullptr),_interpolation(nullptr),_extrapolate(true){    
     //Allokera data-array
     _data = new T[cellCount()];
     for (int i = 0; i < cellCount(); i++) _data[i] = T();
@@ -61,7 +61,7 @@ GridField<T>::GridField(int xdim,int ydim, int zdim, Extrapolation<T> *extrapola
 }
 
 template<class T>
-GridField<T>::GridField(int xdim,int ydim, int zdim, double size, Extrapolation<T> *extrapolation):GridMapping(xdim,ydim,zdim,size){
+GridField<T>::GridField(int xdim,int ydim, int zdim, double size, Extrapolation<T> *extrapolation):GridMapping(xdim,ydim,zdim,size),_extrapolation(nullptr),_interpolation(nullptr),_extrapolate(true){
     
     //Allokera data-array
     _data = new T[cellCount()];
@@ -73,7 +73,7 @@ GridField<T>::GridField(int xdim,int ydim, int zdim, double size, Extrapolation<
 }
 
 template<class T>
-GridField<T>::GridField(const GridField<T> &g):GridMapping(g){
+GridField<T>::GridField(const GridField<T> &g):GridMapping(g),_extrapolation(nullptr),_interpolation(nullptr),_extrapolate(true){
     
     _data = new T[g.cellCount()];
 
@@ -96,12 +96,8 @@ GridField<T>& GridField<T>::operator=(const GridField<T> &g){
         _data = new T[g.cellCount()];
         for (int i = 0; i < g.cellCount(); i++) _data[i] = g._data[i];
 
-        // delete old pointers
-		if(_interpolation != nullptr) delete _interpolation;
-		if(_extrapolation != nullptr) delete _extrapolation;
-		// get new pointers
-        _interpolation = g._interpolation->clone();
-		_extrapolation = g._extrapolation->clone();
+        setInterpolation(g._interpolation);
+        setExtrapolation(g._extrapolation);
     }
     
     return *this;
@@ -133,6 +129,15 @@ void GridField<T>::setExtrapolation(const Extrapolation<T> *e){
 }
 
 template<class T>
+void GridField<T>::disableExtrapolation(){
+    _extrapolate = false;
+}
+template<class T>
+void GridField<T>::enableExtrapolation(){
+    _extrapolate = true;
+}
+
+template<class T>
 bool GridField<T>::isUndefined(int i) const{
     return i < 0 || i >= cellCount();
 }
@@ -154,7 +159,7 @@ T GridField<T>::valueAtIndex(int i) const{
 
 template<class T>
 T GridField<T>::valueAtIndex(int i,int j,int k) const{
-    if (isUndefined(i, j, k)){
+    if (_extrapolate && isUndefined(i, j, k)){
         if(_extrapolation == nullptr){
             std::stringstream ss;
             ss << "Försökte komma åt ett odefinierat index (" << i;
@@ -204,6 +209,7 @@ T GridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
     }
      
     */
+    
     
     return _interpolation->interpolate(*this,i,j,k,x,y,z);
 }
