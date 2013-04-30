@@ -96,7 +96,7 @@ void Fire::setSolids(){
     for (GridFieldIterator<bool> it = solids.iterator(); !it.done(); it.next()) {
         int i,j,k;
         it.index(i, j, k);
-        if (i == 0 || i == (solids.xdim()-1) || j == 0) {
+        if ( j == 0) {
             solids.setValueAtIndex(true, it.index());
         }else{
             solids.setValueAtIndex(false, it.index());
@@ -206,7 +206,7 @@ void Fire::advectLevelSet(double duration)
 
 void Fire::advectTemperature(double dt){
     T->AdvectTemperatureField(dt, u_burnt, phi);
-    T->CalculateBuoyancyForceField();
+    T->CalculateBuoyancyForceField(phi);
 }
 
 double Fire::getAlpha(const int i, const int j, const int k, DirectionEnums d)
@@ -398,17 +398,17 @@ void Fire::runSimulation(){
 		phi.grid->setValueAtIndex(1,i,4,0);
 	}*/
 
+	advectTemperature(preset->dt);
+	
     u_burnt.addForceGrid(*T->beyonce, preset->dt);
     u_fuel.addForceGrid(*T->beyonce, preset->dt);
 
-    Vector3 gravity = Vector3(0.0, -0.1, 0.0);
+    Vector3 gravity = Vector3(0.0, -0.4, 0.0);
     u.addForce(gravity, preset->dt);
     
     //Vorticity confinement forces
     //Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
-
-	advectTemperature(preset->dt);
     
     
 	try{
@@ -743,11 +743,11 @@ void Fire::computeW(){
 void Fire::draw(){
     phi.draw();
     //T->draw();
-
+	T->drawBuoyancyForce();
 	//drawVorticities();
 	//drawCenterVelocities();
-    drawMAC(u_burnt, BURNT, 1,0,0);
-    drawMAC(u_fuel, FUEL, 0,1,1);
+    //drawMAC(u_burnt, BURNT, 1,0,0);
+    //drawMAC(u_fuel, FUEL, 0,1,1);
     //drawMAC(u_burnt, BURNT, 0,1,1);
     //particles.draw();
     //drawMAC(u_burnt, FUEL, 1,0,0);

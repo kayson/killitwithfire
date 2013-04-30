@@ -114,7 +114,7 @@ void DetonationShockDynamics::Update_D_Without_DSD(GridField<double> *phi){
 }
 void DetonationShockDynamics::Update_D(double dt, MACGrid *velocity, GridField<double> *phi){
 	//Update_D_With_DSD(dt, phi, velocity);
-	//Update_D_Without_DSD(phi);
+	Update_D_Without_DSD(phi);
 }
 
 Vector3 DetonationShockDynamics::getFlameSpeed(int i, int j, int k, MACGrid *velocity, Vector3 &normal) const{
@@ -128,7 +128,7 @@ Vector3 DetonationShockDynamics::getFlameSpeed(int i, int j, int k, MACGrid *vel
 	double speed = (Vector3::dot(cVel, normal) * normal).norm() - vel;
 	Vector3 a = normal * speed;
 	Vector3 b = velocity->velocityAtCenter(i, j, k) + normal * FirePresets::S;
-	return a;
+	return b;
 }
 
 double DetonationShockDynamics::getFlameFrontVelocity(int i, int j, int k) const{

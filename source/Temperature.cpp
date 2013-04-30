@@ -9,7 +9,7 @@
 #include "Vector3.h"
 #include "BlackBodyRadiation.h"
 #include "ClosestValueExtrapolation.h"
-
+#include "Gradient.h"
 #if defined __APPLE__ || defined __unix__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
@@ -78,18 +78,21 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
         for(int j = 0; j < grid->ydim(); j++)
             for(int k = 0; k < grid->zdim(); k++){
 
+				Vector3 grad = Gradient::getGradient(*grid, i, j, k, *FirePresets::centralDisc);
+				Vector3 vel = m.velocityAtCenter(i, j, k);
+				double v = -Vector3::dot(vel, grad);
+
                 double c = calculateTemperatureLoss(i, j, k);
-                double v = FirePresets::tempAdvect->advect(dt, m,
-                                                           *grid, i, j, k);
-				double newValue = (grid->valueAtIndex(i,j,k) - v * dt) - c * dt;
-				if(newValue < FirePresets::T_AIR)
-					newValue = FirePresets::T_AIR;
+
+				double newValue = (grid->valueAtIndex(i,j,k) + v * dt) - c * dt;
+				if(newValue < FirePresets::T_AIR*0.8)
+					newValue = FirePresets::T_AIR*0.8;
 				copy.setValueAtIndex(newValue, i, j, k);
             }
 	*grid = copy;
 }
 
-void Temperature::CalculateBuoyancyForceField()
+void Temperature::CalculateBuoyancyForceField(LevelSet &ls)
 {
   int xdim = FirePresets::GRID_DIM_X,
       ydim = FirePresets::GRID_DIM_Y,
@@ -98,13 +101,17 @@ void Temperature::CalculateBuoyancyForceField()
   for(int i = 0; i < xdim; i++)
       for(int j = 0; j < ydim; j++)
           for(int k = 0; k < zdim; k++){
-              Vector3 force = Vector3(0.0, 1.0, 0.0);
-              double amplitude = (grid->valueAtIndex(i,j,k) -
-                                  FirePresets::T_AIR)
-                                 * FirePresets::TEMPERATURE_BUOYANCY_ALPHA;
+			  if(!(ls.getCellType(i, j, k) == CellType::FUEL)) {
+				  Vector3 force = Vector3(0.0, 1.0, 0.0);
+				  double amplitude = (grid->valueAtIndex(i,j,k) -
+									  FirePresets::T_AIR)
+									 * FirePresets::TEMPERATURE_BUOYANCY_ALPHA;
         
-              force *= amplitude;
-              beyonce->setValueAtIndex(force, i, j, k);
+				  force *= amplitude;
+				  beyonce->setValueAtIndex(force, i, j, k);
+			  }
+			  else
+				  beyonce->setValueAtIndex(Vector3(0), i, j, k);
           }
 }
 
@@ -116,12 +123,16 @@ void Temperature::drawBuoyancyForce(){
         double x,y,z;
         grid->indexToWorld(i, j, k, x, y, z);
     
-        Vector3 v = beyonce->valueAtIndex(i,j,k)/100;
+        Vector3 v = beyonce->valueAtIndex(i,j,k)/500;
         glColor3d(1.0,1.0,0.0);
         glBegin(GL_LINE_STRIP);
         glVertex3d(x, y, 0);
         glVertex3d(x + v.x, y +v.y , 0);
         glEnd();
+		glColor3f(1,0,0);
+		glBegin(GL_POINTS);
+		glVertex3f(x, y, 0);
+		glEnd();
     }
 }
 
@@ -150,39 +161,58 @@ double Temperature::maxTemp()
 void Temperature::draw()
 {
 	double maxT = maxTemp();
-	Vector3 LMSw = BlackBodyRadiation::XYZtoLMS(BlackBodyRadiation::blackbodyToXYZ(maxT));
+		glBegin(GL_QUADS);
 
-    glBegin(GL_QUADS);
-    for (GridFieldIterator<double> iter = grid->iterator();
-         !iter.done(); iter.next()) {
+    float dx = (float)grid->dx();
+    float dy = (float)grid->dy();
+    for (GridFieldIterator<double> iter = grid->iterator(); !iter.done(); iter.next()) {
         int i,j,k;
         iter.index(i, j, k);
         double x,y,z;
         grid->indexToWorld(i, j, k, x, y, z);
-        
+		double v = (grid->valueAtIndex(i,j,k) - FirePresets::T_AIR)/(FirePresets::T_MAX - FirePresets::T_AIR);
+		glColor3d(v, v, v);
 
-		// Eq. 23, Nguyen'02
-		Vector3 xyz = BlackBodyRadiation::blackbodyToXYZ(grid->valueAtIndex(i,j,k));
-		Vector3 lms = BlackBodyRadiation::XYZtoLMS(xyz);
-		lms.x /= LMSw.x;
-		lms.y /= LMSw.y;
-		lms.z /= LMSw.z;
-		xyz = BlackBodyRadiation::LMStoXYZ(lms);
-		Vector3 rgb = BlackBodyRadiation::XYZtoRGB(xyz);
-
-		if(grid->valueAtIndex(i,j,k) >= maxT*0.6)
-			glColor3d(rgb.x, rgb.y, rgb.z);
-		else
-			glColor3d(rgb.x*0.3, rgb.y*0.3, rgb.z*0.3);
-
-        
         glVertex3f((float)x, (float)y, (float)z);
         glVertex3f(((float)x+1.f), (float)y, (float)z);
         glVertex3f(((float)x+1.f), ((float)y+1.f), (float)z);
-        glVertex3f((float)x, ((float)y+1.f), (float)z);
-        
+        glVertex3f((float)x, ((float)y+1.f), (float)z);   
     }
     glEnd();
+
+	//Vector3 LMSw = BlackBodyRadiation::XYZtoLMS(BlackBodyRadiation::blackbodyToXYZ(maxT));
+
+ //   glBegin(GL_QUADS);
+ //   for (GridFieldIterator<double> iter = grid->iterator();
+ //        !iter.done(); iter.next()) {
+ //       int i,j,k;
+ //       iter.index(i, j, k);
+ //       double x,y,z;
+ //       grid->indexToWorld(i, j, k, x, y, z);
+ //       
+
+	//	// Eq. 23, Nguyen'02
+	//	Vector3 xyz = BlackBodyRadiation::blackbodyToXYZ(grid->valueAtIndex(i,j,k));
+	//	Vector3 lms = BlackBodyRadiation::XYZtoLMS(xyz);
+	//	lms.x /= LMSw.x;
+	//	lms.y /= LMSw.y;
+	//	lms.z /= LMSw.z;
+	//	xyz = BlackBodyRadiation::LMStoXYZ(lms);
+	//	Vector3 rgb = BlackBodyRadiation::XYZtoRGB(xyz);
+
+	//	if(grid->valueAtIndex(i,j,k) >= maxT*0.6)
+	//		glColor3d(rgb.x, rgb.y, rgb.z);
+	//	else
+	//		glColor3d(rgb.x*0.3, rgb.y*0.3, rgb.z*0.3);
+
+ //       
+ //       glVertex3f((float)x, (float)y, (float)z);
+ //       glVertex3f(((float)x+1.f), (float)y, (float)z);
+ //       glVertex3f(((float)x+1.f), ((float)y+1.f), (float)z);
+ //       glVertex3f((float)x, ((float)y+1.f), (float)z);
+ //       
+ //   }
+ //   glEnd();
 
     //drawBuoyancyForce();
 }

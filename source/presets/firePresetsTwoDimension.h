@@ -44,8 +44,8 @@ CentralDiff *FirePresets::centralDisc = new CentralDiff();
 
 MACAdvect<double> *FirePresets::tempAdvect = new MACAdvectRK2<double>();
 
-const int FirePresets::GRID_DIM_X = 30;
-const int FirePresets::GRID_DIM_Y = 30;
+const int FirePresets::GRID_DIM_X = 60;
+const int FirePresets::GRID_DIM_Y = 60;
 const int FirePresets::GRID_DIM_Z = 1;
 
 const double FirePresets::T_IGNITION = 2200;
@@ -64,7 +64,7 @@ const double FirePresets::S = 1.0;
 const double FirePresets::VORTICITY_EPSILON = 1.5;
 
 const double FirePresets::TEMPERATURE_BUOYANCY_ALPHA = 0.01;
-const double FirePresets::TEMPERATURE_LOSS_CONSTANT = 3000;
+const double FirePresets::TEMPERATURE_LOSS_CONSTANT = 30000;
 
 const double FirePresets::rhof = 1.0;
 const double FirePresets::rhob = 0.1;
