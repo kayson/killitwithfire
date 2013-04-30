@@ -77,8 +77,9 @@ double BlackBodyRadiation::radiance(double lambda, double T)
 
 Vector3 BlackBodyRadiation::blackbodyToXYZ(double T)
 {
+    
 	Vector3 xyz(0.0, 0.0, 0.0);
-	int step = 0;
+	/*int step = 0;
 	#pragma omp parallel for	
 	for(int i = 360; i < 830; i+=5,step++) 
 	{
@@ -91,7 +92,7 @@ Vector3 BlackBodyRadiation::blackbodyToXYZ(double T)
 	xyz.x /= totXYZ;
 	xyz.y /= totXYZ;
 	xyz.z /= totXYZ;
-
+     */
 	return xyz;
 }
 

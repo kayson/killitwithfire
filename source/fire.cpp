@@ -96,7 +96,7 @@ void Fire::setSolids(){
     for (GridFieldIterator<bool> it = solids.iterator(); !it.done(); it.next()) {
         int i,j,k;
         it.index(i, j, k);
-        if ( j == 0) {
+        if ( j == 0 || i == 0 || i == solids.xdim()-1) {
             solids.setValueAtIndex(true, it.index());
         }else{
             solids.setValueAtIndex(false, it.index());
@@ -150,7 +150,8 @@ void Fire::computeGhostValues(){
 				else if (dir == VDIR)
 					burnt->setValueAtIndex(fuelVal + DVn - normalProd.y,it.index());
 				else //if (dir == WDIR)
-					burnt->setValueAtIndex(fuelVal + DVn - normalProd.y,it.index());
+
+					burnt->setValueAtIndex(fuelVal + DVn - normalProd.z,it.index());
 				//burnt->setValueAtIndex(fuelVal+DVn,it.index());
                 
             }else if (cellType == BURNT){
@@ -298,8 +299,8 @@ void Fire::runSimulation(){
     //if(once == 0) once++;
     //else return;
 
-	phi.updateNormals();
-	phi.updateDSD(preset->dt, &u);
+	//phi.updateNormals();
+	//phi.updateDSD(preset->dt, &u);
 
 	 //Advektera levelset
     /*for(double currentTime = 0; currentTime < preset->dt;)
@@ -403,36 +404,35 @@ void Fire::runSimulation(){
     u_burnt.addForceGrid(*T->beyonce, preset->dt);
     u_fuel.addForceGrid(*T->beyonce, preset->dt);
 
-    Vector3 gravity = Vector3(0.0, -0.4, 0.0);
-    u.addForce(gravity, preset->dt);
+    //Vector3 gravity = Vector3(0.0, -0.4, 0.0);
+    //u.addForce(gravity, preset->dt);
     
     //Vorticity confinement forces
     //Vorticity::addVorticity(u, *vorticityForces, FirePresets::VORTICITY_EPSILON, FirePresets::dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
 	//u.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
     
-    
-	try{
-#pragma omp parallel sections
-	{
-		#pragma omp section
-		{
-			projection.project(&u_burnt,&solids, BURNT, preset->dt);
-		}
-		#pragma omp section
-		{
-			projection.project(&u_fuel,&solids, FUEL, preset->dt);
-		}
-	}
-	}
-	catch(std::exception &e){
-		std::cout << e.what() << std::endl;
-	}
+    static int c = 0;
+    c++;
+    if (c % 5) {
+        try{
+
+            projection.project(&u_burnt,&solids, BURNT, preset->dt);
+
+            projection.project(&u_fuel,&solids, FUEL, preset->dt);
+                
+            
+        }
+        catch(std::exception &e){
+            std::cout << e.what() << std::endl;
+        }
+    }
+
     computeGhostValues();
 
     enforceBorderCondition();
 
     advectLevelSet(preset->dt);
-    particles.integrateEuler(u_burnt, preset->dt);
+    //particles.integrateEuler(u_burnt, preset->dt);
 	//Fixa signed distance field
     phi.reinitialize();
     
@@ -444,12 +444,10 @@ void Fire::runSimulation(){
 void Fire::enforceBorderCondition(){
     
     
-    
-    
-    for (GridMappingIterator it = u_fuel.iterator(); !it.done(); it.next()) {
-        int i,j,k;
-        it.index(i, j, k);
-        if (solids.valueAtIndex(i, j, k)) {
+    for (GridFieldIterator<bool> it = solids.iterator(); !it.done(); it.next()) {
+        if (it.value()) {
+            int i,j,k;
+            it.index(i, j, k);
             u_fuel.setValueAtFace(0, i, j, k, RIGHT);
             u_fuel.setValueAtFace(0, i, j, k, LEFT);
             u_fuel.setValueAtFace(0, i, j, k, UP);
@@ -461,8 +459,6 @@ void Fire::enforceBorderCondition(){
             u_burnt.setValueAtFace(0, i, j, k, DOWN);
         }
     }
-    
-    
 }
 
 void Fire::drawVorticities(){
@@ -742,13 +738,14 @@ void Fire::computeW(){
 
 void Fire::draw(){
     phi.draw();
-    //T->draw();
-	T->drawBuoyancyForce();
+    T->draw();
+
+	//T->drawBuoyancyForce();
 	//drawVorticities();
 	//drawCenterVelocities();
     //drawMAC(u_burnt, BURNT, 1,0,0);
     //drawMAC(u_fuel, FUEL, 0,1,1);
-    //drawMAC(u_burnt, BURNT, 0,1,1);
+    //drawMAC(u_fuel, BURNT, 0,1,1);
     //particles.draw();
     //drawMAC(u_burnt, FUEL, 1,0,0);
     //drawMAC(u_burnt, BURNT, 0,1,1);

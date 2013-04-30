@@ -102,7 +102,8 @@ void reinitialize::reinitializeGrid(GridField<double> **g, GridField<double> **g
 {
 	double time = FirePresets::dt;
 	double dt = 0.5 * FirePresets::dx;
-		
+    IntegrateEuler *e = new IntegrateEuler();
+
 	for(double elapsed = 0; elapsed < time;)
 	{
 		if(dt > time)
@@ -112,8 +113,9 @@ void reinitialize::reinitializeGrid(GridField<double> **g, GridField<double> **g
 		//Integrate
 		//double mean = CalcMeanGradient(**g);
 
-		IntegrateEuler *e = new IntegrateEuler();
-		e->calculateIntegral(g, gridCopy, dt, Evaluate);		
+		e->calculateIntegral(g, gridCopy, dt, Evaluate);
 	}
+    delete e;
+
 }
 

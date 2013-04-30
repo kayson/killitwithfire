@@ -107,7 +107,7 @@ CellType LevelSet::getCellType(const double phi){
 		return BURNT;
 }
 Vector3 LevelSet::getFlameSpeed(const int i, const int j, const int k, MACGrid *vel) const{
-	if(getCellType(i, j, k) == CellType::FUEL){
+	if(getCellType(i, j, k) == FUEL){
         Vector3 v = getNormal(i, j, k);
 		return dsd->getFlameSpeed(i, j, k, vel, v);
 	}
@@ -134,8 +134,7 @@ double LevelSet::getCurvature(const int i, const int j, const int k, GridField<d
 		dz*dz*(d2x + d2y) - a*dx*dy*dxy;
 	double val = dx*dx+dy*dy+dz*dz;
 	if(val == 0) return 0;
-	if(_isnan(val1))		
-		std::cout << "hej";
+
 	return (dx*dx*(d2y + d2z) - a*dy*dz*dyz + 
 		dy*dy*(d2x*d2z) - a*dx*dz*dxz + 
 		dz*dz*(d2x + d2y) - a*dx*dy*dxy) /

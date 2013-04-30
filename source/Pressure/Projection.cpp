@@ -17,15 +17,15 @@
 
 void Projection::resize(){
     
-    if(A == nullptr ){
+    if(A == NULL ){
         A = new SparseMatrix<double>(_size,5);
     }
     
-    if (b == nullptr){
+    if (b == NULL){
         b = new std::vector<double>(_size);
     }
     
-    if (x == nullptr){
+    if (x == NULL){
         x = new std::vector<double>(_size);
     }
     
@@ -158,9 +158,9 @@ void Projection::fillb(){
 
 void Projection::print_vector(std::vector<double> &v) const{
     std::cout << "[";
-    for (double val : v) {
+    for (int i = 0; i < v.size(); i++) {
         //std::cout << "|" << std::setw(5) << val << "|" << std::endl;
-        std::cout << std::setw(5) << val << ";" << std::endl;
+        std::cout << std::setw(5) << v[i] << ";" << std::endl;
     }
     std::cout << "]";
 }
@@ -293,7 +293,7 @@ void Projection::project(MACGrid *u,const GridField<bool> *solids,CellType cellT
     for (GridFieldIterator<bool> it = solids->iterator(); !it.done(); it.next()) {
         int i,j,k;
         it.index(i, j, k);
-		if (it.value()){//(i == 0 || i == (solids->xdim()-1) || j == 0 || j == (solids->ydim()-1)) {
+        if (it.value()) {
 
             //if (it.value()) {
             

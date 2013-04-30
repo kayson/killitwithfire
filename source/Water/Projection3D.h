@@ -31,9 +31,9 @@ private:
     std::vector<double> *x;
 public:
     PCGProjection3D(MACGrid *u, GridField<int> *cellType):_u(u),_cellType(cellType){
-        A = nullptr;
-        b = nullptr;
-        x = nullptr;
+        A = NULL;
+        b = NULL;
+        x = NULL;
     };
     ~PCGProjection3D(){
         delete A;

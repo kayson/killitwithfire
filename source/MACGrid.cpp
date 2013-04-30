@@ -481,7 +481,7 @@ void MACGrid::addForceGrid(GridField<Vector3> &f, double dt){
 				double forceval = ( f.valueAtIndex(i,j,k).y + f.valueAtIndex(i,j+1,k).y )/2;
 				_v->setValueAtIndex(val+forceval*dt,i,j,k);
 			}
-			else if(index == 3){
+			else if(index == 2){
 				double val = _w->valueAtIndex(i,j,k);
 				//double forceval = ( f.valueAtIndex(i,j,k).z + f.valueAtIndex(i,j,k+1).z )/2;
 				_w->setValueAtIndex(val, i,j,k);//_w->setValueAtIndex(val+forceval*dt, i,j,k);

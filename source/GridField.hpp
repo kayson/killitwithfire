@@ -17,12 +17,12 @@
 #include "Interpolation.h"
 #include "Extrapolation.h"
 #include <exception>
+#include <stdexcept>
 #include <sstream>
 #include "Vector3.h"
 #include "ConstantValueExtrapolation.h"
 
 #include <iostream>
-
 #ifdef __APPLE__
 #elif defined _WIN32 || defined _WIN64
 #define round(x) floor((x) >= 0 ? (x) + 0.5 : (x) - 0.5)

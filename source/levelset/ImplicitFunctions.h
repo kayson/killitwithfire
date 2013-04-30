@@ -14,9 +14,9 @@ namespace implicitFunction
 		double y = (double) j * (double) FirePresets::dx;
 		double z = (double) k * (double) FirePresets::dx;
 
-		double r = (double) 10.0 * (double) FirePresets::dx;
+		double r = (double) 2.5 * (double) FirePresets::dx;
 		double xo =  -(double)FirePresets::GRID_DIM_X * ((double) FirePresets::dx / 2.0);
-		double yo =  -(double)FirePresets::GRID_DIM_Y * ((double) FirePresets::dx / 4.0);
+		double yo =  -10;//(double)FirePresets::GRID_DIM_Y * ((double) FirePresets::dx / 4.0);
 		double zo =  -(double)FirePresets::GRID_DIM_Z * ((double) FirePresets::dx / 2.0);
 		x += xo;
 		y += yo;

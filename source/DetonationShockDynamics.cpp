@@ -44,8 +44,7 @@ void DetonationShockDynamics::Update_D_With_DSD(double dt, GridField<double> *ph
 				double curv = LevelSet::getCurvature(i, j, k, phi);
 				if(curv > 500) 
 					curv = 0;
-				if(_isnan(curv))
-					std::cout << "hej";
+
 				curvature->setValueAtIndex(curv, i, j, k);
 				nextPhi->setValueAtIndex(phi->valueAtIndex(i, j, k), i, j, k);
 			}
@@ -67,8 +66,6 @@ void DetonationShockDynamics::Update_D_With_DSD(double dt, GridField<double> *ph
 				double c = FirePresets::tempAdvect->advect(dt, *velocity, *curvature, i, j, k);
 				curvature->setValueAtIndex(curvature->valueAtIndex(i, j, k) + c * dt, i, j, k);
 
-				if(_isnan(dv) || _isnan(vphi) || _isnan(v) || _isnan(c))
-					std::cout << "hej!";
 			}
 		}
 	}
@@ -87,8 +84,6 @@ void DetonationShockDynamics::Update_D_With_DSD(double dt, GridField<double> *ph
 				double ddD = -c1 * alpha * alpha * delta 
 					- c2 * alpha * dDeriv->valueAtIndex(i, j, k)
 					- c3 * alpha * alpha * Lcj - c4 * curvDeriv;
-				if(_isnan(curvNext) || _isnan(curvDeriv) || _isnan(delta) || _isnan(alpha) || _isnan(Lcj) || _isnan(ddD))
-					std::cout << "hej";
 				dDeriv->addValueAtIndex(ddD * dt, i, j , k);
 				flameFrontVelocity->addValueAtIndex(dDeriv->valueAtIndex(i, j, k) * dt, i, j, k);
 			}
@@ -105,8 +100,7 @@ void DetonationShockDynamics::Update_D_Without_DSD(GridField<double> *phi){
 				//Calculate mean curvature
 				double curvature = LevelSet::getCurvature(i, j, k, phi);
 				double D = a - b * curvature;
-				if(_isnan(D))
-					std::cout << "hej!";
+
 				flameFrontVelocity->setValueAtIndex(D, i, j, k);
 			}
 		}
@@ -123,8 +117,7 @@ Vector3 DetonationShockDynamics::getFlameSpeed(int i, int j, int k, MACGrid *vel
 	normal.normalize();
 	Vector3 cVel = velocity->velocityAtCenter(i, j, k);
 	double vel = flameFrontVelocity->valueAtIndex(i, j, k);
-	if(_isnan(vel))
-		std::cout << "hej";
+
 	double speed = (Vector3::dot(cVel, normal) * normal).norm() - vel;
 	Vector3 a = normal * speed;
 	Vector3 b = velocity->velocityAtCenter(i, j, k) + normal * FirePresets::S;

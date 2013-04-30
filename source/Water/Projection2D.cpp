@@ -8,8 +8,9 @@
 
 #include "Projection2D.h"
 #include <iomanip>
-#if __linux
 #include <stdexcept>
+#if __linux
+
 #endif
 #include "glfw.h"
 #include "../Pressure/pcgsolver/pcg_solver.h"

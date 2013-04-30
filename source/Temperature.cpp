@@ -10,6 +10,7 @@
 #include "BlackBodyRadiation.h"
 #include "ClosestValueExtrapolation.h"
 #include "Gradient.h"
+
 #if defined __APPLE__ || defined __unix__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
@@ -74,6 +75,21 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
         for(int j = 0; j < grid->ydim(); j++)
             for(int k = 0; k < grid->zdim(); k++)
                 ResetCell(i, j, k, Fire::getCellType(ls.grid->valueAtIndex(i, j, k)));
+    
+
+    for(int i = 0; i < grid->xdim(); i++)
+        for(int j = 0; j < grid->ydim(); j++)
+            for(int k = 0; k < grid->zdim(); k++){
+                double x,y,z;
+                grid->indexToWorld(i, j, k, x, y, z);
+                Vector3 vel = m.velocityAtWorld(Vector3(x,y,z));
+                double val = grid->valueAtWorld(x-dt*vel.x, y-dt*vel.y, z-dt*vel.z);
+                double c = calculateTemperatureLoss(i, j, k);
+
+                copy.setValueAtIndex(val-c, i, j, k);
+    }
+    
+    /*
     for(int i = 0; i < grid->xdim(); i++)
         for(int j = 0; j < grid->ydim(); j++)
             for(int k = 0; k < grid->zdim(); k++){
@@ -89,6 +105,7 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
 					newValue = FirePresets::T_AIR*0.8;
 				copy.setValueAtIndex(newValue, i, j, k);
             }
+    */
 	*grid = copy;
 }
 
@@ -101,7 +118,7 @@ void Temperature::CalculateBuoyancyForceField(LevelSet &ls)
   for(int i = 0; i < xdim; i++)
       for(int j = 0; j < ydim; j++)
           for(int k = 0; k < zdim; k++){
-			  if(!(ls.getCellType(i, j, k) == CellType::FUEL)) {
+			  if(!(ls.getCellType(i, j, k) == FUEL)) {
 				  Vector3 force = Vector3(0.0, 1.0, 0.0);
 				  double amplitude = (grid->valueAtIndex(i,j,k) -
 									  FirePresets::T_AIR)
@@ -171,7 +188,7 @@ void Temperature::draw()
         double x,y,z;
         grid->indexToWorld(i, j, k, x, y, z);
 		double v = (grid->valueAtIndex(i,j,k) - FirePresets::T_AIR)/(FirePresets::T_MAX - FirePresets::T_AIR);
-		glColor3d(v, v, v);
+        glColor3d(0.7*v,0.7*v,0.0);
 
         glVertex3f((float)x, (float)y, (float)z);
         glVertex3f(((float)x+1.f), (float)y, (float)z);

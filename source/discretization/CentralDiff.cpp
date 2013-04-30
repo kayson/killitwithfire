@@ -12,8 +12,9 @@
 
 	//Egentligen en Colocated
 */
-
 #ifdef __APPLE__
+#include <math.h>
+
 #define _isnan(x) isnan(x)
 #endif
 
@@ -101,8 +102,6 @@ double CentralDiff::calcDxy(GridField<double> &g, const int i, const int j, cons
 	double asd2 = g(i+1,j-1,k);
 	double asd1 = g(i+1,j+1,k);
      */
-	if(_isnan(g(i+1,j+1,k)) || _isnan(g(i+1,j-1,k)) ||  _isnan(g(i-1,j-1,k)) - _isnan(g(i-1,j+1,k)))
-		std::cout << "hej";
 	return ( g(i+1,j+1,k) - g(i+1,j-1,k) + g(i-1,j-1,k) - g(i-1,j+1,k) ) / (4.0*FirePresets::dx*FirePresets::dx);
 }
 
