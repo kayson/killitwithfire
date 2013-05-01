@@ -294,10 +294,13 @@ CellType Fire::getCellType(double phi){
 		return BURNT;
 }
 
+double initVolume = 16.0;
 void Fire::runSimulation(){
 
 	phi.reinitialize();
     phi.updateNormals();
+
+	double currentVolume = phi.getVolume();
 
     //static int once = 0;
     //if(once == 0) once++;
@@ -437,34 +440,45 @@ void Fire::runSimulation(){
 
     advectLevelSet(preset->dt);
 
-	//if(volume < initVolume)
-	/*{
-		int bredd = 5;
-		int y0 = 6;
+	if(true)
+	{
 		int x0 = preset->GRID_DIM_X/2;
-		for(int x = -bredd; x <= bredd; x++){
-			for(int y = -bredd; y <= bredd; y++)
+		int y0 = 6;
+		double radius = 3.0;
+		for(int x = 0; x < preset->GRID_DIM_X; ++x)
+		{
+			for(int y = 0; y < preset->GRID_DIM_Y; ++y)
 			{
-				double dist = bredd - std::sqrt( pow(x, 2.0) + pow(y, 2.0) );
-				double val = phi.grid->valueAtIndex(x0+x,y0+y,0);
-
-				if(dist >= 0.0)
+				double ndist = radius - sqrt(pow(x0-x, 2.0) + pow(y0-y, 2.0));
+				double odist = phi.grid->valueAtIndex(x, y, 0);
+				double dist;
+				if(ndist >= 0.0)
 				{
-					if(val < 0.0)
-						phi.grid->setValueAtIndex(dist, x0+x,y0+y,0);
-					else
-						phi.grid->setValueAtIndex(min(dist, val), x0+x,y0+y,0);
+					if(odist < 0.0)
+						dist = ndist;
+					else//both positive = inside fuel
+						dist = min(ndist, odist);
+
+					//Rikta hastighetsfältet utåt från den injektade bränslet
+					Vector3 N = phi.getNormal(x, y, 0)*5.0;
+					u_fuel.setValueAtFace(N.x, x, y, 0, RIGHT);
+					u_fuel.setValueAtFace(-N.x, x, y, 0, LEFT);
+					u_fuel.setValueAtFace(N.y, x, y, 0, UP);
+					u_fuel.setValueAtFace(-N.y, x, y, 0, DOWN);
 				}
 				else
 				{
-					if(val > 0.0)
-						phi.grid->setValueAtIndex(val, x0+x,y0+y,0);
-					else
-						phi.grid->setValueAtIndex(max(dist, val), x0+x,y0+y,0);
+					if(odist >= 0.0)
+						dist = odist;
+					else//both negative = outside fuel
+						dist = max(ndist, odist);
 				}
+				phi.grid->setValueAtIndex(dist, x, y, 0);
 			}
 		}
-	}*/
+		//computeGhostValues();
+	}
+	
 
     //particles.integrateEuler(u_burnt, preset->dt);
 	//Fixa signed distance field 
@@ -538,7 +552,7 @@ void Fire::drawMAC(MACGrid &grid,CellType cellType, double r,double g,double b){
             Vector3 vel = grid.velocityAtWorld(Vector3(x,y,z));
             glBegin(GL_LINE_STRIP);
             glVertex3d(x,y,0);
-            glVertex3d(x+vel.x, y+vel.y,0);
+            glVertex3d(x+vel.x*0.1, y+vel.y*0.1,0);
             glEnd();
         }
 	}
@@ -781,14 +795,14 @@ void Fire::draw(){
 	//T->drawBuoyancyForce();
 	//drawVorticities();
 	//drawCenterVelocities();
-    //drawMAC(u_burnt, BURNT, 1,0,0);
-    //drawMAC(u_fuel, FUEL, 0,1,1);
+    drawMAC(u_burnt, BURNT, 1,0,0);
+    drawMAC(u_fuel, FUEL, 0,1,1);
     //drawMAC(u_fuel, BURNT, 0,1,1);
     //particles.draw();
     //drawMAC(u_burnt, FUEL, 1,0,0);
     //drawMAC(u_burnt, BURNT, 0,1,1);
 
-    drawCenterGradients(FirePresets::centralDisc);
+    //drawCenterGradients(FirePresets::centralDisc);
     //drawFaceVelocities(u_burnt);
 
     //drawMAC();
