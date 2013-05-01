@@ -61,12 +61,12 @@ const double FirePresets::CFL_NUMBER = 2;
 
 const double FirePresets::S = 0.5;
 
-const double FirePresets::VORTICITY_EPSILON = 1.5;
+const double FirePresets::VORTICITY_EPSILON = 3.5;
 
 const double FirePresets::TEMPERATURE_BUOYANCY_ALPHA = 0.01;
 const double FirePresets::TEMPERATURE_LOSS_CONSTANT = 3000;
 
 const double FirePresets::rhof = 1.0;
-const double FirePresets::rhob = 0.1;
+const double FirePresets::rhob = 0.2;
 
 #endif //FIREPRESETSTWODIM_H

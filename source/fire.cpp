@@ -295,6 +295,10 @@ CellType Fire::getCellType(double phi){
 }
 
 void Fire::runSimulation(){
+
+	phi.reinitialize();
+    phi.updateNormals();
+
     //static int once = 0;
     //if(once == 0) once++;
     //else return;
@@ -432,12 +436,38 @@ void Fire::runSimulation(){
     enforceBorderCondition();
 
     advectLevelSet(preset->dt);
+
+	//if(volume < initVolume)
+	/*{
+		int bredd = 5;
+		int y0 = 6;
+		int x0 = preset->GRID_DIM_X/2;
+		for(int x = -bredd; x <= bredd; x++){
+			for(int y = -bredd; y <= bredd; y++)
+			{
+				double dist = bredd - std::sqrt( pow(x, 2.0) + pow(y, 2.0) );
+				double val = phi.grid->valueAtIndex(x0+x,y0+y,0);
+
+				if(dist >= 0.0)
+				{
+					if(val < 0.0)
+						phi.grid->setValueAtIndex(dist, x0+x,y0+y,0);
+					else
+						phi.grid->setValueAtIndex(min(dist, val), x0+x,y0+y,0);
+				}
+				else
+				{
+					if(val > 0.0)
+						phi.grid->setValueAtIndex(val, x0+x,y0+y,0);
+					else
+						phi.grid->setValueAtIndex(max(dist, val), x0+x,y0+y,0);
+				}
+			}
+		}
+	}*/
+
     //particles.integrateEuler(u_burnt, preset->dt);
-	//Fixa signed distance field
-    phi.reinitialize();
-    
-    phi.updateNormals();
-    
+	//Fixa signed distance field 
 }
 
 
@@ -601,13 +631,20 @@ void Fire::drawFaceVelocities(MACGrid &grid) const{
 
 void Fire::drawCenterGradients(Discretization *disc)
 {
+	double max = 0.0;
 	for (GridMappingIterator iter = u.iterator(); !iter.done(); iter.next()) {
 		int i,j,k;
 		iter.index(i, j, k);
 		double x,y,z;
 		u.indexToWorld(i, j, k, x, y, z);
 		GridField<double> *g = phi.grid;
-		Vector3 v = Gradient::getGradient(*g, i, j, k, *disc) * 0.2;
+		Vector3 v = Gradient::getGradient(*g, i, j, k, *disc);
+
+		if(v.norm() > max)
+			max = v.norm();
+
+		v *= 0.2;
+
 		//std::cout << v.norm() << std::endl;
 		/*glColor3f(0,1,0);
 		glBegin(GL_LINES);
@@ -624,13 +661,12 @@ void Fire::drawCenterGradients(Discretization *disc)
 		//x = i; y = j; z = k;
 
         glPointSize(0.5f);
-        glColor3d(1.0,1.0,0.0);
+        glColor3d(1.0,0.0,1.0);
 		glBegin(GL_POINTS);
 		glVertex3d(x, y, 0);
 		glEnd();
 
         
-		glColor3d(1.0,1.0,0.0);
 		glBegin(GL_LINE_STRIP);
 		glVertex3d(x, y, 0);
 		glVertex3d(x + v.x, y+v.y , 0);
@@ -644,6 +680,8 @@ void Fire::drawCenterGradients(Discretization *disc)
 		
 
 	}
+
+	std::cout << "Max gradient = " << max << std::endl;
 	/*
 	for(int i = 0; i < phi.grid.xdim(); i += 5)
 	>>>>>>> Tagit bort vectorgrid
@@ -737,7 +775,7 @@ void Fire::computeW(){
 }
 
 void Fire::draw(){
-    phi.draw();
+    //phi.draw();
     T->draw();
 
 	//T->drawBuoyancyForce();
@@ -750,7 +788,7 @@ void Fire::draw(){
     //drawMAC(u_burnt, FUEL, 1,0,0);
     //drawMAC(u_burnt, BURNT, 0,1,1);
 
-    //drawCenterGradients(FirePresets::centralDisc);
+    drawCenterGradients(FirePresets::centralDisc);
     //drawFaceVelocities(u_burnt);
 
     //drawMAC();

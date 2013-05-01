@@ -27,6 +27,7 @@ public:
 	void fillLevelSet(double (*implicitFunction)(int x, int y, int z));
 	void specifyRenderFunction(void (*renderFunction)());
 
+	double getVolume() const;
 	void drawNormals() const;
 	void draw() const;
 	void printDistanceField();

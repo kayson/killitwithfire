@@ -55,6 +55,8 @@ public:
 	Fire(FirePresets *preset);
 	~Fire();
 
+	double Fire::computeFuelVolume();
+
     void runSimulation();
 
 	void drawCenterGradients(Discretization *disc);
