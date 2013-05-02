@@ -572,7 +572,7 @@ void Fire::drawMAC(MACGrid &grid,CellType cellType, double r,double g,double b){
             Vector3 vel = grid.velocityAtWorld(Vector3(x,y,z))*0.1;
             glBegin(GL_LINE_STRIP);
             glVertex3d(x,y,0);
-            glVertex3d(x+vel.x, y+vel.y,0);
+            glVertex3d(x+vel.x*0.1, y+vel.y*0.1,0);
             glEnd();
         }
 	}
@@ -809,8 +809,8 @@ void Fire::computeW(){
 }
 
 void Fire::draw(){
-    phi.draw();
-    //T->draw();
+    //phi.draw();
+    T->draw();
 
 	//T->drawBuoyancyForce();
 	//drawVorticities();
@@ -822,7 +822,7 @@ void Fire::draw(){
     //drawMAC(u_burnt, FUEL, 1,0,0);
     //drawMAC(u_burnt, BURNT, 0,1,1);
 
-    drawCenterGradients(FirePresets::centralDisc);
+    //drawCenterGradients(FirePresets::centralDisc);
     //drawFaceVelocities(u_burnt);
 
     //drawMAC();

@@ -59,7 +59,7 @@ const double FirePresets::dt = 1.0/10.0;
 const double FirePresets::dx = GRID_DIM_X/GRID_SIZE;
 const double FirePresets::CFL_NUMBER = 2;
 
-const double FirePresets::S = 2.0;
+const double FirePresets::S = 2.5;
 
 const double FirePresets::VORTICITY_EPSILON = 3.5;
 
