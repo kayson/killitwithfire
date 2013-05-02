@@ -39,6 +39,7 @@ Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset-
 	u = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
     u_burnt = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
 	u_fuel = MACGrid::createRandom2D(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_SIZE);
+	enforceBorderCondition();
 
     //Solids
     setSolids();
@@ -294,10 +295,55 @@ CellType Fire::getCellType(double phi){
 		return BURNT;
 }
 
+void Fire::addFuelToLevelSet(int x0, int y0, int z0, double radius)
+{
+	for(int x = 0; x < preset->GRID_DIM_X; ++x)
+	{
+		for(int y = 0; y < preset->GRID_DIM_Y; ++y)
+		{
+			for(int z = 0; z < preset->GRID_DIM_Z; ++z)
+			{
+				double ndist = radius - sqrt(pow(x0-x, 2.0) + pow(y0-y, 2.0) + pow(z0 - z, 2.0));
+				double odist = phi.grid->valueAtIndex(x, y, 0);
+				double dist;
+				if(ndist >= 0.0)
+				{
+					if(odist < 0.0)
+						dist = ndist;
+					else//both positive = inside fuel
+						dist = min(ndist, odist);
+
+					//Rikta hastighetsfältet utåt från den injektade bränslet
+					Vector3 N = phi.getNormal(x, y, 0)*5.0;
+					u_fuel.setValueAtFace(N.x, x, y, 0, RIGHT);
+					u_fuel.setValueAtFace(-N.x, x, y, 0, LEFT);
+					u_fuel.setValueAtFace(N.y, x, y, 0, UP);
+					u_fuel.setValueAtFace(-N.y, x, y, 0, DOWN);
+				}
+				else
+				{
+					if(odist >= 0.0)
+						dist = odist;
+					else//both negative = outside fuel
+						dist = max(ndist, odist);
+				}
+				phi.grid->setValueAtIndex(dist, x, y, 0);
+			}
+		}
+	}
+	computeGhostValues();
+}
+
 void Fire::runSimulation(){
 
 	phi.reinitialize();
     phi.updateNormals();
+
+	double currentVolume = phi.getVolume();
+	double desiredVolume = 30;
+
+	if(currentVolume < desiredVolume)
+		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, 0, 2.0);
 
     //static int once = 0;
     //if(once == 0) once++;
@@ -387,7 +433,6 @@ void Fire::runSimulation(){
 	}
 	}
     computeGhostValues();
-
     enforceBorderCondition();
 
     //Vorticity
@@ -437,35 +482,6 @@ void Fire::runSimulation(){
 
     advectLevelSet(preset->dt);
 
-	//if(volume < initVolume)
-	/*{
-		int bredd = 5;
-		int y0 = 6;
-		int x0 = preset->GRID_DIM_X/2;
-		for(int x = -bredd; x <= bredd; x++){
-			for(int y = -bredd; y <= bredd; y++)
-			{
-				double dist = bredd - std::sqrt( pow(x, 2.0) + pow(y, 2.0) );
-				double val = phi.grid->valueAtIndex(x0+x,y0+y,0);
-
-				if(dist >= 0.0)
-				{
-					if(val < 0.0)
-						phi.grid->setValueAtIndex(dist, x0+x,y0+y,0);
-					else
-						phi.grid->setValueAtIndex(min(dist, val), x0+x,y0+y,0);
-				}
-				else
-				{
-					if(val > 0.0)
-						phi.grid->setValueAtIndex(val, x0+x,y0+y,0);
-					else
-						phi.grid->setValueAtIndex(max(dist, val), x0+x,y0+y,0);
-				}
-			}
-		}
-	}*/
-
     //particles.integrateEuler(u_burnt, preset->dt);
 	//Fixa signed distance field 
 }
@@ -489,6 +505,24 @@ void Fire::enforceBorderCondition(){
             u_burnt.setValueAtFace(0, i, j, k, DOWN);
         }
     }
+
+	//Hastighetsfältet verkar annars åka neråt mot marken med en jäkla kraft som tar ut elden
+	int y = preset->GRID_DIM_Y-1;
+	for(int x = 0; x < preset->GRID_DIM_X; ++x)
+	{
+		for(int z = 0; z < preset->GRID_DIM_Z; ++z)
+		{
+			if(u_fuel.valueAtFace(x, y, z, UP) < 0.0)
+				u_fuel.setValueAtFace(0.0, x,  y, z, UP);
+			if(u_fuel.valueAtFace(x, y, z, DOWN) < 0.0)
+				u_fuel.setValueAtFace(0.0, x, y, z, DOWN);
+
+			if(u_burnt.valueAtFace(x, y, z, UP) < 0.0)
+				u_burnt.setValueAtFace(0.0, x, y, z, UP);
+			if(u_burnt.valueAtFace(x, y, z, DOWN) < 0.0)
+				u_burnt.setValueAtFace(0.0, x, y, z, DOWN);
+		}
+	}
 }
 
 void Fire::drawVorticities(){
@@ -535,7 +569,7 @@ void Fire::drawMAC(MACGrid &grid,CellType cellType, double r,double g,double b){
         if (getCellType(i, j, k) == cellType  && !solids.valueAtIndex(i, j, k)) {
             double x,y,z;
             grid.indexToWorld(i, j, k, x, y, z);
-            Vector3 vel = grid.velocityAtWorld(Vector3(x,y,z));
+            Vector3 vel = grid.velocityAtWorld(Vector3(x,y,z))*0.1;
             glBegin(GL_LINE_STRIP);
             glVertex3d(x,y,0);
             glVertex3d(x+vel.x, y+vel.y,0);
@@ -775,14 +809,14 @@ void Fire::computeW(){
 }
 
 void Fire::draw(){
-    //phi.draw();
-    T->draw();
+    phi.draw();
+    //T->draw();
 
 	//T->drawBuoyancyForce();
 	//drawVorticities();
 	//drawCenterVelocities();
-    //drawMAC(u_burnt, BURNT, 1,0,0);
-    //drawMAC(u_fuel, FUEL, 0,1,1);
+    drawMAC(u_burnt, BURNT, 1,0,0);
+    drawMAC(u_fuel, FUEL, 0,1,1);
     //drawMAC(u_fuel, BURNT, 0,1,1);
     //particles.draw();
     //drawMAC(u_burnt, FUEL, 1,0,0);

@@ -57,6 +57,8 @@ public:
 
 	double Fire::computeFuelVolume();
 
+	void addFuelToLevelSet(int x0, int y0, int z0, double radius);
+
     void runSimulation();
 
 	void drawCenterGradients(Discretization *disc);
