@@ -35,7 +35,8 @@ public:
     
     //Factory-methods
     static MACGrid createRandom2D(int xdim,int ydim, double size);
-    
+    static MACGrid createRandom3D(int xdim,int ydim, int zdim, double size);
+
     //Konstruktorer
     MACGrid();
     MACGrid(int dim, double size);

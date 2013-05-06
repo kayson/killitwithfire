@@ -32,8 +32,8 @@ template <class T>
 class GridField : public GridMapping {
 public:
     T *_data;
-    Interpolation<T> *_interpolation;
 	Extrapolation<T> *_extrapolation;
+    Interpolation<T> *_interpolation;
 private:
     //Helper
     bool isUndefined(int i) const;
@@ -48,7 +48,7 @@ public:
     GridField(int xdim,int ydim, int zdim, double size, Extrapolation<T> *extrapolation);
     GridField(const GridField<T> &g);
     GridField<T>& operator=(const GridField<T> &g);
-    ~GridField();
+    virtual ~GridField();
     
     //Inter/Extra-polering
     void setInterpolation(const Interpolation<T> *i);

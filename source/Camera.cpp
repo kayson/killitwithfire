@@ -29,7 +29,7 @@ void GLFWCALL Camera::reshape( int width, int height )
     
 
     
-    if (true) {
+    if (false) {
         
         glMatrixMode(GL_PROJECTION);
         gluOrtho2D(-2.0f, 20.0f, -2.0f, 20.0f);
@@ -49,6 +49,7 @@ void GLFWCALL Camera::reshape( int width, int height )
         
 
         glEnable(GL_DEPTH_TEST);
+        
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Look from 0,-5,0 towards 0,0,0 with Z as "up" in the image

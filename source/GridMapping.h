@@ -87,9 +87,9 @@ protected:
     int _i;
     const GridMapping *_mapping;
 protected:
-    GridMappingIterator(const GridMapping *mapping):_i(0),_done(false),_mapping(mapping){  };
+    GridMappingIterator(const GridMapping *mapping):_done(false),_i(0),_mapping(mapping){  };
 public:
-    GridMappingIterator(const GridMappingIterator &i):_i(i._i),_done(i._done),_mapping(i._mapping){  };
+    GridMappingIterator(const GridMappingIterator &i):_done(i._done),_i(i._i),_mapping(i._mapping){  };
     ~GridMappingIterator(){ _mapping = NULL; };
     void step(){
         _i++;

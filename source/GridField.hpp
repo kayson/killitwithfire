@@ -74,8 +74,8 @@ GridField<T>::GridField(int xdim,int ydim, int zdim, double size, Extrapolation<
 
 template<class T>
 GridField<T>::GridField(const GridField<T> &g):GridMapping(g),_extrapolation(nullptr),_interpolation(nullptr),_extrapolate(true){
-    
-    _data = new T[g.cellCount()];
+    int count = g.cellCount();
+    _data = new T[count];
 
     //Iterera över g
     for (GridFieldIterator<T> iter = g.iterator(); !iter.done(); iter.next()) {
@@ -93,8 +93,11 @@ GridField<T>& GridField<T>::operator=(const GridField<T> &g){
     if (this != &g) {
         
         //Allokera data-array
-        _data = new T[g.cellCount()];
-        for (int i = 0; i < g.cellCount(); i++) _data[i] = g._data[i];
+        if(g.cellCount() != cellCount()){
+            delete _data;
+            _data = new T[g.cellCount()];
+        }
+        std::copy(g._data,g._data+g.cellCount(), _data);
 
         setInterpolation(g._interpolation);
         setExtrapolation(g._extrapolation);

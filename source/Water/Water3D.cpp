@@ -17,7 +17,7 @@
 #include "ClosestValueExtrapolation.h"
 
 #ifdef __APPLE__
-#include "transform.hpp"
+#include "glm/gtx/transform.hpp"
 #elif defined _WIN32 || defined _WIN64
 #include <glm/gtx/transform.hpp>
 #define round(x) floor((x) >= 0 ? (x) + 0.5 : (x) - 0.5)
@@ -226,7 +226,7 @@ void Water3D::drawCenterVelocities()
 
 void Water3D::drawParticles(){
     glBegin(GL_POINTS);
-    double dx = cellTypes.dx();
+    //double dx = cellTypes.dx();
     for (int i = 0; i < particles.size(); i++) {
         
         glColor3d(particles[i].x/1800.0+0.5, particles[i].y/1800.0+0.5, particles[i].z/1800.0+0.5);

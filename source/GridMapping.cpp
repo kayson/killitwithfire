@@ -9,6 +9,7 @@
 #include "GridMapping.h"
 
 #if defined __APPLE__
+//#include "transform.hpp"
 #include "transform.hpp"
 #elif defined __unix__
 #include "glm/gtx/transform.hpp"
@@ -153,7 +154,7 @@ double GridMapping::dz() const{
 //Funktioner
 //Index to index
  int GridMapping::indexAt(int i, int j, int k) const{
-    return i+(xdim())*j+(xdim())*(ydim())*k;
+    return i+(xdim())*j+(xdim()*ydim()*k);
 }
 
 void GridMapping::indexAt(int index, int &i, int &j, int &k) const{

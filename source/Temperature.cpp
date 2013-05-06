@@ -25,7 +25,9 @@ Temperature::Temperature(GridField<double> *phi)
 		ZDIM = FirePresets::GRID_DIM_Z;
 
 	grid = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
-	beyonce = new GridField<Vector3>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
+    copy = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
+
+    beyonce = new GridField<Vector3>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
 
 	/*double scale = (double)XDIM / (double)YDIM;
 	grid->multTransformation(glm::scale(scale, 1.0, 1.0));
@@ -69,8 +71,8 @@ double Temperature::calculateTemperatureLoss(int i, int j, int k){
             FirePresets::TEMPERATURE_LOSS_CONSTANT;
 }
 
-void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
-	GridField<double> copy = GridField<double>(grid->xdim(), grid->ydim(), grid->zdim(),new ConstantValueExtrapolation<double>()); 
+void Temperature::AdvectTemperatureField(double dt, const MACGrid &m, const LevelSet &ls){
+
 	for(int i = 0; i < grid->xdim(); i++)
         for(int j = 0; j < grid->ydim(); j++)
             for(int k = 0; k < grid->zdim(); k++)
@@ -86,7 +88,7 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
                 double val = grid->valueAtWorld(x-dt*vel.x, y-dt*vel.y, z-dt*vel.z);
                 double c = calculateTemperatureLoss(i, j, k);
 
-                copy.setValueAtIndex(val-c, i, j, k);
+                copy->setValueAtIndex(val-c, i, j, k);
     }
     
     /*
@@ -106,7 +108,8 @@ void Temperature::AdvectTemperatureField(double dt, MACGrid m, LevelSet ls){
 				copy.setValueAtIndex(newValue, i, j, k);
             }
     */
-	*grid = copy;
+
+    std::swap(grid, copy);
 }
 
 void Temperature::CalculateBuoyancyForceField(LevelSet &ls)

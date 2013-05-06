@@ -19,7 +19,7 @@ public:
 
 	GridField<double> GetTemperatureGrid();
 
-    void AdvectTemperatureField(double dt, MACGrid m, LevelSet ls);
+    void AdvectTemperatureField(double dt, const MACGrid &m, const LevelSet &ls);
 
 	void CalculateBuoyancyForceField(LevelSet &ls);
 	double maxTemp();
@@ -27,8 +27,10 @@ public:
 	void drawBuoyancyForce();
 	GridField<Vector3> *beyonce;
 
+	GridField<double> *grid;
+    GridField<double> *copy;
 private:
-	GridField<double> *grid; 
+
     double calculateTemperatureLoss(int i, int j, int k);
 	void InitCell(int i, int j, int k, CellType type);
     void ResetCell(int i, int j, int k, CellType type);

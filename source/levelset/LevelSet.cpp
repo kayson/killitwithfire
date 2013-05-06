@@ -153,7 +153,7 @@ double LevelSet::getCurvature(const int i, const int j, const int k, GridField<d
 		dxz = FirePresets::centralDisc->calcDxz(*gridfield, i, j, k),
 		dyz = FirePresets::centralDisc->calcDyz(*gridfield, i, j, k);
 	double a = 2.0000000000;
-	double val1 = dx*dx*(d2y + d2z) - a*dy*dz*dyz + 
+	//double val1 = dx*dx*(d2y + d2z) - a*dy*dz*dyz +
 		dy*dy*(d2x*d2z) - a*dx*dz*dxz + 
 		dz*dz*(d2x + d2y) - a*dx*dy*dxy;
 	double val = dx*dx+dy*dy+dz*dz;

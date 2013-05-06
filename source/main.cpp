@@ -16,6 +16,7 @@
 #include "presets/firePresetsTwoDimension.h"
 
 #include "fire.h"
+#include "fire3D.h"
 #include "Water/Water2D.h"
 #include "Water/Water3D.h"
 
@@ -49,7 +50,7 @@ char titlestring[200];
 int HEIGHT = 600, WIDTH = 800;
 bool running = false;
 
-Fire *fire;
+Fire3D *fire;
 Water2D *water;
 Water3D *water3d;
 
@@ -70,7 +71,7 @@ int main(int argc, char *argv[])
     unsigned int t = (unsigned int)time(NULL);
     srand(t);
 #if SIMULATION == FIRE
-	fire = new Fire(new FirePresetsTwoDimension());
+	fire = new Fire3D(new FirePresetsTwoDimension());
 #elif SIMULATION == WATER2D
     water = new Water2D();
 #elif SIMULATION == WATER3D
@@ -121,8 +122,6 @@ bool init()
 		return false;
 	}
     
-    
- 
 	//Fixar keylistener
 	controller.initListeners();
 	glfwSetWindowSizeCallback( camera.reshape );
@@ -133,7 +132,9 @@ bool init()
 
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
 	return true;
 }
 
@@ -182,13 +183,8 @@ void update()
 
 
 //renderar objekt
-void render(void)
-{
-
+void render(void){
 	camera.translateForCamera();
-    
-    
-    
     int x, y;
     glfwGetMousePos(&x, &y);
     GLint viewport[4]; //var to hold the viewport info
@@ -207,9 +203,7 @@ void render(void)
     //get the world coordinates from the screen coordinates
     gluUnProject( winX, winY, winZ, modelview, projection, viewport, &Input::worldX, &Input::worldY, &Input::worldZ);
     
-    
-    
-  
+
 #if SIMULATION == FIRE
 	fire->draw();
 #elif SIMULATION == WATER2D

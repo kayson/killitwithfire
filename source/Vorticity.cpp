@@ -37,8 +37,8 @@ void Vorticity::addVorticity(const MACGrid &u, GridField<Vector3> &forces, const
 					centerVelDown = u.velocityAtCenter(i,j-1,k),
 					centerVelRight = u.velocityAtCenter(i+1,j,k),
 					centerVelLeft = u.velocityAtCenter(i-1,j,k),
-					centerVelFront = Vector3(0.,0.,0.),//u.velocityAtCenter(i,j,k+1),
-					centerVelBack = Vector3(0.,0.,0.),//u.velocityAtCenter(i,j,k-1),
+					centerVelFront = u.velocityAtCenter(i,j,k+1),
+					centerVelBack = u.velocityAtCenter(i,j,k-1),
 					centerVel = u.velocityAtCenter(i,j,k);
 						
 					// Från Fedkiw 2001, Smoke etc. ekv (9) s.3 samt diskretisering enl. s.6

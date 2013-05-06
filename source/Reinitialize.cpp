@@ -76,7 +76,7 @@ double reinitialize::Evaluate(GridField<double> &g, int i, int j, int k)
 	if(g.valueAtIndex(i,j,k) < 0)
 	{
 		//Räkna ut sign-funktion (mha central diff)
-		double dx = FirePresets::dx;
+		double dx = g.dx();
 		double ddx = FirePresets::centralDisc->calcDx(g, i, j, k);
 		double ddy = FirePresets::centralDisc->calcDy(g, i, j, k);
 		double ddz = 0.0;
@@ -101,9 +101,10 @@ double reinitialize::Evaluate(GridField<double> &g, int i, int j, int k)
 void reinitialize::reinitializeGrid(GridField<double> **g, GridField<double> **gridCopy)
 {
 	double time = FirePresets::dt;
-	double dt = 0.5 * FirePresets::dx;
+	double dt = 0.5 * (**g).dx();
     IntegrateEuler *e = new IntegrateEuler();
-
+    e->calculateIntegral(g, gridCopy, time, Evaluate);
+    /*
 	for(double elapsed = 0; elapsed < time;)
 	{
 		if(dt > time)
@@ -114,7 +115,7 @@ void reinitialize::reinitializeGrid(GridField<double> **g, GridField<double> **g
 		//double mean = CalcMeanGradient(**g);
 
 		e->calculateIntegral(g, gridCopy, dt, Evaluate);
-	}
+	}*/
     delete e;
 
 }
