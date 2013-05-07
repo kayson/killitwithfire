@@ -16,15 +16,16 @@
 #include "Water/Particles.h"
 #include "Discretization.h"
 #include "BorderCondition.h"
-#include "Projection3D.h"
 #include "GhostMAC.h"
 
 #ifdef __APPLE__
 #include "sparse_matrix.h"
 #include "pcg_solver.h"
+#include "Projection3D.h"
 #elif defined _WIN32 || defined _WIN64
 #include "Pressure\pcgsolver\sparse_matrix.h"
 #include "Pressure\pcgsolver\pcg_solver.h"
+#include "Pressure\Projection3D.h"
 #endif
 #include "GhostMAC.h"
 

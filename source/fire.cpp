@@ -314,11 +314,17 @@ void Fire::addFuelToLevelSet(int x0, int y0, int z0, double radius)
 						dist = min(ndist, odist);
 
 					//Rikta hastighetsfältet utåt från den injektade bränslet
-					Vector3 N = phi.getNormal(x, y, 0)*5.0;
+					/*Vector3 N = phi.getNormal(x, y, 0)*5.0;
 					u_fuel.setValueAtFace(N.x, x, y, 0, RIGHT);
 					u_fuel.setValueAtFace(-N.x, x, y, 0, LEFT);
 					u_fuel.setValueAtFace(N.y, x, y, 0, UP);
-					u_fuel.setValueAtFace(-N.y, x, y, 0, DOWN);
+					u_fuel.setValueAtFace(-N.y, x, y, 0, DOWN);*/
+					//Rikta hastighetsfältet uppåt
+					const double amount = 10.0;
+					u_fuel.setValueAtFace(0.0, x, y, 0, RIGHT);
+					u_fuel.setValueAtFace(0.0, x, y, 0, LEFT);
+					u_fuel.setValueAtFace(amount, x, y, 0, UP);
+					u_fuel.setValueAtFace(amount, x, y, 0, DOWN);
 				}
 				else
 				{
