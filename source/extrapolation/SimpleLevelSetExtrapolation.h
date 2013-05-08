@@ -21,7 +21,7 @@ public:
 	{
 		double x1 = i;
 		double y1 = j;
-		//double z1 = double(k);
+		double z1 = k;
 
 		//Hitta närmaste punkt via cityblock
 		if(i < 0)
@@ -41,9 +41,9 @@ public:
 
 		double x0 = i;
 		double y0 = j;
-		//double z0 = double(c);
+		double z0 = k;
 
-		return g.valueAtIndex(i, j, k) - FirePresets::dx*std::sqrt(std::pow(x1-x0, 2.0) + std::pow(y1-y0, 2.0) + std::pow(y1-y0, 2.0));
+		return g.valueAtIndex(i, j, k) - FirePresets::dx*std::sqrt(std::pow(x1-x0, 2.0) + std::pow(y1-y0, 2.0) + std::pow(y1-y0, 2.0) + std::pow(z1-z0, 2.0));
 	}
 };
 
