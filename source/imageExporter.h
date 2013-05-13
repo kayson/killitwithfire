@@ -8,18 +8,19 @@
 #include "Freeimage.h"
 
 //Stäng av freeimage med denna istället för undre raden.
-#undef FREEIMAGE
+//#undef FREEIMAGE
 
-//#define FREEIMAGE
+#define FREEIMAGE
 
 #endif
 
 namespace ImageExporter
 {
+    static float fps = 30;
+    static float timeTrack = 0;
+	void saveImage(char filename[], int width, int height);
 
-	void saveImage(char* filename, int width, int height);
-
-	bool saveSequence(int *n, int range, int width, int height);
+	bool saveSequence(int &n, float dt, int range, int width, int height);
 
 }//End namespace
 

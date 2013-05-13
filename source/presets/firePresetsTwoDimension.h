@@ -44,9 +44,9 @@ CentralDiff *FirePresets::centralDisc = new CentralDiff();
 
 MACAdvect<double> *FirePresets::tempAdvect = new MACAdvectRK2<double>();
 
-const int FirePresets::GRID_DIM_X = 20;
-const int FirePresets::GRID_DIM_Y = 20;
-const int FirePresets::GRID_DIM_Z = 20;
+const int FirePresets::GRID_DIM_X = 60;
+const int FirePresets::GRID_DIM_Y = 60;
+const int FirePresets::GRID_DIM_Z = 60;
 
 const double FirePresets::T_IGNITION = 2200;
 const double FirePresets::T_MAX = 3000;

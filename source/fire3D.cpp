@@ -870,8 +870,8 @@ void Fire3D::draw(){
 	//drawCenterVelocities();
     //drawMAC(u_burnt, BURNT, 1,0,0);
     //drawMAC(u_fuel, FUEL, 0,1,1);
-    drawGrid(solids);
-    drawBoundary(solids);
+    //drawGrid(solids);
+    //drawBoundary(solids);
 
     //drawVoxels(*(phi.grid));
     drawVoxels(*(T->grid));

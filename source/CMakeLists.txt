@@ -186,13 +186,14 @@ include_directories(
 
 link_directories(
   ${CMAKE_SOURCE_DIR}/../externals/GL/lib
+  ${CMAKE_SOURCE_DIR}/../externals/FreeImage
   ) 
 add_executable(killitwithfire ${killitwithfire_ALL_HEADERS} ${killitwithfire_ALL_SRCS})
 
 if(WIN32)
-  target_link_libraries(killitwithfire freeglut.lib GLFW.lib)
+  target_link_libraries(killitwithfire freeglut.lib GLFW.lib FreeImage.lib)
 endif(WIN32)
 
 if(UNIX)
-  target_link_libraries(killitwithfire GL glut glfw GLU)
+  target_link_libraries(killitwithfire GL glut glfw GLU FreeImage)
 endif(UNIX)
