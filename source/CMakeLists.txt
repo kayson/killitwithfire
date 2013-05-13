@@ -188,6 +188,9 @@ link_directories(
   ${CMAKE_SOURCE_DIR}/../externals/GL/lib
   ${CMAKE_SOURCE_DIR}/../externals/FreeImage
   ) 
+
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/export)
+
 add_executable(killitwithfire ${killitwithfire_ALL_HEADERS} ${killitwithfire_ALL_SRCS})
 
 if(WIN32)

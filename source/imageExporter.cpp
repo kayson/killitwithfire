@@ -35,7 +35,7 @@ void ImageExporter::saveImage(char filename[], int width, int height)
 {
 	//På windows måste det finnas en mapp för att den ska sparas. 
 	//Borde ändras till att be användaren att välja mapp
-	char folder[] = "../export/";
+	char folder[] = "export/";
     char *fend = merge(filename, ".png");
 	char *file = merge(folder, fend);
 
