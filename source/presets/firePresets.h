@@ -31,7 +31,8 @@ public:
 	static const double T_MAX;
 	static const double T_AIR;
 
-	static const double VORTICITY_EPSILON;
+	static const double VORTICITY_EPSILON_FUEL;
+	static const double VORTICITY_EPSILON_BURNT;
 
 	static const double TEMPERATURE_BUOYANCY_ALPHA;
 	static const double TEMPERATURE_LOSS_CONSTANT;

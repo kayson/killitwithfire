@@ -106,7 +106,7 @@ double LevelSet::getVolume() const
         }
     }
 
-	return volume;
+	return volume * pow(FirePresets::dx, 3.0);
 }
 
 CellType LevelSet::getCellType(const int i, const int j, const int k) const {

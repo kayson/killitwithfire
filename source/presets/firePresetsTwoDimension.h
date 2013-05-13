@@ -61,7 +61,8 @@ const double FirePresets::CFL_NUMBER = 2;
 
 const double FirePresets::S = 0.1;
 
-const double FirePresets::VORTICITY_EPSILON = 10.0;
+const double FirePresets::VORTICITY_EPSILON_FUEL = 16.0/3.0;
+const double FirePresets::VORTICITY_EPSILON_BURNT = 60.0/3.0;
 
 const double FirePresets::TEMPERATURE_BUOYANCY_ALPHA = 0.15;
 const double FirePresets::TEMPERATURE_LOSS_CONSTANT = 3000;

@@ -344,10 +344,10 @@ void Fire3D::runSimulation(){
     phi.updateNormals();
     
 	double currentVolume = phi.getVolume();
-	double desiredVolume = 30;
+	const double desiredVolume = 0.75*3.14*0.001;
     
 	if(currentVolume < desiredVolume)
-		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, preset->GRID_DIM_Z/2, 0.4/preset->dx);
+		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, preset->GRID_DIM_Z/2, 0.2/preset->dx);
     
 #if 0
 	static int counter = 0;
@@ -380,9 +380,9 @@ void Fire3D::runSimulation(){
     enforceBorderCondition();
     
     //Vorticity
-	Vorticity::addVorticity(u_burnt, *vorticityForces, preset->VORTICITY_EPSILON, preset->dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	Vorticity::addVorticity(u_burnt, *vorticityForces, preset->VORTICITY_EPSILON_BURNT, preset->dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
     u_burnt.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
-	Vorticity::addVorticity(u_fuel, *vorticityForces, preset->VORTICITY_EPSILON, preset->dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	Vorticity::addVorticity(u_fuel, *vorticityForces,  preset->VORTICITY_EPSILON_FUEL, preset->dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
     u_fuel.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
     computeGhostValues();
     
