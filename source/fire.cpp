@@ -320,7 +320,7 @@ void Fire::addFuelToLevelSet(int x0, int y0, int z0, double radius)
 					u_fuel.setValueAtFace(N.y, x, y, 0, UP);
 					u_fuel.setValueAtFace(-N.y, x, y, 0, DOWN);*/
 					//Rikta hastighetsfältet uppåt
-					const double amount = 10.0;
+					const double amount = 30.0;
 					u_fuel.setValueAtFace(0.0, x, y, 0, RIGHT);
 					u_fuel.setValueAtFace(0.0, x, y, 0, LEFT);
 					u_fuel.setValueAtFace(amount, x, y, 0, UP);
@@ -349,7 +349,7 @@ void Fire::runSimulation(){
 	double desiredVolume = 30;
 
 	if(currentVolume < desiredVolume)
-		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, 0, 2.0);
+		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, 0, 0.4/preset->dx);
 
 #if 0
 	static int counter = 0;

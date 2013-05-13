@@ -311,11 +311,18 @@ void Fire3D::addFuelToLevelSet(int x0, int y0, int z0, double radius){
 						dist = min(ndist, odist);
                     
 					//Rikta hastighetsfältet utåt från den injektade bränslet
-					Vector3 N = phi.getNormal(x, y, z)*5.0;
+					/*Vector3 N = phi.getNormal(x, y, z)*5.0;
 					u_fuel.setValueAtFace(N.x, x, y, z, RIGHT);
 					u_fuel.setValueAtFace(-N.x, x, y, z, LEFT);
 					u_fuel.setValueAtFace(N.y, x, y, z, UP);
-					u_fuel.setValueAtFace(-N.y, x, y, z, DOWN);
+					u_fuel.setValueAtFace(-N.y, x, y, z, DOWN);*/
+
+					//Rikta hastighetsfältet upp i bräbsket
+					const double amount = 30.0;
+					u_fuel.setValueAtFace(0.0, x, y, 0, RIGHT);
+					u_fuel.setValueAtFace(0.0, x, y, 0, LEFT);
+					u_fuel.setValueAtFace(amount, x, y, 0, UP);
+					u_fuel.setValueAtFace(amount, x, y, 0, DOWN);
 				}
 				else
 				{
@@ -340,7 +347,7 @@ void Fire3D::runSimulation(){
 	double desiredVolume = 30;
     
 	if(currentVolume < desiredVolume)
-		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, 10, 2.0);
+		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, preset->GRID_DIM_Z/2, 0.4/preset->dx);
     
 #if 0
 	static int counter = 0;
