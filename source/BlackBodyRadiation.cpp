@@ -3,12 +3,20 @@
 #include <cmath>
 #include "Vector3.h"
 
-double C_1 = 3.7418e-16;
-double C_2 = 1.4388e-2;
+#include "GridField.hpp"
+
+#if defined __APPLE__
+#include "glfw.h"
+#elif defined _WIN32 || defined _WIN64 || __unix__
+#include <GL/glfw.h>
+#endif
+
+const double C_1 = 3.7418e-16;
+const double C_2 = 1.4388e-2;
 
 // CIE starndard observer 1931
 // http://www.cis.rit.edu/mcsl/online/cie.php
-double CIE_X[] = {1.299000e-04, 2.321000e-04, 4.149000e-04, 7.416000e-04, 1.368000e-03, 
+const double CIE_X[] = {1.299000e-04, 2.321000e-04, 4.149000e-04, 7.416000e-04, 1.368000e-03, 
 2.236000e-03, 4.243000e-03, 7.650000e-03, 1.431000e-02, 2.319000e-02, 
 4.351000e-02, 7.763000e-02, 1.343800e-01, 2.147700e-01, 2.839000e-01, 
 3.285000e-01, 3.482800e-01, 3.480600e-01, 3.362000e-01, 3.187000e-01, 
@@ -28,7 +36,7 @@ double CIE_X[] = {1.299000e-04, 2.321000e-04, 4.149000e-04, 7.416000e-04, 1.3680
 2.935326e-05, 2.067383e-05, 1.455977e-05, 1.025398e-05, 7.221456e-06, 
 5.085868e-06, 3.581652e-06, 2.522525e-06, 1.776509e-06, 1.251141e-06};
 
-double CIE_Y[] = {3.917000e-06, 6.965000e-06, 1.239000e-05, 2.202000e-05, 3.900000e-05, 
+const double CIE_Y[] = {3.917000e-06, 6.965000e-06, 1.239000e-05, 2.202000e-05, 3.900000e-05, 
 6.400000e-05, 1.200000e-04, 2.170000e-04, 3.960000e-04, 6.400000e-04, 
 1.210000e-03, 2.180000e-03, 4.000000e-03, 7.300000e-03, 1.160000e-02, 
 1.684000e-02, 2.300000e-02, 2.980000e-02, 3.800000e-02, 4.800000e-02, 
@@ -48,7 +56,7 @@ double CIE_Y[] = {3.917000e-06, 6.965000e-06, 1.239000e-05, 2.202000e-05, 3.9000
 1.060000e-05, 7.465700e-06, 5.257800e-06, 3.702900e-06, 2.607800e-06, 
 1.836600e-06, 1.293400e-06, 9.109300e-07, 6.415300e-07, 4.518100e-07};
 
-double CIE_Z[] = {6.061000e-04, 1.086000e-03, 1.946000e-03, 3.486000e-03, 6.450001e-03, 
+const double CIE_Z[] = {6.061000e-04, 1.086000e-03, 1.946000e-03, 3.486000e-03, 6.450001e-03, 
 1.054999e-02, 2.005001e-02, 3.621000e-02, 6.785001e-02, 1.102000e-01, 
 2.074000e-01, 3.713000e-01, 6.456000e-01, 1.039050e+00, 1.385600e+00, 
 1.622960e+00, 1.747060e+00, 1.782600e+00, 1.772110e+00, 1.744100e+00, 
@@ -144,4 +152,39 @@ Vector3 BlackBodyRadiation::XYZtoRGB(Vector3 xyz)
 	//rgb.z = powf(rgb.z, 1.0 / 2.4);
 
 	return rgb;
+}
+
+void BlackBodyRadiation::draw(const GridField<double> * const temperatureGrid)
+{
+	const float xdim = temperatureGrid->xdim();
+	const float ydim = temperatureGrid->ydim();
+	const float zdim = temperatureGrid->zdim();
+
+	const float step = std::min(2.0f/xdim, 2.0f/ydim);
+
+	glBegin(GL_QUADS);
+	for(int x = 0; x < temperatureGrid->xdim(); ++x)
+	{
+		for(int y = 0; y < temperatureGrid->ydim(); ++y)
+		{
+			for(int z = 0; z < temperatureGrid->zdim(); ++z)
+			{
+
+			}
+
+			//Rita ut på korrekt ställe på skärmen
+			float xp1 = float(x)*step - float(temperatureGrid->xdim()/2)*step;
+			float xp2 = xp1 + step;
+			float yp1 = float(y)*step - float(temperatureGrid->ydim()/2)*step;
+			float yp2 = yp1 + step;
+
+			glColor3f(0.5 + xp1*0.4, 0.5 + yp1*0.4,0);
+			
+			glVertex2f(xp1, yp1);
+			glVertex2f(xp2, yp1);
+			glVertex2f(xp2, yp2);
+			glVertex2f(xp1, yp2);
+		}
+	}
+	glEnd();
 }

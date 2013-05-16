@@ -11,6 +11,7 @@
 #include "MACAdvect.h"
 #include "Input.h"
 #include "JumpCondition.h"
+#include "BlackBodyRadiation.h"
 
 #if defined __APPLE__
 #include "glfw.h"
@@ -347,7 +348,7 @@ void Fire3D::runSimulation(){
 	const double desiredVolume = 0.75*3.14*0.001;
     
 	if(currentVolume < desiredVolume)
-		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, preset->GRID_DIM_Z/2, 0.2/preset->dx);
+		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, preset->GRID_DIM_Z/2, 0.8/preset->dx);
     
 #if 0
 	static int counter = 0;
@@ -862,16 +863,21 @@ void Fire3D::computeW(){
 }
 
 void Fire3D::draw(){
+
+	glLoadIdentity();
+	BlackBodyRadiation::draw(T->grid);
+
     //phi.draw();
     //T->draw();
-    static double angle = 5*4.2;
+    /*static double angle = 5*4.2;
     angle += 0.1;
     double dx = solids.dx();
     glTranslatef(dx*0.5, dx*0.5, dx*0.5);
     glRotatef(angle, 1.0, 0.3, 0.0);
     glTranslatef(-dx*0.5, -dx*0.5, -dx*0.5);
     glScalef(0.08, 0.08, 0.08);
-    glTranslatef(-8, -8, 0);
+    glTranslatef(-8, -8, 0);*/
+
 	//T->drawBuoyancyForce();
 	//drawVorticities();
 	//drawCenterVelocities();
@@ -881,7 +887,7 @@ void Fire3D::draw(){
     //drawBoundary(solids);
 
     //drawVoxels(*(phi.grid));
-    drawVoxels(*(T->grid));
+    //drawVoxels(*(T->grid));
     //drawMAC(u_fuel, BURNT, 0,1,1);
     //particles.draw();
     //drawMAC(u_burnt, FUEL, 1,0,0);

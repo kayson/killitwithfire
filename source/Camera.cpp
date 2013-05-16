@@ -43,6 +43,9 @@ void GLFWCALL Camera::reshape( int width, int height )
         // 65 degrees FOV, same aspect ratio as window, depth range 1 to 100
         //gluPerspective( 85.0f, (GLfloat)width/(GLfloat)height, 1.0f, 100.0f );
         
+
+		gluOrtho2D(-1.0, 1.0f, -1.0f, 1.0f); //Render blackbody!!! 
+
         // Select and setup the modelview matrix.
         glMatrixMode( GL_MODELVIEW ); // "We want to edit the modelview matrix"
         glLoadIdentity(); // Reset the matrix to identity
