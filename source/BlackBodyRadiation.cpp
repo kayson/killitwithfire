@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <cmath>
 #include "Vector3.h"
+#include "firePresets.h"
 
 #include "GridField.hpp"
 #include "LevelSet.h"
@@ -80,8 +81,7 @@ const double CIE_Z[] = {6.061000e-04, 1.086000e-03, 1.946000e-03, 3.486000e-03, 
 double BlackBodyRadiation::radiance(double lambda, double T)
 {
 	// Equation 22, Nguyen02
-	lambda *= 1e-9;
-	return (2*C_1) / (pow(lambda,5) * (exp(C_2/(lambda*T)) - 1) );
+	return (2.0*C_1) / (pow(lambda,5.0) * (exp(C_2/(lambda*T)) - 1.0) );
 }
 
 Vector3 BlackBodyRadiation::blackbodyToXYZ(double T)
@@ -105,31 +105,41 @@ Vector3 BlackBodyRadiation::blackbodyToXYZ(double T)
 	return xyz;
 }
 
-Vector3 BlackBodyRadiation::XYZtoLMS(Vector3 xyz)
+Vector3 BlackBodyRadiation::XYZtoLMS(const Vector3 &xyz)
 {
 	Vector3 lms(0.0, 0.0, 0.0);
 
 	// D65
-	lms.x = xyz.x * 0.400	+ xyz.y * 0.708		+ xyz.z * -0.081;
+	/*lms.x = xyz.x * 0.400	+ xyz.y * 0.708		+ xyz.z * -0.081;
 	lms.y = xyz.x * -0.226	+ xyz.y * 1.165		+ xyz.z * 0.046;
-	lms.z = xyz.x * 0		+ xyz.y * 0			+ xyz.z * 0.918;
+	lms.z = xyz.x * 0		+ xyz.y * 0			+ xyz.z * 0.918;*/
+
+	//CAT02
+	lms.x =  0.7328*xyz.x + 0.4296*xyz.y - 0.1624*xyz.z;
+	lms.y = -0.7036*xyz.x + 1.6975*xyz.y + 0.0061*xyz.z;
+	lms.z =  0.0030*xyz.x + 0.0136*xyz.y + 0.9834*xyz.z;
 
 	return lms;
 }
 
-Vector3 BlackBodyRadiation::LMStoXYZ(Vector3 lms)
+Vector3 BlackBodyRadiation::LMStoXYZ(const Vector3 &lms)
 {
 	Vector3 xyz(0.0, 0.0, 0.0);
 
 	// D65
-	xyz.x = lms.x * 1.861	+ lms.y * -1.131	+ lms.z * 2.209;
+	/*xyz.x = lms.x * 1.861	+ lms.y * -1.131	+ lms.z * 2.209;
 	xyz.y = lms.x * 0.361	+ lms.y * 0.639		+ lms.z * -0.002;
-	xyz.z = lms.x * 0		+ lms.y * 0			+ lms.z * 10.89;
+	xyz.z = lms.x * 0		+ lms.y * 0			+ lms.z * 10.89;*/
+
+	//CAT02
+	xyz.x =  1.09612	*lms.x    - 0.278869*lms.y + 0.182745  *lms.z;
+	xyz.y =  0.454369	*lms.x   + 0.473533	*lms.y + 0.0720978 *lms.z;
+	xyz.z = -0.00962761	*lms.x - 0.00569803	*lms.y + 1.01533   *lms.z;
 	
 	return xyz;
 }
 
-Vector3 BlackBodyRadiation::XYZtoRGB(Vector3 xyz)
+Vector3 BlackBodyRadiation::XYZtoRGB(const Vector3 &xyz)
 {
 	Vector3 rgb(0.0, 0.0, 0.0);
 
@@ -138,14 +148,14 @@ Vector3 BlackBodyRadiation::XYZtoRGB(Vector3 xyz)
 	rgb.y = xyz.x * -0.9692	+ xyz.y * 1.8760	+ xyz.z * 0.0416;
 	rgb.z = xyz.x * 0.0556	+ xyz.y * -0.2040	+ xyz.z * 1.0570;
 
-	double maxRGB = std::max(rgb.x, std::max(rgb.y, rgb.z));
+	/*double maxRGB = std::max(rgb.x, std::max(rgb.y, rgb.z));
 
 	if (maxRGB > 0.0)
 	{
 		rgb.x /= maxRGB;
 		rgb.y /= maxRGB;
 		rgb.z /= maxRGB;
-	}
+	}*/
 
 	// Gamma Correction
 	//rgb.x = powf(rgb.x, 1.0 / 2.4);
@@ -172,18 +182,59 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	glVertex2f(1.0, 1.0);
 	glVertex2f(-1.0, 1.0);
 
+	const double oa = 0.01; //absorberings koef
+	const double os = 0.0; //scattering koef
+	const double ot = oa + os; //tot
+	const double C = exp(-oa*FirePresets::dx);
+
+	const int SAMPLES = 89;//Antal samplade våglängder
+	const double dl = 5e-9;//dx för våglängderna
+	double L[SAMPLES];
+
 	for(int x = 0; x < temperatureGrid.xdim(); ++x)
 	{
 		for(int y = 0; y < temperatureGrid.ydim(); ++y)
 		{
-			double intensity = 0.0;
+			for(int i = 0; i < SAMPLES; ++i)
+				L[i] = 0.0;
 
 			for(int z = 0; z < temperatureGrid.zdim(); ++z)
 			{
-				double v = (temperatureGrid.valueAtIndex(x,y,z) - 293.15)/(3000 - 293.15);
-				if(v > intensity)
-					intensity = v;
+				//Räkna ut intensitet för varje våglängd
+				for(int i = 0; i < SAMPLES; ++i)
+				{
+					const double lambda = (360.0 + double(i)*5)*1e-9;
+					const double T = temperatureGrid.valueAtIndex(x, y, z);
+					L[i] = C*L[i] + oa*radiance(lambda, T)*FirePresets::dx;/* + Scattering*/ 
+				}
 			}
+
+			//Beräkna XYZ från L
+			Vector3 XYZ = Vector3(0.0);
+			for(int i = 0; i < SAMPLES; ++i)
+			{
+				XYZ.x += L[i] * CIE_X[i];
+				XYZ.y += L[i] * CIE_Y[i];
+				XYZ.z += L[i] * CIE_Z[i];
+			}
+			XYZ.x *= dl;
+			XYZ.y *= dl;
+			XYZ.z *= dl;
+
+			Vector3 LMS = XYZtoLMS(XYZ);
+
+			//en variant av chromatic adaption, högt värde på crom minskar intensiteten, lågt värde ökar den.
+			const double crom = 0.1;
+			LMS.x = LMS.x/(LMS.x + crom);
+			LMS.y = LMS.y/(LMS.y + crom);
+			LMS.z = LMS.z/(LMS.z + crom);
+
+			XYZ = LMStoXYZ(LMS);
+
+			Vector3 rgb = XYZtoRGB(XYZ);
+
+
+			glColor3d(rgb.x, rgb.y, rgb.z);
 
 			//Rita ut på korrekt ställe på skärmen
 			float xp1 = float(x)*step - xdim*0.5*step;
@@ -191,8 +242,6 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 			float yp1 = float(y)*step - ydim*0.5*step;
 			float yp2 = yp1 + step;
 
-			glColor3d(intensity, intensity, 0.0);
-			
 			glVertex2f(xp1*0.95, yp1*0.95);
 			glVertex2f(xp2*0.95, yp1*0.95);
 			glVertex2f(xp2*0.95, yp2*0.95);

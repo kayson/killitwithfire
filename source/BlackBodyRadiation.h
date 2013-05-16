@@ -10,9 +10,9 @@ public:
 
 	static double radiance(double lambda, double T);
 	static Vector3 blackbodyToXYZ(double T);
-	static Vector3 XYZtoLMS(Vector3 xyz);
-	static Vector3 LMStoXYZ(Vector3 lms);
-	static Vector3 XYZtoRGB(Vector3 xyz);
+	static Vector3 XYZtoLMS(const Vector3 &xyz);
+	static Vector3 LMStoXYZ(const Vector3 &lms);
+	static Vector3 XYZtoRGB(const Vector3 &xyz);
 	
 	static void draw(const GridField<double> &temperatureGrid, const LevelSet &phi); //Kan inte använda T->grid->xdim() av något okänt skäl, så skickar istället in grid
 };

@@ -344,11 +344,13 @@ void Fire3D::runSimulation(){
 	phi.reinitialize();
     phi.updateNormals();
     
+	// TODO KONTROLLERA ATT DENNA FUNKAR I 3D!!!
+	/*
 	double currentVolume = phi.getVolume();
 	const double desiredVolume = 0.75*3.14*0.001;
     
 	if(currentVolume < desiredVolume)
-		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, preset->GRID_DIM_Z/2, 0.8/preset->dx);
+		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, preset->GRID_DIM_Z/2, 0.8/preset->dx);*/
     
 #if 0
 	static int counter = 0;
