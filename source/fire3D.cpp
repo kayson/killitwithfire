@@ -865,7 +865,7 @@ void Fire3D::computeW(){
 void Fire3D::draw(){
 
 	glLoadIdentity();
-	BlackBodyRadiation::draw(T->grid);
+	BlackBodyRadiation::draw(*(T->grid), phi);
 
     //phi.draw();
     //T->draw();

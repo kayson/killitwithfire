@@ -4,6 +4,7 @@
 #include "Vector3.h"
 
 #include "GridField.hpp"
+#include "LevelSet.h"
 
 #if defined __APPLE__
 #include "glfw.h"
@@ -154,36 +155,48 @@ Vector3 BlackBodyRadiation::XYZtoRGB(Vector3 xyz)
 	return rgb;
 }
 
-void BlackBodyRadiation::draw(const GridField<double> * const temperatureGrid)
+void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi)
 {
-	const float xdim = temperatureGrid->xdim();
-	const float ydim = temperatureGrid->ydim();
-	const float zdim = temperatureGrid->zdim();
+	const float xdim = temperatureGrid.xdim();
+	const float ydim = temperatureGrid.ydim();
+	const float zdim = temperatureGrid.zdim();
 
 	const float step = std::min(2.0f/xdim, 2.0f/ydim);
 
 	glBegin(GL_QUADS);
-	for(int x = 0; x < temperatureGrid->xdim(); ++x)
-	{
-		for(int y = 0; y < temperatureGrid->ydim(); ++y)
-		{
-			for(int z = 0; z < temperatureGrid->zdim(); ++z)
-			{
 
+	//rita en vit boarder
+	glColor3d(1.0,1.0,1.0);
+	glVertex2f(-1.0, -1.0);
+	glVertex2f(1.0, -1.0);
+	glVertex2f(1.0, 1.0);
+	glVertex2f(-1.0, 1.0);
+
+	for(int x = 0; x < temperatureGrid.xdim(); ++x)
+	{
+		for(int y = 0; y < temperatureGrid.ydim(); ++y)
+		{
+			double intensity = 0.0;
+
+			for(int z = 0; z < temperatureGrid.zdim(); ++z)
+			{
+				double v = (temperatureGrid.valueAtIndex(x,y,z) - 293.15)/(3000 - 293.15);
+				if(v > intensity)
+					intensity = v;
 			}
 
 			//Rita ut på korrekt ställe på skärmen
-			float xp1 = float(x)*step - float(temperatureGrid->xdim()/2)*step;
+			float xp1 = float(x)*step - xdim*0.5*step;
 			float xp2 = xp1 + step;
-			float yp1 = float(y)*step - float(temperatureGrid->ydim()/2)*step;
+			float yp1 = float(y)*step - ydim*0.5*step;
 			float yp2 = yp1 + step;
 
-			glColor3f(0.5 + xp1*0.4, 0.5 + yp1*0.4,0);
+			glColor3d(intensity, intensity, 0.0);
 			
-			glVertex2f(xp1, yp1);
-			glVertex2f(xp2, yp1);
-			glVertex2f(xp2, yp2);
-			glVertex2f(xp1, yp2);
+			glVertex2f(xp1*0.95, yp1*0.95);
+			glVertex2f(xp2*0.95, yp1*0.95);
+			glVertex2f(xp2*0.95, yp2*0.95);
+			glVertex2f(xp1*0.95, yp2*0.95);
 		}
 	}
 	glEnd();

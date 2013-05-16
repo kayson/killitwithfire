@@ -10,18 +10,18 @@ namespace implicitFunction
 	double sphere(int i, int j, int k)
 	{
         
-		double x = (double) i * (double) FirePresets::dx;
-		double y = (double) j * (double) FirePresets::dx;
-		double z = (double) k * (double) FirePresets::dx;
+		double x = i;
+		double y = j;
+		double z = k;
 
-		double r = (double) 2.5 * (double) FirePresets::dx;
-		double xo =  -(double)FirePresets::GRID_DIM_X * ((double) FirePresets::dx / 2.0);
-		double yo =  -10;//(double)FirePresets::GRID_DIM_Y * ((double) FirePresets::dx / 4.0);
-		double zo =  -10;//-(double)FirePresets::GRID_DIM_Z * ((double) FirePresets::dx / 2.0);
-		x += xo;
-		y += yo;
-		z += zo;
-		return -sqrt(x * x + y * y + z * z) + sqrt(r * r);
+		double r = (double) 0.5; //Världskoordinater
+		double xo = FirePresets::GRID_DIM_X / 2;//Gridkoordinater
+		double yo = r/FirePresets::dx + double(FirePresets::GRID_DIM_Y)*0.2;
+		double zo = FirePresets::GRID_DIM_Z / 2;
+		x -= xo;
+		y -= yo;
+		z -= zo;
+		return -sqrt(x * x + y * y + z * z)/FirePresets::dx + sqrt(r * r);
 	}
 	double empty(int i, int j, int k)
 	{

@@ -47,7 +47,7 @@ double t0 = 0.0;
 int frames = 0;
 char titlestring[200];
 
-int HEIGHT = 600, WIDTH = 800;
+int HEIGHT = 600, WIDTH = 600;
 bool running = false;
 
 Fire3D *fire;
