@@ -223,7 +223,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 			//en variant av chromatic adaption, högt värde på crom minskar intensiteten, lågt värde ökar den.
 			Vector3 LMS = XYZtoLMS(XYZ);
-			const double crom = 0.1;
+			const double crom = 1.0;
 			LMS.x = LMS.x/(LMS.x + crom);
 			LMS.y = LMS.y/(LMS.y + crom);
 			LMS.z = LMS.z/(LMS.z + crom);
