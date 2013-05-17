@@ -167,11 +167,17 @@ Vector3 BlackBodyRadiation::XYZtoRGB(const Vector3 &xyz)
 
 void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi)
 {
+	const int imageWidth = 2000;
+	const int imageHeight = 2000;
+
+	Vector3 eye(0,5,-5);
+
 	const float xdim = temperatureGrid.xdim();
 	const float ydim = temperatureGrid.ydim();
 	const float zdim = temperatureGrid.zdim();
 
-	const float step = std::min(2.0f/xdim, 2.0f/ydim);
+	//const float step = std::min(2.0f/xdim, 2.0f/ydim);
+	const float step = std::min(2.0f/imageWidth, 2.0f/imageHeight);
 
 	glBegin(GL_QUADS);
 
