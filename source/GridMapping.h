@@ -21,23 +21,25 @@ class GridMappingIterator;
 
 class GridMapping {
 protected:
-    glm::dmat4x4 _trans;  //Local coordinates to worldcoordinates
-    glm::dmat4x4 _itrans; //World coordinates to localcoordinates
+    glm::mat4x4 _trans;  //Local coordinates to worldcoordinates
+    glm::mat4x4 _itrans; //World coordinates to localcoordinates
+    float *_fast_trans;
+    float *_fast_itrans;
     int _xdim,_ydim,_zdim;
     int _size;
     
 protected:
     //Local dim
-    double local_dx() const;
-    double local_dy() const;
-    double local_dz() const;
+    float local_dx() const;
+    float local_dy() const;
+    float local_dz() const;
 public:
     //Konstruktor
     GridMapping();
     GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim);
-    GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim, double size);
-    GridMapping(unsigned int dim,glm::dmat4x4 t);
-    GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim,glm::dmat4x4 t);
+    GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim, float size);
+    GridMapping(unsigned int dim,glm::mat4x4 t);
+    GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim,glm::mat4x4 t);
     GridMapping(const GridMapping &);
     ~GridMapping();
     GridMapping & operator= (const GridMapping & other);
@@ -45,18 +47,18 @@ public:
 
 
     //Transformation
-    void setTransformation(glm::dmat4x4 t);
-    void multTransformation(glm::dmat4x4 t);
-    glm::dmat4x4 getTrans() const;
+    void setTransformation(glm::mat4x4 t);
+    void multTransformation(glm::mat4x4 t);
+    glm::mat4x4 getTrans() const;
     
     //Dim
     int xdim() const;
     int ydim() const;
     int zdim() const;
     int size() const;
-    double dx() const;
-    double dy() const;
-    double dz() const;
+    float dx() const;
+    float dy() const;
+    float dz() const;
 
     //Index to index
     int indexAt(int i, int j, int k) const;
@@ -64,18 +66,18 @@ public:
     bool isValid(int i, int j, int k) const;
 
     //Index to...
-    void indexToWorld(int i,int j,int k, double &w_x, double &w_y,double &w_z) const;
-    void indexToLocal(int i,int j,int k, double &l_x, double &l_y,double &l_z) const;
+    void indexToWorld(int i,int j,int k, float &w_x, float &w_y,float &w_z) const;
+    void indexToLocal(int i,int j,int k, float &l_x, float &l_y,float &l_z) const;
     
     //Local to...
-    void localToIndex(double l_x, double l_y,double l_z,int &i,int &j,int &k) const;
-    void localToWorld(double l_x, double l_y,double l_z, double &w_x,double &w_y,double &w_z) const;
-    void localToUpperLeftIndex(const double l_x,const double l_y,const double l_z, int &i,int &j,int &k) const;
+    void localToIndex(float l_x, float l_y,float l_z,int &i,int &j,int &k) const;
+    void localToWorld(float l_x, float l_y,float l_z, float &w_x,float &w_y,float &w_z) const;
+    void localToUpperLeftIndex(const float l_x,const float l_y,const float l_z, int &i,int &j,int &k) const;
     
     //World to...
-    void worldToLocal(const double w_x,const double w_y,const double w_z, double &l_x,double &l_y,double &l_z) const;
-    void worldToIndex(int &i,int &j,int &k, double w_x, double w_y,double w_z) const;
-    void worldToUpperLeftIndex(const double w_x,const double w_y,const double w_z, int &i,int &j,int &k) const;
+    void worldToLocal(const float w_x,const float w_y,const float w_z, float &l_x,float &l_y,float &l_z) const;
+    void worldToIndex(int &i,int &j,int &k, float w_x, float w_y,float w_z) const;
+    void worldToUpperLeftIndex(const float w_x,const float w_y,const float w_z, int &i,int &j,int &k) const;
     
     GridMappingIterator iterator() const;
 
