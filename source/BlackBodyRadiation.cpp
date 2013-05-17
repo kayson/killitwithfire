@@ -198,7 +198,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	float startTime = omp_get_wtime();
-
+	int n = 0;
 	#pragma omp parallel for private(L)
 	for(int x = 0; x < temperatureGrid.xdim(); ++x)
 	{
@@ -248,7 +248,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 		}
 		#pragma omp critical 
 		{
-			printf("\rRender progress: %.02f%%, %.02fs, %d/%d threads", 100.f*x/(temperatureGrid.xdim()-1), omp_get_wtime() - startTime, omp_get_num_threads(), omp_get_max_threads());
+			printf("\rRender progress: %.02f%%, %.02fs, %d/%d threads", 1000.f*n++/temperatureGrid.xdim(), omp_get_wtime() - startTime, omp_get_num_threads(), omp_get_max_threads());
 			fflush(stdout);
 		}
 	}
