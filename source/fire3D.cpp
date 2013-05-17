@@ -129,6 +129,7 @@ void Fire3D::computeGhostValues(){
         }
         
         //U,V or W
+		
         for (GridFieldIterator<double> it = burnt->iterator(); !it.done(); it.next()) {
             
             int i,j,k;

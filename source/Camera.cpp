@@ -44,7 +44,7 @@ void GLFWCALL Camera::reshape( int width, int height )
         //gluPerspective( 85.0f, (GLfloat)width/(GLfloat)height, 1.0f, 100.0f );
         
 
-		gluOrtho2D(-1.0, 1.0f, -1.0f, 1.0f); //Render blackbody!!! 
+		gluOrtho2D(0.0, 1.0f, 0.0f, 1.0f); //Render blackbody!!! 
 
         // Select and setup the modelview matrix.
         glMatrixMode( GL_MODELVIEW ); // "We want to edit the modelview matrix"

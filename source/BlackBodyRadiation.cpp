@@ -7,10 +7,13 @@
 #include "GridField.hpp"
 #include "LevelSet.h"
 
+#include <omp.h>
+
 #if defined __APPLE__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64 || __unix__
 #include <GL/glfw.h>
+#include <GL/freeglut.h>
 #endif
 
 const double C_1 = 3.7418e-16;
@@ -167,26 +170,12 @@ Vector3 BlackBodyRadiation::XYZtoRGB(const Vector3 &xyz)
 
 void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi)
 {
-	const int imageWidth = 2000;
-	const int imageHeight = 2000;
-
-	Vector3 eye(0,5,-5);
-
 	const float xdim = temperatureGrid.xdim();
 	const float ydim = temperatureGrid.ydim();
 	const float zdim = temperatureGrid.zdim();
 
-	//const float step = std::min(2.0f/xdim, 2.0f/ydim);
-	const float step = std::min(2.0f/imageWidth, 2.0f/imageHeight);
+	const float step = std::min(1.0f/xdim, 1.0f/ydim);
 
-	glBegin(GL_QUADS);
-
-	//rita en vit boarder
-	glColor3d(1.0,1.0,1.0);
-	glVertex2f(-1.0, -1.0);
-	glVertex2f(1.0, -1.0);
-	glVertex2f(1.0, 1.0);
-	glVertex2f(-1.0, 1.0);
 
 	const double oa = 0.01; //absorberings koef
 	const double os = 0.0; //scattering koef
@@ -197,6 +186,21 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	const double dl = 5e-9;//dx för våglängderna
 	double L[SAMPLES];
 
+	//TODO Placera denna allokering på ett annat ställe, samt deallokeringen.
+	const int IMSIZE= temperatureGrid.xdim()*temperatureGrid.ydim()*3;
+	GLfloat *image = new GLfloat[IMSIZE];
+	GLuint textureID;
+	#define GL_CLAMP_TO_EDGE 0x812F
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	float startTime = omp_get_wtime();
+
+	#pragma omp parallel for private(L)
 	for(int x = 0; x < temperatureGrid.xdim(); ++x)
 	{
 		for(int y = 0; y < temperatureGrid.ydim(); ++y)
@@ -211,7 +215,8 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 				{
 					const double lambda = (360.0 + double(i)*5)*1e-9;
 					const double T = temperatureGrid.valueAtIndex(x, y, z);
-					L[i] = C*L[i] + oa*radiance(lambda, T)*FirePresets::dx;/* + Scattering*/ 
+					L[i] = C*L[i] + oa*radiance(lambda, T)*FirePresets::dx;/* + Scattering*/  //raport 1
+					//L[i] = C*L[i] + (1.0 - C)*radiance(lambda, T)/ot; /* + Scattering*/ //rapport 2
 				}
 			}
 
@@ -237,19 +242,43 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 			Vector3 rgb = XYZtoRGB(XYZ);
 
-			glColor3d(rgb.x, rgb.y, rgb.z);
-
-			//Rita ut på korrekt ställe på skärmen
-			float xp1 = float(x)*step - xdim*0.5*step;
-			float xp2 = xp1 + step;
-			float yp1 = float(y)*step - ydim*0.5*step;
-			float yp2 = yp1 + step;
-
-			glVertex2f(xp1*0.95, yp1*0.95);
-			glVertex2f(xp2*0.95, yp1*0.95);
-			glVertex2f(xp2*0.95, yp2*0.95);
-			glVertex2f(xp1*0.95, yp2*0.95);
+			int index = y*temperatureGrid.xdim() + x; // Hitta index i texturen för x och y koordinat.
+			image[index*3 + 0] = rgb.x; //R
+			image[index*3 + 1] = rgb.y; //G
+			image[index*3 + 2] = rgb.z; //B
+		}
+		#pragma omp critical 
+		{
+			printf("\rRender progress: %.02f%%, %.02fs, %d/%d threads", 100.f*x/(temperatureGrid.xdim()-1), omp_get_wtime() - startTime, omp_get_num_threads(), omp_get_max_threads());
+			fflush(stdout);
 		}
 	}
+	std::cout << "\n" << std::endl;
+
+	//rita ut textur
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, temperatureGrid.xdim(), temperatureGrid.ydim(), 0, GL_RGB, GL_FLOAT, image); 
+	glBegin(GL_QUADS);
+	
+	if(temperatureGrid.xdim() > temperatureGrid.ydim())
+	{
+		float aspect = ydim/xdim;
+		glTexCoord2i(0, 0);		glVertex2f(0.0f, 0.0f);
+		glTexCoord2i(1, 0);		glVertex2f(1.0f, 0.0f);
+		glTexCoord2i(1, 1);		glVertex2f(1.0f, aspect);
+		glTexCoord2i(0, 1);		glVertex2f(0.0f, aspect);	
+	}
+	else
+	{
+		float aspect = xdim/ydim;
+		glTexCoord2i(0, 0);		glVertex2f(0.0f, 0.0f);
+		glTexCoord2i(1, 0);		glVertex2f(aspect, 0.0f);
+		glTexCoord2i(1, 1);		glVertex2f(aspect, 1.0f);
+		glTexCoord2i(0, 1);		glVertex2f(0.0f, 1.0f);	
+	}
+	
 	glEnd();
+
+	 //TODO DEALLOKERA OCH ALLOKERA PÅ BÄTTRE STÄLLE!
+	delete[] image;
+	glDeleteTextures( 1, &textureID );
 }

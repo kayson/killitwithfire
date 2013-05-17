@@ -441,7 +441,7 @@ void MACGrid::addForce(Vector3 vec, double dt){
 }
 
 void MACGrid::addForceGrid(GridField<Vector3> &f, double dt){
-	#pragma omp parallel for
+	//#pragma omp parallel for (out of range exception!)
 	for(int index = 0; index < 3; ++index){
 		GridField<double> *field;
 		if(index == 0)
