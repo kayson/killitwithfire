@@ -246,10 +246,24 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	//rita ut textur
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, temperatureGrid.xdim(), temperatureGrid.ydim(), 0, GL_RGB, GL_FLOAT, image); 
 	glBegin(GL_QUADS);
-	glTexCoord2i(0, 0);		glVertex2i(0, 0);
-	glTexCoord2i(1, 0);		glVertex2i(1, 0);
-	glTexCoord2i(1, 1);		glVertex2i(1, 1);
-	glTexCoord2i(0, 1);		glVertex2i(0, 1);	
+	
+	if(temperatureGrid.xdim() > temperatureGrid.ydim())
+	{
+		float aspect = ydim/xdim;
+		glTexCoord2i(0, 0);		glVertex2f(0.0f, 0.0f);
+		glTexCoord2i(1, 0);		glVertex2f(1.0f, 0.0f);
+		glTexCoord2i(1, 1);		glVertex2f(1.0f, aspect);
+		glTexCoord2i(0, 1);		glVertex2f(0.0f, aspect);	
+	}
+	else
+	{
+		float aspect = xdim/ydim;
+		glTexCoord2i(0, 0);		glVertex2f(0.0f, 0.0f);
+		glTexCoord2i(1, 0);		glVertex2f(aspect, 0.0f);
+		glTexCoord2i(1, 1);		glVertex2f(aspect, 1.0f);
+		glTexCoord2i(0, 1);		glVertex2f(0.0f, 1.0f);	
+	}
+	
 	glEnd();
 
 	 //TODO DEALLOKERA OCH ALLOKERA PÅ BÄTTRE STÄLLE!
