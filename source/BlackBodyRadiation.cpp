@@ -171,7 +171,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	const float ydim = temperatureGrid.ydim();
 	const float zdim = temperatureGrid.zdim();
 
-	const float step = std::min(2.0f/xdim, 2.0f/ydim);
+	const float step = std::min(1.0f/xdim, 1.0f/ydim);
 
 	glBegin(GL_QUADS);
 
@@ -205,7 +205,8 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 				{
 					const double lambda = (360.0 + double(i)*5)*1e-9;
 					const double T = temperatureGrid.valueAtIndex(x, y, z);
-					L[i] = C*L[i] + oa*radiance(lambda, T)*FirePresets::dx;/* + Scattering*/ 
+					L[i] = C*L[i] + oa*radiance(lambda, T)*FirePresets::dx;/* + Scattering*/  //raport 1
+					//L[i] = C*L[i] + (1.0 - C)*radiance(lambda, T)/ot; /* + Scattering*/ //rapport 2
 				}
 			}
 
@@ -234,7 +235,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 			glColor3d(rgb.x, rgb.y, rgb.z);
 
 			//Rita ut på korrekt ställe på skärmen
-			float xp1 = float(x)*step - xdim*0.5*step;
+			/*float xp1 = float(x)*step - xdim*0.5*step;
 			float xp2 = xp1 + step;
 			float yp1 = float(y)*step - ydim*0.5*step;
 			float yp2 = yp1 + step;
@@ -242,7 +243,16 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 			glVertex2f(xp1*0.95, yp1*0.95);
 			glVertex2f(xp2*0.95, yp1*0.95);
 			glVertex2f(xp2*0.95, yp2*0.95);
-			glVertex2f(xp1*0.95, yp2*0.95);
+			glVertex2f(xp1*0.95, yp2*0.95);*/
+			float xp1 = float(x)*step;
+			float xp2 = xp1 + step;
+			float yp1 = float(y)*step;
+			float yp2 = yp1 + step;
+
+			glVertex2f(xp1, yp1);
+			glVertex2f(xp2, yp1);
+			glVertex2f(xp2, yp2);
+			glVertex2f(xp1, yp2);
 		}
 	}
 	glEnd();
