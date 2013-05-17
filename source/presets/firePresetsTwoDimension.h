@@ -70,6 +70,6 @@ const double FirePresets::TEMPERATURE_BUOYANCY_ALPHA = 0.15;
 const double FirePresets::TEMPERATURE_LOSS_CONSTANT = 3000;
 
 const double FirePresets::rhof = 1.0;
-const double FirePresets::rhob = 0.1;
+const double FirePresets::rhob = 0.01;
 
 #endif //FIREPRESETSTWODIM_H
