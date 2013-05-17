@@ -160,8 +160,14 @@ void calculateFPS()
 
 void showFPS() 
 {
-	calculateFPS();
-	sprintf(titlestring, "Fire (%.1f FPS)", fps);
+	//calculateFPS();
+	//sprintf(titlestring, "Fire (%.1f FPS)", fps);
+
+	//Skriv ut antal sekunder istället för fps
+	double t = glfwGetTime();
+	sprintf(titlestring, "Fire (%.1f s)", (t-t0));
+	t0 = t;
+
 
 	glfwSetWindowTitle(titlestring);
 }
