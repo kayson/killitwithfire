@@ -176,7 +176,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 	const float step = std::min(1.0f/xdim, 1.0f/ydim);
 
-	const double oa = 0.15; //absorberings koef, för rapport 1 använd 0.01
+	const double oa = 0.01; //absorberings koef, för rapport 1 använd 0.01
 	const double os = 0.0; //scattering koef
 	const double ot = oa + os; //tot
 	const double C = exp(-oa*FirePresets::dx);
@@ -214,8 +214,8 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 				{
 					const double lambda = (360.0 + double(i)*5)*1e-9;
 					const double T = temperatureGrid.valueAtIndex(x, y, z);
-					//L[i] = C*L[i] + oa*radiance(lambda, T)*FirePresets::dx;/* + Scattering*/  //raport 1
-					L[i] = C*L[i] + (1.0 - C)*radiance(lambda, T)/ot; /* + Scattering*/ //rapport 2
+					L[i] = C*L[i] + oa*radiance(lambda, T)*FirePresets::dx;/* + Scattering*/  //raport 1
+					//L[i] = C*L[i] + (1.0 - C)*radiance(lambda, T)/ot; /* + Scattering*/ //rapport 2 EJ BRA METOD DÅ DEN INTE SKALAR MED UPPLÖSNING, dock är den oftast snyggare
 				}
 			}
 
