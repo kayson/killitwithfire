@@ -12,6 +12,8 @@
 #include "Input.h"
 #include "JumpCondition.h"
 
+#include "BlackBodyRadiation.h"
+
 #if defined __APPLE__
 #include "glfw.h"
 #include "pcg_solver.h"
@@ -737,14 +739,17 @@ void Fire::computeW(){
 }
 
 void Fire::draw(){
-    //phi.draw();
-    T->draw();
+    glLoadIdentity();
+	BlackBodyRadiation::draw(*(T->grid), phi);
+	
+	//phi.draw();
+    //T->draw();
 
 	//T->drawBuoyancyForce();
 	//drawVorticities();
 	//drawCenterVelocities();
-    drawMAC(u_burnt, BURNT, 1,0,0);
-    drawMAC(u_fuel, FUEL, 0,1,1);
+    //drawMAC(u_burnt, BURNT, 1,0,0);
+    //drawMAC(u_fuel, FUEL, 0,1,1);
     //drawMAC(u_fuel, BURNT, 0,1,1);
     //particles.draw();
     //drawMAC(u_burnt, FUEL, 1,0,0);
