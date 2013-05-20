@@ -80,11 +80,6 @@ void Temperature::AdvectTemperatureField(double dt, const MACGrid &m, const Leve
             for(int k = 0; k < grid->zdim(); k++)
 			{
 				ResetCell(i, j, k, LevelSet::getCellType(ls.grid->valueAtIndex(i, j, k)));
-
-				/*if(LevelSet::getCellType(phi->valueAtIndex(i, j, k)) == FUEL)
-					std::cout << "Voxel " << i << ", " << j << ", " << k << " = FUEL" << std::endl;*/
-
-				std::cout << "T(" << i << ", " << j << ", " << k << ") = " << << std::endl;
 			}
     
 
