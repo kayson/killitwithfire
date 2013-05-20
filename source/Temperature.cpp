@@ -17,6 +17,8 @@
 #include <GL/glfw.h>
 #endif
 
+#include <iostream>
+
 Temperature::Temperature(GridField<double> *phi)
 {
 
@@ -37,7 +39,7 @@ Temperature::Temperature(GridField<double> *phi)
 	for(int i = 0; i < XDIM; i++){
 		for(int j = 0; j < YDIM; j++){
 			for(int k = 0; k < ZDIM; k++){
-				InitCell(i,j,k, Fire::getCellType(phi->valueAtIndex(i, j, k)));
+				InitCell(i,j,k, LevelSet::getCellType(phi->valueAtIndex(i, j, k)));
 			}
 		}
 	}
@@ -76,7 +78,14 @@ void Temperature::AdvectTemperatureField(double dt, const MACGrid &m, const Leve
 	for(int i = 0; i < grid->xdim(); i++)
         for(int j = 0; j < grid->ydim(); j++)
             for(int k = 0; k < grid->zdim(); k++)
-                ResetCell(i, j, k, Fire::getCellType(ls.grid->valueAtIndex(i, j, k)));
+			{
+				ResetCell(i, j, k, LevelSet::getCellType(ls.grid->valueAtIndex(i, j, k)));
+
+				/*if(LevelSet::getCellType(phi->valueAtIndex(i, j, k)) == FUEL)
+					std::cout << "Voxel " << i << ", " << j << ", " << k << " = FUEL" << std::endl;*/
+
+				std::cout << "T(" << i << ", " << j << ", " << k << ") = " << << std::endl;
+			}
     
 
     for(int i = 0; i < grid->xdim(); i++)

@@ -110,12 +110,7 @@ double LevelSet::getVolume() const
 }
 
 CellType LevelSet::getCellType(const int i, const int j, const int k) const {
-	if(i < 2 || i >= (this->grid->xdim() - 2) || j< 2 || j >= (this->grid->ydim() - 2) ) //Check if is solid
-		return SOLID;
-	else if(this->grid->valueAtIndex(i,j,k) > 0.0)
-		return FUEL;
-	else 
-		return BURNT;
+	return getCellType(grid->valueAtIndex(i, j, k));
 }
 
 CellType LevelSet::getCellType(const double w_x, const double w_y, const double w_z) const {
@@ -123,7 +118,9 @@ CellType LevelSet::getCellType(const double w_x, const double w_y, const double 
 }
 
 CellType LevelSet::getCellType(const double phi){
-	if(false) // Check if solid
+	if(false) // Check if solid 
+		//if(i < 2 || i >= (this->grid->xdim() - 2) || j< 2 || j >= (this->grid->ydim() - 2) ) //Check if is solid
+		//ELLER solids.valueAtIndex(i, j, k) Fanns som sagt 3 olika def.
 		return SOLID;
 	else if(phi > 0.0)
 		return FUEL;

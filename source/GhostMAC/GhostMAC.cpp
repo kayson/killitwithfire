@@ -53,7 +53,7 @@ void GhostMAC::makeRandom(){
 double GhostMAC::valueAtFace(int i,int j,int k,DirectionEnums d, CellType cell) const{
     double x,y,z;
     GridMapping::indexToWorld(i, j, k, x, y, z);
-    CellType thisCellType = Fire::getCellType(_levelset->grid->valueAtWorld(x, y, z));
+    CellType thisCellType = LevelSet::getCellType(_levelset->grid->valueAtWorld(x, y, z));
     
     GhostGridField<double> *u = static_cast< GhostGridField<double>* >(_u);
     GhostGridField<double> *v = static_cast< GhostGridField<double>* >(_v);

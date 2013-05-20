@@ -138,7 +138,7 @@ void Fire3D::computeGhostValues(){
             burnt->indexToWorld(i, j, k, x, y, z);
             
 			//Beräkningar enl. ekv (13) Fedkiw 2002
-            CellType cellType = getCellType(phi.grid->valueAtWorld(x, y, z));
+            CellType cellType = LevelSet::getCellType(phi.grid->valueAtWorld(x, y, z));
             if (cellType == FUEL) {
                 
 				Vector3 centerVel = u_fuel.velocityAtWorld(Vector3(x,y,z));
@@ -270,6 +270,7 @@ double Fire3D::getDensity(const int i, const int j, const int k, DirectionEnums 
 		return preset->rhob;
 }
 
+/*
 CellType Fire3D::getCellType(const int i, const int j, const int k) const
 {
 	if(solids.valueAtIndex(i, j, k)) //Check if is solid
@@ -293,7 +294,7 @@ CellType Fire3D::getCellType(double phi){
 		return FUEL;
 	else
 		return BURNT;
-}
+}*/
 
 void Fire3D::addFuelToLevelSet(int x0, int y0, int z0, double radius){
 	for(int x = 0; x < preset->GRID_DIM_X; ++x)
@@ -499,7 +500,7 @@ void Fire3D::drawMAC(MACGrid &grid,CellType cellType, double r,double g,double b
 	for (GridMappingIterator iter = grid.iterator(); !iter.done(); iter.next()) {
 		int i,j,k;
 		iter.index(i, j, k);
-        if (getCellType(i, j, k) == cellType  && !solids.valueAtIndex(i, j, k)) {
+        if (phi.getCellType(i, j, k) == cellType  && !solids.valueAtIndex(i, j, k)) {
             double x,y,z;
             grid.indexToWorld(i, j, k, x, y, z);
             Vector3 vel = grid.velocityAtWorld(Vector3(x,y,z))*0.1;

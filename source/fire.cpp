@@ -138,7 +138,7 @@ void Fire::computeGhostValues(){
             burnt->indexToWorld(i, j, k, x, y, z);
             
 			//Beräkningar enl. ekv (13) Fedkiw 2002
-            CellType cellType = getCellType(phi.grid->valueAtWorld(x, y, z));
+			CellType cellType = LevelSet::getCellType(phi.grid->valueAtWorld(x, y, z));
             if (cellType == FUEL) {
 
 				Vector3 centerVel = u_fuel.velocityAtWorld(Vector3(x,y,z));
@@ -272,7 +272,8 @@ double Fire::getDensity(const int i, const int j, const int k, DirectionEnums d)
 		return preset->rhob;
 }
 
-CellType Fire::getCellType(const int i, const int j, const int k) const
+/*
+CellType LevelSet::getCellType(const int i, const int j, const int k) const
 {
 	if(solids.valueAtIndex(i, j, k)) //Check if is solid
 		return SOLID;
@@ -282,12 +283,12 @@ CellType Fire::getCellType(const int i, const int j, const int k) const
 		return BURNT;
 }
 
-CellType Fire::getCellType(double w_x, double w_y,double w_z) const
+CellType LevelSet::getCellType(double w_x, double w_y,double w_z) const
 {
 	return getCellType(phi.grid->valueAtWorld(w_x, w_y, w_z));
 }
 
-CellType Fire::getCellType(double phi){
+CellType LevelSet::getCellType(double phi){
 
 	if(false) //Check if is solid
 		return SOLID;
@@ -295,7 +296,7 @@ CellType Fire::getCellType(double phi){
 		return FUEL;
 	else 
 		return BURNT;
-}
+}*/
 
 void Fire::addFuelToLevelSet(int x0, int y0, int z0, double radius)
 {
@@ -347,11 +348,13 @@ void Fire::runSimulation(){
 	phi.reinitialize();
     phi.updateNormals();
 
+	/*
 	double currentVolume = phi.getVolume();
 	double desiredVolume = 30;
 
 	if(currentVolume < desiredVolume)
-		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, 0, 0.4/preset->dx);
+		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, 0, 0.4/preset->dx);*/
+	addFuelToLevelSet(preset->GRID_DIM_X/2, 6, 0, 20.0);
 
 #if 0
 	static int counter = 0;
@@ -496,7 +499,7 @@ void Fire::drawMAC(MACGrid &grid,CellType cellType, double r,double g,double b){
 	for (GridMappingIterator iter = grid.iterator(); !iter.done(); iter.next()) {
 		int i,j,k;
 		iter.index(i, j, k);
-        if (getCellType(i, j, k) == cellType  && !solids.valueAtIndex(i, j, k)) {
+		if (phi.getCellType(i, j, k) == cellType  && !solids.valueAtIndex(i, j, k)) {
             double x,y,z;
             grid.indexToWorld(i, j, k, x, y, z);
             Vector3 vel = grid.velocityAtWorld(Vector3(x,y,z))*0.1;

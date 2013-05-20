@@ -66,7 +66,7 @@ double UpwindDiff::calcDz(GridField<double> &g, const int i, const int j, const 
 
 double UpwindDiff::calcDx(GhostGridField<double> &g, const int i, const int j, const int k)
 {
-	CellType c_t = Fire::getCellType(g(i,j,k));
+	CellType c_t = LevelSet::getCellType(g(i,j,k));
 	if((*_w)(i, j, k).x > 0.0){ // denna är bara boundary kontroll, ej cell type
 		return ( g(i,j,k,c_t) - g(i-1,j,k,c_t)/FirePresets::dx );
 	}
@@ -76,7 +76,7 @@ double UpwindDiff::calcDx(GhostGridField<double> &g, const int i, const int j, c
 }
 double UpwindDiff::calcDy(GhostGridField<double> &g, const int i, const int j, const int k)
 {
-	CellType c_t = Fire::getCellType(g(i,j,k));
+	CellType c_t = LevelSet::getCellType(g(i,j,k));
 	if((*_w)(i, j, k).y > 0.0){
 		return ( g(i,j,k,c_t) - g(i,j-1,k,c_t)/FirePresets::dx );
 	}
@@ -85,7 +85,7 @@ double UpwindDiff::calcDy(GhostGridField<double> &g, const int i, const int j, c
 }
 double UpwindDiff::calcDz(GhostGridField<double> &g, const int i, const int j, const int k)
 {
-	CellType c_t = Fire::getCellType(g(i,j,k));
+	CellType c_t = LevelSet::getCellType(g(i,j,k));
 	if((*_w)(i, j, k).z > 0.0)
 		return ( g(i,j,k,c_t) - g(i,j,k-1,c_t)/FirePresets::dx );
 	else
@@ -129,7 +129,7 @@ double UpwindDiff::calcDxy(GridField<double> &g, const int i, const int j, const
 // GhostGridField<Vector3>-metoder
 
 /*Vector3 UpwindDiff::calcDx(GhostGridField<Vector3> &g, const int i, const int j, const int k){
-	//CellType c_t = Fire::getCellType(g(i,j,k));
+	//CellType c_t = LevelSet::getCellType(g(i,j,k));
 	if((*_w)(i, j, k).x > 0.0)
 		return (g(i, j, k) - g(i-1, j, k))/FirePresets::dx;
 	else
