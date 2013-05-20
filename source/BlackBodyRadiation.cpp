@@ -176,7 +176,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 	const float step = std::min(1.0f/xdim, 1.0f/ydim);
 
-	const double oa = 0.15; //absorberings koef, för rapport 1 använd 0.01
+	const double oa = 0.03; //absorberings koef, för rapport 1 använd 0.01
 	const double os = 0.0; //scattering koef
 	const double ot = oa + os; //tot
 	const double C = exp(-oa*FirePresets::dx);
@@ -233,7 +233,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 			//en variant av chromatic adaption, högt värde på crom minskar intensiteten, lågt värde ökar den.
 			Vector3 LMS = XYZtoLMS(XYZ);
-			const double crom = 1.0;
+			const double crom = 5;
 			LMS.x = LMS.x/(LMS.x + crom);
 			LMS.y = LMS.y/(LMS.y + crom);
 			LMS.z = LMS.z/(LMS.z + crom);
@@ -248,7 +248,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 		}
 		#pragma omp critical 
 		{
-			printf("\rRender progress: %.02f%%, %.02fs, %d/%d threads", 1000.f*n++/temperatureGrid.xdim(), omp_get_wtime() - startTime, omp_get_num_threads(), omp_get_max_threads());
+			printf("\rRender progress: %.02f%%, %.02fs, %d/%d threads", 100.f*n++/(temperatureGrid.xdim()-1), omp_get_wtime() - startTime, omp_get_num_threads(), omp_get_max_threads());
 			fflush(stdout);
 		}
 	}
