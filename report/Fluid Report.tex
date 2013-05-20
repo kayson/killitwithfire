@@ -5,35 +5,25 @@
 \begin{document}
 
 \title{Fluid Course\\ Project Report}   % type title between braces
-\author{Viktor Nilsson , vikni067@student.liu.se}
-
+\author{
+	Viktor Nilsson , vikni067@student.liu.se 
+	\\Andreas Valter , andva287@student.liu.se
+	}
 \date{\today}    % type date between braces
 \maketitle
 
 \setcounter{page}{2}
 
-\begin{abstract}
-	\lipsum[1]
+\include{abstract}
 
-\end{abstract}
+\include{introduction}
 
-\chapter{Chapter title}
-	Test \cite{Bee12}.
-
-	\section{Section title}
-		\lipsum[1]
-	\begin{figure}[h!]
-  		\centering
-   		 \includegraphics[width=0.5\textwidth]{f93}
-		\caption{gooby pls}
-	\end{figure}
-
-	\subsection{Subsection title}
-		\lipsum[1]
-		\begin{equation}
-		\textbf{F}_i^p = -m^2\sum_j (\frac{p_i}{\rho_i^2} + \frac{p_j}{\rho_j^2} \nabla W(\textbf{x}_{ij},h)
-		\end{equation}
-
+\begingroup
+\let\clearpage\relax % Removes blankpage before include
+\chapter{Results}
+	\include{results}
+	\include{discussion}
+\endgroup
 
 \bibliographystyle{abbrv}
 \bibliography{bibl}
