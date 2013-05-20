@@ -176,10 +176,10 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 	const float step = std::min(1.0f/xdim, 1.0f/ydim);
 
-	const double oa = 0.03; //absorberings koef, för rapport 1 använd 0.01
+	const double oa = 0.01; //absorberings koef, för rapport 1 använd 0.01
 	const double os = 0.0; //scattering koef
 	const double ot = oa + os; //tot
-	const double C = exp(-oa*FirePresets::dx);
+	const double C = exp(-ot*FirePresets::dx);
 
 	const int SAMPLES = 89;//Antal samplade våglängder
 	const double dl = 5e-9;//dx för våglängderna
@@ -192,7 +192,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	#define GL_CLAMP_TO_EDGE 0x812F
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -214,8 +214,8 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 				{
 					const double lambda = (360.0 + double(i)*5)*1e-9;
 					const double T = temperatureGrid.valueAtIndex(x, y, z);
-					//L[i] = C*L[i] + oa*radiance(lambda, T)*FirePresets::dx;/* + Scattering*/  //raport 1
-					L[i] = C*L[i] + (1.0 - C)*radiance(lambda, T)/ot; /* + Scattering*/ //rapport 2
+					L[i] = C*L[i] + oa*radiance(lambda, T)*FirePresets::dx;/* + Scattering*/  //raport 2002
+					//L[i] = C*L[i] + (1.0 - C)*radiance(lambda, T)/ot; /* + Scattering*/ //rapport 2006 EJ BRA METOD DÅ DEN INTE SKALAR MED UPPLÖSNING, dock är den oftast snyggare
 				}
 			}
 

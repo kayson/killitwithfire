@@ -55,13 +55,13 @@ const double FirePresets::T_AIR = 20.0 + 273.15;
 
 const double FirePresets::GRID_SIZE = 8;
 
-const double FirePresets::dt = 1.0/40.0;
+const double FirePresets::dt = 1.0/60.0;
 
-const double FirePresets::dx = GRID_DIM_X/GRID_SIZE;
+const double FirePresets::dx = GRID_DIM_X/GRID_SIZE; //Borde väl vara GRID_SIZE/GRID_DIM_X, vågar dock inte ändra då indextoWorld osv kan bero på det. Implicit funktionen behöver ändras då med. //Axel
 
 const double FirePresets::CFL_NUMBER = 2;
 
-const double FirePresets::S = 0.1;
+const double FirePresets::S = 0.25;
 
 const double FirePresets::VORTICITY_EPSILON_FUEL = 16.0/1.0;
 const double FirePresets::VORTICITY_EPSILON_BURNT = 60.0/1.0;
