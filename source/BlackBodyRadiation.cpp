@@ -285,6 +285,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 
 	/* RITA UT FUEL OCH BURNT
+	//TODO TA BORT SENARE NÄR DENNA INTE BEHÖVS FÖR TESTNING LÄNGRE
 void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi)
 {
 	const float xdim = temperatureGrid.xdim();

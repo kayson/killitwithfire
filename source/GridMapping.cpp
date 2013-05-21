@@ -124,13 +124,13 @@ glm::dmat4x4 GridMapping::getTrans() const{
 
 //Local dim
 double GridMapping::local_dx() const{
-    return 1.0/xdim();
+    return 1.0/double(xdim()-1);
 }
 double GridMapping::local_dy() const{
-    return 1.0/ydim();
+    return 1.0/double(ydim()-1);
 }
 double GridMapping::local_dz() const{
-        return 1.0/zdim();
+	return 1.0/double(zdim()-1);
 }
 //Dim
 int GridMapping::xdim() const{
@@ -213,16 +213,16 @@ void GridMapping::indexToWorld(int i,int j,int k, double &w_x, double &w_y,doubl
     
 }
 void GridMapping::indexToLocal(int i,int j,int k, double &l_x, double &l_y,double &l_z) const{
-    l_x = ((double)i)/((double)xdim());
-    l_y = ((double)j)/((double)ydim());
-    l_z = ((double)k)/((double)zdim());
+    l_x = double(i)/double(xdim()-1);
+    l_y = double(j)/double(ydim()-1);
+    l_z = double(k)/double(zdim()-1);//TODO om zdim = 1 så funkar inte detta, en ifsats kan lösa detta
 }
 
 //Local to...
 void GridMapping::localToIndex(double l_x, double l_y,double l_z,int &i,int &j,int &k) const{
-    i = (int)round(l_x*((double)xdim()));
-    j = (int)round(l_y*((double)ydim()));
-    k = (int)round(l_z*((double)zdim()));
+    i = (int)round(l_x*double(xdim()-1));
+    j = (int)round(l_y*double(ydim()-1));
+    k = (int)round(l_z*double(zdim()-1));
 }
 
 void GridMapping::localToWorld(double l_x, double l_y,double l_z, double &w_x,double &w_y,double &w_z) const{
@@ -232,9 +232,9 @@ void GridMapping::localToWorld(double l_x, double l_y,double l_z, double &w_x,do
 }
 
 void GridMapping::localToUpperLeftIndex(const double l_x,const double l_y,const double l_z, int &i,int &j,int &k) const{
-    i = (int)floor(l_x*((double)xdim()));
-    j = (int)floor(l_y*((double)ydim()));
-    k = (int)floor(l_z*((double)zdim()));
+	i = (int)floor(l_x*double(xdim()-1));
+    j = (int)floor(l_y*double(ydim()-1));
+    k = (int)floor(l_z*double(zdim()-1));
 }
 
 //World to...
