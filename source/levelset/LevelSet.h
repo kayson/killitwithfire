@@ -55,6 +55,8 @@ public:
     Vector3 getVelocity(MACGrid &g, int i, const int j, const int k);
     
 private:
+	void initLevelSet();
+
 	DetonationShockDynamics *dsd;
 	void (*render)();
 };

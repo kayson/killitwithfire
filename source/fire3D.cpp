@@ -346,7 +346,6 @@ void Fire3D::runSimulation(){
 	phi.reinitialize();
     phi.updateNormals();
     
-	// TODO KONTROLLERA ATT DENNA FUNKAR I 3D!!!
 	/*
 	double currentVolume = phi.getVolume();
 	const double desiredVolume = 0.75*3.14*0.001;

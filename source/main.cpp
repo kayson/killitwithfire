@@ -50,7 +50,7 @@ char titlestring[200];
 int HEIGHT = 600, WIDTH = 600;
 bool running = false;
 
-Fire *fire;
+Fire3D *fire;
 Water2D *water;
 Water3D *water3d;
 
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     unsigned int t = (unsigned int)time(NULL);
     srand(t);
 #if SIMULATION == FIRE
-	fire = new Fire(new FirePresetsTwoDimension());
+	fire = new Fire3D(new FirePresetsTwoDimension());
 #elif SIMULATION == WATER2D
     water = new Water2D();
 #elif SIMULATION == WATER3D

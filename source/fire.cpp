@@ -354,7 +354,6 @@ void Fire::runSimulation(){
 
 	if(currentVolume < desiredVolume)
 		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, 0, 0.4/preset->dx);*/
-	addFuelToLevelSet(preset->GRID_DIM_X/2, 6, 0, 20.0);
 
 #if 0
 	static int counter = 0;

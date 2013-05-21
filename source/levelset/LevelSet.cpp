@@ -26,6 +26,8 @@ LevelSet::LevelSet()
 {
 
 	grid  = new GridField<double>(10,10,10, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
+	initLevelSet();
+
 	gridCopy = new GridField<double>(10, 10, 10,10, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
 	normals = new GridField<Vector3>(10, 10, 10, 10, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
 
@@ -38,6 +40,8 @@ LevelSet::LevelSet()
 LevelSet::LevelSet(int xDim, int yDim, int zDim, double size)
 {
 	grid  = new GridField<double>(xDim,yDim,zDim,size, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING? bör fixa så det blir signed distance på dessa
+	initLevelSet();
+
 	gridCopy = new GridField<double>(xDim,yDim,zDim,size, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
 	normals = new GridField<Vector3>(xDim,yDim,zDim,size, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
         
@@ -45,6 +49,19 @@ LevelSet::LevelSet(int xDim, int yDim, int zDim, double size)
     gridCopy->multTransformation(glm::scale(1.0, 1.0, 1.0));
     normals->multTransformation(glm::scale(1.0, 1.0, 1.0));      
 	dsd = new DetonationShockDynamics();
+	
+}
+
+//Initiera levelsetet så det inte har någon yta från början
+void LevelSet::initLevelSet()
+{
+	for(int i = 0; i < grid->xdim(); i++){
+		for(int j = 0; j < grid->ydim(); j++){
+			for(int k = 0; k < grid->zdim(); k++){
+                grid->setValueAtIndex(-FLT_MAX, i,j,k);
+            }
+        }
+    }
 }
 
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
