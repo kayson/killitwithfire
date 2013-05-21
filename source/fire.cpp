@@ -731,7 +731,7 @@ void Fire::computeW(){
       w.indexToWorld(i, j, k, x, y, z);
       Vector3 v;
       //if (getCellType(i, j, k) == FUEL) {
-          v = u_fuel.velocityAtWorld(Vector3(x,y,z));
+          v = u_fuel.velocityAtWorld(Vector3(x,y,z)) + phi.getNormal(i, j, k)*FirePresets::S;
       /*}else if (getCellType(i, j, k) == BURNT){
           v = u_burnt.velocityAtWorld(Vector3(x,y,z));
       }*/

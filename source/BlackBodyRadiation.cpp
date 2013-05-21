@@ -168,6 +168,7 @@ Vector3 BlackBodyRadiation::XYZtoRGB(const Vector3 &xyz)
 	return rgb;
 }
 
+
 void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi)
 {
 	const float xdim = temperatureGrid.xdim();
@@ -216,8 +217,8 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 				{
 					const double lambda = (360.0 + double(i)*5)*1e-9;
 					const double T = temperatureGrid.valueAtIndex(x, y, z);
-					L[i] = C*L[i] + oa*radiance(lambda, T)*FirePresets::dx;/* + Scattering*/  //raport 2002
-					//L[i] = C*L[i] + (1.0 - C)*radiance(lambda, T)/ot; /* + Scattering*/ //rapport 2006 EJ BRA METOD DÅ DEN INTE SKALAR MED UPPLÖSNING, dock är den oftast snyggare
+					L[i] = C*L[i] + oa*radiance(lambda, T)*FirePresets::dx;
+					//L[i] = C*L[i] + (1.0 - C)*radiance(lambda, T)/ot; 
 				}
 			}
 
@@ -281,3 +282,87 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	delete[] image;
 	glDeleteTextures( 1, &textureID );
 }
+
+
+	/* RITA UT FUEL OCH BURNT
+void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi)
+{
+	const float xdim = temperatureGrid.xdim();
+	const float ydim = temperatureGrid.ydim();
+	const float zdim = temperatureGrid.zdim();
+
+	//TODO Placera denna allokering på ett annat ställe, samt deallokeringen.
+	const int IMSIZE= temperatureGrid.xdim()*temperatureGrid.ydim()*3;
+	GLfloat *image = new GLfloat[IMSIZE];
+	GLuint textureID;
+	#define GL_CLAMP_TO_EDGE 0x812F
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	float startTime = omp_get_wtime();
+	int n = 0;
+	#pragma omp parallel for
+	for(int x = 0; x < temperatureGrid.xdim(); ++x)
+	{
+		for(int y = 0; y < temperatureGrid.ydim(); ++y)
+		{
+			Vector3 rgb = Vector3(0.0);
+			for(int z = 0; z < temperatureGrid.zdim(); ++z)
+			{
+				if(phi.getCellType(x, y, z) == FUEL)
+				{
+					rgb.z += 20.0;
+				}
+				else
+				{
+					rgb.x += 1.0;
+					rgb.y += 1.0;
+				}
+			}
+
+			rgb *= 1.0/double(zdim);
+
+			int index = y*temperatureGrid.xdim() + x; // Hitta index i texturen för x och y koordinat.
+			image[index*3 + 0] = rgb.x; //R
+			image[index*3 + 1] = rgb.y; //G
+			image[index*3 + 2] = rgb.z; //B
+		}
+		#pragma omp critical 
+		{
+			printf("\rRender progress: %.02f%%, %.02fs, %d/%d threads", 1000.f*n++/temperatureGrid.xdim(), omp_get_wtime() - startTime, omp_get_num_threads(), omp_get_max_threads());
+			fflush(stdout);
+		}
+	}
+	std::cout << "\n" << std::endl;
+
+	//rita ut textur
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, temperatureGrid.xdim(), temperatureGrid.ydim(), 0, GL_RGB, GL_FLOAT, image); 
+	glBegin(GL_QUADS);
+	
+	if(temperatureGrid.xdim() > temperatureGrid.ydim())
+	{
+		float aspect = ydim/xdim;
+		glTexCoord2i(0, 0);		glVertex2f(0.0f, 0.0f);
+		glTexCoord2i(1, 0);		glVertex2f(1.0f, 0.0f);
+		glTexCoord2i(1, 1);		glVertex2f(1.0f, aspect);
+		glTexCoord2i(0, 1);		glVertex2f(0.0f, aspect);	
+	}
+	else
+	{
+		float aspect = xdim/ydim;
+		glTexCoord2i(0, 0);		glVertex2f(0.0f, 0.0f);
+		glTexCoord2i(1, 0);		glVertex2f(aspect, 0.0f);
+		glTexCoord2i(1, 1);		glVertex2f(aspect, 1.0f);
+		glTexCoord2i(0, 1);		glVertex2f(0.0f, 1.0f);	
+	}
+	
+	glEnd();
+
+	 //TODO DEALLOKERA OCH ALLOKERA PÅ BÄTTRE STÄLLE!
+	delete[] image;
+	glDeleteTextures( 1, &textureID );
+}*/
