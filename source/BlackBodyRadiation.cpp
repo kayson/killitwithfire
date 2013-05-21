@@ -181,8 +181,10 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	const double ot = oa + os; //tot
 	const double C = exp(-ot*FirePresets::dx);
 
+
+	const int STEPSIZE = 1;
 	const int SAMPLES = 89;//Antal samplade våglängder
-	const double dl = 5e-9;//dx för våglängderna
+	const double dl = 5e-9*double(STEPSIZE);//dx för våglängderna
 	double L[SAMPLES];
 
 	//TODO Placera denna allokering på ett annat ställe, samt deallokeringen.
@@ -210,7 +212,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 			for(int z = 0; z < temperatureGrid.zdim(); ++z)
 			{
 				//Räkna ut intensitet för varje våglängd
-				for(int i = 0; i < SAMPLES; ++i)
+				for(int i = 0; i < SAMPLES; i += STEPSIZE)
 				{
 					const double lambda = (360.0 + double(i)*5)*1e-9;
 					const double T = temperatureGrid.valueAtIndex(x, y, z);
@@ -221,15 +223,13 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 			//Beräkna XYZ från L
 			Vector3 XYZ = Vector3(0.0);
-			for(int i = 0; i < SAMPLES; ++i)
+			for(int i = 0; i < SAMPLES; i+= STEPSIZE)
 			{
 				XYZ.x += L[i] * CIE_X[i];
 				XYZ.y += L[i] * CIE_Y[i];
 				XYZ.z += L[i] * CIE_Z[i];
 			}
-			XYZ.x *= dl;
-			XYZ.y *= dl;
-			XYZ.z *= dl;
+			XYZ *= dl;
 
 			//en variant av chromatic adaption, högt värde på crom minskar intensiteten, lågt värde ökar den.
 			Vector3 LMS = XYZtoLMS(XYZ);
