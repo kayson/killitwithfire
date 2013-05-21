@@ -61,7 +61,7 @@ const double FirePresets::dx = GRID_DIM_X/GRID_SIZE; //Borde väl vara GRID_SIZE/
 
 const double FirePresets::CFL_NUMBER = 2;
 
-const double FirePresets::S = 0.5;
+const double FirePresets::S = 0.25;
 
 const double FirePresets::VORTICITY_EPSILON_FUEL = 16.0/3.0;
 const double FirePresets::VORTICITY_EPSILON_BURNT = 60.0/3.0;
