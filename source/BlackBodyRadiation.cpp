@@ -168,14 +168,132 @@ Vector3 BlackBodyRadiation::XYZtoRGB(const Vector3 &xyz)
 	return rgb;
 }
 
+void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi)
+{
+	//TODO Placera denna allokering på ett annat ställe, samt deallokeringen.
+	const int XSIZE = 300;
+	const int YSIZE = 600;
+	const int ZSIZE = temperatureGrid.zdim()*2.0;
+	const int IMSIZE= XSIZE*YSIZE*3;
+	GLfloat *image = new GLfloat[IMSIZE];
+	GLuint textureID;
+	#define GL_CLAMP_TO_EDGE 0x812F
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+	const double dx = 1.0/double(XSIZE);
+	const double dy = 1.0/double(YSIZE);
+	const double dz = 1.0/double(ZSIZE);
+
+	const double wdz = double(FirePresets::GRID_DIM_Z)/double(FirePresets::GRID_DIM_X)*double(FirePresets::GRID_SIZE)/double(ZSIZE);
+
+	const double oa = 0.05; //absorberings koef, för rapport 1 använd 0.01
+	const double os = 0.0; //scattering koef
+	const double ot = oa + os; //tot
+	const double C = exp(-ot*wdz);
+
+	const int STEPSIZE = 5;
+	const int SAMPLES = 89;//Antal samplade våglängder
+	const double dl = 5e-9*double(STEPSIZE);//dx för våglängderna
+	double L[SAMPLES];
+
+	float startTime = omp_get_wtime();
+	int n = 0;
+	#pragma omp parallel for private(L)
+	for(int x = 0; x < XSIZE; ++x)
+	{
+		for(int y = 0; y < YSIZE; ++y)
+		{
+			for(int i = 0; i < SAMPLES; ++i)
+				L[i] = 0.0;
+
+			for(int z = 0; z < ZSIZE; ++z)
+			{
+				double xw, yw, zw;
+				temperatureGrid.localToWorld(dx*double(x), dy*double(y), dz*double(z), xw, yw, zw);
+				const double T = temperatureGrid.valueAtWorld(xw, yw, zw);
+				//const double T = 0.0;
+				//Räkna ut intensitet för varje våglängd
+				for(int i = 0; i < SAMPLES; i += STEPSIZE)
+				{
+					const double lambda = (360.0 + double(i)*5)*1e-9;
+					L[i] = C*L[i] + oa*radiance(lambda, T)*wdz;
+					//L[i] = C*L[i] + (1.0 - C)*radiance(lambda, T)/ot; 
+				}
+			}
+
+			//Beräkna XYZ från L
+			Vector3 XYZ = Vector3(0.0);
+			for(int i = 0; i < SAMPLES; i+= STEPSIZE)
+			{
+				XYZ.x += L[i] * CIE_X[i];
+				XYZ.y += L[i] * CIE_Y[i];
+				XYZ.z += L[i] * CIE_Z[i];
+			}
+			XYZ *= dl;
+
+			//en variant av chromatic adaption, högt värde på crom minskar intensiteten, lågt värde ökar den.
+			Vector3 LMS = XYZtoLMS(XYZ);
+			const double crom = 1.0;
+			LMS.x = LMS.x/(LMS.x + crom);
+			LMS.y = LMS.y/(LMS.y + crom);
+			LMS.z = LMS.z/(LMS.z + crom);
+			XYZ = LMStoXYZ(LMS);
+
+			Vector3 rgb = XYZtoRGB(XYZ);
+
+			int index = y*XSIZE + x; // Hitta index i texturen för x och y koordinat.
+			image[index*3 + 0] = rgb.x; //R
+			image[index*3 + 1] = rgb.y; //G
+			image[index*3 + 2] = rgb.z; //B
+		}
+		#pragma omp critical 
+		{
+			printf("\rRender progress: %.02f%%, %.02fs, %d/%d threads", 1000.f*n++/temperatureGrid.xdim(), omp_get_wtime() - startTime, omp_get_num_threads(), omp_get_max_threads());
+			fflush(stdout);
+		}
+	}
+	std::cout << "\n" << std::endl;
+
+	//rita ut textur
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, XSIZE, YSIZE, 0, GL_RGB, GL_FLOAT, image); 
+	glBegin(GL_QUADS);
+	
+	if(temperatureGrid.xdim() > temperatureGrid.ydim())
+	{
+		float aspect = float(temperatureGrid.ydim())/float(temperatureGrid.xdim());
+		glTexCoord2i(0, 0);		glVertex2f(0.0f, 0.0f);
+		glTexCoord2i(1, 0);		glVertex2f(1.0f, 0.0f);
+		glTexCoord2i(1, 1);		glVertex2f(1.0f, aspect);
+		glTexCoord2i(0, 1);		glVertex2f(0.0f, aspect);	
+	}
+	else
+	{
+		float aspect = float(temperatureGrid.xdim())/float(temperatureGrid.ydim());
+		glTexCoord2i(0, 0);		glVertex2f(0.0f, 0.0f);
+		glTexCoord2i(1, 0);		glVertex2f(aspect, 0.0f);
+		glTexCoord2i(1, 1);		glVertex2f(aspect, 1.0f);
+		glTexCoord2i(0, 1);		glVertex2f(0.0f, 1.0f);	
+	}
+	
+	glEnd();
+
+	 //TODO DEALLOKERA OCH ALLOKERA PÅ BÄTTRE STÄLLE!
+	delete[] image;
+	glDeleteTextures( 1, &textureID );
+}
+
+//Per voxel rendering
+/*
 void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi)
 {
 	const float xdim = temperatureGrid.xdim();
 	const float ydim = temperatureGrid.ydim();
 	const float zdim = temperatureGrid.zdim();
-
-	const float step = std::min(1.0f/xdim, 1.0f/ydim);
 
 	const double oa = 0.01; //absorberings koef, för rapport 1 använd 0.01
 	const double os = 0.0; //scattering koef
@@ -196,7 +314,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
@@ -212,11 +330,12 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 			for(int z = 0; z < temperatureGrid.zdim(); ++z)
 			{
+				const double T = temperatureGrid.valueAtIndex(x, y, z);
+
 				//Räkna ut intensitet för varje våglängd
 				for(int i = 0; i < SAMPLES; i += STEPSIZE)
 				{
 					const double lambda = (360.0 + double(i)*5)*1e-9;
-					const double T = temperatureGrid.valueAtIndex(x, y, z);
 					L[i] = C*L[i] + oa*radiance(lambda, T)*FirePresets::dx;
 					//L[i] = C*L[i] + (1.0 - C)*radiance(lambda, T)/ot; 
 				}
@@ -282,10 +401,11 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	delete[] image;
 	glDeleteTextures( 1, &textureID );
 }
+*/
 
-
-	/* RITA UT FUEL OCH BURNT
+	//RITA UT FUEL OCH BURNT
 	//TODO TA BORT SENARE NÄR DENNA INTE BEHÖVS FÖR TESTNING LÄNGRE
+	/* 
 void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi)
 {
 	const float xdim = temperatureGrid.xdim();
