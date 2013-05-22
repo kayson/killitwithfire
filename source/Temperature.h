@@ -31,7 +31,7 @@ public:
     GridField<double> *copy;
 private:
 
-    double calculateTemperatureLoss(int i, int j, int k);
+    double calculateTemperatureLoss(double T) const;
 	void InitCell(int i, int j, int k, CellType type);
     void ResetCell(int i, int j, int k, CellType type);
 	

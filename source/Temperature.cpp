@@ -64,10 +64,7 @@ void Temperature::InitCell(int i, int j, int k, CellType type)
 	}
 }
 
-double Temperature::calculateTemperatureLoss(int i, int j, int k){
-
-    double T = grid->valueAtIndex(i, j, k);
-
+double Temperature::calculateTemperatureLoss(double T) const{
 	return pow((T-FirePresets::T_AIR)/
                    (FirePresets::T_MAX - FirePresets::T_AIR), 4.0) *
             FirePresets::TEMPERATURE_LOSS_CONSTANT;
@@ -78,9 +75,7 @@ void Temperature::AdvectTemperatureField(double dt, const MACGrid &m, const Leve
 	for(int i = 0; i < grid->xdim(); i++)
         for(int j = 0; j < grid->ydim(); j++)
             for(int k = 0; k < grid->zdim(); k++)
-			{
-				ResetCell(i, j, k, LevelSet::getCellType(ls.grid->valueAtIndex(i, j, k)));
-			}
+				ResetCell(i, j, k, ls.getCellType(i, j, k));
     
 
     for(int i = 0; i < grid->xdim(); i++)
@@ -90,9 +85,9 @@ void Temperature::AdvectTemperatureField(double dt, const MACGrid &m, const Leve
                 grid->indexToWorld(i, j, k, x, y, z);
                 Vector3 vel = m.velocityAtWorld(Vector3(x,y,z));
                 double val = grid->valueAtWorld(x-dt*vel.x, y-dt*vel.y, z-dt*vel.z);
-                double c = calculateTemperatureLoss(i, j, k);
-
-                copy->setValueAtIndex(val-c, i, j, k);
+				val -= calculateTemperatureLoss(val)*FirePresets::dt;
+                assert(val >= 0);
+                copy->setValueAtIndex(val, i, j, k);
     }
     
     /*
