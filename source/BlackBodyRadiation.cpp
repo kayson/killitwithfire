@@ -197,6 +197,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+	std::cout << std::endl;
 	float startTime = omp_get_wtime();
 	int n = 0;
 	#pragma omp parallel for private(L)
@@ -252,7 +253,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 			fflush(stdout);
 		}
 	}
-	std::cout << "\n" << std::endl;
+	std::cout << std::endl;
 
 	//rita ut textur
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, temperatureGrid.xdim(), temperatureGrid.ydim(), 0, GL_RGB, GL_FLOAT, image); 

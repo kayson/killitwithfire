@@ -16,6 +16,7 @@
 #include "../fire.h"
 #include "firePresets.h"
 
+#include <omp.h>
 
 template<class T>
 class MACAdvect {
@@ -29,11 +30,12 @@ public:
         double x,y,z;
 
 #pragma omp parallel for
+		
         for (int i = 0; i < u._u->xdim(); i++) {
             for (int j = 0; j < u._u->ydim(); j++) {
                 for (int k = 0; k < u._u->zdim(); k++) {
                     u._u->indexToWorld(i, j, k, x, y, z);
-
+					//std::cout << omp_get_num_threads() << std::endl;
 					double val = advect(dt, u, *u._u, i, j, k);
 
                     u.buffer()->_u->setValueAtIndex(val, i, j, k);

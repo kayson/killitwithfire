@@ -271,6 +271,7 @@ struct PCGSolver
       s=z;
       fixed_matrix.construct_from_matrix(matrix);
       int iteration;
+		
       for(iteration=0; iteration<max_iterations; ++iteration){
          multiply(fixed_matrix, s, z);
          double alpha=rho/BLASWIN::dot(s, z);
