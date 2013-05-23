@@ -196,7 +196,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	const double ot = oa + os; //tot
 	const double C = exp(-ot*wdz);
 
-	const int STEPSIZE = 5;
+	const int STEPSIZE = 10;
 	const int SAMPLES = 89;//Antal samplade våglängder
 	const double dl = 5e-9*double(STEPSIZE);//dx för våglängderna
 	double L[SAMPLES];
