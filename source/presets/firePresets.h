@@ -42,6 +42,8 @@ public:
 	static const double rhof; // Fuel density (kg/m^3)
 	static const double rhob; // Hot gaseous products density (kg/m^3)
 
+	static const double CHROMA; //Chromatic adaption, högt värde minskar intensiteten
+	static const int SAMPLE_STEP; //Antal man hoppar över (1 är minsta, dvs man använder alla sampel)
     //Rutiner
 	AdvectLevelSet *advection;
 	MACAdvect<double> *advectVelocities;

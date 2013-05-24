@@ -189,16 +189,15 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	const double dy = 1.0/double(YSIZE);
 	const double dz = 1.0/double(ZSIZE);
 
-	const double wdz = double(FirePresets::GRID_DIM_Z)/double(FirePresets::GRID_DIM_X)*double(FirePresets::GRID_SIZE)/double(ZSIZE);
+	const double wdz = double(temperatureGrid.zdim())/double(FirePresets::GRID_DIM_X)*double(FirePresets::GRID_SIZE)/double(ZSIZE); //fysisk steglängd mellan sampel
 
 	const double oa = 0.05; //absorberings koef, för rapport 1 använd 0.01
 	const double os = 0.0; //scattering koef
 	const double ot = oa + os; //tot
 	const double C = exp(-ot*wdz);
 
-	const int STEPSIZE = 10;
 	const int SAMPLES = 89;//Antal samplade våglängder
-	const double dl = 5e-9*double(STEPSIZE);//dx för våglängderna
+	const double dl = 5e-9*double(FirePresets::SAMPLE_STEP);//dx för våglängderna
 	double L[SAMPLES];
 
 	float startTime = omp_get_wtime();
@@ -208,7 +207,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	{
 		for(int y = 0; y < YSIZE; ++y)
 		{
-			for(int i = 0; i < SAMPLES; ++i)
+			for(int i = 0; i < SAMPLES; i+= FirePresets::SAMPLE_STEP)
 				L[i] = 0.0;
 
 			for(int z = 0; z < ZSIZE; ++z)
@@ -216,9 +215,9 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 				double xw, yw, zw;
 				temperatureGrid.localToWorld(dx*double(x), dy*double(y), dz*double(z), xw, yw, zw);
 				const double T = temperatureGrid.valueAtWorld(xw, yw, zw);
-				//const double T = 0.0;
+
 				//Räkna ut intensitet för varje våglängd
-				for(int i = 0; i < SAMPLES; i += STEPSIZE)
+				for(int i = 0; i < SAMPLES; i += FirePresets::SAMPLE_STEP)
 				{
 					const double lambda = (360.0 + double(i)*5)*1e-9;
 					L[i] = C*L[i] + oa*radiance(lambda, T)*wdz;
@@ -228,7 +227,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 			//Beräkna XYZ från L
 			Vector3 XYZ = Vector3(0.0);
-			for(int i = 0; i < SAMPLES; i+= STEPSIZE)
+			for(int i = 0; i < SAMPLES; i+= FirePresets::SAMPLE_STEP)
 			{
 				XYZ.x += L[i] * CIE_X[i];
 				XYZ.y += L[i] * CIE_Y[i];
@@ -238,10 +237,9 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 			//en variant av chromatic adaption, högt värde på crom minskar intensiteten, lågt värde ökar den.
 			Vector3 LMS = XYZtoLMS(XYZ);
-			const double crom = 1.0;
-			LMS.x = LMS.x/(LMS.x + crom);
-			LMS.y = LMS.y/(LMS.y + crom);
-			LMS.z = LMS.z/(LMS.z + crom);
+			LMS.x = LMS.x/(LMS.x + FirePresets::CHROMA);
+			LMS.y = LMS.y/(LMS.y + FirePresets::CHROMA);
+			LMS.z = LMS.z/(LMS.z + FirePresets::CHROMA);
 			XYZ = LMStoXYZ(LMS);
 
 			Vector3 rgb = XYZtoRGB(XYZ);

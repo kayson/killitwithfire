@@ -69,6 +69,9 @@ const double FirePresets::VORTICITY_EPSILON_BURNT = 60.0/1.0;
 const double FirePresets::TEMPERATURE_BUOYANCY_ALPHA = 0.4;
 const double FirePresets::TEMPERATURE_LOSS_CONSTANT = 3000;
 
+const double FirePresets::CHROMA = 100; //Chromatic adaption, högt värde minskar intensiteten
+const int FirePresets::SAMPLE_STEP = 15; //Antal man hoppar över (1 är minsta, dvs man använder alla sampel)
+
 const double FirePresets::rhof = 1.0;
 const double FirePresets::rhob = 0.01;
 
