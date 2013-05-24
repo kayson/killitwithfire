@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 
         glfwSwapBuffers();
 
-        ImageExporter::saveSequence(frames, FirePresets::dt, -1, WIDTH, HEIGHT);
+        ImageExporter::saveSequence(frames, WIDTH, HEIGHT);
 
 		// Check if the ESC key was pressed or the window was closed.
 		if(glfwGetKey(GLFW_KEY_ESC) || !glfwGetWindowParam(GLFW_OPENED))

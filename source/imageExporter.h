@@ -21,6 +21,7 @@ namespace ImageExporter
 	void saveImage(char filename[], int width, int height);
 
 	bool saveSequence(int &n, float dt, int range, int width, int height);
+	void saveSequence(int &n, int width, int height);
 
 }//End namespace
 
