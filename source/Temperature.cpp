@@ -26,8 +26,8 @@ Temperature::Temperature(GridField<double> *phi)
 		YDIM = FirePresets::GRID_DIM_Y,
 		ZDIM = FirePresets::GRID_DIM_Z;
 
-	grid = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
-    copy = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
+	grid = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<double>(FirePresets::T_AIR)); //TODO KORREKT EXTRAPOLERING?
+    copy = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<double>(FirePresets::T_AIR)); //TODO KORREKT EXTRAPOLERING?
 
     beyonce = new GridField<Vector3>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
 
