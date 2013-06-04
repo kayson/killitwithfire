@@ -19,7 +19,7 @@ public:
 
 
     //Konstanter
-    static const double dx;
+    //static const double dx;
     static const double dt;
 	static const double CFL_NUMBER;
     

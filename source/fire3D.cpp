@@ -185,7 +185,7 @@ double Fire3D::computeDT(double currentTime){
 	double smallStep;
     
 	//Bridson s. 35
-	double dx = preset->dx;
+	double dx = u_fuel.dx(); //TODO KORREKT DX?
 	double alpha = preset->CFL_NUMBER;
 	double c = w.getMax().norm();
 	if(c != 0)
@@ -384,9 +384,9 @@ void Fire3D::runSimulation(){
     enforceBorderCondition();
     
     //Vorticity
-	Vorticity::addVorticity(u_burnt, *vorticityForces, preset->VORTICITY_EPSILON_BURNT, preset->dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	Vorticity::addVorticity(u_burnt, *vorticityForces, preset->VORTICITY_EPSILON_BURNT, u_burnt.dx(), phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
     u_burnt.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
-	Vorticity::addVorticity(u_fuel, *vorticityForces,  preset->VORTICITY_EPSILON_FUEL, preset->dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	Vorticity::addVorticity(u_fuel, *vorticityForces,  preset->VORTICITY_EPSILON_FUEL, u_fuel.dx(), phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
     u_fuel.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
     computeGhostValues();
     

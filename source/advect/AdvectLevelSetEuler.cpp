@@ -18,7 +18,7 @@ void AdvectLevelSetEuler::advect(GridField<Vector3> &w, LevelSet &phi, double dt
 			}
 		}
 	}
-	double ldt = FirePresets::dx/vmax;
+	double ldt = phi.grid->dx()/vmax;
 	if(ldt > dt) ldt = dt;
 
 	double steps = dt/ldt;

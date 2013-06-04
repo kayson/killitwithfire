@@ -11,85 +11,85 @@
 
 double UpwindDiff::calcDxm(GridField<double> &g, const int i, const int j, const int k)
 {
-	return (double)(g(i, j, k) - g(i-1, j, k))/(FirePresets::dx);
+	return (double)(g(i, j, k) - g(i-1, j, k))/(g.dx());
 }
 
 double UpwindDiff::calcDym(GridField<double> &g, const int i, const int j, const int k)
 {
-	return (double)(g(i, j, k) - g(i, j-1, k))/(FirePresets::dx);
+	return (double)(g(i, j, k) - g(i, j-1, k))/(g.dx());
 }
 
 double UpwindDiff::calcDzm(GridField<double> &g, const int i, const int j, const int k)
 {
-	return (double)(g(i, j, k) - g(i, j, k-1))/(FirePresets::dx);
+	return (double)(g(i, j, k) - g(i, j, k-1))/(g.dx());
 }
 
 double UpwindDiff::calcDxp(GridField<double> &g, const int i, const int j, const int k)
 {
-	return (double)(g(i+1, j, k) - g(i, j, k))/(FirePresets::dx);
+	return (double)(g(i+1, j, k) - g(i, j, k))/(g.dx());
 }
 
 double UpwindDiff::calcDyp(GridField<double> &g, const int i, const int j, const int k)
 {
-	return (double)(g(i, j + 1, k) - g(i, j, k))/(FirePresets::dx);
+	return (double)(g(i, j + 1, k) - g(i, j, k))/(g.dx());
 }
 
 double UpwindDiff::calcDzp(GridField<double> &g, const int i, const int j, const int k)
 {
-	return (double)(g(i, j, k + 1) - g(i, j, k))/(FirePresets::dx);
+	return (double)(g(i, j, k + 1) - g(i, j, k))/(g.dx());
 }
 
 
 double UpwindDiff::calcDx(GridField<double> &g, const int i, const int j, const int k)
 {
 	if((*_w)(i, j, k).x > 0.0){ // if(BURNT)
-		return (g(i, j, k) - g(i-1, j, k))/FirePresets::dx;
+		return (g(i, j, k) - g(i-1, j, k))/g.dx();
 	}
 	else {// FUEL
-		return (g(i+1, j, k) - g(i, j, k))/FirePresets::dx;
+		return (g(i+1, j, k) - g(i, j, k))/g.dx();
 	}
 }
 double UpwindDiff::calcDy(GridField<double> &g, const int i, const int j, const int k)
 {
 	if((*_w)(i, j, k).y > 0.0)
-		return (g(i, j, k) - g(i, j-1, k))/FirePresets::dx;
+		return (g(i, j, k) - g(i, j-1, k))/g.dx();
 	else
-		return (g(i, j+1, k) - g(i, j, k))/FirePresets::dx;
+		return (g(i, j+1, k) - g(i, j, k))/g.dx();
 }
 double UpwindDiff::calcDz(GridField<double> &g, const int i, const int j, const int k)
 {
 	if((*_w)(i, j, k).z > 0.0)
-		return (g(i, j, k) - g(i, j, k-1))/FirePresets::dx;
+		return (g(i, j, k) - g(i, j, k-1))/g.dx();
 	else
-		return (g(i, j, k+1) - g(i, j, k))/FirePresets::dx;
+		return (g(i, j, k+1) - g(i, j, k))/g.dx();
 }
 
 double UpwindDiff::calcDx(GhostGridField<double> &g, const int i, const int j, const int k)
 {
 	CellType c_t = LevelSet::getCellType(g(i,j,k));
 	if((*_w)(i, j, k).x > 0.0){ // denna är bara boundary kontroll, ej cell type
-		return ( g(i,j,k,c_t) - g(i-1,j,k,c_t)/FirePresets::dx );
+		return ( g(i,j,k,c_t) - g(i-1,j,k,c_t)/g.dx() );
 	}
 	else {
-		return ( g(i+1,j,k,c_t) - g(i,j,k,c_t)/FirePresets::dx );
+		return ( g(i+1,j,k,c_t) - g(i,j,k,c_t)/g.dx() );
 	}
 }
 double UpwindDiff::calcDy(GhostGridField<double> &g, const int i, const int j, const int k)
 {
 	CellType c_t = LevelSet::getCellType(g(i,j,k));
 	if((*_w)(i, j, k).y > 0.0){
-		return ( g(i,j,k,c_t) - g(i,j-1,k,c_t)/FirePresets::dx );
+		return ( g(i,j,k,c_t) - g(i,j-1,k,c_t)/g.dx() );
 	}
 	else
-		return ( g(i,j+1,k, c_t) - g(i,j,k,c_t)/FirePresets::dx );
+		return ( g(i,j+1,k, c_t) - g(i,j,k,c_t)/g.dx() );
 }
 double UpwindDiff::calcDz(GhostGridField<double> &g, const int i, const int j, const int k)
 {
 	CellType c_t = LevelSet::getCellType(g(i,j,k));
 	if((*_w)(i, j, k).z > 0.0)
-		return ( g(i,j,k,c_t) - g(i,j,k-1,c_t)/FirePresets::dx );
+		return ( g(i,j,k,c_t) - g(i,j,k-1,c_t)/g.dx() );
 	else
-		return ( g(i,j,k+1,c_t) - g(i,j,k,c_t)/FirePresets::dx );
+		return ( g(i,j,k+1,c_t) - g(i,j,k,c_t)/g.dx() );
 }
 
 double UpwindDiff::calcD2x(GridField<double> &g, const int i, const int j, const int k)
@@ -131,9 +131,9 @@ double UpwindDiff::calcDxy(GridField<double> &g, const int i, const int j, const
 /*Vector3 UpwindDiff::calcDx(GhostGridField<Vector3> &g, const int i, const int j, const int k){
 	//CellType c_t = LevelSet::getCellType(g(i,j,k));
 	if((*_w)(i, j, k).x > 0.0)
-		return (g(i, j, k) - g(i-1, j, k))/FirePresets::dx;
+		return (g(i, j, k) - g(i-1, j, k))/g.dx();
 	else
-		return (g(i+1, j, k) - g(i, j, k))/FirePresets::dx;
+		return (g(i+1, j, k) - g(i, j, k))/g.dx();
 }
 Vector3 UpwindDiff::calcDy(GhostGridField<Vector3> &g, const int i, const int j, const int k);
 Vector3 UpwindDiff::calcDz(GhostGridField<Vector3> &g, const int i, const int j, const int k);*/
@@ -141,23 +141,23 @@ Vector3 UpwindDiff::calcDz(GhostGridField<Vector3> &g, const int i, const int j,
 Vector3 UpwindDiff::calcDx(GridField<Vector3> &g, const int i, const int j, const int k)
 {
 	if((*_w)(i, j, k).x > 0.0)
-		return (g(i, j, k) - g(i-1, j, k))/FirePresets::dx;
+		return (g(i, j, k) - g(i-1, j, k))/g.dx();
 	else
-		return (g(i+1, j, k) - g(i, j, k))/FirePresets::dx;
+		return (g(i+1, j, k) - g(i, j, k))/g.dx();
 }
 Vector3 UpwindDiff::calcDy(GridField<Vector3> &g, const int i, const int j, const int k)
 {
 	if((*_w)(i, j, k).y > 0.0)
-		return (g(i, j, k) - g(i, j-1, k))/FirePresets::dx;
+		return (g(i, j, k) - g(i, j-1, k))/g.dx();
 	else
-		return (g(i, j+1, k) - g(i, j, k))/FirePresets::dx;
+		return (g(i, j+1, k) - g(i, j, k))/g.dx();
 }
 Vector3 UpwindDiff::calcDz(GridField<Vector3> &g, const int i, const int j, const int k)
 {
 	if((*_w)(i, j, k).z > 0.0)
-		return (g(i, j, k) - g(i, j, k-1))/FirePresets::dx;
+		return (g(i, j, k) - g(i, j, k-1))/g.dx();
 	else
-		return (g(i, j, k+1) - g(i, j, k))/FirePresets::dx;
+		return (g(i, j, k+1) - g(i, j, k))/g.dx();
 }
 
 Vector3 UpwindDiff::calcD2x(GridField<Vector3> &g, const int i, const int j, const int k)

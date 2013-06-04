@@ -107,15 +107,15 @@ double LevelSet::getVolume() const
 {
 	double volume = 0.0;
 	double H;
-	double idx = 1.0/FirePresets::dx;
+	double idx = 1.0/grid->dx();
 	for (GridFieldIterator<double> it = grid->iterator(); !it.done(); it.next()) {
         if (it.value()) {
             int i,j,k;
             it.index(i, j, k);
 			double val = it.value();
-			if(val > FirePresets::dx)
+			if(val > grid->dx())
 				H = 1.0;
-			else if(val < -FirePresets::dx)
+			else if(val < -grid->dx())
 				H = 0.0;
 			else
 				H = 0.5 + 0.75 * val * idx - 0.25 * pow(val*idx, 3.0);
@@ -123,7 +123,7 @@ double LevelSet::getVolume() const
         }
     }
 
-	return volume * pow(FirePresets::dx, 3.0);
+	return volume * pow(grid->dx(), 3.0);
 }
 
 CellType LevelSet::getCellType(const int i, const int j, const int k) const {
