@@ -455,8 +455,8 @@ void MACGrid::addForceGrid(GridField<Vector3> &f, double dt){
 		for(GridFieldIterator<double> iter = field->iterator(); !iter.done(); iter.next()) {
 			int i,j,k;
 			iter.index(i,j,k);
-			double x,y,z;
-			field->indexToWorld(i,j,k,x,y,z);
+			double x0, y0, z0;
+			field->indexToWorld(i,j,k,x0,y0,z0);
 
 			if(index == 0){
 				double val = _u->valueAtIndex(i,j,k);
@@ -473,6 +473,25 @@ void MACGrid::addForceGrid(GridField<Vector3> &f, double dt){
 				double forceval = ( f.valueAtIndex(i,j,k).z + f.valueAtIndex(i,j,k+1).z )/2;
 				_w->setValueAtIndex(val+forceval*dt,i,j,k);
 			}
+
+			//Denna tar hänsyn till att f har en annan storlek är field, tex om man vill ha högreupplöst temperaturgrid
+			//TODO WHY THIS NOT WORK!!!
+			/*Vector3 force = f.valueAtWorld(x0, y0, z0);
+			if(index == 0){
+				double val = _u->valueAtIndex(i,j,k);
+				double forceval = force.x;
+				_u->setValueAtIndex(val+forceval*dt,i,j,k);
+			}
+			else if(index == 1){
+				double val = _v->valueAtIndex(i,j,k);
+				double forceval = force.y;
+				_v->setValueAtIndex(val+forceval*dt,i,j,k);
+			}
+			else if(index == 2){
+                double val = _w->valueAtIndex(i,j,k);
+				double forceval = force.z;
+				_w->setValueAtIndex(val+forceval*dt,i,j,k);
+			}*/
 		}
 	}
 }
