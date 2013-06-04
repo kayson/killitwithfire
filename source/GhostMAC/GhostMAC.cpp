@@ -92,9 +92,9 @@ void GhostMAC::initialize(int xdim,int ydim,int zdim, double size){
     _v = new GhostGridField<double>(xdim,ydim+1,zdim,_levelset,VDIR);
     _w = new GhostGridField<double>(xdim,ydim,zdim+1,_levelset,WDIR);
     
-    _cache = new GridField<Vector3>(xdim,ydim,zdim, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING? Används denna ens?
+    _cache = new GridField<Vector3>(xdim,ydim,zdim, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING? Används denna ens?
     _cache->setTransformation(glm::dmat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
-    _hasCache = new GridField<bool>(xdim,ydim,zdim, new ConstantValueExtrapolation<bool>()); //TODO KORREKT EXTRAPOLERING?
+    _hasCache = new GridField<bool>(xdim,ydim,zdim, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<bool>()); //TODO KORREKT EXTRAPOLERING?
     _hasCache->setTransformation(glm::dmat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
     _hasCache->setAll(false);
     

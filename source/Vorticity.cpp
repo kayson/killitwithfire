@@ -11,6 +11,8 @@
 
 #include "ConstantValueExtrapolation.h"
 
+#include "firePresets.h"
+
 // 1.	Skapa ett Gridfield ohm genom nabmla x u (dvs. curl)
 // 2.	Skapa N genom N = (gradienten av normen av ohm)/(gradient av täljaren)
 //		N kommer då peka från låg-vorticity-områden till områden med
@@ -19,8 +21,8 @@
 
 void Vorticity::addVorticity(const MACGrid &u, GridField<Vector3> &forces, const double epsilon, const double dx, const int dimx, const int dimy, const int dimz){
 		
-	GridField<double> ohmNorm = GridField<double>(dimx, dimy, dimz, new ConstantValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
-	GridField<Vector3> ohmVecGrid = GridField<Vector3>(dimx, dimy, dimz, new ConstantValueExtrapolation<Vector3>());  //TODO KORREKT EXTRAPOLERING?
+	GridField<double> ohmNorm = GridField<double>(dimx, dimy, dimz, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
+	GridField<Vector3> ohmVecGrid = GridField<Vector3>(dimx, dimy, dimz, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<Vector3>());  //TODO KORREKT EXTRAPOLERING?
 		
 	Discretization *d = new CentralDiff();
 	Gradient g;

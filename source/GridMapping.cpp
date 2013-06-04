@@ -30,13 +30,13 @@ GridMapping::GridMapping(unsigned int dim, glm::dmat4x4 t):_xdim(dim),_ydim(dim)
     _fast_itrans = new double[16];
     setTransformation(t);
 }
-
+/*
 GridMapping::GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim):_xdim(xdim),_ydim(ydim),_zdim(zdim),_size(_xdim*_ydim*_zdim){
     _fast_trans = new double[16];
     _fast_itrans = new double[16];
     setTransformation(glm::dmat4(1.0));
 
-}
+}*/
 GridMapping::GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim, glm::dmat4x4 t):_xdim(xdim),_ydim(ydim),_zdim(zdim),_size(_xdim*_ydim*_zdim){
     _fast_trans = new double[16];
     _fast_itrans = new double[16];
@@ -57,8 +57,6 @@ GridMapping::GridMapping(const GridMapping &g){
     _ydim = g._ydim;
     _zdim = g._zdim;
     _size = g._size;
-
-
 }
 
 GridMapping::~GridMapping(){

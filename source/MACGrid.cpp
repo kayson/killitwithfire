@@ -145,13 +145,13 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     //Initiera variabler
     _buffer = NULL;
     
-    _u = new GridField<double>(xdim+1,ydim,zdim, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
-    _v = new GridField<double>(xdim,ydim+1,zdim, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
-    _w = new GridField<double>(xdim,ydim,zdim+1, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
+    _u = new GridField<double>(xdim+1,ydim,zdim, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
+    _v = new GridField<double>(xdim,ydim+1,zdim, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
+    _w = new GridField<double>(xdim,ydim,zdim+1, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
     
-    _cache = new GridField<Vector3>(xdim,ydim,zdim, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
+    _cache = new GridField<Vector3>(xdim,ydim,zdim, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
     _cache->setTransformation(glm::dmat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
-    _hasCache = new GridField<bool>(xdim,ydim,zdim, new ConstantValueExtrapolation<bool>()); //TODO KORREKT EXTRAPOLERING?
+    _hasCache = new GridField<bool>(xdim,ydim,zdim, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<bool>()); //TODO KORREKT EXTRAPOLERING?
     _hasCache->setTransformation(glm::dmat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
     _hasCache->setAll(false);
 

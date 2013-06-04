@@ -25,7 +25,7 @@
 LevelSet::LevelSet()
 {
 
-	grid  = new GridField<double>(10,10,10, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
+	grid  = new GridField<double>(10,10,10, FirePresets::GRID_SIZE, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
 	initLevelSet();
 
 	gridCopy = new GridField<double>(10, 10, 10,10, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?

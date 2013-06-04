@@ -20,6 +20,8 @@
 class GridMappingIterator;
 
 class GridMapping {
+private:
+	 GridMapping();
 protected:
     glm::dmat4x4 _trans;  //Local coordinates to worldcoordinates
     glm::dmat4x4 _itrans; //World coordinates to localcoordinates
@@ -35,8 +37,7 @@ protected:
     double local_dz() const;
 public:
     //Konstruktor
-    GridMapping();
-    GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim);
+    //GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim);
     GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim, double size);
     GridMapping(unsigned int dim,glm::dmat4x4 t);
     GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim,glm::dmat4x4 t);
