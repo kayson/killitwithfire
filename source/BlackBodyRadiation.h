@@ -15,7 +15,7 @@ public:
 	static Vector3 XYZtoRGB(const Vector3 &xyz);
 	
 	static void draw(const GridField<double> &temperatureGrid, const LevelSet &phi); //Kan inte använda T->grid->xdim() av något okänt skäl, så skickar istället in grid
-	static void drawLevelSet(const GridField<double> &temperatureGrid, const LevelSet &phi);
+	static void drawLevelSet(const LevelSet &phi);
 };
 
 #endif

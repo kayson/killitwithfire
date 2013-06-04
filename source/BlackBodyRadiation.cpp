@@ -189,7 +189,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	const double dy = 1.0/double(YSIZE);
 	const double dz = 1.0/double(ZSIZE);
 
-	const double wdz = double(temperatureGrid.zdim())/double(FirePresets::GRID_DIM_X)*double(FirePresets::GRID_SIZE)/double(ZSIZE); //fysisk steglängd mellan sampel
+	const double wdz = double(temperatureGrid.zdim())/double(temperatureGrid.xdim())*double(FirePresets::GRID_SIZE)/double(ZSIZE); //fysisk steglängd mellan sampel
 
 	const double oa = 0.05; //absorberings koef, för rapport 1 använd 0.01
 	const double os = 0.0; //scattering koef
@@ -284,17 +284,13 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	delete[] image;
 	glDeleteTextures( 1, &textureID );
 
-	drawLevelSet(temperatureGrid, phi);
+	drawLevelSet(phi);
 }
 
-void BlackBodyRadiation::drawLevelSet(const GridField<double> &temperatureGrid, const LevelSet &phi)
+void BlackBodyRadiation::drawLevelSet(const LevelSet &phi)
 {
-	const float xdim = temperatureGrid.xdim();
-	const float ydim = temperatureGrid.ydim();
-	const float zdim = temperatureGrid.zdim();
-
 	//TODO Placera denna allokering på ett annat ställe, samt deallokeringen.
-	const int IMSIZE= temperatureGrid.xdim()*temperatureGrid.ydim()*3;
+	const int IMSIZE= phi.grid->xdim()*phi.grid->ydim()*3;
 	GLfloat *image = new GLfloat[IMSIZE];
 	GLuint textureID;
 	#define GL_CLAMP_TO_EDGE 0x812F
@@ -308,13 +304,13 @@ void BlackBodyRadiation::drawLevelSet(const GridField<double> &temperatureGrid, 
 	float startTime = omp_get_wtime();
 	int n = 0;
 	#pragma omp parallel for
-	for(int x = 0; x < temperatureGrid.xdim(); ++x)
+	for(int x = 0; x < phi.grid->xdim(); ++x)
 	{
-		for(int y = 0; y < temperatureGrid.ydim(); ++y)
+		for(int y = 0; y < phi.grid->ydim(); ++y)
 		{
 			CellType type = BURNT;
 			double vmin = FLT_MAX;
-			for(int z = 0; z < temperatureGrid.zdim(); ++z)
+			for(int z = 0; z < phi.grid->zdim(); ++z)
 			{
 				if(phi.getCellType(x, y, z) == FUEL)
 				{
@@ -327,7 +323,7 @@ void BlackBodyRadiation::drawLevelSet(const GridField<double> &temperatureGrid, 
 				}
 			}
 
-			int index = y*temperatureGrid.xdim() + x; // Hitta index i texturen för x och y koordinat.
+			int index = y*phi.grid->xdim() + x; // Hitta index i texturen för x och y koordinat.
 
 			if(type == FUEL)
 			{
@@ -342,21 +338,21 @@ void BlackBodyRadiation::drawLevelSet(const GridField<double> &temperatureGrid, 
 				image[index*3 + 2] = 0; //B
 			}
 		}
-		#pragma omp critical 
+		/*#pragma omp critical 
 		{
 			printf("\rRender progress: %.02f%%, %.02fs, %d/%d threads", 1000.f*n++/temperatureGrid.xdim(), omp_get_wtime() - startTime, omp_get_num_threads(), omp_get_max_threads());
 			fflush(stdout);
-		}
+		}*/
 	}
 	std::cout << "\n" << std::endl;
 
 	//rita ut textur
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, temperatureGrid.xdim(), temperatureGrid.ydim(), 0, GL_RGB, GL_FLOAT, image); 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, phi.grid->xdim(), phi.grid->ydim(), 0, GL_RGB, GL_FLOAT, image); 
 	glBegin(GL_QUADS);
 	
-	if(temperatureGrid.xdim() > temperatureGrid.ydim())
+	if(phi.grid->xdim() > phi.grid->ydim())
 	{
-		float aspect = ydim/xdim;
+		float aspect = double(phi.grid->ydim())/double(phi.grid->xdim());
 		glTexCoord2i(0, 0);		glVertex2f(0.0f, aspect);
 		glTexCoord2i(1, 0);		glVertex2f(1.0f, aspect);
 		glTexCoord2i(1, 1);		glVertex2f(1.0f, 1.0);
@@ -364,7 +360,7 @@ void BlackBodyRadiation::drawLevelSet(const GridField<double> &temperatureGrid, 
 	}
 	else
 	{
-		float aspect = xdim/ydim;
+		float aspect = double(phi.grid->xdim())/double(phi.grid->ydim());
 		glTexCoord2i(0, 0);		glVertex2f(aspect, 0.0f);
 		glTexCoord2i(1, 0);		glVertex2f(1.0, 0.0f);
 		glTexCoord2i(1, 1);		glVertex2f(1.0, 1.0f);
