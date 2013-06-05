@@ -37,6 +37,8 @@ public:
 	static const double TEMPERATURE_BUOYANCY_ALPHA;
 	static const double TEMPERATURE_LOSS_CONSTANT;
 
+	static const double TEMPERATUR_MULT; // 1 means that the temperature is the same as the rest, 2 means twice the resolution and so on.
+
 	static const double S;
 
 	static const double rhof; // Fuel density (kg/m^3)

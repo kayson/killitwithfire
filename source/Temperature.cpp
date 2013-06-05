@@ -19,14 +19,12 @@
 
 #include <iostream>
 
-const int MULT = 1;
-
 Temperature::Temperature(GridField<double> *phi)
 {
 
-	int XDIM = FirePresets::GRID_DIM_X*MULT,
-		YDIM = FirePresets::GRID_DIM_Y*MULT,
-		ZDIM = FirePresets::GRID_DIM_Z*MULT;
+	int XDIM = FirePresets::GRID_DIM_X*FirePresets::TEMPERATUR_MULT,
+		YDIM = FirePresets::GRID_DIM_Y*FirePresets::TEMPERATUR_MULT,
+		ZDIM = FirePresets::GRID_DIM_Z*FirePresets::TEMPERATUR_MULT;
 
 	grid = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<double>(FirePresets::T_AIR)); //TODO KORREKT EXTRAPOLERING?
     copy = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<double>(FirePresets::T_AIR)); //TODO KORREKT EXTRAPOLERING?
@@ -174,9 +172,9 @@ GridField<double> Temperature::GetTemperatureGrid(){
 
 double Temperature::maxTemp()
 {
-	int xdim = FirePresets::GRID_DIM_X*MULT,
-		ydim = FirePresets::GRID_DIM_Y*MULT,
-		zdim = FirePresets::GRID_DIM_Z*MULT;
+	int xdim = FirePresets::GRID_DIM_X*FirePresets::TEMPERATUR_MULT,
+		ydim = FirePresets::GRID_DIM_Y*FirePresets::TEMPERATUR_MULT,
+		zdim = FirePresets::GRID_DIM_Z*FirePresets::TEMPERATUR_MULT;
   
 	double max = 0;
 
