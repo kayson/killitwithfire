@@ -35,7 +35,7 @@ Fire3D::Fire3D(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, pre
 	preset = pre;
     
     phi.grid->setTransformation(u.getTrans());
-	phi.fillLevelSet(preset->implicitFunction);
+	//phi.fillLevelSet(preset->implicitFunction);
 	//2D grid
 	u = MACGrid::createRandom3D(preset->GRID_DIM_X, preset->GRID_DIM_Y,preset->GRID_DIM_Z, preset->GRID_SIZE);
     u_burnt = MACGrid::createRandom3D(preset->GRID_DIM_X, preset->GRID_DIM_Y,preset->GRID_DIM_Z, preset->GRID_SIZE);
@@ -297,11 +297,11 @@ CellType Fire3D::getCellType(double phi){
 }*/
 
 void Fire3D::addFuelToLevelSet(int x0, int y0, int z0, double radius){
-	for(int x = 0; x < preset->GRID_DIM_X; ++x)
+	for(int x = 0; x < phi.grid->xdim(); ++x)
 	{
-		for(int y = 0; y < preset->GRID_DIM_Y; ++y)
+		for(int y = 0; y < phi.grid->ydim(); ++y)
 		{
-			for(int z = 0; z < preset->GRID_DIM_Z; ++z)
+			for(int z = 0; z < phi.grid->zdim(); ++z)
 			{
 				double ndist = radius - sqrt(pow(x0-x, 2.0) + pow(y0-y, 2.0) + pow(z0 - z, 2.0));
 				double odist = phi.grid->valueAtIndex(x, y, z);
@@ -352,6 +352,8 @@ void Fire3D::runSimulation(){
     
 	if(currentVolume < desiredVolume)
 		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, preset->GRID_DIM_Z/2, 0.8/preset->dx);*/
+
+	addFuelToLevelSet(phi.grid->xdim()/2, 1.5/phi.grid->dx(), phi.grid->zdim()/2, 0.6/phi.grid->dx());
     
 #if 0
 	static int counter = 0;

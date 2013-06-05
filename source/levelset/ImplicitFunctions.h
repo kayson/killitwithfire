@@ -16,7 +16,7 @@ namespace implicitFunction
 
 		double dx = double(FirePresets::GRID_SIZE)/double(FirePresets::GRID_DIM_X);//TODO så man skickar in dx istället!
 
-		double r = (double) 0.75; //Världskoordinater
+		double r = (double) 0.5; //Världskoordinater
 		double xo = FirePresets::GRID_DIM_X / 2;//Gridkoordinater
 		double yo = double(FirePresets::GRID_DIM_Y)*0.2;
 		double zo = FirePresets::GRID_DIM_Z / 2;
