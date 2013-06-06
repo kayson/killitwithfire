@@ -29,6 +29,7 @@
 #endif
 #include "GhostMAC.h"
 
+#include "SmokeDensity.h"
 #include "Temperature.h"
 
 class FirePresets;
@@ -83,6 +84,7 @@ private:
     Particles particles;
     FirePresets *preset;
     LevelSet phi;
+	SmokeDensity smoke;
 
 	Temperature *T;
 

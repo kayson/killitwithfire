@@ -90,10 +90,10 @@ void Temperature::AdvectTemperatureField(double dt, const MACGrid &m, const Leve
                 double x,y,z;
                 grid->indexToWorld(i, j, k, x, y, z);
                 Vector3 vel = m.velocityAtWorld(Vector3(x,y,z));
-                double val = grid->valueAtWorld(x-dt*vel.x, y-dt*vel.y, z-dt*vel.z);
+                double val = grid->valueAtWorld(x-dt*vel.x, y-dt*vel.y, z-dt*vel.z);//TODO bättre integeringsmetod så man får med jump condition
 				val -= calculateTemperatureLoss(val)*FirePresets::dt;
 
-				assert(val >= FirePresets::T_AIR); //TODO VERKAR INTE FUNGERA
+				assert(val >= 0); //TODO VERKAR INTE FUNGERA
 				if(val < FirePresets::T_AIR)//TODO KONTROLLERA VARFÖR DETTA HÄNDER ISTÄLLET
 				{
 					//std::cout << "Temperature is below air temperature!" << std::endl;

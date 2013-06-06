@@ -30,10 +30,12 @@
 #include "GhostMAC.h"
 
 #include "Temperature.h"
+#include "SmokeDensity.h"
 
 class FirePresets;
 template<class T> class GridField;
 class GridMapping;
+
 class Fire3D{
 protected:
     void setSolids();
@@ -88,7 +90,8 @@ private:
     LevelSet phi;
     
 	Temperature *T;
-    
+	SmokeDensity smoke;
+
 	//Pressure field
 	GridField<double> *p;
 	GridField<double> *rhs;

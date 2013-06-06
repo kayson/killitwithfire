@@ -12,6 +12,7 @@
 #include "Input.h"
 #include "JumpCondition.h"
 #include "BlackBodyRadiation.h"
+#include "SmokeDensity.h"
 
 #if defined __APPLE__
 #include "glfw.h"
@@ -29,7 +30,15 @@
 #include "ClosestValueExtrapolation.h"
 #include "ConstantValueExtrapolation.h"
 
-Fire3D::Fire3D(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE, new ClosestValueExtrapolation<Vector3>()),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE), ghost(&phi, FirePresets::GRID_SIZE,true),projection(&ghost,&phi), u_fuel(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),u_burnt(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),solids(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE, new ClosestValueExtrapolation<bool>())
+Fire3D::Fire3D(FirePresets *pre):
+	phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), 
+	w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE, new ClosestValueExtrapolation<Vector3>()),
+	u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE), 
+	ghost(&phi, FirePresets::GRID_SIZE,true),projection(&ghost,&phi), 
+	u_fuel(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),
+	u_burnt(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),
+	solids(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE, new ClosestValueExtrapolation<bool>()),
+	smoke(preset->GRID_DIM_X*pre->TEMPERATUR_MULT, preset->GRID_DIM_Y*pre->TEMPERATUR_MULT, preset->GRID_DIM_Z*pre->TEMPERATUR_MULT, preset->GRID_SIZE, phi)
 {
 	//Presets
 	preset = pre;
@@ -392,7 +401,7 @@ void Fire3D::runSimulation(){
     u_fuel.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
     computeGhostValues();
     
-	advectTemperature(preset->dt);
+	advectTemperature(preset->dt); //TODO bör inte temperaturena advekteras efter projektionen?
 	
     u_burnt.addForceGrid(*T->beyonce, preset->dt);
     u_fuel.addForceGrid(*T->beyonce, preset->dt);
@@ -409,12 +418,12 @@ void Fire3D::runSimulation(){
         std::cout << e.what() << std::endl;
     }
     
-    
     computeGhostValues();
-    
     enforceBorderCondition();
-    
+
     advectLevelSet(preset->dt);
+
+	//smoke.advectDensityField(preset->dt, u_burnt, phi); //TODO renderas inte så ingen ide att simulera den heller atm, funkar gör den nog iaf
 }
 
 
@@ -871,8 +880,7 @@ void Fire3D::computeW(){
 void Fire3D::draw(){
 
 	glLoadIdentity();
-	BlackBodyRadiation::draw(*(T->grid), phi);
-
+	BlackBodyRadiation::draw(*(T->grid), phi, smoke);
     //phi.draw();
     //T->draw();
     /*static double angle = 5*4.2;

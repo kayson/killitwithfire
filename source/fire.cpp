@@ -30,7 +30,15 @@
 #include "ClosestValueExtrapolation.h"
 #include "ConstantValueExtrapolation.h"
 
-Fire::Fire(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE, new ClosestValueExtrapolation<Vector3>()),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE), ghost(&phi, FirePresets::GRID_SIZE,true),projection(&ghost,&phi), u_fuel(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),u_burnt(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),solids(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE, new ClosestValueExtrapolation<bool>())
+Fire::Fire(FirePresets *pre):
+	phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), 
+	w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE, new ClosestValueExtrapolation<Vector3>()),
+	u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE), 
+	ghost(&phi, FirePresets::GRID_SIZE,true),projection(&ghost,&phi), 
+	u_fuel(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),
+	u_burnt(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),
+	solids(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE, new ClosestValueExtrapolation<bool>()),
+	smoke(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE, phi)
 {
 	//Presets
 	preset = pre;
@@ -742,7 +750,7 @@ void Fire::computeW(){
 
 void Fire::draw(){
     glLoadIdentity();
-	BlackBodyRadiation::draw(*(T->grid), phi);
+	BlackBodyRadiation::draw(*(T->grid), phi, smoke);
 	
 	//phi.draw();
     //T->draw();
