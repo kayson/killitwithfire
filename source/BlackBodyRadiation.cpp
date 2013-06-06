@@ -198,65 +198,69 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	const double ot = oa + os; //tot
 	const double C = exp(-ot*wdz);
 
-	const int SAMPLES = 89;//Antal samplade våglängder
-	const double dl = 5e-9*double(FirePresets::SAMPLE_STEP);//dx för våglängderna
-	double L[SAMPLES];
-
 	//double *emission = new double[temperatureGrid.xdim()*temperatureGrid.ydim()*temperatureGrid.zdim()];
 
 	float startTime = omp_get_wtime();
 	int n = 0;
-	#pragma omp parallel for private(L)
-	for(int x = 0; x < XSIZE; ++x)
+	#pragma omp parallel
 	{
-		for(int y = 0; y < YSIZE; ++y)
+		double *L = new double[FirePresets::TOTAL_SAMPLES];
+
+		#pragma omp for
+		for(int x = 0; x < XSIZE; ++x)
 		{
-			for(int i = 0; i < SAMPLES; i+= FirePresets::SAMPLE_STEP)
-				L[i] = 0.0;
-
-			for(int z = 0; z < ZSIZE; ++z)
+			for(int y = 0; y < YSIZE; ++y)
 			{
-				double xw, yw, zw;
-				temperatureGrid.localToWorld(dx*double(x), dy*double(y), dz*double(z), xw, yw, zw);
-				const double T = temperatureGrid.valueAtWorld(xw, yw, zw);
+				for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i+= 1)
+					L[i] = 0.0;
 
-				//Räkna ut intensitet för varje våglängd
-				for(int i = 0; i < SAMPLES; i += FirePresets::SAMPLE_STEP)
+				for(int z = 0; z < ZSIZE; ++z)
 				{
-					const double lambda = (360.0 + double(i)*5)*1e-9;
-					L[i] = C*L[i] + oa*radiance(lambda, T)*wdz;
+					double xw, yw, zw;
+					temperatureGrid.localToWorld(dx*double(x), dy*double(y), dz*double(z), xw, yw, zw);
+					const double T = temperatureGrid.valueAtWorld(xw, yw, zw);
+
+					//Räkna ut intensitet för varje våglängd
+					for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i += 1)
+					{
+						const double lambda = (360.0 + double(i*FirePresets::SAMPLE_STEP)*5)*1e-9;
+						L[i] = C*L[i] + oa*radiance(lambda, T)*wdz;
+					}
 				}
-			}
 
-			//Beräkna XYZ från L
-			Vector3 XYZ = Vector3(0.0);
-			for(int i = 0; i < SAMPLES; i+= FirePresets::SAMPLE_STEP)
+				//Beräkna XYZ från L
+				Vector3 XYZ = Vector3(0.0);
+				for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i+= 1)
+				{
+					int j = FirePresets::SAMPLE_STEP*i;
+					XYZ.x += L[i] * CIE_X[j];
+					XYZ.y += L[i] * CIE_Y[j];
+					XYZ.z += L[i] * CIE_Z[j];
+				}
+				XYZ *= FirePresets::SAMPLE_DL;
+
+				//en variant av chromatic adaption, högt värde på crom minskar intensiteten, lågt värde ökar den.
+				Vector3 LMS = XYZtoLMS(XYZ);
+				LMS.x = LMS.x/(LMS.x + FirePresets::CHROMA);
+				LMS.y = LMS.y/(LMS.y + FirePresets::CHROMA);
+				LMS.z = LMS.z/(LMS.z + FirePresets::CHROMA);
+				XYZ = LMStoXYZ(LMS);
+
+				Vector3 rgb = XYZtoRGB(XYZ);
+
+				int index = y*XSIZE + x; // Hitta index i texturen för x och y koordinat.
+				image[index*3 + 0] = rgb.x; //R
+				image[index*3 + 1] = rgb.y; //G
+				image[index*3 + 2] = rgb.z; //B
+			}
+			#pragma omp critical 
 			{
-				XYZ.x += L[i] * CIE_X[i];
-				XYZ.y += L[i] * CIE_Y[i];
-				XYZ.z += L[i] * CIE_Z[i];
+				printf("\rRender progress: %.02f%%, %.02fs, %d/%d threads", 1000.f*n++/temperatureGrid.xdim(), omp_get_wtime() - startTime, omp_get_num_threads(), omp_get_max_threads());
+				fflush(stdout);
 			}
-			XYZ *= dl;
-
-			//en variant av chromatic adaption, högt värde på crom minskar intensiteten, lågt värde ökar den.
-			Vector3 LMS = XYZtoLMS(XYZ);
-			LMS.x = LMS.x/(LMS.x + FirePresets::CHROMA);
-			LMS.y = LMS.y/(LMS.y + FirePresets::CHROMA);
-			LMS.z = LMS.z/(LMS.z + FirePresets::CHROMA);
-			XYZ = LMStoXYZ(LMS);
-
-			Vector3 rgb = XYZtoRGB(XYZ);
-
-			int index = y*XSIZE + x; // Hitta index i texturen för x och y koordinat.
-			image[index*3 + 0] = rgb.x; //R
-			image[index*3 + 1] = rgb.y; //G
-			image[index*3 + 2] = rgb.z; //B
 		}
-		#pragma omp critical 
-		{
-			printf("\rRender progress: %.02f%%, %.02fs, %d/%d threads", 1000.f*n++/temperatureGrid.xdim(), omp_get_wtime() - startTime, omp_get_num_threads(), omp_get_max_threads());
-			fflush(stdout);
-		}
+
+		delete [] L;
 	}
 	std::cout << "\n" << std::endl;
 
