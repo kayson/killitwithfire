@@ -220,8 +220,6 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 				temperatureGrid.localToWorld(dx*double(x), dy*double(y), dz*double(z), xw, yw, zw);
 				const double T = temperatureGrid.valueAtWorld(xw, yw, zw);
 
-				const double dens = smoke.grid->valueAtWorld(xw, yw, zw);
-
 				//Räkna ut intensitet för varje våglängd
 				for(int i = 0; i < SAMPLES; i += FirePresets::SAMPLE_STEP)
 				{

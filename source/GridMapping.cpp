@@ -251,6 +251,19 @@ void GridMapping::worldToUpperLeftIndex(const double w_x,const double w_y,const 
     worldToLocal(w_x, w_y, w_z, l_x, l_y, l_z);
     localToUpperLeftIndex(l_x, l_y, l_z, i, j, k);
 }
+
+bool GridMapping::localIsValid(double l_x, double l_y,double l_z)
+{
+	return l_x >= 0.0 && l_x < 1.0 && l_y >= 0.0 && l_y < 1.0 && l_z >= 0.0 && l_z < 1.0;
+}
+
+bool GridMapping::worldIsValid(const double w_x,const double w_y,const double w_z) const
+{
+	double l_x,l_y,l_z;
+    worldToLocal(w_x, w_y, w_z, l_x, l_y, l_z);
+	return localIsValid(l_x, l_y, l_z);
+}
+
 GridMappingIterator GridMapping::iterator() const{
     return GridMappingIterator(this);
 }
