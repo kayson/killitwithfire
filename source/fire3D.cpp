@@ -74,7 +74,7 @@ Fire3D::Fire3D(FirePresets *pre):
     
 	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
     
-    
+	blackBodyRender = BlackBodyRadiation(300, 600, *T->grid);
     
     //Init marker-particles
     for (GridFieldIterator<bool> iter = solids.iterator(); !iter.done(); iter.next()) {
@@ -880,7 +880,7 @@ void Fire3D::computeW(){
 void Fire3D::draw(){
 
 	glLoadIdentity();
-	BlackBodyRadiation::draw(*(T->grid), phi, smoke);
+	blackBodyRender.draw(*(T->grid), phi, smoke);
     //phi.draw();
     //T->draw();
     /*static double angle = 5*4.2;

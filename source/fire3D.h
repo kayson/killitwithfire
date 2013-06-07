@@ -32,6 +32,8 @@
 #include "Temperature.h"
 #include "SmokeDensity.h"
 
+#include "BlackBodyRadiation.h"
+
 class FirePresets;
 template<class T> class GridField;
 class GridMapping;
@@ -123,6 +125,8 @@ private:
     
 	//Vorticity confinement forces
 	GridField<Vector3> *vorticityForces;
+
+	BlackBodyRadiation blackBodyRender;
 };
 
 #endif //FIRE_H
