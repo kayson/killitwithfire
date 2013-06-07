@@ -149,7 +149,7 @@ double GridMapping::dx() const{
         double x1,x0,y,z;
         indexToWorld(0, 0, 0, x0, y, z);
         indexToWorld(1, 0, 0, x1, y, z);
-        return abs(x1-x0);
+        return fabs(x1-x0);
     }
     return 0;
 }
@@ -159,7 +159,7 @@ double GridMapping::dy() const{
         double x,y0,y1,z;
         indexToWorld(0, 0, 0, x, y0, z);
         indexToWorld(0, 1, 0, x, y1, z);
-        return abs(y1-y0);
+        return fabs(y1-y0);
     }
     return 0;
 }
@@ -169,7 +169,7 @@ double GridMapping::dz() const{
         double x,y,z0,z1;
         indexToWorld(0, 0, 0, x, y, z0);
         indexToWorld(0, 0, 1, x, y, z1);
-        return abs(z1-z0);
+        return fabs(z1-z0);
     }
     return 0;
 }
