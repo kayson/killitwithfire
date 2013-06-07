@@ -46,6 +46,9 @@ public:
 
 	static const double CHROMA; //Chromatic adaption, högt värde minskar intensiteten
 	static const int SAMPLE_STEP; //Antal man hoppar över (1 är minsta, dvs man använder alla sampel)
+	static const double SAMPLE_DL; //våglängds dx
+	static const int TOTAL_SAMPLES;
+
     //Rutiner
 	AdvectLevelSet *advection;
 	MACAdvect<double> *advectVelocities;

@@ -79,6 +79,10 @@ public:
     void worldToLocal(const double w_x,const double w_y,const double w_z, double &l_x,double &l_y,double &l_z) const;
     void worldToIndex(int &i,int &j,int &k, double w_x, double w_y,double w_z) const;
     void worldToUpperLeftIndex(const double w_x,const double w_y,const double w_z, int &i,int &j,int &k) const;
+
+	//valid
+	static bool localIsValid(double l_x, double l_y,double l_z);
+	bool worldIsValid(const double w_x,const double w_y,const double w_z) const;
     
     GridMappingIterator iterator() const;
 
