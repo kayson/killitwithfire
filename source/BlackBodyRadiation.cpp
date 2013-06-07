@@ -80,6 +80,7 @@ BlackBodyRadiation::BlackBodyRadiation()
 {
 	Le = NULL;
 	image = NULL;
+	L = NULL;
 }
 
 BlackBodyRadiation::BlackBodyRadiation(const int XPIXELS, const int YPIXELS, const GridField<double> &temperatureGrid)
@@ -133,6 +134,7 @@ void BlackBodyRadiation::deallocate()
 	glDeleteTextures( 1, &textureID );
 
 	if(Le != NULL) delete [] Le;
+	if(L != NULL) delete [] L;
 }
 
 //Def xsize och gridx först osv.
@@ -163,6 +165,8 @@ void BlackBodyRadiation::allocate()
 	//dock tror jag det kostar förmycket minne
 	int LeSize = gridx*gridy*gridz*FirePresets::TOTAL_SAMPLES;
 	Le = new double[LeSize]; 
+	
+	L = new double[omp_get_max_threads()*FirePresets::TOTAL_SAMPLES];
 }
 
 
@@ -287,7 +291,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 			}
 		}
 
-		double *L = new double[FirePresets::TOTAL_SAMPLES];
+		double *local_L = &L[omp_get_thread_num()*FirePresets::TOTAL_SAMPLES];
 		Vector3 normal = Vector3(0.0, 0.0, 1.0);
 		#pragma omp for
 		for(int x = 0; x < xsize; ++x)
@@ -300,10 +304,10 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 				for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i+= 1)
 				{
-					L[i] = 0.0;
+					local_L[i] = 0.0;
 
 					//Calc surround light with all voxels
-					const int jump = 10;
+					const int jump = 5;
 					for(int a = 0; a < temperatureGrid.xdim(); a += jump)
 					{
 						for(int b = 0; b < temperatureGrid.ydim(); b += jump)
@@ -323,7 +327,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 								diff.normalize();
 								double diffuse = std::max(Vector3::dot(diff, normal), 0.0);
 
-								L[i] += pow(dist, -2.0)*Le[index]*diffuse*0.4;
+								local_L[i] += pow(dist, -2.0)*Le[index]*diffuse*0.4;
 							}
 						}
 					}
@@ -339,7 +343,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 					for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i += 1)
 					{
 						const double lambda = (360.0 + double(i*FirePresets::SAMPLE_STEP)*5)*1e-9;
-						L[i] = C*L[i] + oa*radiance(lambda, T)*wds;
+						local_L[i] = C*local_L[i] + oa*radiance(lambda, T)*wds;
 					}
 				}
 
@@ -348,9 +352,9 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 				for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i+= 1)
 				{
 					int j = FirePresets::SAMPLE_STEP*i;
-					XYZ.x += L[i] * CIE_X[j];
-					XYZ.y += L[i] * CIE_Y[j];
-					XYZ.z += L[i] * CIE_Z[j];
+					XYZ.x += local_L[i] * CIE_X[j];
+					XYZ.y += local_L[i] * CIE_Y[j];
+					XYZ.z += local_L[i] * CIE_Z[j];
 				}
 				XYZ *= FirePresets::SAMPLE_DL;
 
@@ -374,8 +378,6 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 				fflush(stdout);
 			}
 		}
-
-		delete [] L;
 	}
 	std::cout << "\n" << std::endl;
 

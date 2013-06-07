@@ -50,6 +50,7 @@ private:
 	int gridx, gridy, gridz;
 
 	double *Le;
+	double *L;
 
 };
 
