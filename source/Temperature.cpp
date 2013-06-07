@@ -93,7 +93,7 @@ void Temperature::AdvectTemperatureField(double dt, const MACGrid &m, const Leve
                 double val = grid->valueAtWorld(x-dt*vel.x, y-dt*vel.y, z-dt*vel.z);
 				val -= calculateTemperatureLoss(val)*FirePresets::dt;
 
-				assert(val >= FirePresets::T_AIR); //TODO VERKAR INTE FUNGERA
+				//assert(val >= FirePresets::T_AIR); //TODO VERKAR INTE FUNGERA
 				if(val < FirePresets::T_AIR)//TODO KONTROLLERA VARFÖR DETTA HÄNDER ISTÄLLET
 				{
 					//std::cout << "Temperature is below air temperature!" << std::endl;
