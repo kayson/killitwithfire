@@ -169,7 +169,7 @@ void BlackBodyRadiation::allocate()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	wds = double(FirePresets::GRID_SIZE)/double(zsize*2);
+	wds = double(FirePresets::GRID_SIZE)/double(std::max(gridx, std::max(gridy, gridz)) * 4);
 
 	oa = 0.05; //absorberings koef, för rapport 1 använd 0.01
 	os = 0.0; //scattering koef
@@ -282,13 +282,14 @@ Vector3 BlackBodyRadiation::XYZtoRGB(const Vector3 &xyz)
 	return rgb;
 }
 
+const double LeScale = 40.0;
 void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke)
 {
 	//Vector3 eyepos(1.0, 1.0, -1);
 	//Vector3 lookAt(0.5, 0.5, 0.5);
 	
 	//def i lokala koordinater
-	Vector3 eyepos(2, 2, 8);
+	Vector3 eyepos(2, 2, 6.5);
 	Vector3 lookAt(2, 2, 2);
 
 	//ej optimalt sätt att ställa in kameraaxlarna
@@ -438,7 +439,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 											diff.normalize();
 											//double diffuse = std::max(Vector3::dot(diff, normal), 0.0); //TODO bör beräknas med normalen, dock finns det ingen metod för räkna ut normalen på träffytan atm.
 											//local_L[i] += pow(dist, -2.0)*Le[index]*diffuse*0.4;
-											local_L[i] += pow(dist, -2.0)*Le[index]*10.0;
+											local_L[i] += pow(dist, -2.0)*Le[index]*LeScale;
 										}
 									}
 								}
@@ -455,7 +456,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 								diff.normalize();
 								//double diffuse = std::max(Vector3::dot(diff, normal), 0.0); //TODO bör beräknas med normalen, dock finns det ingen metod för räkna ut normalen på träffytan atm.
 								//local_L[i] += pow(dist, -2.0)*Le[index]*diffuse*0.4;
-								local_L[i] += pow(dist, -2.0)*LeMean[i]*10.0;
+								local_L[i] += pow(dist, -2.0)*LeMean[i]*LeScale;
 							}
 						}
 
