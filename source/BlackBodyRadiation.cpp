@@ -83,6 +83,11 @@ BlackBodyRadiation::BlackBodyRadiation()
 	Le = NULL;
 	image = NULL;
 	L = NULL;
+
+	LeMean = NULL;
+	xm = NULL;
+	ym = NULL;
+	zm = NULL;
 }
 
 BlackBodyRadiation::BlackBodyRadiation(const int XPIXELS, const int YPIXELS, const GridField<double> &temperatureGrid)
@@ -137,6 +142,11 @@ void BlackBodyRadiation::deallocate()
 
 	if(Le != NULL) delete [] Le;
 	if(L != NULL) delete [] L;
+
+	if(LeMean != NULL) delete [] LeMean;
+	if(xm != NULL) delete [] xm;
+	if(ym != NULL) delete [] ym;
+	if(zm != NULL) delete [] zm;
 }
 
 //Def xsize och gridx först osv.
@@ -172,6 +182,11 @@ void BlackBodyRadiation::allocate()
 	Le = new double[LeSize]; 
 	
 	L = new double[omp_get_max_threads()*FirePresets::TOTAL_SAMPLES];
+
+	LeMean = new double[FirePresets::TOTAL_SAMPLES];
+	xm = new double[FirePresets::TOTAL_SAMPLES];
+	ym = new double[FirePresets::TOTAL_SAMPLES];
+	zm = new double[FirePresets::TOTAL_SAMPLES];
 }
 
 
@@ -298,17 +313,11 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	temperatureGrid.indexToWorld(0, 0, 0, minCoord.x, minCoord.y, minCoord.z);
 	temperatureGrid.indexToWorld(temperatureGrid.xdim()-1, temperatureGrid.ydim()-1, temperatureGrid.zdim()-1, maxCoord.x, maxCoord.y, maxCoord.z);
 
-
 	const double nearPlaneDistance = 0.1;
 	const double aspect_ratio = double(xsize)/double(ysize);
 	const double fovy = PI*0.33;
 	const double w = nearPlaneDistance*tan(fovy);
 	const double h = w/aspect_ratio;
-
-	double *LeMean = new double[FirePresets::TOTAL_SAMPLES];
-	double *xm = new double[FirePresets::TOTAL_SAMPLES];
-	double *ym = new double[FirePresets::TOTAL_SAMPLES];
-	double *zm = new double[FirePresets::TOTAL_SAMPLES];
 
 	float startTime = omp_get_wtime();
 	int n = 0;
@@ -515,11 +524,6 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	glTexCoord2i(0, 1);		glVertex2f(0.0f, 1.0f);	
 	
 	glEnd();
-
-	delete [] LeMean; 
-	delete [] xm;
-	delete [] ym;
-	delete [] zm;
 }
 
 /*

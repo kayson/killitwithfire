@@ -54,6 +54,11 @@ private:
 
 	double *Le;
 	double *L;
+	
+	double *LeMean;
+	double *xm;
+	double *ym;
+	double *zm;
 };
 
 #endif
