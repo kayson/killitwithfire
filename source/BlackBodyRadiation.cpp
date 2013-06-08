@@ -323,10 +323,13 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	int n = 0;
 	#pragma omp parallel
 	{
-		#pragma omp for
-		for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i += 1)
+		if(!FirePresets::QUALITY_ROOM)
 		{
-			LeMean[i] = 0.0;
+			#pragma omp for
+			for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i += 1)
+			{
+				LeMean[i] = 0.0;
+			}
 		}
 
 		#pragma omp for
@@ -346,29 +349,35 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 									z)*FirePresets::TOTAL_SAMPLES + i;
 
 						const double lambda = (360.0 + double(i*FirePresets::SAMPLE_STEP)*5)*1e-9;
-						
 						Le[index] = radiance(lambda, T);
-						LeMean[i] += Le[index];
-						xm[i] += double(x)*Le[index];
-						ym[i] += double(y)*Le[index];
-						zm[i] += double(z)*Le[index];
+						
+						if(!FirePresets::QUALITY_ROOM)
+						{
+							LeMean[i] += Le[index];
+							xm[i] += double(x)*Le[index];
+							ym[i] += double(y)*Le[index];
+							zm[i] += double(z)*Le[index];
+						}
 
-						Le[index] = oa*Le[index]*wds;
+						Le[index] = oa*Le[index]*pow(wds, 3.0);
 					}
 				}
 			}
 		}
 
-		#pragma omp for
-		for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i += 1)
+		if(!FirePresets::QUALITY_ROOM)
 		{
-			if(LeMean[i] > 0.0)
+			#pragma omp for
+			for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i += 1)
 			{
-				xm[i] /= LeMean[i];
-				ym[i] /= LeMean[i];
-				zm[i] /= LeMean[i];
+				if(LeMean[i] > 0.0)
+				{
+					xm[i] /= LeMean[i];
+					ym[i] /= LeMean[i];
+					zm[i] /= LeMean[i];
 
-				LeMean[i] *= oa*pow(wds, 3.0);
+					LeMean[i] *= oa*pow(wds, 3.0);
+				}
 			}
 		}
 
@@ -407,42 +416,47 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 							
 							// OEFFEKTIVT
 							//Calc surround light with all voxels
-							/*const int jump = 5;
-							for(int a = 0; a < temperatureGrid.xdim(); a += jump)
+							if(FirePresets::QUALITY_ROOM)
 							{
-								for(int b = 0; b < temperatureGrid.ydim(); b += jump)
+								const int jump = 1;
+								for(int a = 0; a < temperatureGrid.xdim(); a += jump)
 								{
-									for(int c = 0; c < temperatureGrid.zdim(); c += jump)
+									for(int b = 0; b < temperatureGrid.ydim(); b += jump)
 									{
-										int index = (a*temperatureGrid.ydim()*temperatureGrid.zdim() +
-													 b*temperatureGrid.zdim() +
-													 c)*FirePresets::TOTAL_SAMPLES + i;
+										for(int c = 0; c < temperatureGrid.zdim(); c += jump)
+										{
+											int index = (a*temperatureGrid.ydim()*temperatureGrid.zdim() +
+														 b*temperatureGrid.zdim() +
+														 c)*FirePresets::TOTAL_SAMPLES + i;
 								
-										double xw2, yw2, zw2;
-										temperatureGrid.indexToWorld(a, b, c, xw2, yw2, zw2);
-										Vector3 p1(xw2, yw2, zw2);
+											double xw2, yw2, zw2;
+											temperatureGrid.indexToWorld(a, b, c, xw2, yw2, zw2);
+											Vector3 p1(xw2, yw2, zw2);
 
-										Vector3 diff = p1 - endPoint;
-										double dist = diff.norm();
-										diff.normalize();
-										//double diffuse = std::max(Vector3::dot(diff, normal), 0.0);
-										//local_L[i] += pow(dist, -2.0)*Le[index]*diffuse*0.4;
-										local_L[i] += pow(dist, -2.0)*Le[index]*0.1;
+											Vector3 diff = p1 - endPoint;
+											double dist = diff.norm();
+											diff.normalize();
+											//double diffuse = std::max(Vector3::dot(diff, normal), 0.0); //TODO bör beräknas med normalen, dock finns det ingen metod för räkna ut normalen på träffytan atm.
+											//local_L[i] += pow(dist, -2.0)*Le[index]*diffuse*0.4;
+											local_L[i] += pow(dist, -2.0)*Le[index]*10.0;
+										}
 									}
 								}
-							}*/
-							
-							//RÄKNAR MED MEDELVÄRDE ISTÄLLET
-							double xw2, yw2, zw2;
-							temperatureGrid.indexToWorld(xm[i], ym[i], zm[i], xw2, yw2, zw2);
-							Vector3 p1(xw2, yw2, zw2);
+							}
+							else
+							{
+								//RÄKNAR MED MEDELVÄRDE ISTÄLLET
+								double xw2, yw2, zw2;
+								temperatureGrid.indexToWorld(xm[i], ym[i], zm[i], xw2, yw2, zw2);
+								Vector3 p1(xw2, yw2, zw2);
 
-							Vector3 diff = p1 - endPoint;
-							double dist = diff.norm();
-							diff.normalize();
-							//double diffuse = std::max(Vector3::dot(diff, normal), 0.0);
-							//local_L[i] += pow(dist, -2.0)*Le[index]*diffuse*0.4;
-							local_L[i] += pow(dist, -2.0)*LeMean[i]*10.0;
+								Vector3 diff = p1 - endPoint;
+								double dist = diff.norm();
+								diff.normalize();
+								//double diffuse = std::max(Vector3::dot(diff, normal), 0.0); //TODO bör beräknas med normalen, dock finns det ingen metod för räkna ut normalen på träffytan atm.
+								//local_L[i] += pow(dist, -2.0)*Le[index]*diffuse*0.4;
+								local_L[i] += pow(dist, -2.0)*LeMean[i]*10.0;
+							}
 						}
 
 						//ray casting

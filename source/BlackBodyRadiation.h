@@ -55,7 +55,7 @@ private:
 	double *Le;
 	double *L;
 	
-	double *LeMean;
+	double *LeMean;//Kanske borde göra mean på T istället då denna kan generera flimmer med färger
 	double *xm;
 	double *ym;
 	double *zm;

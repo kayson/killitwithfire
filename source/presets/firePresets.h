@@ -48,6 +48,7 @@ public:
 	static const int SAMPLE_STEP; //Antal man hoppar över (1 är minsta, dvs man använder alla sampel)
 	static const double SAMPLE_DL; //våglängds dx
 	static const int TOTAL_SAMPLES;
+	static const bool QUALITY_ROOM;
 
     //Rutiner
 	AdvectLevelSet *advection;
