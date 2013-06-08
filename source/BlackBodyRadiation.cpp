@@ -286,33 +286,19 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	up.normalize();
 
 	//Normalerna för sidorna 
-	Vector3 stop(0, -1, 0);
+	//Används inte nu men bör göras, när vi kan ta reda på normalen från endPoint
+	/*Vector3 stop(0, -1, 0);
 	Vector3 sbottom(0, 1, 0);
 	Vector3 sleft(1, 0, 0);
 	Vector3 sright(-1, 0, 0);
 	Vector3 sback(0, 0, 1);
-	Vector3 sfront(0, 0, -1);
+	Vector3 sfront(0, 0, -1);*/
 
-	Vector3 p1;
-	Vector3 p2;
-	Vector3 p3;
-	Vector3 p4;
-	Vector3 p5;
-	Vector3 p6;
-	Vector3 p7;
-	Vector3 p8;
-	temperatureGrid.indexToWorld(0, 0, 0, p1.x, p1.y, p1.z);
-	temperatureGrid.indexToWorld(0, 0, temperatureGrid.zdim()-1, p2.x, p2.y, p2.z);
-	temperatureGrid.indexToWorld(temperatureGrid.xdim()-1, 0, temperatureGrid.zdim()-1, p3.x, p3.y, p3.z);
-	temperatureGrid.indexToWorld(temperatureGrid.xdim()-1, 0, 0, p4.x, p4.y, p4.z);
-	temperatureGrid.indexToWorld(0, temperatureGrid.ydim()-1, 0, p5.x, p5.y, p5.z);
-	temperatureGrid.indexToWorld(0, temperatureGrid.ydim()-1, temperatureGrid.zdim()-1, p6.x, p6.y, p6.z);
-	temperatureGrid.indexToWorld(temperatureGrid.xdim()-1, temperatureGrid.ydim()-1, temperatureGrid.zdim()-1, p7.x, p7.y, p7.z);
-	temperatureGrid.indexToWorld(temperatureGrid.xdim()-1, temperatureGrid.ydim()-1, 0, p8.x, p8.y, p8.z);
+	Vector3 minCoord, maxCoord;
+	temperatureGrid.indexToWorld(0, 0, 0, minCoord.x, minCoord.y, minCoord.z);
+	temperatureGrid.indexToWorld(temperatureGrid.xdim()-1, temperatureGrid.ydim()-1, temperatureGrid.zdim()-1, maxCoord.x, maxCoord.y, maxCoord.z);
 
-	//const double w = double(xsize)*0.5;
-	//const double h = double(ysize)*0.5;
-	
+
 	const double nearPlaneDistance = 0.1;
 	const double aspect_ratio = double(xsize)/double(ysize);
 	const double fovy = PI*0.33;
@@ -391,13 +377,11 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 				Vector3 direction = nearPlanePos-eyepos;
 				direction.normalize();
 
-				//std::cout << "Pos = " << nearPlanePos.x << ", " << nearPlanePos.y << ", " << nearPlanePos.z << std::endl;
-				
 				double tmin, tmax;
 				Vector3 normal;
 
 				int index = y*xsize + x;
-				if(Vector3::rayBoxIntersection(p1, p7, nearPlanePos, direction, &tmin, &tmax))
+				if(Vector3::rayBoxIntersection(minCoord, maxCoord, nearPlanePos, direction, &tmin, &tmax))
 				{
 					if(tmax > 0.0) //fluidbox is behind
 					{
