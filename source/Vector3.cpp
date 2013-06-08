@@ -286,7 +286,7 @@ Vector3 operator- (const double f, const Vector3 &v)
 
 Vector3 operator* (const double f, const Vector3 &v)
 {
-	return v;
+	return v*f;
 }
 
 Vector3 Vector3::operator- () const
@@ -297,4 +297,98 @@ Vector3 Vector3::operator- () const
 bool Vector3::operator> (const Vector3 &v) const
 {
 	return norm() > v.norm();
+}
+
+//retunerar -1 om linjen inte korsar planet eller om linjen är parallell med det
+double Vector3::planeLineIntersection(const Vector3 &point, const Vector3 &normal, const Vector3 &lineDirection, const Vector3 &linePos)
+{
+	
+	double den = dot(normal, lineDirection);
+	if(den == 0.0)
+		return -1;
+
+	double num = dot((point - linePos), normal);
+	if(num == 0.0)
+		return -1;
+
+	return num/den;
+}
+
+//r1 r2 och r3 är 3 punkter i planet, point är punkten man vill kontrollera
+bool Vector3::pointInRectangle(const Vector3 &point, const Vector3 &r1, const Vector3 &r2, const Vector3 &r3)
+{
+	Vector3 e0 = point - r2;
+
+	Vector3 e1 = r1 - r2;
+	double u = Vector3::dot(e1, e0);
+	if(u >= 0.0)
+	{
+		u /= pow(e1.norm(), 2.0);
+		if(u <= 1.0)
+		{
+			Vector3 e2 = r3 - r2;
+			double v = Vector3::dot(e2, e0);
+			if(v >= 0.0)
+			{
+				v /= pow(e2.norm(), 2.0);
+				if(v <= 1.0)
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
+void binsort(double *max, double *min)
+{
+	if(*max < *min)
+	{
+		double temp = *max;
+		*max = *min;
+		*min = temp;
+	}
+}
+
+// minbox is the corner of AABB with minimal coordinates - left bottom, maxbox is maximal corner
+//code originally from http://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms
+bool Vector3::rayBoxIntersection(const Vector3 &minbox, const Vector3 &maxbox, const Vector3 &lineOrigin, const Vector3 &lineDirection, double *tmin, double *tmax)
+{
+	//avoid division with zero
+	Vector3 dir = lineDirection;
+	/*dir.x = sgn(dir.x)*std::max(fabs(dir.x), DBL_MIN);
+	dir.y = sgn(dir.y)*std::max(fabs(dir.y), DBL_MIN);
+	dir.z = sgn(dir.z)*std::max(fabs(dir.z), DBL_MIN);*/
+
+	Vector3 dirfrac;
+	dirfrac.x = 1.0f / dir.x;
+	dirfrac.y = 1.0f / dir.y;
+	dirfrac.z = 1.0f / dir.z;
+
+	double xmin = (minbox.x - lineOrigin.x)*dirfrac.x;
+	double xmax = (maxbox.x - lineOrigin.x)*dirfrac.x;
+	double ymin = (minbox.y - lineOrigin.y)*dirfrac.y;
+	double ymax = (maxbox.y - lineOrigin.y)*dirfrac.y;
+	double zmin = (minbox.z - lineOrigin.z)*dirfrac.z;
+	double zmax = (maxbox.z - lineOrigin.z)*dirfrac.z;
+
+	binsort(&xmax, &xmin);
+	binsort(&ymax, &ymin);
+	binsort(&zmax, &zmin);
+
+	*tmin = std::max(std::max(xmin, ymin), zmin);
+	*tmax = std::min(std::min(xmax, ymax), zmax);
+
+	// if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behind us (if tmin is < 0 i think we start inside the box //axel)
+	if (*tmax < 0)
+		return false;
+
+	// if tmin > tmax, ray doesn't intersect AABB
+	if (*tmin > *tmax)
+		return false;
+
+	return true;
 }

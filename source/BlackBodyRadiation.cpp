@@ -11,6 +11,8 @@
 
 #include <omp.h>
 
+const double PI = 3.14159265359;
+
 const double C_1 = 3.7418e-16;
 const double C_2 = 1.4388e-2;
 
@@ -144,12 +146,8 @@ void BlackBodyRadiation::allocate()
 	dy = 1.0/double(ysize);
 	dz = 1.0/double(zsize);
 
-	wds = double(gridz)/double(gridx)*double(FirePresets::GRID_SIZE)/double(zsize); //fysisk steglängd mellan sampel
-
-	oa = 0.05; //absorberings koef, för rapport 1 använd 0.01
-	os = 0.0; //scattering koef
-	ot = oa + os; //tot
-	C = exp(-ot*wds);
+	du = 2.0/double(xsize-1);
+	dv = 2.0/double(ysize-1);
 
 	const int IMSIZE= xsize*ysize*3;
 	image = new GLfloat[IMSIZE];
@@ -160,6 +158,13 @@ void BlackBodyRadiation::allocate()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	wds = double(FirePresets::GRID_SIZE)/double(zsize*2);
+
+	oa = 0.05; //absorberings koef, för rapport 1 använd 0.01
+	os = 0.0; //scattering koef
+	ot = oa + os; //tot
+	C = exp(-ot*wds);
 
 	//Används för att rendera rummet, kan nog vara lägre samplad än total_samples, alt gör man denna med macgrid för slippa göra samma beräkningar 2 ggr
 	//dock tror jag det kostar förmycket minne
@@ -262,6 +267,278 @@ Vector3 BlackBodyRadiation::XYZtoRGB(const Vector3 &xyz)
 	return rgb;
 }
 
+void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke)
+{
+	//Vector3 eyepos(1.0, 1.0, -1);
+	//Vector3 lookAt(0.5, 0.5, 0.5);
+	
+	//def i lokala koordinater
+	Vector3 eyepos(2, 2, 8);
+	Vector3 lookAt(2, 2, 2);
+
+	//ej optimalt sätt att ställa in kameraaxlarna
+	Vector3 up(0.0, 1.0, 0.0);
+	Vector3 forward = lookAt - eyepos;
+	forward.normalize();
+	Vector3 right = forward.cross(&up);
+	right.normalize();
+	up = right.cross(&forward);
+	up.normalize();
+
+	//Normalerna för sidorna 
+	Vector3 stop(0, -1, 0);
+	Vector3 sbottom(0, 1, 0);
+	Vector3 sleft(1, 0, 0);
+	Vector3 sright(-1, 0, 0);
+	Vector3 sback(0, 0, 1);
+	Vector3 sfront(0, 0, -1);
+
+	Vector3 p1;
+	Vector3 p2;
+	Vector3 p3;
+	Vector3 p4;
+	Vector3 p5;
+	Vector3 p6;
+	Vector3 p7;
+	Vector3 p8;
+	temperatureGrid.indexToWorld(0, 0, 0, p1.x, p1.y, p1.z);
+	temperatureGrid.indexToWorld(0, 0, temperatureGrid.zdim()-1, p2.x, p2.y, p2.z);
+	temperatureGrid.indexToWorld(temperatureGrid.xdim()-1, 0, temperatureGrid.zdim()-1, p3.x, p3.y, p3.z);
+	temperatureGrid.indexToWorld(temperatureGrid.xdim()-1, 0, 0, p4.x, p4.y, p4.z);
+	temperatureGrid.indexToWorld(0, temperatureGrid.ydim()-1, 0, p5.x, p5.y, p5.z);
+	temperatureGrid.indexToWorld(0, temperatureGrid.ydim()-1, temperatureGrid.zdim()-1, p6.x, p6.y, p6.z);
+	temperatureGrid.indexToWorld(temperatureGrid.xdim()-1, temperatureGrid.ydim()-1, temperatureGrid.zdim()-1, p7.x, p7.y, p7.z);
+	temperatureGrid.indexToWorld(temperatureGrid.xdim()-1, temperatureGrid.ydim()-1, 0, p8.x, p8.y, p8.z);
+
+	//const double w = double(xsize)*0.5;
+	//const double h = double(ysize)*0.5;
+	
+	const double nearPlaneDistance = 0.1;
+	const double aspect_ratio = double(xsize)/double(ysize);
+	const double fovy = PI*0.33;
+	const double w = nearPlaneDistance*tan(fovy);
+	const double h = w/aspect_ratio;
+
+	double *LeMean = new double[FirePresets::TOTAL_SAMPLES];
+	double *xm = new double[FirePresets::TOTAL_SAMPLES];
+	double *ym = new double[FirePresets::TOTAL_SAMPLES];
+	double *zm = new double[FirePresets::TOTAL_SAMPLES];
+
+	float startTime = omp_get_wtime();
+	int n = 0;
+	#pragma omp parallel
+	{
+		#pragma omp for
+		for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i += 1)
+		{
+			LeMean[i] = 0.0;
+		}
+
+		#pragma omp for
+		for(int x = 0; x < temperatureGrid.xdim(); ++x)
+		{
+			for(int y = 0; y < temperatureGrid.ydim(); ++y)
+			{
+				for(int z = 0; z < temperatureGrid.zdim(); ++z)
+				{
+					const double T = temperatureGrid.valueAtIndex(x, y, z);
+
+					//Räkna ut intensitet för varje våglängd
+					for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i += 1)
+					{
+						int index = (x*temperatureGrid.ydim()*temperatureGrid.zdim() +
+									y*temperatureGrid.zdim() +
+									z)*FirePresets::TOTAL_SAMPLES + i;
+
+						const double lambda = (360.0 + double(i*FirePresets::SAMPLE_STEP)*5)*1e-9;
+						
+						Le[index] = radiance(lambda, T);
+						LeMean[i] += Le[index];
+						xm[i] += double(x)*Le[index];
+						ym[i] += double(y)*Le[index];
+						zm[i] += double(z)*Le[index];
+
+						Le[index] = oa*Le[index]*wds;
+					}
+				}
+			}
+		}
+
+		#pragma omp for
+		for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i += 1)
+		{
+			if(LeMean[i] > 0.0)
+			{
+				xm[i] /= LeMean[i];
+				ym[i] /= LeMean[i];
+				zm[i] /= LeMean[i];
+
+				LeMean[i] *= oa*pow(wds, 3.0);
+			}
+		}
+
+		double *local_L = &L[omp_get_thread_num()*FirePresets::TOTAL_SAMPLES];
+		Vector3 normal = Vector3(0.0, 0.0, 1.0);
+		#pragma omp for
+		for(int x = 0; x < xsize; ++x)
+		{
+			double u = -1.0 + double(x)*du; //Screenspace coordinate
+			for(int y = 0; y < ysize; ++y)
+			{
+				double v = -1.0 + double(y)*dv;//Screenspace coordinate
+
+				Vector3 nearPlanePos = eyepos + forward*nearPlaneDistance + right*u*(w/2) + up*v*(h/2);
+				Vector3 direction = nearPlanePos-eyepos;
+				direction.normalize();
+
+				//std::cout << "Pos = " << nearPlanePos.x << ", " << nearPlanePos.y << ", " << nearPlanePos.z << std::endl;
+				
+				double tmin, tmax;
+				Vector3 normal;
+
+				int index = y*xsize + x;
+				if(Vector3::rayBoxIntersection(p1, p7, nearPlanePos, direction, &tmin, &tmax))
+				{
+					if(tmax > 0.0) //fluidbox is behind
+					{
+						Vector3 endPoint = nearPlanePos + direction*tmax;
+						Vector3 startPoint;
+						if(tmin > 0.0)
+							startPoint = nearPlanePos + direction*tmin;
+						else
+							startPoint = nearPlanePos;
+
+						for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i+= 1)
+						{
+							local_L[i] = 0.0;
+							
+							// OEFFEKTIVT
+							//Calc surround light with all voxels
+							/*const int jump = 5;
+							for(int a = 0; a < temperatureGrid.xdim(); a += jump)
+							{
+								for(int b = 0; b < temperatureGrid.ydim(); b += jump)
+								{
+									for(int c = 0; c < temperatureGrid.zdim(); c += jump)
+									{
+										int index = (a*temperatureGrid.ydim()*temperatureGrid.zdim() +
+													 b*temperatureGrid.zdim() +
+													 c)*FirePresets::TOTAL_SAMPLES + i;
+								
+										double xw2, yw2, zw2;
+										temperatureGrid.indexToWorld(a, b, c, xw2, yw2, zw2);
+										Vector3 p1(xw2, yw2, zw2);
+
+										Vector3 diff = p1 - endPoint;
+										double dist = diff.norm();
+										diff.normalize();
+										//double diffuse = std::max(Vector3::dot(diff, normal), 0.0);
+										//local_L[i] += pow(dist, -2.0)*Le[index]*diffuse*0.4;
+										local_L[i] += pow(dist, -2.0)*Le[index]*0.1;
+									}
+								}
+							}*/
+							
+							//RÄKNAR MED MEDELVÄRDE ISTÄLLET
+							double xw2, yw2, zw2;
+							temperatureGrid.indexToWorld(xm[i], ym[i], zm[i], xw2, yw2, zw2);
+							Vector3 p1(xw2, yw2, zw2);
+
+							Vector3 diff = p1 - endPoint;
+							double dist = diff.norm();
+							diff.normalize();
+							//double diffuse = std::max(Vector3::dot(diff, normal), 0.0);
+							//local_L[i] += pow(dist, -2.0)*Le[index]*diffuse*0.4;
+							local_L[i] += pow(dist, -2.0)*LeMean[i]*10.0;
+						}
+
+						//ray casting
+						double length = (endPoint - startPoint).norm();
+						double steps = length/wds;
+						int intsteps = int(steps); //TODO Finns risk att vi missar lite info eftersom vi struntar om det blir någon rest här!, dock finns det risk att man samplar dubbelt annars
+						Vector3 pos;
+						for(int z = 0; z < intsteps; z += 1)
+						{
+							pos = endPoint - direction*double(z)*wds; //From end to start we traverse the ray backwards here.
+
+							//Beräknar med lokala koordinater
+							if(temperatureGrid.worldIsValid(pos.x, pos.y, pos.z))
+							{
+
+								const double T = temperatureGrid.valueAtWorld(pos.x, pos.y, pos.z);
+
+								//Räkna ut intensitet för varje våglängd
+								for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i += 1)
+								{
+									const double lambda = (360.0 + double(i*FirePresets::SAMPLE_STEP)*5)*1e-9;
+									local_L[i] = C*local_L[i] + oa*radiance(lambda, T)*wds;
+								}
+							}
+						}
+						double restLength = (pos - nearPlanePos).norm();
+						double Crest = exp(-ot*restLength);
+						for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i += 1) //Se till att ljusstyrkan minskar med avståndet, om tex startPoint != nearPlane.
+							local_L[i] = Crest*local_L[i];
+
+						//Beräkna XYZ från L
+						Vector3 XYZ = Vector3(0.0);
+						for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i+= 1)
+						{
+							int j = FirePresets::SAMPLE_STEP*i;
+							XYZ.x += local_L[i] * CIE_X[j];
+							XYZ.y += local_L[i] * CIE_Y[j];
+							XYZ.z += local_L[i] * CIE_Z[j];
+						}
+						XYZ *= FirePresets::SAMPLE_DL;
+
+						//en variant av chromatic adaption, högt värde på crom minskar intensiteten, lågt värde ökar den.
+						Vector3 LMS = XYZtoLMS(XYZ);
+						LMS.x = LMS.x/(LMS.x + FirePresets::CHROMA);
+						LMS.y = LMS.y/(LMS.y + FirePresets::CHROMA);
+						LMS.z = LMS.z/(LMS.z + FirePresets::CHROMA);
+						XYZ = LMStoXYZ(LMS);
+
+						Vector3 rgb = XYZtoRGB(XYZ);
+						image[index*3 + 0] = rgb.x; //R
+						image[index*3 + 1] = rgb.y; //G
+						image[index*3 + 2] = rgb.z; //B
+					}
+					else
+					{
+						image[index*3 + 0] = 0.0; //R
+						image[index*3 + 1] = 0.0; //G
+						image[index*3 + 2] = 0.0; //B
+					}
+				}
+			}
+			#pragma omp critical 
+			{
+				printf("\rRender progress: %.02f%%, %.02fs, %d/%d threads", 1000.f*n++/temperatureGrid.xdim(), omp_get_wtime() - startTime, omp_get_num_threads(), omp_get_max_threads());
+				fflush(stdout);
+			}
+		}
+	}
+	std::cout << "\n" << std::endl;
+
+	//rita ut textur
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, xsize, ysize, 0, GL_RGB, GL_FLOAT, image); 
+	glBegin(GL_QUADS);
+	
+	glTexCoord2i(0, 0);		glVertex2f(0.0f, 0.0f);
+	glTexCoord2i(1, 0);		glVertex2f(1.0f, 0.0f);
+	glTexCoord2i(1, 1);		glVertex2f(1.0f, 1.0f);
+	glTexCoord2i(0, 1);		glVertex2f(0.0f, 1.0f);	
+	
+	glEnd();
+
+	delete [] LeMean; 
+	delete [] xm;
+	delete [] ym;
+	delete [] zm;
+}
+
+/*
 void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke)
 {
 	float startTime = omp_get_wtime();
@@ -407,7 +684,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 	drawLevelSet(phi);
 }
-
+*/
 void BlackBodyRadiation::drawLevelSet(const LevelSet &phi)
 {
 	const int IMSIZE= phi.grid->xdim()*phi.grid->ydim()*3;

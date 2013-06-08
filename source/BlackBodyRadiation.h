@@ -8,6 +8,7 @@
 #include <GL/freeglut.h>
 #endif
 
+#include <utility>
 
 class Vector3;
 class LevelSet;
@@ -45,13 +46,14 @@ private:
 	double wds;//Steglängd för raycastern
 	double oa, os, ot, C;
 
+	double du, dv;// def [-1, 1] screen space coordinates
+
 	int xsize, ysize, zsize;
 
 	int gridx, gridy, gridz;
 
 	double *Le;
 	double *L;
-
 };
 
 #endif
