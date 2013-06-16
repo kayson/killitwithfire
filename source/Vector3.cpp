@@ -299,46 +299,16 @@ bool Vector3::operator> (const Vector3 &v) const
 	return norm() > v.norm();
 }
 
-//retunerar -1 om linjen inte korsar planet eller om linjen är parallell med det
-double Vector3::planeLineIntersection(const Vector3 &point, const Vector3 &normal, const Vector3 &lineDirection, const Vector3 &linePos)
+
+void Vector3::rotY(double angle)
 {
-	
-	double den = dot(normal, lineDirection);
-	if(den == 0.0)
-		return -1;
-
-	double num = dot((point - linePos), normal);
-	if(num == 0.0)
-		return -1;
-
-	return num/den;
+	double temp = x;
+	x = x*cos(angle) + z*sin(angle);
+	z =  z*cos(angle) - temp*sin(angle);
 }
 
-//r1 r2 och r3 är 3 punkter i planet, point är punkten man vill kontrollera
-bool Vector3::pointInRectangle(const Vector3 &point, const Vector3 &r1, const Vector3 &r2, const Vector3 &r3)
-{
-	Vector3 e0 = point - r2;
 
-	Vector3 e1 = r1 - r2;
-	double u = Vector3::dot(e1, e0);
-	if(u >= 0.0)
-	{
-		u /= pow(e1.norm(), 2.0);
-		if(u <= 1.0)
-		{
-			Vector3 e2 = r3 - r2;
-			double v = Vector3::dot(e2, e0);
-			if(v >= 0.0)
-			{
-				v /= pow(e2.norm(), 2.0);
-				if(v <= 1.0)
-					return true;
-			}
-		}
-	}
-	return false;
-}
-
+//Hjälpfunktioner endast
 template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }

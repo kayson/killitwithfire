@@ -187,6 +187,8 @@ void BlackBodyRadiation::allocate()
 	xm = new double[FirePresets::TOTAL_SAMPLES];
 	ym = new double[FirePresets::TOTAL_SAMPLES];
 	zm = new double[FirePresets::TOTAL_SAMPLES];
+
+	angle = 0;
 }
 
 
@@ -285,12 +287,13 @@ Vector3 BlackBodyRadiation::XYZtoRGB(const Vector3 &xyz)
 const double LeScale = 0.25;
 void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke)
 {
-	//Vector3 eyepos(1.0, 1.0, -1);
-	//Vector3 lookAt(0.5, 0.5, 0.5);
-	
-	//def i lokala koordinater
-	Vector3 eyepos(2, 2, 6.5);
+	//def i world coord
 	Vector3 lookAt(2, 2, 2);
+	Vector3 eyepos(2, 2, 6.5);
+	eyepos -= lookAt;
+	eyepos.rotY(3.28 * angle);
+	eyepos += lookAt;
+	angle += FirePresets::dt;
 
 	//ej optimalt sätt att ställa in kameraaxlarna
 	Vector3 up(0.0, 1.0, 0.0);
@@ -300,15 +303,6 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 	right.normalize();
 	up = right.cross(&forward);
 	up.normalize();
-
-	//Normalerna för sidorna 
-	//Används inte nu men bör göras, när vi kan ta reda på normalen från endPoint
-	/*Vector3 stop(0, -1, 0);
-	Vector3 sbottom(0, 1, 0);
-	Vector3 sleft(1, 0, 0);
-	Vector3 sright(-1, 0, 0);
-	Vector3 sback(0, 0, 1);
-	Vector3 sfront(0, 0, -1);*/
 
 	Vector3 minCoord, maxCoord;
 	temperatureGrid.indexToWorld(0, 0, 0, minCoord.x, minCoord.y, minCoord.z);
@@ -516,6 +510,12 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 						image[index*3 + 1] = 0.0; //G
 						image[index*3 + 2] = 0.0; //B
 					}
+				}
+				else
+				{
+					image[index*3 + 0] = 0.0; //R
+					image[index*3 + 1] = 0.0; //G
+					image[index*3 + 2] = 0.0; //B
 				}
 			}
 			#pragma omp critical 

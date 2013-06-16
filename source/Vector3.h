@@ -59,9 +59,8 @@ public:
 		out << v.x << " " << v.y << " " << v.z << std::endl;
 		return out;
 	}
-
-	static double planeLineIntersection(const Vector3 &point, const Vector3 &normal, const Vector3 &lineDirection, const Vector3 &linePos);
-	static bool pointInRectangle(const Vector3 &point, const Vector3 &r1, const Vector3 &r2, const Vector3 &r3);
+	
+	void rotY(double angle); //rotera runt y axeln
 
 	static bool rayBoxIntersection(const Vector3 &minbox, const Vector3 &maxbox, const Vector3 &lineOrigin, const Vector3 &lineDirection, double *tmin, double *tmax);
 

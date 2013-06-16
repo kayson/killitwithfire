@@ -59,6 +59,8 @@ private:
 	double *xm;
 	double *ym;
 	double *zm;
+
+	double angle;
 };
 
 #endif
