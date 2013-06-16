@@ -76,6 +76,7 @@ const int FirePresets::SAMPLE_STEP = 15; //Antal man hoppar över (1 är minsta, d
 const double FirePresets::SAMPLE_DL = 5e-9*double(FirePresets::SAMPLE_STEP); //Antal man hoppar över (1 är minsta, dvs man använder alla sampel)
 const int FirePresets::TOTAL_SAMPLES = 89/FirePresets::SAMPLE_STEP;
 const bool FirePresets::QUALITY_ROOM = false; //kanske borde vara #DEFINE istället
+const int FirePresets::SAMPLE_STEP_QUALITY = 4;
 
 const double FirePresets::rhof = 1.0;
 const double FirePresets::rhob = 0.01;

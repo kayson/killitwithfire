@@ -169,7 +169,7 @@ void BlackBodyRadiation::allocate()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	wds = double(FirePresets::GRID_SIZE)/double(std::max(gridx, std::max(gridy, gridz)) * 4);
+	wds = double(FirePresets::GRID_SIZE)/double(std::max(gridx, std::max(gridy, gridz)) * FirePresets::SAMPLE_STEP_QUALITY);
 
 	oa = 0.05; //absorberings koef, för rapport 1 använd 0.01
 	os = 0.0; //scattering koef
@@ -282,7 +282,7 @@ Vector3 BlackBodyRadiation::XYZtoRGB(const Vector3 &xyz)
 	return rgb;
 }
 
-const double LeScale = 40.0;
+const double LeScale = 0.25;
 void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke)
 {
 	//Vector3 eyepos(1.0, 1.0, -1);
@@ -351,7 +351,8 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 
 						const double lambda = (360.0 + double(i*FirePresets::SAMPLE_STEP)*5)*1e-9;
 						Le[index] = radiance(lambda, T);
-						
+						Le[index] = oa*Le[index]*temperatureGrid.dx()*temperatureGrid.dy()*temperatureGrid.dz();
+
 						if(!FirePresets::QUALITY_ROOM)
 						{
 							LeMean[i] += Le[index];
@@ -360,7 +361,7 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 							zm[i] += double(z)*Le[index];
 						}
 
-						Le[index] = oa*Le[index]*pow(wds, 3.0);
+						
 					}
 				}
 			}
@@ -376,8 +377,6 @@ void BlackBodyRadiation::draw(const GridField<double> &temperatureGrid, const Le
 					xm[i] /= LeMean[i];
 					ym[i] /= LeMean[i];
 					zm[i] /= LeMean[i];
-
-					LeMean[i] *= oa*pow(wds, 3.0);
 				}
 			}
 		}
