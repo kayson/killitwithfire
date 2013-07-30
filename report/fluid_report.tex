@@ -1,0 +1,45 @@
+\documentclass[]{report}   % list options between brackets
+\usepackage{graphicx,url,placeins,algorithm,algorithmic,lipsum}
+\graphicspath{{figures/}}
+
+\begin{document}
+
+\title{TN1008\\ Project Report}   % type title between braces
+\author{
+  Viktor Nilsson , vikni067@student.liu.se 
+  \\Axel Kinner ,
+  \\Johannes Deligiannis ,
+  \\Johan Beck-Norén ,
+  \\Andreas Valter , andva287@student.liu.se
+	}
+        \date{\today}    % type date between braces
+        \maketitle
+        
+\setcounter{page}{2}
+
+\include{abstract}
+
+\begingroup
+\let\clearpage\relax % Removes blankpage before include
+\chapter{Introduction}
+\include{introduction}
+
+\chapter{Background}
+\include{background_physically_based_model}
+
+\include{background_navierstoke}
+
+\include{background_boundary_conditions}
+
+\chapter{Method}
+
+\chapter{Results}
+\include{results}
+\include{discussion}
+
+\endgroup
+
+\bibliographystyle{abbrv}
+\bibliography{bibl}
+
+\end{document}
