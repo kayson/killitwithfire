@@ -43,8 +43,14 @@ void Projection3D::fillA(){
     for (GridFieldIterator<double> it = _phi->grid->iterator(); !it.done(); it.next()) {
 
         int i,j,k;
+<<<<<<< HEAD
         it.index(i, j, k);	        
             CellType centerCell = Fire::getCellType(_phi->grid->valueAtIndex(it.index()));
+=======
+        it.index(i, j, k);
+                    
+            CellType centerCell = LevelSet::getCellType(_phi->grid->valueAtIndex(it.index()));
+>>>>>>> 2a88315ae07d8f49783faa6cbb95720c0817039b
             
             if (centerCell == _cellType && !isSolid(i, j, k)) {
                 
@@ -52,7 +58,7 @@ void Projection3D::fillA(){
                 
                 
                 if(_phi->grid->isValid(i-1, j, k)){
-                    CellType left = Fire::getCellType(_phi->grid->valueAtIndex(i-1, j, k));
+                    CellType left = LevelSet::getCellType(_phi->grid->valueAtIndex(i-1, j, k));
                     
                     if (isSolid(i-1, j, k)) {
                         //Solid
@@ -67,7 +73,7 @@ void Projection3D::fillA(){
                 }
                 
                 if(_phi->grid->isValid(i+1, j, k)){
-                    CellType right = Fire::getCellType(_phi->grid->valueAtIndex(i+1, j, k));
+                    CellType right = LevelSet::getCellType(_phi->grid->valueAtIndex(i+1, j, k));
                     if (isSolid(i+1, j, k)) {
                         //Solid
                     }else if (right == _cellType) {
@@ -81,7 +87,7 @@ void Projection3D::fillA(){
                 }
                 
                 if(_phi->grid->isValid(i, j-1, k)){
-                    CellType down = Fire::getCellType(_phi->grid->valueAtIndex(i, j-1, k));
+                    CellType down = LevelSet::getCellType(_phi->grid->valueAtIndex(i, j-1, k));
                     if (isSolid(i, j-1, k)) {
                         //Solid
                     }else if (down == _cellType) {
@@ -95,7 +101,7 @@ void Projection3D::fillA(){
                 }
                 
                 if(_phi->grid->isValid(i, j+1, k)){
-                    CellType up = Fire::getCellType(_phi->grid->valueAtIndex(i, j+1, k));
+                    CellType up = LevelSet::getCellType(_phi->grid->valueAtIndex(i, j+1, k));
                     if (isSolid(i, j+1, k)) {
                         //Solid
                     }else if (up == _cellType) {
@@ -109,7 +115,7 @@ void Projection3D::fillA(){
                 }
                 
                 if(_phi->grid->isValid(i, j, k-1)){
-                    CellType down = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k-1));
+                    CellType down = LevelSet::getCellType(_phi->grid->valueAtIndex(i, j, k-1));
                     if (isSolid(i, j, k-1)) {
                         //Solid
                     }else if (down == _cellType) {
@@ -123,7 +129,7 @@ void Projection3D::fillA(){
                 }
                 
                 if(_phi->grid->isValid(i, j, k+1)){
-                    CellType up = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k+1));
+                    CellType up = LevelSet::getCellType(_phi->grid->valueAtIndex(i, j, k+1));
                     if (isSolid(i, j, k+1)) {
                         //Solid
                     }else if (up == _cellType) {
@@ -160,7 +166,7 @@ void Projection3D::fillb(){
         int i,j,k;
         it.index(i, j, k);
         int index = it.index();
-        CellType cellType = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k));
+        CellType cellType = LevelSet::getCellType(_phi->grid->valueAtIndex(i, j, k));
         
         if (_cellType == cellType && !isSolid(i,j,k)) {
             double scale = 1.0/_dx;
@@ -202,7 +208,7 @@ void Projection3D::applyPressure(){
         int i,j,k;
         it.index(i, j, k);
         int index = it.index();
-        CellType cellType = Fire::getCellType(_phi->grid->valueAtIndex(i, j, k));
+        CellType cellType = LevelSet::getCellType(_phi->grid->valueAtIndex(i, j, k));
         
         if (cellType == _cellType && !isSolid(i,j,k)) {
             double scale = _dt/(_dx);
@@ -332,13 +338,13 @@ double Projection3D::getAlpha(int i, int j, int k, DirectionEnums d) const{
 	if(d == FORWARD)
 		otherCell = _phi->grid->valueAtIndex(i,j,k+1);
     
-	if(Fire::getCellType(thisCell) == FUEL && Fire::getCellType(otherCell) == FUEL){
+	if(LevelSet::getCellType(thisCell) == FUEL && LevelSet::getCellType(otherCell) == FUEL){
 		return 1;
-	}else if(Fire::getCellType(thisCell) == FUEL && Fire::getCellType(otherCell) == BURNT){
+	}else if(LevelSet::getCellType(thisCell) == FUEL && LevelSet::getCellType(otherCell) == BURNT){
         double val = (thisCell /(thisCell - otherCell));
         
 		return val;
-    }else if(Fire::getCellType(thisCell) == BURNT && Fire::getCellType(otherCell) == FUEL){
+    }else if(LevelSet::getCellType(thisCell) == BURNT && LevelSet::getCellType(otherCell) == FUEL){
 		double val =  1.0 - (thisCell /(thisCell - otherCell));
         if(val > 10*10*10) val = 10*10*10;
         return val;

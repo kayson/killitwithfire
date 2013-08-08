@@ -49,6 +49,7 @@ GridField<T>::GridField():GridField(10,10,10, new ConstantValueExtrapolation<T>(
     
 }
 
+/*
 template<class T>
 GridField<T>::GridField(int xdim,int ydim, int zdim, Extrapolation<T> *extrapolation):GridMapping(xdim,ydim,zdim),_extrapolation(nullptr),_interpolation(nullptr),_extrapolate(true){    
     //Allokera data-array
@@ -58,7 +59,7 @@ GridField<T>::GridField(int xdim,int ydim, int zdim, Extrapolation<T> *extrapola
     //Extra/Interpolation
     setInterpolation(Interpolation<T>::defaultInterpolation());
 	setExtrapolation(extrapolation);
-}
+}*/
 
 template<class T>
 GridField<T>::GridField(int xdim,int ydim, int zdim, double size, Extrapolation<T> *extrapolation):GridMapping(xdim,ydim,zdim,size),_extrapolation(nullptr),_interpolation(nullptr),_extrapolate(true){

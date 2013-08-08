@@ -25,7 +25,9 @@
 LevelSet::LevelSet()
 {
 
-	grid  = new GridField<double>(10,10,10, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
+	grid  = new GridField<double>(10,10,10, FirePresets::GRID_SIZE, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
+	initLevelSet();
+
 	gridCopy = new GridField<double>(10, 10, 10,10, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
 	normals = new GridField<Vector3>(10, 10, 10, 10, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
 
@@ -38,6 +40,8 @@ LevelSet::LevelSet()
 LevelSet::LevelSet(int xDim, int yDim, int zDim, double size)
 {
 	grid  = new GridField<double>(xDim,yDim,zDim,size, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING? bör fixa så det blir signed distance på dessa
+	initLevelSet();
+
 	gridCopy = new GridField<double>(xDim,yDim,zDim,size, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
 	normals = new GridField<Vector3>(xDim,yDim,zDim,size, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
         
@@ -45,6 +49,19 @@ LevelSet::LevelSet(int xDim, int yDim, int zDim, double size)
     gridCopy->multTransformation(glm::scale(1.0, 1.0, 1.0));
     normals->multTransformation(glm::scale(1.0, 1.0, 1.0));      
 	dsd = new DetonationShockDynamics();
+	
+}
+
+//Initiera levelsetet så det inte har någon yta från början
+void LevelSet::initLevelSet()
+{
+	for(int i = 0; i < grid->xdim(); i++){
+		for(int j = 0; j < grid->ydim(); j++){
+			for(int k = 0; k < grid->zdim(); k++){
+                grid->setValueAtIndex(-FLT_MAX, i,j,k);
+            }
+        }
+    }
 }
 
 void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
@@ -90,15 +107,15 @@ double LevelSet::getVolume() const
 {
 	double volume = 0.0;
 	double H;
-	double idx = 1.0/FirePresets::dx;
+	double idx = 1.0/grid->dx();
 	for (GridFieldIterator<double> it = grid->iterator(); !it.done(); it.next()) {
         if (it.value()) {
             int i,j,k;
             it.index(i, j, k);
 			double val = it.value();
-			if(val > FirePresets::dx)
+			if(val > grid->dx())
 				H = 1.0;
-			else if(val < -FirePresets::dx)
+			else if(val < -grid->dx())
 				H = 0.0;
 			else
 				H = 0.5 + 0.75 * val * idx - 0.25 * pow(val*idx, 3.0);
@@ -106,16 +123,11 @@ double LevelSet::getVolume() const
         }
     }
 
-	return volume * pow(FirePresets::dx, 3.0);
+	return volume * pow(grid->dx(), 3.0);
 }
 
 CellType LevelSet::getCellType(const int i, const int j, const int k) const {
-	if(i < 2 || i >= (this->grid->xdim() - 2) || j< 2 || j >= (this->grid->ydim() - 2) ) //Check if is solid
-		return SOLID;
-	else if(this->grid->valueAtIndex(i,j,k) > 0.0)
-		return FUEL;
-	else 
-		return BURNT;
+	return getCellType(grid->valueAtIndex(i, j, k));
 }
 
 CellType LevelSet::getCellType(const double w_x, const double w_y, const double w_z) const {
@@ -123,7 +135,9 @@ CellType LevelSet::getCellType(const double w_x, const double w_y, const double 
 }
 
 CellType LevelSet::getCellType(const double phi){
-	if(false) // Check if solid
+	if(false) // Check if solid 
+		//if(i < 2 || i >= (this->grid->xdim() - 2) || j< 2 || j >= (this->grid->ydim() - 2) ) //Check if is solid
+		//ELLER solids.valueAtIndex(i, j, k) Fanns som sagt 3 olika def.
 		return SOLID;
 	else if(phi > 0.0)
 		return FUEL;

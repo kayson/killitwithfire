@@ -15,7 +15,7 @@
 
 
 template<class T>
-GhostGridField<T>::GhostGridField(int xdim,int ydim,int zdim,LevelSet *p, VelocityDirection direction):GridField<T>(xdim,ydim,zdim, new ConstantValueExtrapolation<T>()),_levelset(p){ //TODO KORREKT EXTRAPOLERING?
+GhostGridField<T>::GhostGridField(int xdim,int ydim,int zdim,LevelSet *p, VelocityDirection direction):GridField<T>(xdim,ydim,zdim, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<T>()),_levelset(p){ //TODO KORREKT EXTRAPOLERING?
     _direction = direction;
 }
 
@@ -26,16 +26,16 @@ T GhostGridField<T>::valueAtWorld(double w_x, double w_y,double w_z) const{
     int i,j,k;
     GridField<T>::worldToUpperLeftIndex(w_x, w_y, w_z, i, j, k);
     
-    CellType thisType = Fire::getCellType(_levelset->grid->valueAtWorld(w_x, w_y, w_z));
-    CellType c000 = Fire::getCellType(_levelset->grid->valueAtIndex(i, j, k));
-    CellType c100 = Fire::getCellType(_levelset->grid->valueAtIndex(i+1, j, k));
-    CellType c110 = Fire::getCellType(_levelset->grid->valueAtIndex(i+1, j+1, k));
-    CellType c010 = Fire::getCellType(_levelset->grid->valueAtIndex(i, j+1, k));
+    CellType thisType = LevelSet::getCellType(_levelset->grid->valueAtWorld(w_x, w_y, w_z));
+    CellType c000 = LevelSet::getCellType(_levelset->grid->valueAtIndex(i, j, k));
+    CellType c100 = LevelSet::getCellType(_levelset->grid->valueAtIndex(i+1, j, k));
+    CellType c110 = LevelSet::getCellType(_levelset->grid->valueAtIndex(i+1, j+1, k));
+    CellType c010 = LevelSet::getCellType(_levelset->grid->valueAtIndex(i, j+1, k));
 
-    CellType c001 = Fire::getCellType(_levelset->grid->valueAtIndex(i, j, k+1));
-    CellType c101 = Fire::getCellType(_levelset->grid->valueAtIndex(i+1, j, k+1));
-    CellType c111 = Fire::getCellType(_levelset->grid->valueAtIndex(i+1, j+1, k+1));
-    CellType c011 = Fire::getCellType(_levelset->grid->valueAtIndex(i, j+1, k+1));
+    CellType c001 = LevelSet::getCellType(_levelset->grid->valueAtIndex(i, j, k+1));
+    CellType c101 = LevelSet::getCellType(_levelset->grid->valueAtIndex(i+1, j, k+1));
+    CellType c111 = LevelSet::getCellType(_levelset->grid->valueAtIndex(i+1, j+1, k+1));
+    CellType c011 = LevelSet::getCellType(_levelset->grid->valueAtIndex(i, j+1, k+1));
     
     double v000 = GridField<T>::valueAtIndex(i,j,k)+jump(thisType, c000, i, j, k);
     double v100 = GridField<T>::valueAtIndex(i+1,j,k)+jump(thisType, c100, i+1, j, k);

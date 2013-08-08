@@ -57,10 +57,16 @@ bool ImageExporter::saveSequence(int &n, float dt, int range, int width, int hei
         ImageExporter::timeTrack += dt;
 	if(n == range)
 		return false;
-
-
-
 }
+
+void ImageExporter::saveSequence(int &n, int width, int height)
+{
+	char name[10];
+    itoa(n, name, 10);
+    saveImage(name, width, height);
+    n++;
+}
+
 #else
 bool ImageExporter::saveSequence(int &n, float dt, int range, int width, int height)
 {

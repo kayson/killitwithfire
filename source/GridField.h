@@ -44,7 +44,7 @@ private:
 public:
     //Konstruktor/Destruktor
     GridField(const GridMapping &m, Extrapolation<T> *extrapolation);
-    GridField(int xdim,int ydim, int zdim, Extrapolation<T> *extrapolation);
+    //GridField(int xdim,int ydim, int zdim, Extrapolation<T> *extrapolation);
     GridField(int xdim,int ydim, int zdim, double size, Extrapolation<T> *extrapolation);
     GridField(const GridField<T> &g);
     GridField<T>& operator=(const GridField<T> &g);

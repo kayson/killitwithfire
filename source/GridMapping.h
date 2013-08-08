@@ -20,6 +20,8 @@
 class GridMappingIterator;
 
 class GridMapping {
+private:
+	 GridMapping();
 protected:
     glm::dmat4x4 _trans;  //Local coordinates to worldcoordinates
     glm::dmat4x4 _itrans; //World coordinates to localcoordinates
@@ -35,8 +37,7 @@ protected:
     double local_dz() const;
 public:
     //Konstruktor
-    GridMapping();
-    GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim);
+    //GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim);
     GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim, double size);
     GridMapping(unsigned int dim,glm::dmat4x4 t);
     GridMapping(unsigned int xdim,unsigned int ydim,unsigned int zdim,glm::dmat4x4 t);
@@ -78,6 +79,10 @@ public:
     void worldToLocal(const double w_x,const double w_y,const double w_z, double &l_x,double &l_y,double &l_z) const;
     void worldToIndex(int &i,int &j,int &k, double w_x, double w_y,double w_z) const;
     void worldToUpperLeftIndex(const double w_x,const double w_y,const double w_z, int &i,int &j,int &k) const;
+
+	//valid
+	static bool localIsValid(double l_x, double l_y,double l_z);
+	bool worldIsValid(const double w_x,const double w_y,const double w_z) const;
     
     GridMappingIterator iterator() const;
 

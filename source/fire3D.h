@@ -30,10 +30,14 @@
 #include "GhostMAC.h"
 
 #include "Temperature.h"
+#include "SmokeDensity.h"
+
+#include "BlackBodyRadiation.h"
 
 class FirePresets;
 template<class T> class GridField;
 class GridMapping;
+
 class Fire3D{
 protected:
     void setSolids();
@@ -48,8 +52,8 @@ protected:
 	double getDensity(const int i, const int j, const int k, DirectionEnums d);
     
 	void computeW();
-	CellType getCellType(const int i, const int j, const int k) const;
-	CellType getCellType(double w_x, double w_y,double w_z) const;
+	/*CellType getCellType(const int i, const int j, const int k) const;
+	CellType getCellType(double w_x, double w_y,double w_z) const;*/
 	//void
 public:
 	Fire3D(FirePresets *preset);
@@ -81,14 +85,15 @@ public:
     
     void enforceBorderCondition(); //NO PANIC! JUST FOR TESTING.
     
-	static CellType getCellType(double phi);
+	//static CellType getCellType(double phi);
 private:
     Particles particles;
     FirePresets *preset;
     LevelSet phi;
     
 	Temperature *T;
-    
+	SmokeDensity smoke;
+
 	//Pressure field
 	GridField<double> *p;
 	GridField<double> *rhs;
@@ -120,6 +125,8 @@ private:
     
 	//Vorticity confinement forces
 	GridField<Vector3> *vorticityForces;
+
+	BlackBodyRadiation blackBodyRender;
 };
 
 #endif //FIRE_H

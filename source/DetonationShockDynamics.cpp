@@ -15,10 +15,10 @@
 #endif
 
 DetonationShockDynamics::DetonationShockDynamics(){
-	flameFrontVelocity = new GridField<double>(FirePresets::GRID_DIM_X, FirePresets::GRID_DIM_Y, FirePresets::GRID_DIM_Z, new ConstantValueExtrapolation<double>());
-	dDeriv = new GridField<double>(FirePresets::GRID_DIM_X, FirePresets::GRID_DIM_Y, FirePresets::GRID_DIM_Z,new ConstantValueExtrapolation<double>());
-	curvature = new GridField<double>(FirePresets::GRID_DIM_X, FirePresets::GRID_DIM_Y, FirePresets::GRID_DIM_Z,new ConstantValueExtrapolation<double>());
-	nextPhi = new GridField<double>(FirePresets::GRID_DIM_X, FirePresets::GRID_DIM_Y, FirePresets::GRID_DIM_Z,new ConstantValueExtrapolation<double>());
+	flameFrontVelocity = new GridField<double>(FirePresets::GRID_DIM_X, FirePresets::GRID_DIM_Y, FirePresets::GRID_DIM_Z, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<double>());
+	dDeriv = new GridField<double>(FirePresets::GRID_DIM_X, FirePresets::GRID_DIM_Y, FirePresets::GRID_DIM_Z, FirePresets::GRID_SIZE,new ConstantValueExtrapolation<double>());
+	curvature = new GridField<double>(FirePresets::GRID_DIM_X, FirePresets::GRID_DIM_Y, FirePresets::GRID_DIM_Z, FirePresets::GRID_SIZE,new ConstantValueExtrapolation<double>());
+	nextPhi = new GridField<double>(FirePresets::GRID_DIM_X, FirePresets::GRID_DIM_Y, FirePresets::GRID_DIM_Z, FirePresets::GRID_SIZE,new ConstantValueExtrapolation<double>());
 	for(int i = 0; i < FirePresets::GRID_DIM_X; i++){
 		for(int j = 0; j < FirePresets::GRID_DIM_Y; j++){
 			for(int k = 0; k < FirePresets::GRID_DIM_Z; k++){

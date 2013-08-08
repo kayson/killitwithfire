@@ -209,12 +209,12 @@ public:
         field->indexToWorld(i,j,k,x,y,z);
         
 		Vector3 sPos = Vector3(x,y,z);
-		//CellType sType = Fire::getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
+		//CellType sType = LevelSet::getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
 		CellType sType = phi.getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
         Vector3 sVel = g.velocityAtWorld(sPos);
 
         Vector3 ePos = sPos-sVel*dt;
-		//CellType eType = Fire::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
+		//CellType eType = LevelSet::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
 		CellType eType = phi.getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
 		Vector3 eVel = g.velocityAtWorld(ePos);
 
@@ -283,8 +283,8 @@ public:
         Vector3 sVel = g.velocityAtWorld(sPos);
         Vector3 ePos = oPos-sVel*0.5*dt; //end pos
 
-		CellType sType = Fire::getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
-		CellType eType = Fire::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
+		CellType sType = LevelSet::getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
+		CellType eType = LevelSet::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
 		
 		if(sType == eType)
 		{
@@ -292,8 +292,8 @@ public:
 			sVel = g.velocityAtWorld(sPos);
 			ePos = oPos-sVel*dt;
 
-			sType = Fire::getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
-			eType = Fire::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
+			sType = LevelSet::getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
+			eType = LevelSet::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
 			
 			if(sType == eType)
 				return field->valueAtWorld(ePos.x, ePos.y, ePos.z);
@@ -316,8 +316,8 @@ public:
 			sPos = ePos;
 			ePos = oPos-sVel*dt;
 
-			sType = Fire::getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
-			eType = Fire::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
+			sType = LevelSet::getCellType(phi.grid->valueAtWorld(sPos.x, sPos.y, sPos.z));
+			eType = LevelSet::getCellType(phi.grid->valueAtWorld(ePos.x, ePos.y, ePos.z));
 
 			if(sType == eType)
 				return field->valueAtWorld(ePos.x, ePos.y, ePos.z);

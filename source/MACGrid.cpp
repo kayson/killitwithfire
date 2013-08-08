@@ -145,13 +145,13 @@ void MACGrid::initialize(int xdim,int ydim,int zdim, double size){
     //Initiera variabler
     _buffer = NULL;
     
-    _u = new GridField<double>(xdim+1,ydim,zdim, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
-    _v = new GridField<double>(xdim,ydim+1,zdim, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
-    _w = new GridField<double>(xdim,ydim,zdim+1, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
+    _u = new GridField<double>(xdim+1,ydim,zdim, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
+    _v = new GridField<double>(xdim,ydim+1,zdim, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
+    _w = new GridField<double>(xdim,ydim,zdim+1, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>());  //TODO KORREKT EXTRAPOLERING?
     
-    _cache = new GridField<Vector3>(xdim,ydim,zdim, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
+    _cache = new GridField<Vector3>(xdim,ydim,zdim, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
     _cache->setTransformation(glm::dmat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
-    _hasCache = new GridField<bool>(xdim,ydim,zdim, new ConstantValueExtrapolation<bool>()); //TODO KORREKT EXTRAPOLERING?
+    _hasCache = new GridField<bool>(xdim,ydim,zdim, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<bool>()); //TODO KORREKT EXTRAPOLERING?
     _hasCache->setTransformation(glm::dmat4x4(size,0,0,0, 0,size,0,0, 0,0,size,0, 0,0,0,1));
     _hasCache->setAll(false);
 
@@ -455,9 +455,9 @@ void MACGrid::addForceGrid(GridField<Vector3> &f, double dt){
 		for(GridFieldIterator<double> iter = field->iterator(); !iter.done(); iter.next()) {
 			int i,j,k;
 			iter.index(i,j,k);
-			double x,y,z;
-			field->indexToWorld(i,j,k,x,y,z);
-
+			double x0, y0, z0;
+			field->indexToWorld(i,j,k,x0,y0,z0);
+			/*
 			if(index == 0){
 				double val = _u->valueAtIndex(i,j,k);
 				double forceval = ( f.valueAtIndex(i,j,k).x + f.valueAtIndex(i+1,j,k).x )/2;
@@ -471,6 +471,25 @@ void MACGrid::addForceGrid(GridField<Vector3> &f, double dt){
 			else if(index == 2){
                 double val = _w->valueAtIndex(i,j,k);
 				double forceval = ( f.valueAtIndex(i,j,k).z + f.valueAtIndex(i,j,k+1).z )/2;
+				_w->setValueAtIndex(val+forceval*dt,i,j,k);
+			}*/
+
+			//Denna tar hänsyn till att f har en annan storlek är field, tex om man vill ha högreupplöst temperaturgrid
+			//TODO WHY THIS NOT WORK!!!
+			Vector3 force = f.valueAtWorld(x0, y0, z0);
+			if(index == 0){
+				double val = _u->valueAtIndex(i,j,k);
+				double forceval = force.x;
+				_u->setValueAtIndex(val+forceval*dt,i,j,k);
+			}
+			else if(index == 1){
+				double val = _v->valueAtIndex(i,j,k);
+				double forceval = force.y;
+				_v->setValueAtIndex(val+forceval*dt,i,j,k);
+			}
+			else if(index == 2){
+                double val = _w->valueAtIndex(i,j,k);
+				double forceval = force.z;
 				_w->setValueAtIndex(val+forceval*dt,i,j,k);
 			}
 		}

@@ -17,15 +17,17 @@
 #include <GL/glfw.h>
 #endif
 
+#include <iostream>
+
 Temperature::Temperature(GridField<double> *phi)
 {
 
-	int XDIM = FirePresets::GRID_DIM_X,
-		YDIM = FirePresets::GRID_DIM_Y,
-		ZDIM = FirePresets::GRID_DIM_Z;
+	int XDIM = FirePresets::GRID_DIM_X*FirePresets::TEMPERATUR_MULT,
+		YDIM = FirePresets::GRID_DIM_Y*FirePresets::TEMPERATUR_MULT,
+		ZDIM = FirePresets::GRID_DIM_Z*FirePresets::TEMPERATUR_MULT;
 
-	grid = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
-    copy = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
+	grid = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<double>(FirePresets::T_AIR)); //TODO KORREKT EXTRAPOLERING?
+    copy = new GridField<double>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<double>(FirePresets::T_AIR)); //TODO KORREKT EXTRAPOLERING?
 
     beyonce = new GridField<Vector3>(XDIM, YDIM, ZDIM, FirePresets::GRID_SIZE, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
 
@@ -37,7 +39,9 @@ Temperature::Temperature(GridField<double> *phi)
 	for(int i = 0; i < XDIM; i++){
 		for(int j = 0; j < YDIM; j++){
 			for(int k = 0; k < ZDIM; k++){
-				InitCell(i,j,k, Fire::getCellType(phi->valueAtIndex(i, j, k)));
+				double x,y,z;
+                grid->indexToWorld(i, j, k, x, y, z);
+				InitCell(i,j,k, LevelSet::getCellType(phi->valueAtWorld(x, y, z)));
 			}
 		}
 	}
@@ -62,10 +66,7 @@ void Temperature::InitCell(int i, int j, int k, CellType type)
 	}
 }
 
-double Temperature::calculateTemperatureLoss(int i, int j, int k){
-
-    double T = grid->valueAtIndex(i, j, k);
-
+double Temperature::calculateTemperatureLoss(double T) const{
 	return pow((T-FirePresets::T_AIR)/
                    (FirePresets::T_MAX - FirePresets::T_AIR), 4.0) *
             FirePresets::TEMPERATURE_LOSS_CONSTANT;
@@ -76,7 +77,11 @@ void Temperature::AdvectTemperatureField(double dt, const MACGrid &m, const Leve
 	for(int i = 0; i < grid->xdim(); i++)
         for(int j = 0; j < grid->ydim(); j++)
             for(int k = 0; k < grid->zdim(); k++)
-                ResetCell(i, j, k, Fire::getCellType(ls.grid->valueAtIndex(i, j, k)));
+			{
+				double x,y,z;
+                grid->indexToWorld(i, j, k, x, y, z);
+				ResetCell(i, j, k, ls.getCellType(x, y, z));
+			}
     
 
     for(int i = 0; i < grid->xdim(); i++)
@@ -85,10 +90,16 @@ void Temperature::AdvectTemperatureField(double dt, const MACGrid &m, const Leve
                 double x,y,z;
                 grid->indexToWorld(i, j, k, x, y, z);
                 Vector3 vel = m.velocityAtWorld(Vector3(x,y,z));
-                double val = grid->valueAtWorld(x-dt*vel.x, y-dt*vel.y, z-dt*vel.z);
-                double c = calculateTemperatureLoss(i, j, k);
+                double val = grid->valueAtWorld(x-dt*vel.x, y-dt*vel.y, z-dt*vel.z);//TODO bättre integeringsmetod så man får med jump condition
+				val -= calculateTemperatureLoss(val)*FirePresets::dt;
 
-                copy->setValueAtIndex(val-c, i, j, k);
+				if(val < FirePresets::T_AIR)//TODO KONTROLLERA VARFÖR DETTA HÄNDER ISTÄLLET
+				{
+					//std::cout << "Temperature is below air temperature!" << std::endl;
+					val = FirePresets::T_AIR;
+				}
+
+                copy->setValueAtIndex(val, i, j, k);
     }
     
     /*
@@ -114,14 +125,12 @@ void Temperature::AdvectTemperatureField(double dt, const MACGrid &m, const Leve
 
 void Temperature::CalculateBuoyancyForceField(LevelSet &ls)
 {
-  int xdim = FirePresets::GRID_DIM_X,
-      ydim = FirePresets::GRID_DIM_Y,
-      zdim = FirePresets::GRID_DIM_Z;
-  
-  for(int i = 0; i < xdim; i++)
-      for(int j = 0; j < ydim; j++)
-          for(int k = 0; k < zdim; k++){
-			  if(!(ls.getCellType(i, j, k) == FUEL)) {
+	for(int i = 0; i < grid->xdim(); i++)
+      for(int j = 0; j < grid->ydim(); j++)
+          for(int k = 0; k < grid->zdim(); k++){
+			  double x,y,z;
+              grid->indexToWorld(i, j, k, x, y, z);
+			  if(!(ls.getCellType(x, y, z) == FUEL)) {
 				  Vector3 force = Vector3(0.0, 1.0, 0.0);
 				  double amplitude = (grid->valueAtIndex(i,j,k) -
 									  FirePresets::T_AIR)
@@ -162,9 +171,9 @@ GridField<double> Temperature::GetTemperatureGrid(){
 
 double Temperature::maxTemp()
 {
-	int xdim = FirePresets::GRID_DIM_X,
-		ydim = FirePresets::GRID_DIM_Y,
-		zdim = FirePresets::GRID_DIM_Z;
+	int xdim = FirePresets::GRID_DIM_X*FirePresets::TEMPERATUR_MULT,
+		ydim = FirePresets::GRID_DIM_Y*FirePresets::TEMPERATUR_MULT,
+		zdim = FirePresets::GRID_DIM_Z*FirePresets::TEMPERATUR_MULT;
   
 	double max = 0;
 

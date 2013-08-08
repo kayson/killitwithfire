@@ -12,6 +12,7 @@
 #include "Input.h"
 #include "JumpCondition.h"
 #include "BlackBodyRadiation.h"
+#include "SmokeDensity.h"
 
 #if defined __APPLE__
 #include "glfw.h"
@@ -29,13 +30,21 @@
 #include "ClosestValueExtrapolation.h"
 #include "ConstantValueExtrapolation.h"
 
-Fire3D::Fire3D(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE, new ClosestValueExtrapolation<Vector3>()),u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE), ghost(&phi, FirePresets::GRID_SIZE,true),projection(&ghost,&phi), u_fuel(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),u_burnt(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),solids(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE, new ClosestValueExtrapolation<bool>())
+Fire3D::Fire3D(FirePresets *pre):
+	phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE), 
+	w(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z,preset->GRID_SIZE, new ClosestValueExtrapolation<Vector3>()),
+	u(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE), 
+	ghost(&phi, FirePresets::GRID_SIZE,true),projection(&ghost,&phi), 
+	u_fuel(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),
+	u_burnt(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE),
+	solids(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, preset->GRID_SIZE, new ClosestValueExtrapolation<bool>()),
+	smoke(preset->GRID_DIM_X*pre->TEMPERATUR_MULT, preset->GRID_DIM_Y*pre->TEMPERATUR_MULT, preset->GRID_DIM_Z*pre->TEMPERATUR_MULT, preset->GRID_SIZE, phi)
 {
 	//Presets
 	preset = pre;
     
     phi.grid->setTransformation(u.getTrans());
-	phi.fillLevelSet(preset->implicitFunction);
+	//phi.fillLevelSet(preset->implicitFunction);
 	//2D grid
 	u = MACGrid::createRandom3D(preset->GRID_DIM_X, preset->GRID_DIM_Y,preset->GRID_DIM_Z, preset->GRID_SIZE);
     u_burnt = MACGrid::createRandom3D(preset->GRID_DIM_X, preset->GRID_DIM_Y,preset->GRID_DIM_Z, preset->GRID_SIZE);
@@ -46,8 +55,8 @@ Fire3D::Fire3D(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, pre
     setSolids();
 	//Advect
     
-	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim(), new ConstantValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
-	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim(), new ConstantValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
+	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim(), FirePresets::GRID_SIZE, new ConstantValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
+	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim(), FirePresets::GRID_SIZE, new ConstantValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
 	pVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
 	rhsVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
     
@@ -63,9 +72,9 @@ Fire3D::Fire3D(FirePresets *pre):phi(preset->GRID_DIM_X, preset->GRID_DIM_Y, pre
     
 	T = new Temperature(phi.grid);
     
-	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
+	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
     
-    
+	blackBodyRender = BlackBodyRadiation(600, 600, *T->grid);
     
     //Init marker-particles
     for (GridFieldIterator<bool> iter = solids.iterator(); !iter.done(); iter.next()) {
@@ -138,7 +147,7 @@ void Fire3D::computeGhostValues(){
             burnt->indexToWorld(i, j, k, x, y, z);
             
 			//Beräkningar enl. ekv (13) Fedkiw 2002
-            CellType cellType = getCellType(phi.grid->valueAtWorld(x, y, z));
+            CellType cellType = LevelSet::getCellType(phi.grid->valueAtWorld(x, y, z));
             if (cellType == FUEL) {
                 
 				Vector3 centerVel = u_fuel.velocityAtWorld(Vector3(x,y,z));
@@ -185,7 +194,7 @@ double Fire3D::computeDT(double currentTime){
 	double smallStep;
     
 	//Bridson s. 35
-	double dx = preset->dx;
+	double dx = u_fuel.dx(); //TODO KORREKT DX?
 	double alpha = preset->CFL_NUMBER;
 	double c = w.getMax().norm();
 	if(c != 0)
@@ -270,6 +279,7 @@ double Fire3D::getDensity(const int i, const int j, const int k, DirectionEnums 
 		return preset->rhob;
 }
 
+/*
 CellType Fire3D::getCellType(const int i, const int j, const int k) const
 {
 	if(solids.valueAtIndex(i, j, k)) //Check if is solid
@@ -293,14 +303,14 @@ CellType Fire3D::getCellType(double phi){
 		return FUEL;
 	else
 		return BURNT;
-}
+}*/
 
 void Fire3D::addFuelToLevelSet(int x0, int y0, int z0, double radius){
-	for(int x = 0; x < preset->GRID_DIM_X; ++x)
+	for(int x = 0; x < phi.grid->xdim(); ++x)
 	{
-		for(int y = 0; y < preset->GRID_DIM_Y; ++y)
+		for(int y = 0; y < phi.grid->ydim(); ++y)
 		{
-			for(int z = 0; z < preset->GRID_DIM_Z; ++z)
+			for(int z = 0; z < phi.grid->zdim(); ++z)
 			{
 				double ndist = radius - sqrt(pow(x0-x, 2.0) + pow(y0-y, 2.0) + pow(z0 - z, 2.0));
 				double odist = phi.grid->valueAtIndex(x, y, z);
@@ -345,13 +355,14 @@ void Fire3D::runSimulation(){
 	phi.reinitialize();
     phi.updateNormals();
     
-	// TODO KONTROLLERA ATT DENNA FUNKAR I 3D!!!
 	/*
 	double currentVolume = phi.getVolume();
 	const double desiredVolume = 0.75*3.14*0.001;
     
 	if(currentVolume < desiredVolume)
 		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, preset->GRID_DIM_Z/2, 0.8/preset->dx);*/
+
+	addFuelToLevelSet(phi.grid->xdim()/2, 1.5/phi.grid->dx(), phi.grid->zdim()/2, 0.6/phi.grid->dx());
     
 #if 0
 	static int counter = 0;
@@ -384,13 +395,13 @@ void Fire3D::runSimulation(){
     enforceBorderCondition();
     
     //Vorticity
-	Vorticity::addVorticity(u_burnt, *vorticityForces, preset->VORTICITY_EPSILON_BURNT, preset->dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	Vorticity::addVorticity(u_burnt, *vorticityForces, preset->VORTICITY_EPSILON_BURNT, u_burnt.dx(), phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
     u_burnt.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
-	Vorticity::addVorticity(u_fuel, *vorticityForces,  preset->VORTICITY_EPSILON_FUEL, preset->dx, phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
+	Vorticity::addVorticity(u_fuel, *vorticityForces,  preset->VORTICITY_EPSILON_FUEL, u_fuel.dx(), phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim());
     u_fuel.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
     computeGhostValues();
     
-	advectTemperature(preset->dt);
+	advectTemperature(preset->dt); //TODO bör inte temperaturena advekteras efter projektionen?
 	
     u_burnt.addForceGrid(*T->beyonce, preset->dt);
     u_fuel.addForceGrid(*T->beyonce, preset->dt);
@@ -406,12 +417,12 @@ void Fire3D::runSimulation(){
         std::cout << e.what() << std::endl;
     }
     
-    
     computeGhostValues();
-    
     enforceBorderCondition();
-    
+
     advectLevelSet(preset->dt);
+
+	//smoke.advectDensityField(preset->dt, u_burnt, phi); //TODO renderas inte så ingen ide att simulera den heller atm, funkar gör den nog iaf
 }
 
 
@@ -498,7 +509,7 @@ void Fire3D::drawMAC(MACGrid &grid,CellType cellType, double r,double g,double b
 	for (GridMappingIterator iter = grid.iterator(); !iter.done(); iter.next()) {
 		int i,j,k;
 		iter.index(i, j, k);
-        if (getCellType(i, j, k) == cellType  && !solids.valueAtIndex(i, j, k)) {
+        if (phi.getCellType(i, j, k) == cellType  && !solids.valueAtIndex(i, j, k)) {
             double x,y,z;
             grid.indexToWorld(i, j, k, x, y, z);
             Vector3 vel = grid.velocityAtWorld(Vector3(x,y,z))*0.1;
@@ -855,7 +866,8 @@ void Fire3D::computeW(){
         w.indexToWorld(i, j, k, x, y, z);
         Vector3 v;
         //if (getCellType(i, j, k) == FUEL) {
-        v = u_fuel.velocityAtWorld(Vector3(x,y,z));
+		//v = u_fuel.velocityAtWorld(Vector3(x,y,z)); Finns en liten risk att detta är korrekta def, men jag tror inte det //Axel
+        v = u_fuel.velocityAtWorld(Vector3(x,y,z)) + phi.getNormal(i, j, k)*FirePresets::S;
         /*}else if (getCellType(i, j, k) == BURNT){
          v = u_burnt.velocityAtWorld(Vector3(x,y,z));
          }*/
@@ -867,8 +879,7 @@ void Fire3D::computeW(){
 void Fire3D::draw(){
 
 	glLoadIdentity();
-	BlackBodyRadiation::draw(*(T->grid), phi);
-
+	blackBodyRender.draw(*(T->grid), phi, smoke);
     //phi.draw();
     //T->draw();
     /*static double angle = 5*4.2;

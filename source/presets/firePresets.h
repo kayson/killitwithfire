@@ -19,7 +19,7 @@ public:
 
 
     //Konstanter
-    static const double dx;
+    //static const double dx;
     static const double dt;
 	static const double CFL_NUMBER;
     
@@ -37,10 +37,18 @@ public:
 	static const double TEMPERATURE_BUOYANCY_ALPHA;
 	static const double TEMPERATURE_LOSS_CONSTANT;
 
+	static const double TEMPERATUR_MULT; // 1 means that the temperature is the same as the rest, 2 means twice the resolution and so on.
+
 	static const double S;
 
 	static const double rhof; // Fuel density (kg/m^3)
 	static const double rhob; // Hot gaseous products density (kg/m^3)
+
+	static const double CHROMA; //Chromatic adaption, högt värde minskar intensiteten
+	static const int SAMPLE_STEP; //Antal man hoppar över (1 är minsta, dvs man använder alla sampel)
+	static const double SAMPLE_DL; //våglängds dx
+	static const int TOTAL_SAMPLES;
+	static const bool QUALITY_ROOM;
 
     //Rutiner
 	AdvectLevelSet *advection;

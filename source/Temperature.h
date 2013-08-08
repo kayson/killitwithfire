@@ -13,7 +13,7 @@ class LevelSet;
 class Temperature{
 
 public:
-	Temperature(){};
+	
 	Temperature(GridField<double> *phi);
 	~Temperature(){};
 
@@ -30,8 +30,9 @@ public:
 	GridField<double> *grid;
     GridField<double> *copy;
 private:
+	Temperature(){};
 
-    double calculateTemperatureLoss(int i, int j, int k);
+    double calculateTemperatureLoss(double T) const;
 	void InitCell(int i, int j, int k, CellType type);
     void ResetCell(int i, int j, int k, CellType type);
 	
