@@ -1,0 +1,13 @@
+The ghost fluid method requires extra caution when velocities at arbitrary points are evaluated. If the point is close to the interface chances are at least one velocity value is on the other side of the interface when interpolating. The balance equations in section (X.X), are used to enforce mass conservation. In practice, a second velocity field \begin{math}\vec{u}^{ G}\end{math} ("ghost values") is used in parallel to the original velocity field \begin{math}\vec{u}\end{math}. The ghost values are found using the adjusted velocity values described by following equation:
+\begin{align}
+\Delta V  & = (\frac{\rho_{fuel}}{\rho_{burnt}} - 1)S \\
+\end{align}
+Where $\rho $ is the density of the fluid, the difference in density between burnt and fuel is what causes the reaction at the flame front. $S$ is the speed in which the fuel is burning, a typical value is about 0.5 m/s. In general $ \hat n$ is the normal pointing from the fluid region to the burnt region, in this case it's the normal of the level-set $ \phi $.
+\begin{equation}
+    \vec{u}^{G}(\vec{x})= 
+\begin{cases}
+    \vec{u}(\vec{x})-\Delta V \hat{n},& \text{if } \phi (\vec{x}) \geq 0\\
+    \vec{u}(\vec{x})+\Delta V \hat{n},                    & \text{otherwise}
+\end{cases}
+\end{equation}
+In practice this can be done once at the beginning of the simulation by storing the ghost values in second grid or on the fly during simulation to save space. No matter what implementation is used it boils down to a simple check of the level set sign whether the point being used for interpolation is in the same kind of medium (burnt or fuel) and picking the value from same grid if the medium is the same, or choosing the ghost value otherwise. 
