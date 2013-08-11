@@ -44,7 +44,9 @@ Fire3D::Fire3D(FirePresets *pre):
 	preset = pre;
     
     phi.grid->setTransformation(u.getTrans());
-	//phi.fillLevelSet(preset->implicitFunction);
+	//phi.fillLevelSet(preset->implicitFunction); 
+	addFuelToLevelSet(phi.grid->xdim()/2, 1.5/phi.grid->dx(), phi.grid->zdim()/2, 0.6/phi.grid->dx()); // if we want to start with a fluid
+
 	//2D grid
 	u = MACGrid::createRandom3D(preset->GRID_DIM_X, preset->GRID_DIM_Y,preset->GRID_DIM_Z, preset->GRID_SIZE);
     u_burnt = MACGrid::createRandom3D(preset->GRID_DIM_X, preset->GRID_DIM_Y,preset->GRID_DIM_Z, preset->GRID_SIZE);
@@ -74,7 +76,7 @@ Fire3D::Fire3D(FirePresets *pre):
     
 	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
     
-	blackBodyRender = BlackBodyRadiation(600, 600, *T->grid);
+	blackBodyRender = BlackBodyRadiation(1080, 1080, *T->grid);
     
     //Init marker-particles
     for (GridFieldIterator<bool> iter = solids.iterator(); !iter.done(); iter.next()) {
@@ -353,16 +355,10 @@ void Fire3D::addFuelToLevelSet(int x0, int y0, int z0, double radius){
 void Fire3D::runSimulation(){
     
 	phi.reinitialize();
-    phi.updateNormals();
-    
-	/*
-	double currentVolume = phi.getVolume();
-	const double desiredVolume = 0.75*3.14*0.001;
-    
-	if(currentVolume < desiredVolume)
-		addFuelToLevelSet(preset->GRID_DIM_X/2, 6, preset->GRID_DIM_Z/2, 0.8/preset->dx);*/
 
 	addFuelToLevelSet(phi.grid->xdim()/2, 1.5/phi.grid->dx(), phi.grid->zdim()/2, 0.6/phi.grid->dx());
+
+    phi.updateNormals();
     
 #if 0
 	static int counter = 0;
@@ -449,24 +445,6 @@ void Fire3D::enforceBorderCondition(){
             u_burnt.setValueAtFace(0, i, j, k, BACKWARD);
         }
     }
-    
-	//Hastighetsfältet verkar annars åka neråt mot marken med en jäkla kraft som tar ut elden
-	int y = preset->GRID_DIM_Y-1;
-	for(int x = 0; x < preset->GRID_DIM_X; ++x)
-	{
-		for(int z = 0; z < preset->GRID_DIM_Z; ++z)
-		{
-			if(u_fuel.valueAtFace(x, y, z, UP) < 0.0)
-				u_fuel.setValueAtFace(0.0, x,  y, z, UP);
-			if(u_fuel.valueAtFace(x, y, z, DOWN) < 0.0)
-				u_fuel.setValueAtFace(0.0, x, y, z, DOWN);
-            
-			if(u_burnt.valueAtFace(x, y, z, UP) < 0.0)
-				u_burnt.setValueAtFace(0.0, x, y, z, UP);
-			if(u_burnt.valueAtFace(x, y, z, DOWN) < 0.0)
-				u_burnt.setValueAtFace(0.0, x, y, z, DOWN);
-		}
-	}
 }
 
 void Fire3D::drawVorticities(){
