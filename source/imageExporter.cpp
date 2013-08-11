@@ -1,13 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <cstdlib>
 #include "imageExporter.h"
 #ifdef __APPLE__
 #include "glfw.h"
 #elif defined _WIN32 || defined _WIN64
 #include <GL/glfw.h> // Takes care of everything GL-related
 #include <GL/freeglut.h> // Takes care of everything GL-related
+#else
+#include <GL/glfw.h>
+#include <GL/freeglut.h>
+
+#include <sstream>
+#include <string.h>
+#include <cstring>
 #endif
+#include <string>
 #ifdef FREEIMAGE
 int BitsPerPixel = 24;
 
@@ -47,9 +56,11 @@ void ImageExporter::saveImage(char filename[], int width, int height)
 bool ImageExporter::saveSequence(int &n, float dt, int range, int width, int height)
 {
     if(ImageExporter::timeTrack > 1.0 / ImageExporter::fps) {
-        char name[10];
-        itoa(n, name, 10);
-        saveImage(name, width, height);
+		std::stringstream strs;
+		strs << n;
+		std::string temp_str = strs.str();
+		saveImage((char*) temp_str.c_str(),
+				  width, height);
         n++;
         ImageExporter::timeTrack = 0.0f;
     }
@@ -61,9 +72,13 @@ bool ImageExporter::saveSequence(int &n, float dt, int range, int width, int hei
 
 void ImageExporter::saveSequence(int &n, int width, int height)
 {
-	char name[10];
-    itoa(n, name, 10);
-    saveImage(name, width, height);
+	std::stringstream strs;
+	strs << n;
+	std::string temp_str = strs.str();
+
+	saveImage((char*) temp_str.c_str(),
+			  width, height);
+	std::cout << "saved "  << temp_str << std::endl;
     n++;
 }
 

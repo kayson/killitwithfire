@@ -189,6 +189,12 @@ link_directories(
   ${CMAKE_SOURCE_DIR}/../externals/FreeImage
   ) 
 
+find_package(OpenMP)
+if (OPENMP_FOUND)
+	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
+
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/export)
 
 add_executable(killitwithfire ${killitwithfire_ALL_HEADERS} ${killitwithfire_ALL_SRCS})
@@ -198,5 +204,5 @@ if(WIN32)
 endif(WIN32)
 
 if(UNIX)
-  target_link_libraries(killitwithfire GL glut glfw GLU FreeImage)
+  target_link_libraries(killitwithfire GL glut glfw GLU freeimage)
 endif(UNIX)

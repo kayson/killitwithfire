@@ -21,7 +21,6 @@
 #include "Water/Water3D.h"
 
 #include "imageExporter.h"
-
 #include "integrateEuler.h"
 
 #include <omp.h>

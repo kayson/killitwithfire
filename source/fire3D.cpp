@@ -44,7 +44,7 @@ Fire3D::Fire3D(FirePresets *pre):
 	preset = pre;
     
     phi.grid->setTransformation(u.getTrans());
-	//phi.fillLevelSet(preset->implicitFunction);
+	phi.fillLevelSet(preset->implicitFunction);
 	//2D grid
 	u = MACGrid::createRandom3D(preset->GRID_DIM_X, preset->GRID_DIM_Y,preset->GRID_DIM_Z, preset->GRID_SIZE);
     u_burnt = MACGrid::createRandom3D(preset->GRID_DIM_X, preset->GRID_DIM_Y,preset->GRID_DIM_Z, preset->GRID_SIZE);
@@ -78,13 +78,7 @@ Fire3D::Fire3D(FirePresets *pre):
     
     //Init marker-particles
     for (GridFieldIterator<bool> iter = solids.iterator(); !iter.done(); iter.next()) {
-        /*=======
-         GridField<int> *cellTypes = new GridField<int>(u);
-         u.setTransformation(u.getTrans());
-         cellTypes->setAll(FUEL);
-         for (GridFieldIterator<int> it = celltype.iterator(); !it.done(); it.next()) {
-         >>>>>>> d8aef0f94a6ad6f794898cd5aab402d8ae20c69a*/
-        int i,j,k;
+		int i,j,k;
         iter.index(i, j, k);
         double l_x,l_y,l_z;
         solids.indexToLocal(i, j, k, l_x, l_y, l_z);

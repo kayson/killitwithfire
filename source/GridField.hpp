@@ -32,8 +32,12 @@
 #include "ConstantValueExtrapolation.h"
 
 template<class T>
-GridField<T>::GridField(const GridMapping &m, Extrapolation<T> *extrapolation):GridMapping(m),_extrapolation(nullptr),_interpolation(nullptr),_extrapolate(true){
-    
+GridField<T>::GridField(const GridMapping &m, Extrapolation<T> *extrapolation):
+	GridMapping(m),
+	_extrapolation(nullptr),
+	_interpolation(nullptr)
+{
+	_extrapolate = true;
     //Allokera data-array
     _data = new T[cellCount()];
     for (int i = 0; i < cellCount(); i++) _data[i] = T(0);
@@ -45,8 +49,11 @@ GridField<T>::GridField(const GridMapping &m, Extrapolation<T> *extrapolation):G
 
 
 template<class T>
-GridField<T>::GridField():GridField(10,10,10, new ConstantValueExtrapolation<T>()),_extrapolate(true){ //TODO KORREKT EXTRAPOLERING?
-    
+GridField<T>::GridField():
+	GridField(10,10,10,
+			  new ConstantValueExtrapolation<T>())
+{ //TODO KORREKT EXTRAPOLERING?
+	_extrapolate = true;
 }
 
 /*

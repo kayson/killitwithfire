@@ -43,14 +43,11 @@ void Projection3D::fillA(){
     for (GridFieldIterator<double> it = _phi->grid->iterator(); !it.done(); it.next()) {
 
         int i,j,k;
-<<<<<<< HEAD
-        it.index(i, j, k);	        
-            CellType centerCell = Fire::getCellType(_phi->grid->valueAtIndex(it.index()));
-=======
+
         it.index(i, j, k);
                     
             CellType centerCell = LevelSet::getCellType(_phi->grid->valueAtIndex(it.index()));
->>>>>>> 2a88315ae07d8f49783faa6cbb95720c0817039b
+
             
             if (centerCell == _cellType && !isSolid(i, j, k)) {
                 

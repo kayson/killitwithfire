@@ -1,0 +1,11 @@
+The temperature has a great inpact to the way that fire behaves.
+It is modeled as a temperature field, describing the current temperature in all parts of the grid.
+During the chemical process of ignition, the gaseous fluid is heated until it reaches a high enough temperature to ignite.
+After ignition, it continues to heat up until it reaches $T_{max}$ and after that it starts to decrease. 
+The decrease is modeled as equation (\ref{eq:t_fallof})
+\begin{equation}
+\label{eq:t_fallof}
+T_t = -(\vec{u} * \nabla) T - c_T (\frac{T - T_{air}}{T_{max}-T_{air}})^4
+\end{equation}
+and is solved using the semi-Lagrangian stable fluids method. 
+The forth power term is used to control the rate of cooling where $c_t$ is a possitive constant.
