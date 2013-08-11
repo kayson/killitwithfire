@@ -23,7 +23,7 @@ To ensure stability in Eq \ref{eq:levelset_advection} [Källa levelset], the fini
 
 As described in X (angående signed distance, kanske inte finns?), $\vec{n}$ is not assured to be a unit vector since it is a numerical approximation of a signed distance function, $\vec{n}$ is therefore normalized before usage. $\vec{n}$ could even be evaluated as a null vector, in these cases a constant unit vector $(0, 1, 0)$ which is pointing upwards, is used.
 
-\subsection{Level set extrapolation}
+\subsection{Extrapolation}
 
 When accessing values outside the grid, extrapolation is needed to find out the value of the signed distance function, e.g. when calculating the finite difference. Some easy ways to do this is by using a constant value or by finding the closest real value to it. More sophisticated methods is to make the value for-fill the properties of a signed distance function, which is more described in [Bridson]. The method that is used here is a more simple way to mimic a signed distance function. 
 
