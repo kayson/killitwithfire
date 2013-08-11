@@ -1,0 +1,21 @@
+The incompressible Navier-Stokes equations in equation (\ref{eq:navierstokes}) offers a way to describe the motion of fluids. 
+This equation is the base of most simulations of fluids like water, smoke and fire. 
+The equation is made out of a set of partial different equations that describes how the fluid should be behaving trough out the simulation.
+\begin{equation}
+  \label{eq:navierstokes}
+  \begin{split} 
+    \frac{\partial \vec{u}}{\partial t} + \vec{u} \cdot \nabla \vec{u} + \frac{1}{\rho} \nabla p &= \vec{g} + \nu \nabla \cdot \nabla \vec{u},\\ 
+    \nabla\cdot \vec{u} &= 0
+  \end{split}
+\end{equation}
+In this equation, $\vec{u}$ represents the velocity field of the fluid. 
+$\rho$ is the density of the fluid. 
+$p$ stands for the pressure and is the force per unit area that the fluid is affecting its surroundings with. 
+The letter $g$ represents external or body forces that acts on the whole fluid. 
+This term handles things like gravity and buoyancy. 
+The letter $\rho$ represents the fluids viscosity. 
+This term describes how much the fluid resists deforming while it is moving. 
+Things like honey has a high viscosity, while fluids like water has a really low viscosity. 
+For fluids with low viscosity, this term is usually not modeled because it has such small impact to the simulation.
+\\
+\\

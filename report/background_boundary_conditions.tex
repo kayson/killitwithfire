@@ -1,0 +1,15 @@
+When solving the projection step of the Navier-Stokes equation, there are two different types of boundary conditions that need to be enforced in order for the fluid to interact with e.g walls of other solid objects. These conditions can be seen as constraints that rule out unwanted solutions for the partial PDE of the projection step. The first type of boundary condition is the \emph{Dirichlet boundary condition}. It simply states that any partial velocity vector component that points into a grid cell marked as solid is set to have a velocity of zero for that component.
+
+\begin{equation}
+\label{eq:dirichlet}
+V \cdot n = 0
+\end{equation}
+
+In equation (\ref{eq:dirichlet}) \emph{V} is the velocity vector, and \emph{n} is the boundary surface normal. This boundary condition is enforced for the velocity field before and after the projection step. This results in that no velocity vectors will point into grid cells marked as solids.
+
+The second boundary condition is the \emph{Neumann boundary condition} (\ref{eq:neumann}) and it ensures that there is no change of flow between fluid cells and cells marked as solid. The condition is enforced when building the linear equation system during the projection step. The connection between a fluid cell and a neighbouring solid cell is removed by entering a zero-value in the correct location in the diagonal matrix, thus ensuring that no exchange of fluid or change of flow will occur between the cells.
+
+\begin{equation}
+\label{eq:neumann}
+\frac{\partial V}{\partial n} = 0
+\end{equation}

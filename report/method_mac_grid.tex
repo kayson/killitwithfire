@@ -1,0 +1,20 @@
+The grid is stored as a 1D array of size \begin{math}N\end{math} where \begin{math}N_x*N_y*N_z\end{math} is the number of cells in dimension \begin{math}x\end{math}, \begin{math}y\end{math} and \begin{math}z\end{math}. To access a grid index \begin{math}(i,j,k)\end{math} a transformation from 3D to a 1D array index is made using the following formula:
+ \begin{equation} 
+ f_{1D}(i,j,k) = i + jN_x + kN_xN_y 
+ \end{equation}
+To avoid the half indices introduced in fig. \ref{fig:mac-grid}, the following convention is used:  
+\begin{align*}
+ u_{i-\frac{1}{2},j,k} & =  u[f_{1D}(i,j,k)] 			\\
+ u_{i+\frac{1}{2},j,k} & =  u[f_{1D}(i+1,j,k)] 			\\
+ v_{i,j-\frac{1}{2},k} & =  v[f_{1D}(i,j,k)] 			\\
+ v_{i,j+\frac{1}{2},k} & =  v[f_{1D}(i,j+1,k)] 			\\
+ w_{i,j,k-\frac{1}{2}} & =  w[f_{1D}(i,j,k)] 			\\
+ w_{i,j,k+\frac{1}{2}} & =  w[f_{1D}(i,j,k+1)] 		
+ \end{align*}
+
+Note that $u$,$v$ and $w$ have different dimensions, and possibly different lengths $N$, more specifically:
+ \begin{align*}
+N_u & = (N_x+1)*N_y*N_z			\\
+N_v & = N_x*(N_y+1)*N_z			\\
+N_w & = N_x*N_y*(N_z+1)				
+ \end{align*}

@@ -24,6 +24,7 @@
 
 #include "integrateEuler.h"
 
+#include <omp.h>
 
 #define FIRE 0
 #define WATER2D 1
@@ -78,6 +79,7 @@ int main(int argc, char *argv[])
 	water3d = new Water3D();
 #endif
 
+	omp_set_nested(0);
 	// Main loop
 	while(running)
 	{
@@ -191,7 +193,9 @@ void update()
 
 //renderar objekt
 void render(void){
+	glRotatef(100.0f,1.0,0,0);
 	camera.translateForCamera();
+	
     int x, y;
     glfwGetMousePos(&x, &y);
     GLint viewport[4]; //var to hold the viewport info

@@ -1,0 +1,19 @@
+Since we are using grids with finite spacing for our simulation, numerical dissipation will cause non-physical damping of some of the fine detail energy in the simulation such as vortices and small scale turbulence. We can add this missing energy back into our simulation by increasing the speed of existing vortices in the fluid. This method is called vorticity confinement and is implemented as in REF TILL RAPPORT HÄR. First we calculate the curl $\omega$ of the original vector field.
+\begin{equation}
+\label{eq:vorticity}
+\omega = \nabla \times \vec{V}
+\end{equation}
+We define normalized vorticity vectors $\vec{N}$ that will point from areas with low vorticity towards areas with high vorticity.
+\begin{equation}
+\label{eq:vort_loc_vec}
+\vec{N} = \frac{\nabla |\omega|}{|\nabla |\omega ||}
+\end{equation}
+
+The resulting vorticity confinement force $\vec{f}_{vort}$ to be added to the velocity fields can then be calculated using these vorticity location vectors.
+
+\begin{equation}
+\label{eq:vort_force}
+	\vec{f}_{vort} = \epsilon\Delta x(\vec{N}\times\omega))
+\end{equation}
+
+In equation (\ref{eq:vort_force}) $\epsilon$ is some arbitrary scalar to control the magnitude of the vorticity force being added. The dependency on $\Delta x$ ensures that as the grid resolution is refined and $\Delta x$ grows smaller the vorticity confinement force added decreases as well, resulting in the physically correct result being obtained. The resulting force $\vec{f}_{vort}$ is added to the velocity fields as an external force.

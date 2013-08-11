@@ -38,13 +38,19 @@ void Projection3D::resize(){
 void Projection3D::fillA(){
     assert(*_phi->grid == *_u);
     int row = 0;
-    
+
     //Iterera över all celler
     for (GridFieldIterator<double> it = _phi->grid->iterator(); !it.done(); it.next()) {
+
         int i,j,k;
+<<<<<<< HEAD
+        it.index(i, j, k);	        
+            CellType centerCell = Fire::getCellType(_phi->grid->valueAtIndex(it.index()));
+=======
         it.index(i, j, k);
                     
             CellType centerCell = LevelSet::getCellType(_phi->grid->valueAtIndex(it.index()));
+>>>>>>> 2a88315ae07d8f49783faa6cbb95720c0817039b
             
             if (centerCell == _cellType && !isSolid(i, j, k)) {
                 
@@ -141,7 +147,7 @@ void Projection3D::fillA(){
             row++;
         
     }
-    
+	std::cout << std::endl;   
 }
 
 
@@ -153,8 +159,10 @@ bool Projection3D::isSolid(int i,int j ,int k) const{
 void Projection3D::fillb(){
     assert(*_phi->grid == *_u);
     double mean = 0;
+
     //Fill b
     for (GridFieldIterator<double> it = _phi->grid->iterator(); !it.done(); it.next()) {
+				
         int i,j,k;
         it.index(i, j, k);
         int index = it.index();
@@ -175,6 +183,7 @@ void Projection3D::fillb(){
         }else{
             (*b)[index] = 0;
         }
+		
     }
     
     /*mean /= static_cast<double>( (*b).size() );
@@ -216,7 +225,7 @@ void Projection3D::applyPressure(){
 
 
 void Projection3D::project(MACGrid *u,const GridField<bool> *solids,CellType cellType,double dt){
-    assert(*u == *_u);
+	assert(*u == *_u);
     _u = u;
     _solids = solids;
     _cellType = cellType;
@@ -230,7 +239,7 @@ void Projection3D::project(MACGrid *u,const GridField<bool> *solids,CellType cel
     fillA(); //Fyll A-matrisen
     fillb(); //Fyll b-vektorn
 
-    //Border condition
+    //Border 
     for (GridFieldIterator<bool> it = solids->iterator(); !it.done(); it.next()) {
         if (it.value()) {
             int i,j,k;
@@ -266,13 +275,13 @@ void Projection3D::project(MACGrid *u,const GridField<bool> *solids,CellType cel
         }
     }
     
-    std::cout << "divergence before projection: " << sum << std::endl;
+    std::cout << "Divergence before: " << sum;
     
     double residual;
     int iterations;
     PCGSolver<double> solver;
     if(solver.solve(*A, *b, *x, residual, iterations)){
-        std::cout << "YAY!" << std::endl;
+        //std::cout << "YAY!" << std::endl;
     }else{
         std::cout << "FAIL! resudual:" << residual << std::endl;
     }
@@ -299,14 +308,14 @@ void Projection3D::project(MACGrid *u,const GridField<bool> *solids,CellType cel
     
     //Divergence
     fillb(); //Fyll b-vektorn
-    std::cout << "fillb:" << std::endl;
+    //std::cout << "fillb:" << std::endl;
     //print_vector(*b);
     sum = 0;
     for (int i = 0; i< b->size(); i++) {
         sum += b->at(i);
     }
     
-    std::cout << "divergence after projection: " << sum << std::endl;
+    std::cout << ", after: " << sum;
     
     
 }

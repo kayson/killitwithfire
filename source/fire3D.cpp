@@ -402,12 +402,11 @@ void Fire3D::runSimulation(){
     u_burnt.addForceGrid(*T->beyonce, preset->dt);
     u_fuel.addForceGrid(*T->beyonce, preset->dt);
     
+
     try{
-        
         projection.project(&u_burnt,&solids, BURNT, preset->dt);
         
         projection.project(&u_fuel,&solids, FUEL, preset->dt);
-        
         
     }
     catch(std::exception &e){
