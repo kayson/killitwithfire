@@ -1,11 +1,11 @@
-The blue core does not only move with the velocity field $\vec{u_f}$, it is also burning with the speed $S$ in the normal direction. This means that the level set which defines the blue core is advected by the velocity field $\vec{w} = \vec{u_f} + S \vec{n}$, where $\vec{n}$ is calculated using a central difference, Eq \ref{eq:central_diff}.
+The blue core does not only move with the velocity field $\vec{u_f}$, it is also burning with the speed $S$ in the normal direction. This means that the level set which defines the blue core is advected by the velocity field $\vec{w} = \vec{u_f} + S \vec{n}$, where $\vec{n}$ is calculated using a central difference, eq. (\ref{eq:central_diff}).
 
 \begin{equation}
 \label{eq:central_diff}
 \frac{\partial \phi}{\partial x} \approx \phi_x^\pm = \frac{\phi_{i+1,j,k} - \phi_{i-1,j,k}}{\Delta x }
 \end{equation}  
 
-To ensure stability in Eq \ref{eq:levelset_advection} [Källa levelset], the finite difference is calculated using a upwind scheme, Eq \ref{eq:upwind}. Eq \ref{eq:levelset_advection} must also satisfy the time step constraint Eq \ref{eq:time_constraint}. Inte helt nöjd med detta stycke... framför allt första meningen
+To ensure stability in eq. (\ref{eq:levelset_advection}) [Källa levelset], the finite difference is calculated using a upwind scheme, eq. (\ref{eq:upwind}). Eq. (\ref{eq:levelset_advection}) must also satisfy the time step constraint in eq. (\ref{eq:time_constraint}). Inte helt nöjd med detta stycke... framför allt första meningen
 
 \begin{equation}
 \label{eq:upwind}
@@ -25,9 +25,9 @@ As described in X (angående signed distance, kanske inte finns?), $\vec{n}$ is n
 
 \subsection{Extrapolation}
 
-When accessing values outside the grid, extrapolation is needed to find out the value of the signed distance function, e.g. when calculating the finite difference. Some easy ways to do this is by using a constant value or by finding the closest real value to it. More sophisticated methods is to make the value for-fill the properties of a signed distance function, which is more described in [Bridson]. The method that is used here is a more simple way to mimic a signed distance function. 
+When accessing values outside the grid, extrapolation is needed to find out the value of the signed distance function, e.g. when calculating the finite difference. Some easy ways to do this is by using a constant value or by finding the closest real value to it. More sophisticated methods is to make the value fulfil the properties of a signed distance function as described in [Bridson]. The method below is a more simple way to mimic a signed distance function. 
 
-Find the closest real position $p_r$ to the position $p_e$. The extrapolated value $\phi_e$ is then calculated using $\phi(\vec{p_r})$ subtracted with the distance between $p_r$ and $p_e$, Eq \ref{eq:levelset_extrapolation}. Which means that the value is further away from the interface. 
+Find the closest real position $p_r$ to the position $p_e$. The extrapolated value $\phi_e$ is then calculated using $\phi(\vec{p_r})$ subtracted with the distance between $p_r$ and $p_e$, eq. (\ref{eq:levelset_extrapolation}). This means that the value is further away from the interface. 
 
 \begin{equation}
 \label{eq:levelset_extrapolation}
