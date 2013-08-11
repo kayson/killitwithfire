@@ -1,4 +1,4 @@
-Since we are using grids with finite spacing for our simulation, numerical dissipation will cause non-physical damping of some of the fine detail energy in the simulation such as vortices and small scale turbulence. We can add this missing energy back into our simulation by increasing the speed of existing vortices in the fluid. This method is called vorticity confinement and is implemented as in REF TILL RAPPORT HÄR. First we calculate the curl $\omega$ of the original vector field.
+Since we are using grids with finite spacing for our simulation, numerical dissipation will cause non-physical damping of some of the fine detail energy in the simulation such as vortices and small scale turbulence. We can add this missing energy back into our simulation by increasing the speed of existing vortices in the fluid. This method is called vorticity confinement and is implemented as in \cite{Nguyen02}. First we calculate the curl $\omega$ of the original vector field.
 \begin{equation}
 \label{eq:vorticity}
 \omega = \nabla \times \vec{V}
