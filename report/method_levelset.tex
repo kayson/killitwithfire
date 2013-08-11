@@ -1,0 +1,33 @@
+The blue core does not only move with the velocity field $\vec{u_f}$, it is also burning with the speed $S$ in the normal direction. This means that the level set which defines the blue core is advected by the velocity field $\vec{w} = \vec{u_f} + S \vec{n}$, where $\vec{n}$ is calculated using a central difference, Eq \ref{eq:central_diff}.
+
+ \begin{equation}
+\label{eq:central_diff}
+\frac{\partial \phi}{\partial x} \approx \phi_x^\pm = \frac{\phi_{i+1,j,k} - \phi_{i-1,j,k}}{\Delta x }
+\end{equation}  
+
+To ensure stability in Eq \ref{eq:levelset_advection} [Källa levelset], the finite difference is calculated using a upwind scheme, Eq \ref{eq:time_constraint}. Eq \ref{eq:levelset_advection} must also satisfy the time step constraint Eq \ref{eq:time_constraint}. Inte helt nöjd med detta stycke... framför allt första meningen
+
+ \begin{equation}
+ \label{eq:upwind}
+\frac{\partial \phi}{\partial x} \approx \left\{\begin{matrix}
+ \phi_x^+ = \frac{\phi_{i+1,j,k} - \phi_{i,j,k}}{\Delta x } & ,\vec{w_x} < 0
+\\ 
+ \phi_x^- = \frac{\phi_{i+1,j,k} - \phi_{i-1,j,k}}{\Delta x } & ,\vec{w_x} > 0 
+\end{matrix}\right.
+\end{equation}  
+
+ \begin{equation}
+ \label{eq:time_constraint}
+\Delta t < min \left \{ \frac{\Delta x}{ \vec{w_x} }, \frac{\Delta y}{ \vec{w_y} }, \frac{\Delta z}{ \vec{w_z} } \right \}
+\end{equation} 
+
+As described in X (angående signed distance), $\vec{n}$ is not assured to be a unit vector since it is a numerical approximation of a signed distance function, $\vec{n}$ is therefore normalized before usage. $\vec{n}$ could even be evaluated as a Null vector, in these cases a constant unit vector $(0, 1, 0)$ which is pointing upwards, is used.
+
+\subsection{Level set extrapolation}
+
+When accessing values outside the grid, extrapolation is needed to find out the value of the signed distance function, e.g. when calculating the finite difference. Some easy ways to do this is by using a constant value or by finding the closest real value to it. More sofficated methods is make the value forfill the properties of a signed distance function, which is more described in [Bridson]. The method that is used here is a more simple way to mimic a signed distance function. 
+
+Find the position and value of the closest real signed distance value in the grid. (TODO kolla upp fel i koden på extrapoleringen dx() används endast.Bör också bero på normalens värde?. (vilekt kanske inte går då normalen inte är def)
+The extrapolated value is then calculated using the real value subtracted with the distance from the extrapoled position. Which means that the value is further away from the interface. 
+
+This solution would be true if the extrapolated value were in the direction of the -N from the real value. (Tror Axel iaf ^^)
