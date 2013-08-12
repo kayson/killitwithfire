@@ -1,5 +1,5 @@
 We are using a ray casting method for rendering our fire. The ray caster collects temperatures over the scene and transform them into a color for each pixel using black-body radiation.
-\section{Black-body radiation}
+\subsection{Black-body radiation}
 	To be able to convert a temperature sample in the grid to a color, we use the black-body radiation model. 
 
 
@@ -70,7 +70,7 @@ The LMS values are then converted back by inverting Equation 3. And finally the 
      \end{bmatrix}
 \end{equation}
 
-\section{Ray casting method}
+\subsection{Ray casting method}
 The radiative transport equation can be solved discreetly using ray-casting, by traversing a ray that goes from the eye and then through the volume. The temperature is then sampled several times along the ray. That gives us the discrete formulate in equation \ref{eq:5} \cite{Nguyen02} and because we neglect the scattering effect as mentioned earlier we can also neglect $ p(\vec{\omega},\vec{\omega}')$.
 
 \begin{equation}
