@@ -204,5 +204,5 @@ if(WIN32)
 endif(WIN32)
 
 if(UNIX)
-  target_link_libraries(killitwithfire GL glut glfw GLU freeimage)
+  target_link_libraries(killitwithfire GL glut glfw GLU freeimage tbb Half assimp openvdb)
 endif(UNIX)

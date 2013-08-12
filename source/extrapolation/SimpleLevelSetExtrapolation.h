@@ -43,7 +43,7 @@ public:
 		double y0 = j;
 		double z0 = k;
 
-		return g.valueAtIndex(i, j, k) - g.dx()*std::sqrt( std::pow(x1-x0, 2.0) + std::pow(y1-y0, 2.0) + std::pow(z1-z0, 2.0) );
+		return g.valueAtIndex(i, j, k) - std::sqrt( std::pow(g.dx(), 2.0)*std::pow(x1-x0, 2.0) + std::pow(g.dy(), 2.0)*std::pow(y1-y0, 2.0) + std::pow(g.dz(), 2.0)*std::pow(z1-z0, 2.0) );
 	}
 };
 

@@ -1,3 +1,8 @@
+#ifndef MESHTOVOLCONVERTER_H
+#define MESHTOVOLCONVERTER_H
+#ifdef __unix__
+#ifndef __APPLE__
+
 #include <openvdb/openvdb.h>
 #include <openvdb/tools/MeshToVolume.h>
 
@@ -5,7 +10,8 @@
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
-
+#endif
+#endif
 #include <vector>
 
 using namespace std;
@@ -24,7 +30,8 @@ class MeshToVolumeConverter
     
 	bool convert(const char *pFile, float voxelSize)
     {
-		initialize();
+#ifdef __unix__
+#ifndef __APPLE__
         vector<openvdb::math::Vec3s> points;
         vector<openvdb::math::Vec4ui> triangles;
         bool success;
@@ -39,15 +46,22 @@ class MeshToVolumeConverter
             return false;
         }
         return true;
+#endif
+#endif
     }
 
 	double fill(int x, int y, int z)
 	{
+#ifdef __unix__
+#ifndef __APPLE__
 		m_grid->getAccessor().getValue(openvdb::math::Coord(x, y, z));
+#endif
+#endif
 	}
 
   private:
-
+#ifdef __unix__
+#ifndef __APPLE__
 	openvdb::FloatGrid::Ptr m_grid;
 
 	void initialize()
@@ -146,6 +160,8 @@ class MeshToVolumeConverter
     {
         
     }
-    
-
+#endif
+#endif
 };
+#endif
+

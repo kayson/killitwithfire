@@ -76,6 +76,18 @@ void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
     }
     
 }
+void LevelSet::fillLevelSetFromConverter(MeshToVolumeConverter &converter)
+{
+	for(int i = 0; i < grid->xdim(); i++){
+		for(int j = 0; j < grid->ydim(); j++){
+			for(int k = 0; k < grid->zdim(); k++){
+                grid->setValueAtIndex( converter.fill(i,j,k),i,j,k);
+                //std::cout << phi.valueAtIndex(i, j, k);
+            }
+        }
+    }
+    
+}
 
 Vector3 LevelSet::getVelocity(MACGrid &g, int i, const int j, const int k){
     assert(false);
@@ -214,7 +226,14 @@ Vector3 LevelSet::getNormal(const int i, const int j, const int k) const
 
 Vector3 LevelSet::getNormal(const double w_x, const double w_y, const double w_z) const
 {
-	return normals->valueAtWorld(w_x, w_y, w_z);
+	Vector3 N = normals->valueAtWorld(w_x, w_y, w_z);
+	double l = N.norm();
+	if(l > 0.0)
+		N *= 1.0/l;
+	else
+		N = Vector3(0.0, 1.0, 0.0);
+
+	return N;
 }
 void LevelSet::drawNormals() const{
 
