@@ -48,6 +48,9 @@ class MeshToVolumeConverter
         return true;
 #endif
 #endif
+
+		return false;// TODO added this so it will compile on Windows
+
     }
 
 	double fill(int x, int y, int z)
@@ -57,6 +60,8 @@ class MeshToVolumeConverter
 		m_grid->getAccessor().getValue(openvdb::math::Coord(x, y, z));
 #endif
 #endif
+
+		return 0.0;// TODO added this so it will compile on Windows
 	}
 
   private:

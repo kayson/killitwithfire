@@ -11,12 +11,10 @@
 #else
 #include <GL/glfw.h>
 #include <GL/freeglut.h>
-
+#endif
 #include <sstream>
 #include <string.h>
 #include <cstring>
-#endif
-#include <string>
 #ifdef FREEIMAGE
 int BitsPerPixel = 24;
 
