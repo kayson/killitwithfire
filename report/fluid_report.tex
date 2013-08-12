@@ -1,5 +1,6 @@
 \documentclass[]{report}   % list options between brackets
-\usepackage{graphicx,url,placeins,algorithm,algorithmic,lipsum,amssymb,amsmath,subfigure}
+\usepackage{graphicx,url,placeins,algorithm,algorithmic,lipsum,amssymb,amsmath,subfigure,float}
+\usepackage[hidelinks]{hyperref}
 \graphicspath{{figures/}}
 
 \begin{document}
@@ -54,10 +55,10 @@
 \input{method_self_advect}
 \subsection{External forces}
 \input{method_external}
-\subsection{Projection}
-\input{method_projection}
 \subsection{Vorticity Confinement}
 \input{method_vorticity_confinement}
+\subsection{Projection}
+\input{method_projection}
 \section{Advecting level set}
 \input{method_levelset}
 

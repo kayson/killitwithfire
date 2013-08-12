@@ -1,4 +1,4 @@
-To be able to track the interface between the blue core and the hot gaseous products a Level set method is used. The Level set method represents the interface by an implicit function $\phi$ defined as Eq \ref{eq:levelsetmethod} in a 3D-space. 
+To be able to track the interface between the blue core and the hot gaseous products a Level set method is used. The Level set method represents the interface by an implicit function $\phi$ defined as equation \ref{eq:levelsetmethod} in a 3D-space. 
 
 \begin{subequations}
 \label{eq:levelsetmethod}
@@ -13,32 +13,32 @@ To be able to track the interface between the blue core and the hot gaseous prod
 \end{equation}
 \end{subequations}
 
-This representation is useful for tracking and calculating topology properties of a interface. The representation makes it easy to find out where in the fluid a sample point is taken since it is only a matter of testing the sign. Since $\phi$ is a implicit function, the normal can be calculated as in Eq \ref{eq:normal1}, and is pointing in an inwards direction. (TODO har jag rätt här?)
+This representation is useful for tracking and calculating topology properties of a interface. The representation makes it easy to find out where in the fluid a sample point is taken since it is only a matter of testing the sign. Since $\phi$ is a implicit function, the normal can be calculated as in equation \ref{eq:normal1}.
 
 \begin{equation}
 \label{eq:normal1}
  \vec{n} = \frac{ \nabla \phi }{ \left | \nabla \phi \right | }
 \end{equation}    
 
-Moving an interface along a vector field $\vec{V}$, the velocity field for instance, is a matter of solving the Hyperbolic PDE in equation (\ref{eq:levelset_advection}).
+Moving an interface along a vector field $\vec{V}$, the velocity field for instance, is a matter of solving the hyperbolic PDE in equation \ref{eq:levelset_advection}.
 
  \begin{equation}
 \label{eq:levelset_advection}
   \frac{\partial \phi}{\partial t} = -\vec{V} \cdot \nabla \phi
 \end{equation}  
 
-$\phi$ is also a signed distance function which means that the value of $\phi$ gives the distance to the closest point $\vec{p}$ of the interface, eq. (\ref{eq:signed_distance}). The direction of this point is also parallel with the normal, and since the length of the gradient is $1$ [Källa bridson], this point $\vec{p}$ can be calculated for a given point $\vec{x}$ by equation (\ref{eq:find_point}).
+$\phi$ is also a signed distance function which means that the value of $\phi$ gives the distance to the closest point $\vec{p}$ of the interface, eq. \ref{eq:signed_distance}. The direction of this point is also parallel with the surface normal, and since the length of the gradient is $1$ \cite{bridson}, this point $\vec{p}$ can be calculated for a given point $\vec{x}$ by equation \ref{eq:find_point}.
 
 \begin{subequations}
 \label{eq:signed_distance}
 \begin{equation}
-distance_L(\vec{x}) = \underset{\vec{p} \in L}{\texttt{min}} \left \| \vec{x} - \vec{p} \right \|
+distance_L(\vec{x}) = \underset{\vec{p} \in L}{min} \left \| \vec{x} - \vec{p} \right \|
 \end{equation}    
 \begin{equation}
-\phi(\vec{x}) = distance_L(\vec{x}) : \vec{x} is inside
+\phi(\vec{x}) = distance_L(\vec{x}) : \vec{x} \text{ is inside}
 \end{equation}
 \begin{equation}
-\phi(\vec{x}) = -distance_L(\vec{x}) : \vec{x} is outside
+\phi(\vec{x}) = -distance_L(\vec{x}) : \vec{x} \text{ is outside}
 \end{equation}
 \end{subequations}
 
@@ -50,6 +50,4 @@ distance_L(\vec{x}) = \underset{\vec{p} \in L}{\texttt{min}} \left \| \vec{x} - 
 \begin{equation}
 \label{eq:find_point}
  \vec{p} = \vec{x} - \vec{n} \cdot \nabla\phi(\vec{x}), \vec{p} \in L
-\end{equation} 
-
-The reason for having a signed distance function is to increase stability, [källa lvlset]. 
+\end{equation}  

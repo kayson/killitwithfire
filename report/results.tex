@@ -4,7 +4,7 @@
 \caption{Settings and performance for the figures}
 \begin{tabular}{lllllll}
 \hline
-Figure & $\vec{u_fuel}/\vec{u_burnt}$ grid & $T$ grid & $T_{ign}/T_{max}$ & $S$ & $\epsilon_{burnt}$ & Simulation/Rendering time (s) \\
+Figure & $\vec{u}_{fuel}/\vec{u}_{burnt}$ grid & $T$ grid & $T_{ign}/T_{max}$ & $S$ & $\epsilon_{burnt}$ & Simulation/Rendering time (s) \\
 \hline
 \ref{fig:fire1}      &	30x60x30	&	90x180x90	&	2200/3000	&	0.1	&		60	&	5/64	\\
 \ref{fig:fire2}      &	15x30x15	&	90x180x90	&	2200/3000	&	0.1	&		60	&	3/64	\\
@@ -222,6 +222,23 @@ Same as figure \ref{fig:fire5}, but without fuel injection.
 \label{fig:fire5}
 The black body only emits radiance for one wavelength one at the time.
 }
-\end{figure}     
+\end{figure} 
 
-Länk till video FIXAR AXEL IMORGON...
+\begin{figure}[h!]
+\centering
+\subfigure[frame 4]{\centering
+\includegraphics[width=.3 \linewidth]{figures/bluecore/4.png}}
+\subfigure[frame 8]{\centering
+\includegraphics[width=.3\linewidth]{figures/bluecore/8.png}}
+\subfigure[frame 20]{\centering
+\includegraphics[width=.3\linewidth]{figures/bluecore/20.png}}
+\caption
+{
+\label{fig:fire5}
+A burning blue core visualized as a surface.
+}
+\end{figure}       
+
+Link to a video which demonstrates all the results in the figures:
+\href{http://youtu.be/F40\_rowaLQg}{Video link}
+
