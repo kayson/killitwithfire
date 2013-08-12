@@ -1,5 +1,5 @@
 \label{sec:method_two_phase_flow}
-The ghost fluid method requires extra caution when velocities at arbitrary points are evaluated. If the point is close to the interface chances are at least one velocity value is on the other side of the interface when interpolating. The balance equations in section (X.X), are used to enforce mass conservation. In practice, a second velocity field \begin{math}\vec{u}^{ G}\end{math} ("ghost values") is used in parallel to the original velocity field \begin{math}\vec{u}\end{math}. The ghost values are found using the adjusted velocity values described by following equation
+The ghost fluid method requires extra caution when velocities at arbitrary points are evaluated. If the point is close to the interface chances are at least one velocity value is on the other side of the interface when interpolating. The balance equations in section (\ref{sec:hot_gaseous_products}), are used to enforce mass conservation. In practice, a second velocity field \begin{math}\vec{u}^{ G}\end{math} ("ghost values") is used in parallel to the original velocity field \begin{math}\vec{u}\end{math}. The ghost values are found using the adjusted velocity values described by following equation
 \begin{align}
 \Delta V  & = (\frac{\rho_{fuel}}{\rho_{burnt}} - 1)S \\
 \end{align}
