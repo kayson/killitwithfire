@@ -854,7 +854,7 @@ void BlackBodyRadiation::drawFireBlueCore(const GridField<double> &temperatureGr
 
 					Vector3 pos;
 					temperatureGrid.indexToWorld(x, y, z, pos.x, pos.y, pos.z);
-					if(phi.grid->worldIsValid(pos.x, pos.y, pos.z) && phi.getCellType(pos.x, pos.y, pos.z) == CellType::FUEL)
+					if(phi.grid->worldIsValid(pos.x, pos.y, pos.z) && phi.getCellType(pos.x, pos.y, pos.z) == FUEL)
 					{
 						// incorrect calculation of the surrounding light, since the blue core gets its energy from the heated gas. 
 						// but it looks ok though
@@ -1002,7 +1002,7 @@ void BlackBodyRadiation::drawFireBlueCore(const GridField<double> &temperatureGr
 							{
 								const double T = temperatureGrid.valueAtWorld(pos.x, pos.y, pos.z);
 
-								if(phi.grid->worldIsValid(pos.x, pos.y, pos.z) && phi.getCellType(pos.x, pos.y, pos.z) == CellType::FUEL)
+								if(phi.grid->worldIsValid(pos.x, pos.y, pos.z) && phi.getCellType(pos.x, pos.y, pos.z) == FUEL)
 								{
 									for(int i = 0; i < FirePresets::TOTAL_SAMPLES; i += 1)
 									{
