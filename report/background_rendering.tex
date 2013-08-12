@@ -28,9 +28,10 @@ This allows us to calculate the spectral radiance $L$ for a given wavelength $\l
 \end{equation}
 The scattering part, $ p(\vec{\omega},\vec{\omega}')$,  is neglected due to the high computation time and the fact that there are few scattering effects in flames. \\\\
 The achieved radiance is then mapped onto the XYZ-color space by using the CIE standard observer 1931\cite{CIE}.
-We then convert the XYZ colors to the LMS-color space with the CAT02 transformation method \cite{CAT02}, Equation 3.
+We then convert the XYZ colors to the LMS-color space with the CAT02 transformation method \cite{CAT02}, equation \ref{eq:3}.
 
 \begin{equation}
+\label{eq:3}
 	\begin{bmatrix}
        L          \\
        M \\
@@ -48,9 +49,10 @@ We then convert the XYZ colors to the LMS-color space with the CAT02 transformat
      \end{bmatrix}
 \end{equation}
 We also add an chromatic adaption at this step to get a result as if the observers eyes and thereby vision have adapted to the intensity in the scene. Without this step a too bright flame was produced which is the case when looking at a flame with a normal to large sized pupil. \\\\
-The LMS values are then converted back by inverting Equation 3. And finally the XYZ values are converted into the RGB-color space with an sRGB conversion, Equation 4\cite{sRGB}.
+The LMS values are then converted back by inverting Equation 3. And finally the XYZ values are converted into the RGB-color space with an sRGB conversion, Equation \ref{eq:4} \cite{sRGB}.
 
 \begin{equation}
+\label{eq:4}
 	\begin{bmatrix}
       R          \\
        G \\
@@ -69,9 +71,10 @@ The LMS values are then converted back by inverting Equation 3. And finally the 
 \end{equation}
 
 \section{Ray casting method}
-The radiative transport equation can be solved discreetly using ray-casting, by traversing a ray that goes from the eye and then through the volume. The temperature is then sampled several times along the ray. That gives us the discrete formulate Equation 5\cite{Nguyen02} and because we neglect the scattering effect as mentioned earlier we can also neglect $ p(\vec{\omega},\vec{\omega}')$.
+The radiative transport equation can be solved discreetly using ray-casting, by traversing a ray that goes from the eye and then through the volume. The temperature is then sampled several times along the ray. That gives us the discrete formulate in equation \ref{eq:5} \cite{Nguyen02} and because we neglect the scattering effect as mentioned earlier we can also neglect $ p(\vec{\omega},\vec{\omega}')$.
 
 \begin{equation}
+\label{eq:5}
 \begin{split}
 	L_{n,\lambda}(x,\vec{\omega}) = e^{-\sigma_t\Delta x}L_{(n-1),\lambda}(x+\Delta x,\vec{\omega})+\\
 	L_\lambda(x,\vec{\omega})p(\vec{\omega},\vec{\omega}')\sigma_s \Delta x+ \\
@@ -79,9 +82,10 @@ The radiative transport equation can be solved discreetly using ray-casting, by 
 \end{split}
 \end{equation}
 The equation tells us that we have to traverse the ray backwards from its endpoint back to the eye, to simulate the energy loss from absorption, scattering and distance. We use a constant $\Delta x$ during the whole rendering. \\\\
-The ray-caster is using a perspective to give a more realistic view, which is calculated by first defining a forward, up and right vector (in unit lengths) from the eye. These vectors is then used to calculate the near plane position that belongs to a pixel (which has a $u, v$ coordinate), Equation 6. 
+The ray-caster is using a perspective to give a more realistic view, which is calculated by first defining a forward, up and right vector (in unit lengths) from the eye. These vectors is then used to calculate the near plane position that belongs to a pixel (which has a $u, v$ coordinate), equation \ref{eq:6}. 
 
 \begin{equation}
+\label{eq:6}
 \begin{split}
 \vec{x}_{nearplane} = \vec{x}_{eye} + F*D_{nearplane} +\\
  R*u*\frac{w}{2} + U*v*\frac{h}{2}
