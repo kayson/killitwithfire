@@ -6,64 +6,64 @@
 
 \title{TN1008\\ Project Report}   % type title between braces
 \author{
-  Viktor Nilsson , vikni067@student.liu.se 
-  \\Axel Kinner ,
-  \\Johannes Deligiannis ,
-  \\Johan Beck-Norén , johbe559@student.liu.se
-  \\Andreas Valter , andva287@student.liu.se
+  Viktor Nilsson, vikni067@student.liu.se 
+  \\Axel Kinner,
+  \\Johannes Deligiannis, johde901@student.liu.se
+  \\Johan Beck-Norén, johbe559@student.liu.se
+  \\Andreas Valter, andva287@student.liu.se
 	}
         \date{\today}    % type date between braces
         \maketitle
         
 \setcounter{page}{2}
 
-\include{abstract}
+\input{abstract}
 
 \begingroup
 \let\clearpage\relax % Removes blankpage before include
 \chapter{Introduction}
-\include{introduction}
+\input{introduction}
 
 \chapter{Background}
-\section{MAC Grid}
-\include{background_mac}
 \section{Physically Based Model}
-\include{background_physically_based_model}
+\input{background_physically_based_model}
 \section{Level set method}
-\include{background_levelset}
+\input{background_levelset}
 \section{Navier-Stokes Equation}
-\include{background_navierstoke}
+\input{background_navierstoke}
 \subsection{Self-Advection}
-\include{background_self_advect}
+\input{background_self_advect}
 \subsection{External forces}
-\include{background_external}
+\input{background_external}
 \subsection{Projection}
-\include{background_projection}
+\input{background_projection}
 \subsection{Boundary Conditions}
-\include{background_boundary_conditions}
+\input{background_boundary_conditions}
+\section{MAC Grid}
+\input{background_mac}
 \section{Rendering}
-\include{background_rendering}
+\input{background_rendering}
 
 \chapter{Method}
 \section{MAC Grid}
-\include{method_mac_grid}
+\input{method_mac_grid}
 \subsection{Two Phase Flow}
-\include{method_two_phase_flow}
+\input{method_two_phase_flow}
 \section{Navier-Stokes}
 \subsection{Self-Advection}
-\include{method_self_advect}
+\input{method_self_advect}
 \subsection{External forces}
-\include{method_external}
+\input{method_external}
 \subsection{Projection}
-\include{method_projection}
+\input{method_projection}
 \subsection{Vorticity Confinement}
-\include{method_vorticity_confinement}
+\input{method_vorticity_confinement}
 \section{Advecting level set}
-\include{method_levelset}
+\input{method_levelset}
 
 \chapter{Results}
-\include{results}
-\include{discussion}
+\input{results}
+\input{discussion}
 
 \endgroup
 
