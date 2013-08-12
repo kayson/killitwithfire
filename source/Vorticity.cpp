@@ -32,8 +32,7 @@ void Vorticity::addVorticity(const MACGrid &u, GridField<Vector3> &forces, const
 	for(int i=0; i < dimx; ++i){
 		for(int j=0; j < dimy; ++j){
 			for(int k=0; k< dimz; ++k){
-				// Ful-fix för boundaries
-				if( (i > 1) && (j > 1) /*&& (k > 0)*/ && (i < dimx-2) && (j < dimy-2) /*&& (k < dimz)*/ ){
+				if( (i > 1) && (j > 1) && (i < dimx-2) && (j < dimy-2) ){
 					Vector3 
 					centerVelUp = u.velocityAtCenter(i,j+1,k),
 					centerVelDown = u.velocityAtCenter(i,j-1,k),
@@ -60,8 +59,7 @@ void Vorticity::addVorticity(const MACGrid &u, GridField<Vector3> &forces, const
 	for(int i=0; i < dimx; ++i){
 		for(int j=0; j < dimy; ++j){
 			for(int k=0; k< dimz; ++k){
-				// Ful-fix för boundaries
-				if( (i > 1) && (j > 1) /*&& (k > 0)*/ && (i < dimx-2) && (j < dimy-2) /*&& (k < dimz)*/ ){
+				if( (i > 1) && (j > 1) && (i < dimx-2) && (j < dimy-2) ){
 						
 					n = g.getGradient(ohmNorm, i, j, k, *d);
 
@@ -70,10 +68,6 @@ void Vorticity::addVorticity(const MACGrid &u, GridField<Vector3> &forces, const
 					Vector3 ohmVecTemp;
 
 					ohmVecTemp = ohmVecGrid.valueAtIndex(i,j,k);
-
-					/*Vector3 crossprod(	N.z * ohmVecTemp.y - N.y * ohmVecTemp.z,
-										N.z * ohmVecTemp.x - N.x * ohmVecTemp.z,
-										N.x * ohmVecTemp.y - N.y * ohmVecTemp.x);**/
 
 					Vector3 crossprod(	N.y * ohmVecTemp.z - N.z * ohmVecTemp.y,
 										-(N.x * ohmVecTemp.z - N.z * ohmVecTemp.x),
