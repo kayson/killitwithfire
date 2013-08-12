@@ -32,7 +32,7 @@ $\phi$ is also a signed distance function which means that the value of $\phi$ g
 \begin{subequations}
 \label{eq:signed_distance}
 \begin{equation}
-distance_L(\vec{x}) = \underset{\vec{p} \in L}{\texttt{min}} \left \| \vec{x} - \vec{p} \right \|
+distance_L(\vec{x}) = \underset{\vec{p} \in L}{min} \left \| \vec{x} - \vec{p} \right \|
 \end{equation}    
 \begin{equation}
 \phi(\vec{x}) = distance_L(\vec{x}) : \vec{x} \text{ is inside}
@@ -50,6 +50,4 @@ distance_L(\vec{x}) = \underset{\vec{p} \in L}{\texttt{min}} \left \| \vec{x} - 
 \begin{equation}
 \label{eq:find_point}
  \vec{p} = \vec{x} - \vec{n} \cdot \nabla\phi(\vec{x}), \vec{p} \in L
-\end{equation} 
-
-The reason for having a signed distance function is to increase stability, [k�lla lvlset]. 
+\end{equation}  
