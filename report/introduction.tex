@@ -4,9 +4,9 @@ By fully understanding the process behind fires one can easier simulate and rend
 The chemical reaction is most commonly producing carbon dioxide, heat and light. The actual flame that we can see is then the combined outcome of all three products. Depending on the temperature of the flame; it appears differently when observed by the human eye. This is due to the Black-body radiation emitted from the fuel, gas and soot particles.
 
 \section{Different ways to simulate fire}
-The most correct state of the art approach for producing flames is to track the burnt fuel and the unburnt fuel as two separate fluids. By tracking the temperature of the two; the simulation ignites the unburnt fuel when reaching a specific temperature and reduces the burnt fuel over the time. To create a lasting flame one has to add unburnt fuel over the simulation time. This assumes that the system is surrounded by an oxidizer (e.g air).
+The most physically correct state of the art approach today for simulating fire is to track the burnt fuel and the unburnt fuel as two separate fluids. By tracking the temperature of the two; the simulation ignites the unburnt fuel when reaching a specific temperature and reduces the burnt fuel over the time. To create a lasting flame one has to add unburnt fuel over the simulation time. This assumes that the system is surrounded by an oxidizer (e.g air).
 
-Other approaches includes to create the flames procedurally, without using any fluid system. This is ofcourse much easier and faster to implement. There is also some fluid approaches that track one fluid; the flame surface (density) instead of the temperature.
+Other approaches includes creating the flames procedurally, without using any fluid system. This is of course much easier and faster to implement. There is also some fluid approaches that track one fluid; the flame surface (density) instead of the temperature.
 
 \section{General fluid simulation background}
 Fluid simulation has been around before we even started to use computers. The first mathematical approaches were presented around 1950. Incompressible and free-surface fluids were first seen around 1995 \cite{foster}. Before this the fluids were computed as non physically-based and in 2D.
@@ -14,4 +14,4 @@ Fluid simulation has been around before we even started to use computers. The fi
 Since the Navier-Stokes equations are still yet to be solved many different approaches and methods for fluid simulation exists.
 
 \section{Previous implementations of fire}
-The most notable previous report; and the one this report followed is Physically Based Modeling and Animation of Fire \cite{Nguyen02}. It approaches the problem as described earlier with two seperated fluids and combines them with the help of a ghost fluid in between them. There exist many new improved methods based on \cite{Nguyen02} such as Wrinkled Flames and Cellular Patterns \cite{wrinkled}, which introduces the characteristic surface a flame often have.
+The most notable previous report, and the one this report follows closely is Physically Based Modeling and Animation of Fire \cite{Nguyen02}. It approaches the problem as described earlier with two seperated fluids and combines them with the help of a ghost fluid in between them. There exists many new and improved methods based on \cite{Nguyen02} such as Wrinkled Flames and Cellular Patterns \cite{wrinkled}, which introduces the characteristic surface a flame often have.

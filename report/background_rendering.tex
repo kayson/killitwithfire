@@ -1,4 +1,4 @@
-We are using a ray casting method for rendering our fire. The ray caster collects temperatures over the scene and transform them into a color for each pixel with the help of Black-body radiation.
+We are using a ray casting method for rendering our fire. The ray caster collects temperatures over the scene and transform them into a color for each pixel using black-body radiation.
 \section{Black-body radiation}
 	To be able to convert a temperature sample in the grid to a color, we use the black-body radiation model. 
 
@@ -10,14 +10,16 @@ We are using a ray casting method for rendering our fire. The ray caster collect
 \caption{Five different temperatures and their respective spectral radiancy depending on the wavelength. Notice the color spectrum that the human eye can observe, from 400 to 700 nm.}
 \end{figure}
 
-The black-body radiation model calculates an emitted radiance for a given wavelength and temperature, Planck's formula\cite{Nguyen02} Equation 1. Where $C_1 \approx 3.7418 \cdot 10^{-16} Wm^2$ and $C_2 \approx 1.4388 \cdot 10^{-2} m^\circ K$
+The black-body radiation model calculates an emitted radiance for a given wavelength and temperature, Planck's formula\cite{Nguyen02} equation \ref{eq:planck}. Where $C_1 \approx 3.7418 \cdot 10^{-16} Wm^2$ and $C_2 \approx 1.4388 \cdot 10^{-2} m^\circ K$
 
 \begin{equation}
+\label{eq:planck}
 	L_{e,\lambda}(x) = \frac{2C_1}{\lambda^5(e^{C_2/(\lambda T)}-1)}
 \end{equation}
-This allows us to calculate the spectral radiance $L$ for a given wavelength $\lambda$ and position using the radiative transport, Equation 2, using the blackbody radiation as the emitted radiance. 
+This allows us to calculate the spectral radiance $L$ for a given wavelength $\lambda$ and position using the radiative transport, equation \ref{eq:blackbody}, using the blackbody radiation as the emitted radiance. 
 
 \begin{equation}
+\label{eq:blackbody}
 \begin{split}
 	(\vec{\omega}\cdot \nabla)L_\lambda(x,\vec{\omega}) = -\sigma_t(x)L_\lambda(x,\vec{\omega}) + \\ 
 \sigma_s(x) \int_{4\pi} p(\vec{\omega},\vec{\omega}')L_\lambda(x,\vec{\omega}')d\vec{\omega}' + \\
