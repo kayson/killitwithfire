@@ -1,12 +1,12 @@
-External forces are handeled in a quite straight forward way. 
+External forces are handled in a quite straight forward way. 
 For each point in the grid all forces are calculated and added together. 
 After that we calculate the new velocity by integrating the force.
 The gravitational force is applied uniformly over all grid points that has fluid in them.
-Bouyancy is described by a simple model that is directly connected to the temperature in each grid point.
+Buoyancy is described by a simple model that is directly connected to the temperature in each grid point.
 We define it as equation \ref{eq:navierstokes}.
 The vector $z$ is a unit vector pointing upward. 
 \begin{equation}
 \label{eq:buoyancy}
 f_{buoy} = \alpha(T-T_{air})z
 \end{equation}
-$\alpha$ is a possitive constant, $T_{air}$ is the ambient temperature of the room and $T$ is the temperature. 
+$\alpha$ is a positive constant, $T_{air}$ is the ambient temperature of the room and $T$ is the temperature. 
