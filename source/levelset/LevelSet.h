@@ -16,7 +16,7 @@ class DetonationShockDynamics;
 #include "glm.hpp"
 #include "glm/gtx/transform.hpp"
 #endif
-
+#include "meshtovolumeconverter.h"
 class LevelSet
 {
 public:
@@ -25,6 +25,7 @@ public:
 	~LevelSet(){}
 
 	void fillLevelSet(double (*implicitFunction)(int x, int y, int z));
+	void fillLevelSetFromConverter(MeshToVolumeConverter &converter);
 	void specifyRenderFunction(void (*renderFunction)());
 
 	double getVolume() const;

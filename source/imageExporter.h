@@ -11,6 +11,10 @@
 //#undef FREEIMAGE
 
 #define FREEIMAGE
+#else
+
+#include "FreeImage.h"
+#define FREEIMAGE
 
 #endif
 

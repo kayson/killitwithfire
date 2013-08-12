@@ -1,0 +1,14 @@
+OBS har inte hunnit redigera denna text. helt så jag fixar formler osv runt 19 tiden. Viktor du kan ta bort stycken om det överlappar med det du skrivit.
+
+The last step so solve in the in the Navier-Stokes equation is the pressure step, which is also called the projection step, by its linear algebraic properties of a Projection. This step enforces that the velocity field is divergence free and therefore incompressible, by calculating a pressure field p which satisfies this property, Eq X (navierstokes pressure + divergensfritt). 
+
+This can be done by using the Helmholtz-Hodge decomposition theorem which states that a vector field $\vec{v}$ can be expressed as a sum of two vector fields, one curl free $\vec{v_{cf}}$ and one divergence free $\vec{v_{df}}$, Eq x. If $\vec{v}$ is then set as the Ve and Vdf as the requested velocity field Vreq and then set vcf as dt * Delta P / phi, it is possible to reorder Eq helm holtz to a Eq which looks like a euler integration of Ve with the Gradient of P, Eq reorder. 
+
+Eq Helm holtz. v = vcf  + vdf
+Eq Helm holz2 Ve = dt * Delta P / phi + Vreq ? 
+Eq Vreq = Ve - dt Delta P / phi
+
+It is still two unkowns in Eq Vreq which is one to many to be able to solve this equation. But since Vreq is divergence free it is possible to rule it out by apply the divergence operator V on both sides in Eq helm 2. This results in a possion equation x, which is possible to solve. 
+
+Poission. Eq
+

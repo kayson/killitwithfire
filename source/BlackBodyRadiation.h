@@ -32,8 +32,9 @@ public:
 	static Vector3 XYZtoRGB(const Vector3 &xyz);
 	
 	void draw(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke); //Kan inte använda T->grid->xdim() av något okänt skäl, så skickar istället in grid
-	static void drawLevelSet(const LevelSet &phi);
-	static void drawSmoke(const SmokeDensity &smoke);
+	void drawColor(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke); //kopia av draw men med specialvillkor
+	void drawFireBlueCore(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke); //kopia av draw men med specialvillkor
+	void drawBlueCore(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke); //kopia av draw men med specialvillkor
 
 private:
 	void allocate();
@@ -59,6 +60,11 @@ private:
 	double *xm;
 	double *ym;
 	double *zm;
+
+	double angle;
+
+	double funVar2;
+	int funVar;
 };
 
 #endif

@@ -1,5 +1,5 @@
 \documentclass[]{report}   % list options between brackets
-\usepackage{graphicx,url,placeins,algorithm,algorithmic,lipsum,amssymb,amsmath}
+\usepackage{graphicx,url,placeins,algorithm,algorithmic,lipsum,amssymb,amsmath,subfigure}
 \graphicspath{{figures/}}
 
 \begin{document}
@@ -9,7 +9,7 @@
   Viktor Nilsson , vikni067@student.liu.se 
   \\Axel Kinner ,
   \\Johannes Deligiannis ,
-  \\Johan Beck-Norén ,
+  \\Johan Beck-Norén , johbe559@student.liu.se
   \\Andreas Valter , andva287@student.liu.se
 	}
         \date{\today}    % type date between braces
@@ -29,10 +29,16 @@
 \include{background_mac}
 \section{Physically Based Model}
 \include{background_physically_based_model}
+\section{Level set method}
+\include{background_levelset}
 \section{Navier-Stokes Equation}
 \include{background_navierstoke}
 \subsection{Self-Advection}
 \include{background_self_advect}
+\subsection{External forces}
+\include{background_external}
+\subsection{Projection}
+\include{background_projection}
 \subsection{Boundary Conditions}
 \include{background_boundary_conditions}
 \section{Rendering}
@@ -46,8 +52,15 @@
 \section{Navier-Stokes}
 \subsection{Self-Advection}
 \include{method_self_advect}
+\subsection{External forces}
+\include{method_external}
 \subsection{Projection}
 \include{method_projection}
+\subsection{Vorticity Confinement}
+\include{method_vorticity_confinement}
+\section{Advecting level set}
+\include{method_levelset}
+
 \chapter{Results}
 \include{results}
 \include{discussion}

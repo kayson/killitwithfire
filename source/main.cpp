@@ -21,7 +21,6 @@
 #include "Water/Water3D.h"
 
 #include "imageExporter.h"
-
 #include "integrateEuler.h"
 
 #include <omp.h>
@@ -48,7 +47,7 @@ double t0 = 0.0;
 int frames = 0;
 char titlestring[200];
 
-int HEIGHT = 600, WIDTH = 300;
+int HEIGHT = 1080, WIDTH = 540;
 bool running = false;
 
 Fire3D *fire;
@@ -95,7 +94,7 @@ int main(int argc, char *argv[])
 
         glfwSwapBuffers();
 
-        ImageExporter::saveSequence(frames, WIDTH, HEIGHT);
+        //ImageExporter::saveSequence(frames, WIDTH, HEIGHT);
 
 		// Check if the ESC key was pressed or the window was closed.
 		if(glfwGetKey(GLFW_KEY_ESC) || !glfwGetWindowParam(GLFW_OPENED))
