@@ -1,5 +1,6 @@
 \section{Discussion}
-	Test \cite{Bee12}.
-
-	\section{Section title}
-		\lipsum[1]
+We are pleased with the overall result of this project. Using world coordinates for our simulation grids this enabled us to have different resolutions for different grids used in the simulation. For instance the temperature grid can have considerably higher resolution than the grids used for the velocity fields in the same simulation run.
+\subsection{Current limitations of solution}
+The design patterns used in our implementation is based on class inheritance, which turns out to be considerable performace hit, and created a sometimes unnecessary long simulation time. The current render method only samples from the simulation grids, and can therefore not render anything not present in the grid, for example a surrounding environment, meshes, and so on.
+\subsection{Possible improvements}
+Herp. Derp.
