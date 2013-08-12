@@ -1,0 +1,16 @@
+The projection step is a linear operation to update $\vec{u}$ according to the pressure, $p$.
+This is done to maintain incompressibility as seen in the Navier-stokes equations, equation \eqref{eq:incompress}, we have to for each timestep compensate for the pressure to make $\vec{u}$ divergence-free.
+\begin{equation}
+\label{eq:incompress}
+	\nabla\cdot \vec{u}= 0
+\end{equation}
+To retrieve the pressure $p$ we have to solve the equation \eqref{eq:Apb} \cite{bridson}.
+\begin{equation}
+\label{eq:Apb}
+	Ap = b
+\end{equation}
+Where $A$ is the coefficient matrix, each row corresponds to one cell in the fluid. So for large grids $A$ will be extremly storage dependent. $b$ is a vector with all the negative divergences for each cell of the fluid. 
+
+After $A$ and $b$ are calculated and set they are inserted into a PCG-solver (Preconditioned Conjugate Gradient), to retrieve the pressure vector $p$.
+As mentioned earlier, when the new pressure-gradient is retrieved we can for incompressibility calculate the new $\vec{u}$ which will be needed for the next time step.
+
