@@ -270,20 +270,6 @@ Vector3 BlackBodyRadiation::XYZtoRGB(const Vector3 &xyz)
 	rgb.y = xyz.x * -0.9692	+ xyz.y * 1.8760	+ xyz.z * 0.0416;
 	rgb.z = xyz.x * 0.0556	+ xyz.y * -0.2040	+ xyz.z * 1.0570;
 
-	/*double maxRGB = std::max(rgb.x, std::max(rgb.y, rgb.z));
-
-	if (maxRGB > 0.0)
-	{
-		rgb.x /= maxRGB;
-		rgb.y /= maxRGB;
-		rgb.z /= maxRGB;
-	}*/
-
-	// Gamma Correction
-	//rgb.x = powf(rgb.x, 1.0 / 2.4);
-	//rgb.y = powf(rgb.y, 1.0 / 2.4);
-	//rgb.z = powf(rgb.z, 1.0 / 2.4);
-
 	return rgb;
 }
 

@@ -55,8 +55,8 @@ Fire::Fire(FirePresets *pre):
     setSolids();
 	//Advect
 
-	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim(), FirePresets::GRID_SIZE, new ConstantValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
-	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim(), FirePresets::GRID_SIZE, new ConstantValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
+	p = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim(), FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
+	rhs = new GridField<double>(phi.grid->xdim(), phi.grid->ydim(), phi.grid->zdim(), FirePresets::GRID_SIZE, new ClosestValueExtrapolation<double>()); //TODO KORREKT EXTRAPOLERING?
 	pVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
 	rhsVec.reserve( phi.grid->xdim() * phi.grid->ydim() * phi.grid->zdim() );
 

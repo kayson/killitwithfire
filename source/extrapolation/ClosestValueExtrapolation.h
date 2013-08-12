@@ -1,5 +1,3 @@
-//Axel väldigt simpel approximering av ett levelset utanför griden
-
 #ifndef CLOSESTVALUEEXTRAPOLATION_H
 #define CLOSESTVALUEEXTRAPOLATION_H
 
