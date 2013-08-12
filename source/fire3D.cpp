@@ -14,6 +14,8 @@
 #include "BlackBodyRadiation.h"
 #include "SmokeDensity.h"
 
+//#include "meshtovolumeconverter.h"
+
 #if defined __APPLE__
 #include "glfw.h"
 #include "pcg_solver.h"
@@ -44,7 +46,11 @@ Fire3D::Fire3D(FirePresets *pre):
 	preset = pre;
     
     phi.grid->setTransformation(u.getTrans());
+	//MeshToVolumeConverter converter;
+	//converter.convert("cube.obj", preset->GRID_SIZE);
+	//phi.fillLevelSetFromConverter(converter);
 	//phi.fillLevelSet(preset->implicitFunction); 
+	
 	addFuelToLevelSet(phi.grid->xdim()/2, 1.5/phi.grid->dx(), phi.grid->zdim()/2, 0.6/phi.grid->dx()); // if we want to start with a fluid
 
 	//2D grid
@@ -80,13 +86,7 @@ Fire3D::Fire3D(FirePresets *pre):
     
     //Init marker-particles
     for (GridFieldIterator<bool> iter = solids.iterator(); !iter.done(); iter.next()) {
-        /*=======
-         GridField<int> *cellTypes = new GridField<int>(u);
-         u.setTransformation(u.getTrans());
-         cellTypes->setAll(FUEL);
-         for (GridFieldIterator<int> it = celltype.iterator(); !it.done(); it.next()) {
-         >>>>>>> d8aef0f94a6ad6f794898cd5aab402d8ae20c69a*/
-        int i,j,k;
+		int i,j,k;
         iter.index(i, j, k);
         double l_x,l_y,l_z;
         solids.indexToLocal(i, j, k, l_x, l_y, l_z);

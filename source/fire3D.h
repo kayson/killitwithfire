@@ -12,21 +12,13 @@
 #include "helper.h"
 #include "Particles.h"
 
-//#include "Pressure\pcgsolver\blas_win.h"
 #include "Water/Particles.h"
 #include "Discretization.h"
 #include "BorderCondition.h"
 #include "GhostMAC.h"
-
-#ifdef __APPLE__
 #include "sparse_matrix.h"
 #include "pcg_solver.h"
-#include "Projection3D.h"
-#elif defined _WIN32 || defined _WIN64
-#include "Pressure\pcgsolver\sparse_matrix.h"
-#include "Pressure\pcgsolver\pcg_solver.h"
-#include "Pressure\Projection3D.h"
-#endif
+#include "Pressure/Projection3D.h"
 #include "GhostMAC.h"
 
 #include "Temperature.h"
@@ -37,7 +29,6 @@
 class FirePresets;
 template<class T> class GridField;
 class GridMapping;
-
 class Fire3D{
 protected:
     void setSolids();
