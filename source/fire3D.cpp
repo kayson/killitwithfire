@@ -82,7 +82,7 @@ Fire3D::Fire3D(FirePresets *pre):
     
 	vorticityForces = new GridField<Vector3>(preset->GRID_DIM_X, preset->GRID_DIM_Y, preset->GRID_DIM_Z, FirePresets::GRID_SIZE, new ConstantValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
     
-	blackBodyRender = BlackBodyRadiation(1080, 1080, *T->grid);
+	blackBodyRender = BlackBodyRadiation(380, 380, *T->grid);
     
     //Init marker-particles
     for (GridFieldIterator<bool> iter = solids.iterator(); !iter.done(); iter.next()) {
