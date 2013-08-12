@@ -5,7 +5,7 @@ The blue core does not only move with the velocity field $\vec{u_f}$, it is also
 \frac{\partial \phi}{\partial x} \approx \phi_x^\pm = \frac{\phi_{i+1,j,k} - \phi_{i-1,j,k}}{\Delta x }
 \end{equation}  
 
-To ensure stability in equation \ref{eq:levelset_advection} [K�lla levelset], the finite difference is calculated using a upwind scheme, eq. \ref{eq:upwind}. Eq. \ref{eq:levelset_advection} must also satisfy the time step constraint in eq. \ref{eq:time_constraint}. Inte helt n�jd med detta stycke... framf�r allt f�rsta meningen
+To ensure stability in equation \ref{eq:levelset_advection} \cite{CFL}, the finite difference is calculated using a upwind scheme, eq. \ref{eq:upwind}. eq. \ref{eq:levelset_advection} must also satisfy the time step constraint in eq. \ref{eq:time_constraint}.
 
 \begin{equation}
 \label{eq:upwind}
@@ -21,11 +21,11 @@ To ensure stability in equation \ref{eq:levelset_advection} [K�lla levelset], 
 \Delta t < min \left \{ \frac{\Delta x}{ \vec{w_x} }, \frac{\Delta y}{ \vec{w_y} }, \frac{\Delta z}{ \vec{w_z} } \right \}
 \end{equation} 
 
-As described in X (ang�ende signed distance, kanske inte finns?), $\vec{n}$ is not assured to be a unit vector since it is a numerical approximation of a signed distance function, $\vec{n}$ is therefore normalized before usage. $\vec{n}$ could even be evaluated as a null vector, in these cases a constant unit vector $(0, 1, 0)$ which is pointing upwards, is used.
+$\vec{n}$ is not assured to be a unit vector since it is a numerical approximation of a signed distance function, $\vec{n}$ is therefore normalized before usage. $\vec{n}$ could even be evaluated as a null vector, in these cases a constant unit vector $(0, 1, 0)$ which is pointing upwards, is used.
 
 \subsection{Extrapolation}
 
-When accessing values outside the grid, extrapolation is needed to find out the value of the signed distance function, e.g. when calculating the finite difference. Some easy ways to do this is by using a constant value or by finding the closest real value to it. More sophisticated methods is to make the value fulfil the properties of a signed distance function as described in [Bridson]. The method below is a more simple way to mimic a signed distance function. 
+When accessing values outside the grid, extrapolation is needed to find out the value of the signed distance function, e.g. when calculating the finite difference. Some easy ways to do this is by using a constant value or by finding the closest real value to it. More sophisticated methods is to make the value fulfil the properties of a signed distance function as described in \cite{bridson}. The method below is a more simple way to mimic a signed distance function. 
 
 Find the closest real position $p_r$ to the position $p_e$. The extrapolated value $\phi_e$ is then calculated using $\phi(\vec{p_r})$ subtracted with the distance between $p_r$ and $p_e$, eq. \ref{eq:levelset_extrapolation}. This means that the value is further away from the interface. 
 
@@ -34,4 +34,4 @@ Find the closest real position $p_r$ to the position $p_e$. The extrapolated val
 \phi_e(\vec{p_e}) =  \phi(\vec{p_r}) - \left | p_r - p_e  \right |
 \end{equation} 
 
-This solution would be true if the extrapolated value were in the negative normal direction from the real value. (Tror Axel iaf)
+This solution would be true if the extrapolated value were in the negative normal direction from the real value.
