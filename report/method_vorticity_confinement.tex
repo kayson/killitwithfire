@@ -17,3 +17,5 @@ The resulting vorticity confinement force $\vec{f}_{vort}$ to be added to the ve
 \end{equation}
 
 In equation \ref{eq:vort_force} $\epsilon$ is some arbitrary scalar to control the magnitude of the vorticity force being added. The dependency on $\Delta x$ ensures that as the grid resolution is refined and $\Delta x$ grows smaller the vorticity confinement force added decreases as well, resulting in the physically correct result being obtained. The resulting force $\vec{f}_{vort}$ is added to the velocity fields as an external force.
+
+Since the velocity vector in eq. \ref{eq:vort_loc_vec} is stored component-wise in a MAC grid, we need to interpolate a velocity value for the center of the cell for which we are calculating the vorticity confinement force to be able to calculate the cross product. This is done by a central difference to obtain the derivatives needed. For example, $\frac{\partial V_z}{\partial y}$ is discretized as $\frac{V^{j+1}_z - V^{j-1}_z}{2\Delta x}$ in the implementation.
