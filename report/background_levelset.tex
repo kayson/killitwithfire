@@ -1,4 +1,4 @@
-To be able to track the interface between the blue core and the hot gaseous products a Level set method is used. The Level set method represents the interface by an implicit function $\phi$ defined as equation \ref{eq:levelsetmethod} in a 3D-space. 
+To be able to track the interface between the blue core and the hot gaseous products a Level set method is used. The Level set method represents the interface by an implicit function $\phi$ defined as equation \ref{eq:levelsetmethod} in a 3D-space, where $h = 0$. 
 
 \begin{subequations}
 \label{eq:levelsetmethod}
@@ -50,4 +50,14 @@ distance_L(\vec{x}) = \underset{\vec{p} \in L}{min} \left \| \vec{x} - \vec{p} \
 \begin{equation}
 \label{eq:find_point}
  \vec{p} = \vec{x} - \vec{n} \cdot \nabla\phi(\vec{x}), \vec{p} \in L
-\end{equation}  
+\end{equation}
+
+\begin{figure}[h!]
+	\centering
+		\includegraphics[width=.5 \linewidth]{figures/levelset.pdf}
+	\caption{Illustration of the levelset and its properties.}
+	\label{fig:levelset}
+\end{figure}
+
+\subsection{Reinitialize signed distance function}
+\input{background_reinit}
