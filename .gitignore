@@ -230,7 +230,5 @@ xcuserdata
 *.vrb
 *.xdy
 *.tdo
-*.pdf
-
-#unignore directory
-!report/figures/
+fluid_report.pdf
+"TNCG14 Project Report".pdf
