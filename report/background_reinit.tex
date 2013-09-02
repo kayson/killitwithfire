@@ -1,5 +1,3 @@
 Since the level set only is a sampled signed distance function in practice, a reinitialize operation is used to make sure that the level set is always close to a signed distance function. 
 This is done by making sure that the length of the gradient is kept close to 1.
 By always having the grid described in this way, it is certain that whenever moving in the direction of the gradient towards the surface with the distance $d$, the closest point on the surface will not change and the distance to the surface is now $d$ less then it was before.
-
-Since the levelset is only a sampled signed distance function in practice, a reinitialize operation is used
