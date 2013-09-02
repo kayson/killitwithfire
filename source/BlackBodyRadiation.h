@@ -31,10 +31,10 @@ public:
 	static Vector3 LMStoXYZ(const Vector3 &lms);
 	static Vector3 XYZtoRGB(const Vector3 &xyz);
 	
-	void draw(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke); //Kan inte använda T->grid->xdim() av något okänt skäl, så skickar istället in grid
-	void drawColor(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke); //kopia av draw men med specialvillkor
-	void drawFireBlueCore(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke); //kopia av draw men med specialvillkor
-	void drawBlueCore(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke); //kopia av draw men med specialvillkor
+	void draw(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke); 
+	void drawColor(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke); 
+	void drawFireBlueCore(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke); 
+	void drawBlueCore(const GridField<double> &temperatureGrid, const LevelSet &phi, const SmokeDensity &smoke); 
 
 private:
 	void allocate();
@@ -44,7 +44,7 @@ private:
 	GLuint textureID;
 
 	double dx, dy, dz;
-	double wds;//Steglängd för raycastern
+	double wds; // ray caster sample step
 	double oa, os, ot, C;
 
 	double du, dv;// def [-1, 1] screen space coordinates
@@ -56,7 +56,7 @@ private:
 	double *Le;
 	double *L;
 	
-	double *LeMean;//Kanske borde göra mean på T istället då denna kan generera flimmer med färger
+	double *LeMean;
 	double *xm;
 	double *ym;
 	double *zm;

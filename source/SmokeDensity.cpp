@@ -53,7 +53,7 @@ void SmokeDensity::advectDensityField(double dt, const MACGrid &m, const LevelSe
                 double x,y,z;
                 grid->indexToWorld(i, j, k, x, y, z);
                 Vector3 vel = m.velocityAtWorld(Vector3(x,y,z));
-                double val = grid->valueAtWorld(x-dt*vel.x, y-dt*vel.y, z-dt*vel.z); //TODO bättre integeringsmetod så man får med jump condition
+                double val = grid->valueAtWorld(x-dt*vel.x, y-dt*vel.y, z-dt*vel.z);
 
 				assert(val >= mindens && val <= maxdens);
 

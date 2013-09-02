@@ -90,12 +90,11 @@ void Temperature::AdvectTemperatureField(double dt, const MACGrid &m, const Leve
                 double x,y,z;
                 grid->indexToWorld(i, j, k, x, y, z);
                 Vector3 vel = m.velocityAtWorld(Vector3(x,y,z));
-                double val = grid->valueAtWorld(x-dt*vel.x, y-dt*vel.y, z-dt*vel.z);//TODO bättre integeringsmetod så man får med jump condition
+                double val = grid->valueAtWorld(x-dt*vel.x, y-dt*vel.y, z-dt*vel.z);
 				val -= calculateTemperatureLoss(val)*FirePresets::dt;
 
-				if(val < FirePresets::T_AIR)//TODO KONTROLLERA VARFÖR DETTA HÄNDER ISTÄLLET
+				if(val < FirePresets::T_AIR)//TODO this should not happen
 				{
-					//std::cout << "Temperature is below air temperature!" << std::endl;
 					val = FirePresets::T_AIR;
 				}
 
@@ -208,40 +207,4 @@ void Temperature::draw()
         glVertex3f((float)x, ((float)y+1.f), (float)z);   
     }
     glEnd();
-
-	//Vector3 LMSw = BlackBodyRadiation::XYZtoLMS(BlackBodyRadiation::blackbodyToXYZ(maxT));
-
- //   glBegin(GL_QUADS);
- //   for (GridFieldIterator<double> iter = grid->iterator();
- //        !iter.done(); iter.next()) {
- //       int i,j,k;
- //       iter.index(i, j, k);
- //       double x,y,z;
- //       grid->indexToWorld(i, j, k, x, y, z);
- //       
-
-	//	// Eq. 23, Nguyen'02
-	//	Vector3 xyz = BlackBodyRadiation::blackbodyToXYZ(grid->valueAtIndex(i,j,k));
-	//	Vector3 lms = BlackBodyRadiation::XYZtoLMS(xyz);
-	//	lms.x /= LMSw.x;
-	//	lms.y /= LMSw.y;
-	//	lms.z /= LMSw.z;
-	//	xyz = BlackBodyRadiation::LMStoXYZ(lms);
-	//	Vector3 rgb = BlackBodyRadiation::XYZtoRGB(xyz);
-
-	//	if(grid->valueAtIndex(i,j,k) >= maxT*0.6)
-	//		glColor3d(rgb.x, rgb.y, rgb.z);
-	//	else
-	//		glColor3d(rgb.x*0.3, rgb.y*0.3, rgb.z*0.3);
-
- //       
- //       glVertex3f((float)x, (float)y, (float)z);
- //       glVertex3f(((float)x+1.f), (float)y, (float)z);
- //       glVertex3f(((float)x+1.f), ((float)y+1.f), (float)z);
- //       glVertex3f((float)x, ((float)y+1.f), (float)z);
- //       
- //   }
- //   glEnd();
-
-    //drawBuoyancyForce();
 }

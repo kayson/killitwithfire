@@ -57,8 +57,6 @@ Water3D *water3d;
 Input controller;
 static Camera camera;
 
-
-
 int main(int argc, char *argv[]) 
 {
 	if(!init())
@@ -66,7 +64,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	//ImageExporter::saveImage("hej", WIDTH, HEIGHT);
 	int frames = 0;
     unsigned int t = (unsigned int)time(NULL);
     srand(t);
@@ -122,10 +119,10 @@ bool init()
 		return false;
 	}
     
-	//Fixar keylistener
+	//Set up keylisteners
 	controller.initListeners();
 	glfwSetWindowSizeCallback( camera.reshape );
-	glfwSwapInterval(0);//Tar bort Vsync
+	glfwSwapInterval(0);//remove v-sync
 
 	glClearColor (0.0f, 0, 0.0f, 0.0f);
 	glShadeModel (GL_SMOOTH);
@@ -161,10 +158,7 @@ void calculateFPS()
 
 void showFPS() 
 {
-	//calculateFPS();
-	//sprintf(titlestring, "Fire (%.1f FPS)", fps);
-
-	//Skriv ut antal sekunder istället för fps
+	// draw seconds per frame
 	double t = glfwGetTime();
 	sprintf(titlestring, "Fire (%.1f s)", (t-t0));
 	t0 = t;
@@ -175,7 +169,7 @@ void showFPS()
 
 void update()
 {
-	controller.updateInput(fps); //updatera mus och tangentbord
+	controller.updateInput(fps); //update mouse and keyboard input
 
 	//Update physics
 #if SIMULATION == FIRE
@@ -188,13 +182,11 @@ void update()
 
 }
 
-
-
-//renderar objekt
 void render(void){
 	glRotatef(100.0f,1.0,0,0);
 	camera.translateForCamera();
 	
+	/* Code for get mouse coordinate in world coordiantes?*/
     int x, y;
     glfwGetMousePos(&x, &y);
     GLint viewport[4]; //var to hold the viewport info
@@ -221,12 +213,7 @@ void render(void){
 #elif SIMULATION == WATER3D
 	water3d->draw();
 #endif
-    
-    
-
-    
-
-    
+  
     
 }
 

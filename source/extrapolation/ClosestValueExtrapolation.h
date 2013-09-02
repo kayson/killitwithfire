@@ -16,7 +16,7 @@ public:
 	}
 
 	virtual T doExtrapolation(const GridField<T>& g, int i, int j, int k) const{
-		//Hitta närmaste punkt via cityblock
+		// find closest point by cityblock distance
 		if(i < 0)
 			i = 0;
 		else if(i >= g.xdim())

@@ -25,25 +25,23 @@
 LevelSet::LevelSet()
 {
 
-	grid  = new GridField<double>(10,10,10, FirePresets::GRID_SIZE, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
+	grid  = new GridField<double>(10,10,10, FirePresets::GRID_SIZE, new SimpleLevelSetExtrapolation()); 
 	initLevelSet();
 
-	gridCopy = new GridField<double>(10, 10, 10,10, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
-	normals = new GridField<Vector3>(10, 10, 10, 10, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
+	gridCopy = new GridField<double>(10, 10, 10,10, new SimpleLevelSetExtrapolation()); 
+	normals = new GridField<Vector3>(10, 10, 10, 10, new ClosestValueExtrapolation<Vector3>()); 
 
-//	grid  = new GridField<double>(1000,1000,1000);
-//	gridCopy = new GridField<double>(1000, 1000, 1000,10);
 	normals = new GridField<Vector3>(1000, 1000, 1000,10,new ConstantValueExtrapolation<Vector3>());
 	dsd = new DetonationShockDynamics();
 }
 
 LevelSet::LevelSet(int xDim, int yDim, int zDim, double size)
 {
-	grid  = new GridField<double>(xDim,yDim,zDim,size, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING? bör fixa så det blir signed distance på dessa
+	grid  = new GridField<double>(xDim,yDim,zDim,size, new SimpleLevelSetExtrapolation()); 
 	initLevelSet();
 
-	gridCopy = new GridField<double>(xDim,yDim,zDim,size, new SimpleLevelSetExtrapolation()); //TODO KORREKT EXTRAPOLERING?
-	normals = new GridField<Vector3>(xDim,yDim,zDim,size, new ClosestValueExtrapolation<Vector3>()); //TODO KORREKT EXTRAPOLERING?
+	gridCopy = new GridField<double>(xDim,yDim,zDim,size, new SimpleLevelSetExtrapolation()); 
+	normals = new GridField<Vector3>(xDim,yDim,zDim,size, new ClosestValueExtrapolation<Vector3>());
         
     grid->multTransformation(glm::scale(1.0, 1.0, 1.0));
     gridCopy->multTransformation(glm::scale(1.0, 1.0, 1.0));
@@ -70,7 +68,6 @@ void LevelSet::fillLevelSet(double (*implicitFunction)(int, int, int))
 		for(int j = 0; j < grid->ydim(); j++){
 			for(int k = 0; k < grid->zdim(); k++){
                 grid->setValueAtIndex( implicitFunction(i,j,k),i,j,k);
-                //std::cout << phi.valueAtIndex(i, j, k);
             }
         }
     }
@@ -82,7 +79,6 @@ void LevelSet::fillLevelSetFromConverter(MeshToVolumeConverter &converter)
 		for(int j = 0; j < grid->ydim(); j++){
 			for(int k = 0; k < grid->zdim(); k++){
                 grid->setValueAtIndex( converter.fill(i,j,k),i,j,k);
-                //std::cout << phi.valueAtIndex(i, j, k);
             }
         }
     }
@@ -114,7 +110,7 @@ void LevelSet::printDistanceField()
 	}
 }
 
-// Beräknar volumen på levelsetet (FUEL)
+// Calculate the volume of the level set (FUEL part only)
 double LevelSet::getVolume() const
 {
 	double volume = 0.0;
@@ -180,7 +176,7 @@ double LevelSet::getCurvature(const int i, const int j, const int k, GridField<d
 		dyz = FirePresets::centralDisc->calcDyz(*gridfield, i, j, k);
 	double a = 2.0000000000;
 	//double val1 = dx*dx*(d2y + d2z) - a*dy*dz*dyz +
-		dy*dy*(d2x*d2z) - a*dx*dz*dxz + 
+		dy*dy*(d2x*d2z) - a*dx*dz*dxz + //TODO What is this?
 		dz*dz*(d2x + d2y) - a*dx*dy*dxy;
 	double val = dx*dx+dy*dy+dz*dz;
 	if(val == 0) return 0;

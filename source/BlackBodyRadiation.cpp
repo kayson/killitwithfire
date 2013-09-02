@@ -172,13 +172,12 @@ void BlackBodyRadiation::allocate()
 
 	wds = double(FirePresets::GRID_SIZE)/double(std::max(gridx, std::max(gridy, gridz)) * FirePresets::SAMPLE_STEP_QUALITY);
 
-	oa = 0.05; //absorberings koef, för rapport 1 använd 0.01
-	os = 0.0; //scattering koef
+	oa = 0.05; //absorbation coef
+	os = 0.0; //scattering coef
 	ot = oa + os; //tot
 	C = exp(-ot*wds);
 
-	//Används för att rendera rummet, kan nog vara lägre samplad än total_samples, alt gör man denna med macgrid för slippa göra samma beräkningar 2 ggr
-	//dock tror jag det kostar förmycket minne
+	//very memory hungry...
 	int LeSize = gridx*gridy*gridz*FirePresets::TOTAL_SAMPLES;
 	Le = new double[LeSize]; 
 	
@@ -208,7 +207,8 @@ double BlackBodyRadiation::radiance(double lambda, double T)
 
 Vector3 BlackBodyRadiation::blackbodyToXYZ(double T)
 {
-    
+    //TODO NOT USED i think
+
 	Vector3 xyz(0.0, 0.0, 0.0);
 	/*int step = 0;
 	#pragma omp parallel for	

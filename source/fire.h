@@ -51,9 +51,6 @@ protected:
 	double getDensity(const int i, const int j, const int k, DirectionEnums d);
 
 	void computeW();
-	/*CellType getCellType(const int i, const int j, const int k) const; //TODO Felaktiga bör vara static? Använder def i levelset istället då denna används i Fire3D med
-	CellType getCellType(double w_x, double w_y,double w_z) const;*/
-	//void 
 public:
 	Fire(FirePresets *preset);
 	~Fire();
@@ -81,7 +78,7 @@ public:
 
     void enforceBorderCondition(); //NO PANIC! JUST FOR TESTING.
     
-	//static CellType getCellType(double phi);
+
 private:
     Particles particles;
     FirePresets *preset;

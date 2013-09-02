@@ -281,32 +281,6 @@ double Fire3D::getDensity(const int i, const int j, const int k, DirectionEnums 
 		return preset->rhob;
 }
 
-/*
-CellType Fire3D::getCellType(const int i, const int j, const int k) const
-{
-	if(solids.valueAtIndex(i, j, k)) //Check if is solid
-		return SOLID;
-	else if(phi.grid->valueAtIndex(i,j,k) > 0.0)
-		return FUEL;
-	else
-		return BURNT;
-}
-
-CellType Fire3D::getCellType(double w_x, double w_y,double w_z) const
-{
-	return getCellType(phi.grid->valueAtWorld(w_x, w_y, w_z));
-}
-
-CellType Fire3D::getCellType(double phi){
-    
-	if(false) //Check if is solid
-		return SOLID;
-	else if(phi > 0.0)
-		return FUEL;
-	else
-		return BURNT;
-}*/
-
 void Fire3D::addFuelToLevelSet(int x0, int y0, int z0, double radius){
 	for(int x = 0; x < phi.grid->xdim(); ++x)
 	{
@@ -324,14 +298,7 @@ void Fire3D::addFuelToLevelSet(int x0, int y0, int z0, double radius){
 					else//both positive = inside fuel
 						dist = min(ndist, odist);
                     
-					//Rikta hastighetsfältet utåt från den injektade bränslet
-					/*Vector3 N = phi.getNormal(x, y, z)*5.0;
-					u_fuel.setValueAtFace(N.x, x, y, z, RIGHT);
-					u_fuel.setValueAtFace(-N.x, x, y, z, LEFT);
-					u_fuel.setValueAtFace(N.y, x, y, z, UP);
-					u_fuel.setValueAtFace(-N.y, x, y, z, DOWN);*/
-
-					//Rikta hastighetsfältet upp i bräbsket
+					// force the fueld velocity to point upwards.
 					const double amount = 30.0;
 					u_fuel.setValueAtFace(0.0, x, y, 0, RIGHT);
 					u_fuel.setValueAtFace(0.0, x, y, 0, LEFT);
@@ -397,7 +364,7 @@ void Fire3D::runSimulation(){
     u_fuel.addForceGrid(*vorticityForces, preset->dt); // Add vorticity forces to velocity field
     computeGhostValues();
     
-	advectTemperature(preset->dt); //TODO bör inte temperaturena advekteras efter projektionen?
+	advectTemperature(preset->dt); 
 	
     u_burnt.addForceGrid(*T->beyonce, preset->dt);
     u_fuel.addForceGrid(*T->beyonce, preset->dt);
@@ -418,7 +385,8 @@ void Fire3D::runSimulation(){
 
     advectLevelSet(preset->dt);
 
-	//smoke.advectDensityField(preset->dt, u_burnt, phi); //TODO renderas inte så ingen ide att simulera den heller atm, funkar gör den nog iaf
+	//not rendered at the moment and should therefore not be calculated
+	//smoke.advectDensityField(preset->dt, u_burnt, phi); 
 }
 
 

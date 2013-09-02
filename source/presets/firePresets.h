@@ -17,9 +17,7 @@ public:
 	~FirePresets(){}
 	double (*implicitFunction)(int x, int y, int z);
 
-
-    //Konstanter
-    //static const double dx;
+	// constants
     static const double dt;
 	static const double CFL_NUMBER;
     
@@ -45,9 +43,9 @@ public:
 	static const double rhob; // Hot gaseous products density (kg/m^3)
 
 	static const double CHROMA; //Chromatic adaption, högt värde minskar intensiteten
-	static const int SAMPLE_STEP; //Antal man hoppar över (1 är minsta, dvs man använder alla sampel)
-	static const double SAMPLE_DL; //våglängds dx
-	static const int SAMPLE_STEP_QUALITY; //steglängd, 1 är min
+	static const int SAMPLE_STEP; 
+	static const double SAMPLE_DL; 
+	static const int SAMPLE_STEP_QUALITY;
 	static const int TOTAL_SAMPLES;
 	static const bool QUALITY_ROOM;
 	
