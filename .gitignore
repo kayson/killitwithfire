@@ -231,3 +231,6 @@ xcuserdata
 *.xdy
 *.tdo
 *.pdf
+
+#unignore directory
+!report/figures/
