@@ -1,6 +1,8 @@
 \documentclass[]{report}   % list options between brackets
 \usepackage{graphicx,url,placeins,algorithm,algorithmic,lipsum,amssymb,amsmath,subfigure,float}
 \usepackage[hidelinks]{hyperref}
+\usepackage[titletoc]{appendix}
+\usepackage{pdfpages}
 \graphicspath{{figures/}}
 
 \begin{document}
@@ -70,7 +72,15 @@
 
 \endgroup
 
+\begingroup
+\begin{appendices}
+\chapter{Rendering report}
+\includepdf[pages=-]{render}
+\end{appendices}
+\endgroup
+
 \bibliographystyle{abbrv}
 \bibliography{bibl}
+
 
 \end{document}
