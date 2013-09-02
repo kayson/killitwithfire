@@ -6,7 +6,7 @@
 #include <cmath>
 
 void AdvectLevelSetEuler::advect(GridField<Vector3> &w, LevelSet &phi, double dt){
-	//Räkna ut dt för levelsetet
+	// Calculate a stable dt for the levelset
 	double vmax = 0.0;
 	for(int i = 0; i < w.xdim(); i++)
 	{
@@ -23,7 +23,8 @@ void AdvectLevelSetEuler::advect(GridField<Vector3> &w, LevelSet &phi, double dt
 
 	double steps = dt/ldt;
 
-	do{//Justera så att man gör levelset advectionen under tiden dt, går nog att göra snyggare än så här
+	//Advect to the levelset with its local dt ldt, until its reach the time dt.
+	do{
 		for(int i = 0; i < (phi.grid)->xdim(); i++)
 		{
 			for(int j = 0; j < (phi.grid)->ydim(); j++)
