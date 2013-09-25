@@ -46,9 +46,9 @@ Fire3D::Fire3D(FirePresets *pre):
 	preset = pre;
     
     phi.grid->setTransformation(u.getTrans());
-	//MeshToVolumeConverter converter;
-	//converter.convert("cube.obj", preset->GRID_SIZE);
-	//phi.fillLevelSetFromConverter(converter);
+	MeshToVolumeConverter converter;
+	converter.convert("cube.obj", preset->GRID_SIZE);
+	phi.fillLevelSetFromConverter(converter);
 	//phi.fillLevelSet(preset->implicitFunction); 
 	
 	addFuelToLevelSet(phi.grid->xdim()/2, 1.5/phi.grid->dx(), phi.grid->zdim()/2, 0.6/phi.grid->dx()); // if we want to start with a fluid

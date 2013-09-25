@@ -81,7 +81,9 @@ void LevelSet::fillLevelSetFromConverter(MeshToVolumeConverter &converter)
 	for(int i = 0; i < grid->xdim(); i++){
 		for(int j = 0; j < grid->ydim(); j++){
 			for(int k = 0; k < grid->zdim(); k++){
-                grid->setValueAtIndex( converter.fill(i,j,k),i,j,k);
+				double x, y, z;
+				grid->indexToWorld(i, j, k, x, y, z);
+				grid->setValueAtIndex( converter.fill(x,y,z),i,j,k);
                 //std::cout << phi.valueAtIndex(i, j, k);
             }
         }
