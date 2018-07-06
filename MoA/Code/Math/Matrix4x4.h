@@ -11,7 +11,7 @@
  *************************************************************************************************/
 #ifndef _matrix4x4_h
 #define _matrix4x4_h
-
+#include <iostream>
 #include <algorithm>
 #include <iterator>
 
